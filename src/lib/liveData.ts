@@ -6,6 +6,9 @@ import type {
   KpiMetric,
   KpiStatus,
   LiveFinancialRecord,
+  MarketFundamentals,
+  MarketQuote,
+  MarketSnapshot,
   Scores,
 } from '../types'
 import {
@@ -111,7 +114,7 @@ const createUnavailableMetric = (key: KpiKey): KpiMetric => ({
   previousValue: 0,
   unit: units[key],
   status: 'unknown',
-  comment: 'EDINET開示から取得できません',
+  comment: '開示データから取得できません',
   trend: [],
   available: false,
 })
@@ -173,13 +176,61 @@ const calculateLiveScores = (
   return scores
 }
 
-const mergeRecord = (company: Company, record: LiveFinancialRecord): Company => {
+const valuationMetrics = (
+  quote?: MarketQuote,
+  fundamentals?: MarketFundamentals,
+): Partial<
+  Record<KpiKey, { value: number; previousValue?: number; trend?: number[] }>
+> => {
+  if (!quote || !fundamentals) return {}
+  const metrics: Partial<
+    Record<KpiKey, { value: number; previousValue?: number; trend?: number[] }>
+  > = {}
+  const prices = [quote.previousClose, quote.close].filter(
+    (value): value is number => value !== undefined,
+  )
+  const eps =
+    fundamentals.forecastEps && fundamentals.forecastEps > 0
+      ? fundamentals.forecastEps
+      : fundamentals.eps
+  const { bps } = fundamentals
+  if (eps !== undefined && eps > 0) {
+    metrics.per = {
+      value: quote.close / eps,
+      previousValue: quote.previousClose
+        ? quote.previousClose / eps
+        : quote.close / eps,
+      trend: prices.map((price) => price / eps),
+    }
+  }
+  if (bps !== undefined && bps > 0) {
+    metrics.pbr = {
+      value: quote.close / bps,
+      previousValue: quote.previousClose
+        ? quote.previousClose / bps
+        : quote.close / bps,
+      trend: prices.map((price) => price / bps),
+    }
+  }
+  return metrics
+}
+
+const mergeRecord = (
+  company: Company,
+  record: LiveFinancialRecord,
+  quote?: MarketQuote,
+  fundamentals?: MarketFundamentals,
+): Company => {
+  const recordMetrics = {
+    ...record.metrics,
+    ...valuationMetrics(quote, fundamentals),
+  }
   const available = new Set(
-    kpiKeys.filter((key) => record.metrics[key] !== undefined),
+    kpiKeys.filter((key) => recordMetrics[key] !== undefined),
   )
   const metrics = Object.fromEntries(
     kpiKeys.map((key) => {
-      const live = record.metrics[key]
+      const live = recordMetrics[key]
       return [
         key,
         live
@@ -195,11 +246,10 @@ const mergeRecord = (company: Company, record: LiveFinancialRecord): Company => 
   ) as CompanyMetrics
   const rawMetrics = { ...neutralMetrics }
   kpiKeys.forEach((key) => {
-    rawMetrics[key] = record.metrics[key]?.value ?? neutralMetrics[key]
+    rawMetrics[key] = recordMetrics[key]?.value ?? neutralMetrics[key]
   })
   const previousOperatingMargin =
-    record.metrics.operatingMargin?.previousValue ??
-    rawMetrics.operatingMargin
+    recordMetrics.operatingMargin?.previousValue ?? rawMetrics.operatingMargin
   const history = record.history
   const warnings = buildWarnings(
     rawMetrics,
@@ -226,6 +276,7 @@ const mergeRecord = (company: Company, record: LiveFinancialRecord): Company => 
     dataUpdatedAt: record.filedAt,
     financialPeriod: record.periodEnd,
     liveMetricCount: available.size,
+    stockPrice: quote,
   }
 }
 
@@ -238,11 +289,27 @@ export const loadFinancialSnapshot = async (): Promise<FinancialSnapshot> => {
   return response.json() as Promise<FinancialSnapshot>
 }
 
+export const loadMarketSnapshot = async (): Promise<MarketSnapshot> => {
+  const url = `${import.meta.env.BASE_URL}data/market.json?v=${Date.now()}`
+  const response = await fetch(url, { cache: 'no-store' })
+  if (!response.ok) {
+    throw new Error(`Market snapshot could not be loaded: ${response.status}`)
+  }
+  return response.json() as Promise<MarketSnapshot>
+}
+
 export const mergeLiveCompanies = (
   companies: Company[],
   snapshot: FinancialSnapshot,
+  marketSnapshot: MarketSnapshot | null = null,
 ) =>
   companies.map((company) => {
     const record = snapshot.records[company.code]
-    return record ? mergeRecord(company, record) : company
+    const quote = marketSnapshot?.quotes[company.code]
+    const fundamentals = marketSnapshot?.fundamentals[company.code]
+    return record
+      ? mergeRecord(company, record, quote, fundamentals)
+      : quote
+        ? { ...company, stockPrice: quote }
+        : company
   })
