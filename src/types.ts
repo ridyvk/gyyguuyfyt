@@ -166,6 +166,7 @@ export interface CompanyFilter {
   theme: string | 'all'
   warningsOnly: boolean
   sort:
+    | 'code-asc'
     | 'score-desc'
     | 'per-asc'
     | 'pbr-asc'
