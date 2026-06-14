@@ -26,6 +26,19 @@ export const formatDelta = (metric: KpiMetric) => {
 
 export const formatScore = (score: number) => Math.round(score).toString()
 
+export const formatStockPrice = (value: number) =>
+  new Intl.NumberFormat('ja-JP', {
+    style: 'currency',
+    currency: 'JPY',
+    maximumFractionDigits: value < 100 ? 1 : 0,
+  }).format(value)
+
+export const formatChangePercent = (value?: number) => {
+  if (value === undefined) return '前日比なし'
+  const sign = value > 0 ? '+' : ''
+  return `${sign}${formatNumber(value, 2)}%`
+}
+
 export const statusLabel = {
   good: '良好',
   normal: '普通',
