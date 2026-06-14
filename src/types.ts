@@ -82,6 +82,7 @@ export interface Company {
   dataUpdatedAt?: string
   financialPeriod?: string
   liveMetricCount?: number
+  stockPrice?: MarketQuote
 }
 
 export interface LiveMetricValue {
@@ -102,7 +103,7 @@ export interface LiveFinancialRecord {
 }
 
 export interface FinancialSnapshot {
-  schemaVersion: 1
+  schemaVersion: 1 | 2
   generatedAt: string | null
   source: 'EDINET'
   status: 'ready' | 'setup-required' | 'error'
@@ -112,6 +113,38 @@ export interface FinancialSnapshot {
     companies: number
     documentsScanned: number
     documentsUpdated: number
+  }
+}
+
+export interface MarketQuote {
+  date: string
+  close: number
+  previousClose?: number
+  changePercent?: number
+  volume?: number
+  source: 'J-Quants'
+}
+
+export interface MarketFundamentals {
+  disclosedDate: string
+  eps?: number
+  forecastEps?: number
+  bps?: number
+}
+
+export interface MarketSnapshot {
+  schemaVersion: 1
+  generatedAt: string | null
+  source: 'J-Quants'
+  status: 'ready' | 'setup-required' | 'error'
+  message: string
+  latestTradingDate: string | null
+  quotes: Record<string, MarketQuote>
+  fundamentals: Record<string, MarketFundamentals>
+  stats: {
+    companies: number
+    tradingDates: string[]
+    fundamentals: number
   }
 }
 
