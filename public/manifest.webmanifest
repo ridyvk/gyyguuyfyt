@@ -1,0 +1,19 @@
+{
+  "name": "KPI Scope",
+  "short_name": "KPI Scope",
+  "description": "日本の上場企業をKPIタイルで読み解く企業分析アプリ",
+  "lang": "ja",
+  "start_url": "./#/",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F2F2F7",
+  "theme_color": "#F2F2F7",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
