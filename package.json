@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "update:financials": "python scripts/update_edinet_financials.py"
+    "update:financials": "python scripts/update_edinet_financials.py",
+    "update:market": "python scripts/update_market_prices.py"
   },
   "dependencies": {
     "idb": "^8.0.3",
