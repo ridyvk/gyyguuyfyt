@@ -85,6 +85,7 @@ export default function FilterPanel({
             update('sort', event.target.value as CompanyFilter['sort'])
           }
         >
+          <option value="code-asc">証券コード順</option>
           <option value="score-desc">総合スコアが高い順</option>
           <option value="per-asc">PERが低い順</option>
           <option value="pbr-asc">PBRが低い順</option>
