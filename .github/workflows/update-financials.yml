@@ -7,6 +7,7 @@ on:
     paths:
       - .github/workflows/update-financials.yml
       - public/data/financials.json
+      - public/data/market.json
   schedule:
     - cron: '17 */3 * * *'
   workflow_dispatch:
@@ -39,26 +40,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check EDINET API key
+      - name: Check data API keys
         id: credentials
         env:
           EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
+          JQUANTS_API_KEY: ${{ secrets.JQUANTS_API_KEY }}
         run: |
           if [ -n "$EDINET_API_KEY" ]; then
-            echo "enabled=true" >> "$GITHUB_OUTPUT"
+            echo "edinet_enabled=true" >> "$GITHUB_OUTPUT"
           else
-            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "edinet_enabled=false" >> "$GITHUB_OUTPUT"
             echo "::warning::EDINET_API_KEY is not configured. The updater was skipped."
+          fi
+          if [ -n "$JQUANTS_API_KEY" ]; then
+            echo "market_enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "market_enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::JQUANTS_API_KEY is not configured. The market updater was skipped."
           fi
 
       - name: Setup Python
-        if: steps.credentials.outputs.enabled == 'true'
+        if: steps.credentials.outputs.edinet_enabled == 'true' || steps.credentials.outputs.market_enabled == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
       - name: Update financial snapshot
-        if: steps.credentials.outputs.enabled == 'true'
+        if: steps.credentials.outputs.edinet_enabled == 'true'
         env:
           EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
           LOOKBACK_DAYS: ${{ inputs.lookback_days || '7' }}
@@ -68,16 +76,22 @@ jobs:
             --lookback-days "$LOOKBACK_DAYS" \
             --bootstrap-days "$BOOTSTRAP_DAYS"
 
+      - name: Update market snapshot
+        if: steps.credentials.outputs.market_enabled == 'true'
+        env:
+          JQUANTS_API_KEY: ${{ secrets.JQUANTS_API_KEY }}
+        run: python scripts/update_market_prices.py
+
       - name: Commit updated snapshot
-        if: steps.credentials.outputs.enabled == 'true'
+        if: steps.credentials.outputs.edinet_enabled == 'true' || steps.credentials.outputs.market_enabled == 'true'
         run: |
           git config user.name "kpi-scope-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add public/data/financials.json
+          git add public/data/financials.json public/data/market.json
           if git diff --cached --quiet; then
             echo "No snapshot changes."
           else
-            git commit -m "Update EDINET financial snapshot"
+            git commit -m "Update financial and market snapshots"
             git push
           fi
 
