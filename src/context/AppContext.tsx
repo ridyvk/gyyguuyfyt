@@ -13,9 +13,12 @@ import {
   saveCompareList,
   saveWatchlist,
 } from '../lib/storage'
-import type { Company } from '../types'
-import type { FinancialSnapshot } from '../types'
-import { loadFinancialSnapshot, mergeLiveCompanies } from '../lib/liveData'
+import type { Company, FinancialSnapshot } from '../types'
+import {
+  loadFinancialSnapshot,
+  loadMarketSnapshot,
+  mergeLiveCompanies,
+} from '../lib/liveData'
 
 interface AppContextValue {
   companies: Company[]
@@ -48,22 +51,35 @@ export function AppProvider({ children }: { children: ReactNode }) {
       loadWatchlist(),
       loadCompareList(),
       loadFinancialSnapshot().catch(() => null),
+      loadMarketSnapshot().catch(() => null),
     ])
-      .then(([companyModule, storedWatchlist, storedCompare, snapshot]) => {
-        if (!active) return
-        const loadedCompanies = snapshot
-          ? mergeLiveCompanies(companyModule.companies, snapshot)
-          : companyModule.companies
-        setCompanies(loadedCompanies)
-        setFinancialSnapshot(snapshot)
-        const validIds = new Set(
-          loadedCompanies.map((company) => company.id),
-        )
-        setWatchlist(storedWatchlist.filter((id) => validIds.has(id)))
-        setCompareList(
-          storedCompare.filter((id) => validIds.has(id)).slice(0, 5),
-        )
-      })
+      .then(
+        ([
+          companyModule,
+          storedWatchlist,
+          storedCompare,
+          snapshot,
+          marketSnapshot,
+        ]) => {
+          if (!active) return
+          const loadedCompanies = snapshot
+            ? mergeLiveCompanies(
+                companyModule.companies,
+                snapshot,
+                marketSnapshot,
+              )
+            : companyModule.companies
+          setCompanies(loadedCompanies)
+          setFinancialSnapshot(snapshot)
+          const validIds = new Set(
+            loadedCompanies.map((company) => company.id),
+          )
+          setWatchlist(storedWatchlist.filter((id) => validIds.has(id)))
+          setCompareList(
+            storedCompare.filter((id) => validIds.has(id)).slice(0, 5),
+          )
+        },
+      )
       .finally(() => {
         if (active) setStorageReady(true)
       })
