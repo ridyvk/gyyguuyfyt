@@ -24,5 +24,27 @@
 .data-badge--mock { color: #8a5700; background: rgba(255, 159, 10, 0.1); }
 .company-data-line { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; margin-top: 15px; color: var(--muted); font-size: 9px; }
 .company-data-line .data-badge { margin-top: 0; }
+
+.stock-quote {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 2px 12px;
+  margin: 13px 0;
+  padding: 11px 13px;
+  border: 1px solid rgba(0, 122, 255, 0.12);
+  border-radius: 13px;
+  background: rgba(0, 122, 255, 0.045);
+}
+.stock-quote div { display: flex; align-items: baseline; gap: 8px; }
+.stock-quote span, .stock-quote small { color: var(--muted); font-size: 9px; }
+.stock-quote strong { color: var(--text); font-size: 17px; font-weight: 650; letter-spacing: -0.03em; }
+.stock-quote .stock-quote__change { font-size: 11px; font-weight: 650; }
+.stock-quote__change--up { color: #168445 !important; }
+.stock-quote__change--down { color: #d7384e !important; }
+.stock-quote small { grid-column: 1 / -1; }
+.stock-quote--hero { width: min(330px, 100%); margin-top: 16px; }
+.stock-quote--hero strong { font-size: 23px; }
+
 .mini-trend-empty, .chart-empty { display: grid; place-items: center; color: var(--muted); font-size: 9px; }
 .chart-empty { height: 100%; border: 1px dashed var(--border); border-radius: 14px; font-size: 11px; }
