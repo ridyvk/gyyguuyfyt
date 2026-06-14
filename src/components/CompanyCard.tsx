@@ -1,6 +1,10 @@
 import { Bookmark, ChevronRight, GitCompareArrows } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { formatMetric } from '../lib/formatters'
+import {
+  formatChangePercent,
+  formatMetric,
+  formatStockPrice,
+} from '../lib/formatters'
 import type { Company, ScoreKey } from '../types'
 import MiniTrendChart from './MiniTrendChart'
 import RadarScoreChart from './RadarScoreChart'
@@ -74,6 +78,25 @@ export default function CompanyCard({
           />
         ))}
       </div>
+
+      {company.stockPrice && (
+        <div className="stock-quote">
+          <div>
+            <span>終値</span>
+            <strong>{formatStockPrice(company.stockPrice.close)}</strong>
+          </div>
+          <span
+            className={`stock-quote__change ${
+              (company.stockPrice.changePercent ?? 0) >= 0
+                ? 'stock-quote__change--up'
+                : 'stock-quote__change--down'
+            }`}
+          >
+            {formatChangePercent(company.stockPrice.changePercent)}
+          </span>
+          <small>{company.stockPrice.date} · J-Quants</small>
+        </div>
+      )}
 
       <div className="company-card__metrics">
         <div><span>PER</span><strong>{formatMetric(company.metrics.per)}</strong></div>
