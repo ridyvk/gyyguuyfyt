@@ -19,6 +19,9 @@ export default function MiniTrendChart({
   height = 48,
   showTooltip = false,
 }: MiniTrendChartProps) {
+  if (data.length === 0) {
+    return <div className="mini-trend-empty" style={{ height }}>データなし</div>
+  }
   const chartData = data.map((value, index) => ({ index, value }))
   const domain = [
     Math.min(...data) - Math.abs(Math.min(...data)) * 0.08 - 0.5,

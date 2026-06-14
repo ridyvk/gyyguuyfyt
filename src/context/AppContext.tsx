@@ -14,12 +14,15 @@ import {
   saveWatchlist,
 } from '../lib/storage'
 import type { Company } from '../types'
+import type { FinancialSnapshot } from '../types'
+import { loadFinancialSnapshot, mergeLiveCompanies } from '../lib/liveData'
 
 interface AppContextValue {
   companies: Company[]
   watchlist: string[]
   compareList: string[]
   storageReady: boolean
+  financialSnapshot: FinancialSnapshot | null
   toggleWatchlist: (companyId: string) => void
   toggleCompare: (companyId: string) => boolean
   removeFromCompare: (companyId: string) => void
@@ -35,6 +38,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [watchlist, setWatchlist] = useState<string[]>([])
   const [compareList, setCompareList] = useState<string[]>([])
   const [storageReady, setStorageReady] = useState(false)
+  const [financialSnapshot, setFinancialSnapshot] =
+    useState<FinancialSnapshot | null>(null)
 
   useEffect(() => {
     let active = true
@@ -42,11 +47,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
       import('../lib/mockGenerator'),
       loadWatchlist(),
       loadCompareList(),
+      loadFinancialSnapshot().catch(() => null),
     ])
-      .then(([companyModule, storedWatchlist, storedCompare]) => {
+      .then(([companyModule, storedWatchlist, storedCompare, snapshot]) => {
         if (!active) return
-        const loadedCompanies = companyModule.companies
+        const loadedCompanies = snapshot
+          ? mergeLiveCompanies(companyModule.companies, snapshot)
+          : companyModule.companies
         setCompanies(loadedCompanies)
+        setFinancialSnapshot(snapshot)
         const validIds = new Set(
           loadedCompanies.map((company) => company.id),
         )
@@ -109,6 +118,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       watchlist,
       compareList,
       storageReady,
+      financialSnapshot,
       toggleWatchlist,
       toggleCompare,
       removeFromCompare,
@@ -121,6 +131,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       watchlist,
       compareList,
       storageReady,
+      financialSnapshot,
       toggleWatchlist,
       toggleCompare,
       removeFromCompare,

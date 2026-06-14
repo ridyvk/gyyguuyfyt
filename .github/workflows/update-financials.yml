@@ -1,0 +1,71 @@
+name: Update EDINET financials
+
+on:
+  schedule:
+    - cron: '17 */3 * * *'
+  workflow_dispatch:
+    inputs:
+      lookback_days:
+        description: Days to scan when data already exists
+        required: false
+        default: '7'
+      bootstrap_days:
+        description: Days to scan on the first run
+        required: false
+        default: '460'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: edinet-financial-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check EDINET API key
+        id: credentials
+        env:
+          EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
+        run: |
+          if [ -n "$EDINET_API_KEY" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::EDINET_API_KEY is not configured. The updater was skipped."
+          fi
+
+      - name: Setup Python
+        if: steps.credentials.outputs.enabled == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Update financial snapshot
+        if: steps.credentials.outputs.enabled == 'true'
+        env:
+          EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
+          LOOKBACK_DAYS: ${{ inputs.lookback_days || '7' }}
+          BOOTSTRAP_DAYS: ${{ inputs.bootstrap_days || '460' }}
+        run: |
+          python scripts/update_edinet_financials.py \
+            --lookback-days "$LOOKBACK_DAYS" \
+            --bootstrap-days "$BOOTSTRAP_DAYS"
+
+      - name: Commit updated snapshot
+        if: steps.credentials.outputs.enabled == 'true'
+        run: |
+          git config user.name "kpi-scope-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/data/financials.json
+          if git diff --cached --quiet; then
+            echo "No snapshot changes."
+          else
+            git commit -m "Update EDINET financial snapshot"
+            git push
+          fi

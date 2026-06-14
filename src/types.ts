@@ -43,6 +43,7 @@ export interface KpiMetric {
   status: KpiStatus
   comment: string
   trend: number[]
+  available?: boolean
 }
 
 export type CompanyMetrics = Record<KpiKey, KpiMetric>
@@ -77,6 +78,41 @@ export interface Company {
   warnings: string[]
   analysisComment: string
   hasWarning: boolean
+  dataSource?: 'EDINET' | 'mock'
+  dataUpdatedAt?: string
+  financialPeriod?: string
+  liveMetricCount?: number
+}
+
+export interface LiveMetricValue {
+  value: number
+  previousValue?: number
+  trend?: number[]
+}
+
+export interface LiveFinancialRecord {
+  code: string
+  companyName: string
+  documentId: string
+  filedAt: string
+  periodEnd: string
+  sourceUrl: string
+  metrics: Partial<Record<KpiKey, LiveMetricValue>>
+  history: FinancialYearPoint[]
+}
+
+export interface FinancialSnapshot {
+  schemaVersion: 1
+  generatedAt: string | null
+  source: 'EDINET'
+  status: 'ready' | 'setup-required' | 'error'
+  message: string
+  records: Record<string, LiveFinancialRecord>
+  stats: {
+    companies: number
+    documentsScanned: number
+    documentsUpdated: number
+  }
 }
 
 export interface CompanyNote {

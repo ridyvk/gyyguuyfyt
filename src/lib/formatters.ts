@@ -11,11 +11,13 @@ export const formatNumber = (value: number, digits = 1) =>
   }).format(value)
 
 export const formatMetric = (metric: KpiMetric) => {
+  if (metric.available === false) return '—'
   const sign = metric.unit === '億円' && metric.value > 0 ? '+' : ''
   return `${sign}${numberFormat.format(metric.value)}${metric.unit}`
 }
 
 export const formatDelta = (metric: KpiMetric) => {
+  if (metric.available === false) return '前年差なし'
   const delta = metric.value - metric.previousValue
   const sign = delta > 0 ? '+' : ''
   const suffix = metric.unit === '%' ? 'pt' : metric.unit

@@ -28,10 +28,17 @@ export default function KpiTile({ label, metric }: KpiTileProps) {
         </span>
       </div>
       <div className="kpi-tile__value">{formatMetric(metric)}</div>
-      <div className={`kpi-tile__delta ${delta >= 0 ? 'is-up' : 'is-down'}`}>
-        <DeltaIcon size={14} />
-        前年差 {formatDelta(metric)}
-      </div>
+      {metric.available === false ? (
+        <div className="kpi-tile__delta">
+          <Minus size={14} />
+          {formatDelta(metric)}
+        </div>
+      ) : (
+        <div className={`kpi-tile__delta ${delta >= 0 ? 'is-up' : 'is-down'}`}>
+          <DeltaIcon size={14} />
+          前年差 {formatDelta(metric)}
+        </div>
+      )}
       <MiniTrendChart
         data={metric.trend}
         color={statusColors[metric.status]}
