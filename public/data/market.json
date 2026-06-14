@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": null,
+  "source": "J-Quants",
+  "status": "setup-required",
+  "message": "GitHub ActionsのJQUANTS_API_KEYを設定すると株価の自動更新が始まります。",
+  "latestTradingDate": null,
+  "quotes": {},
+  "fundamentals": {},
+  "stats": {
+    "companies": 0,
+    "tradingDates": [],
+    "fundamentals": 0
+  }
+}
