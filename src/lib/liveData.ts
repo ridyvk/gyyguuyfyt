@@ -123,7 +123,7 @@ const createUnavailableMetric = (key: KpiKey): KpiMetric => ({
   previousValue: 0,
   unit: units[key],
   status: 'unknown',
-  comment: 'EDINET開示から取得できません',
+  comment: '開示データから取得できません',
   trend: [],
   available: false,
 })
@@ -147,7 +147,10 @@ const createLiveMetric = (
   }
 }
 
-const isUsableLiveMetric = (key: KpiKey, value: number) => {
+const isUsableLiveMetric = (
+  key: KpiKey,
+  value: number,
+) => {
   if (!Number.isFinite(value)) return false
   if (
     ['revenueGrowth', 'inventoryGrowth', 'receivablesGrowth'].includes(key) &&
@@ -260,7 +263,12 @@ const mergeRecord = (
       return [
         key,
         live
-          ? createLiveMetric(key, live.value, live.previousValue, live.trend)
+          ? createLiveMetric(
+              key,
+              live.value,
+              live.previousValue,
+              live.trend,
+            )
           : createUnavailableMetric(key),
       ]
     }),
@@ -270,7 +278,8 @@ const mergeRecord = (
     rawMetrics[key] = recordMetrics[key]?.value ?? neutralMetrics[key]
   })
   const previousOperatingMargin =
-    recordMetrics.operatingMargin?.previousValue ?? rawMetrics.operatingMargin
+    recordMetrics.operatingMargin?.previousValue ??
+    rawMetrics.operatingMargin
   const history = record.history
   const warnings = buildWarnings(
     rawMetrics,
@@ -294,7 +303,7 @@ const mergeRecord = (
       available,
     ),
     hasWarning: warnings.length > 0,
-    dataSource: 'EDINET',
+    dataSource: record.source === 'TDnet' ? 'TDnet' : 'EDINET',
     dataUpdatedAt: record.filedAt,
     financialPeriod: record.periodEnd,
     financialSourceUrl: record.sourceUrl,
@@ -317,7 +326,7 @@ const createUnavailableCompany = (
   strengths: [],
   warnings: [],
   analysisComment:
-    'EDINETからこの企業の比較可能な財務データを取得できていないため、分析コメントは生成していません。',
+    'EDINET・TDnetからこの企業の比較可能な財務データを取得できていないため、分析コメントは生成していません。',
   hasWarning: false,
   dataSource: 'unavailable',
   dataUpdatedAt: undefined,
@@ -326,6 +335,9 @@ const createUnavailableCompany = (
   liveMetricCount: 0,
   stockPrice: quote,
 })
+
+export const hasFinancialData = (company: Company) =>
+  company.dataSource === 'EDINET' || company.dataSource === 'TDnet'
 
 export const loadFinancialSnapshot = async (): Promise<FinancialSnapshot> => {
   const url = `${import.meta.env.BASE_URL}data/financials.json?v=${Date.now()}`
