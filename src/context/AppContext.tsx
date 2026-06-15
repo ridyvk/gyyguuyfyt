@@ -13,7 +13,8 @@ import {
   saveCompareList,
   saveWatchlist,
 } from '../lib/storage'
-import type { Company, FinancialSnapshot } from '../types'
+import type { Company } from '../types'
+import type { FinancialSnapshot } from '../types'
 import {
   loadFinancialSnapshot,
   loadMarketSnapshot,
@@ -62,21 +63,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
           marketSnapshot,
         ]) => {
           if (!active) return
-          const loadedCompanies = snapshot
-            ? mergeLiveCompanies(
-                companyModule.companies,
-                snapshot,
-                marketSnapshot,
-              )
-            : companyModule.companies
+          const loadedCompanies = mergeLiveCompanies(
+            companyModule.companies,
+            snapshot,
+            marketSnapshot,
+          )
           setCompanies(loadedCompanies)
           setFinancialSnapshot(snapshot)
           const validIds = new Set(
             loadedCompanies.map((company) => company.id),
           )
           setWatchlist(storedWatchlist.filter((id) => validIds.has(id)))
+          const comparableIds = new Set(
+            loadedCompanies
+              .filter((company) => company.dataSource === 'EDINET')
+              .map((company) => company.id),
+          )
           setCompareList(
-            storedCompare.filter((id) => validIds.has(id)).slice(0, 5),
+            storedCompare.filter((id) => comparableIds.has(id)).slice(0, 5),
           )
         },
       )
