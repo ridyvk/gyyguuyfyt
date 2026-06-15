@@ -45,7 +45,7 @@ export default function RadarScoreChart({
   return (
     <div style={{ width: '100%', height }}>
       <ResponsiveContainer width="100%" height="100%">
-        <RadarChart data={data} outerRadius="68%">
+        <RadarChart data={data} outerRadius="68%" accessibilityLayer={false}>
           <PolarGrid stroke="rgba(60,60,67,0.16)" />
           <PolarAngleAxis
             dataKey="subject"
