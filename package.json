@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "update:financials": "python scripts/update_edinet_financials.py",
+    "update:tdnet": "python scripts/update_tdnet_financials.py",
     "update:market": "python scripts/update_market_prices.py"
   },
   "dependencies": {
