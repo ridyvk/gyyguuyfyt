@@ -31,7 +31,11 @@ export default function MiniTrendChart({
   return (
     <div style={{ width: '100%', height }} aria-hidden={!showTooltip}>
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={chartData} margin={{ top: 4, right: 2, bottom: 2, left: 2 }}>
+        <AreaChart
+          data={chartData}
+          margin={{ top: 4, right: 2, bottom: 2, left: 2 }}
+          accessibilityLayer={false}
+        >
           <defs>
             <linearGradient id={`mini-${color.replace('#', '')}`} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={color} stopOpacity={0.32} />
