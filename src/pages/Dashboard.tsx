@@ -19,6 +19,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import ChartReveal from '../components/ChartReveal'
 import ScoreBadge from '../components/ScoreBadge'
 import { useApp } from '../context/AppContext'
 import { listedCompanySource } from '../lib/companySource'
@@ -80,16 +81,10 @@ export default function Dashboard() {
         </div>
       </section>
 
-      <section
-        className={`data-status data-status--${financialSnapshot?.status ?? 'error'}`}
-      >
+      <section className={`data-status data-status--${financialSnapshot?.status ?? 'error'}`}>
         <RefreshCw size={18} />
         <div>
-          <strong>
-            {financialSnapshot?.status === 'ready'
-              ? 'EDINET財務データを自動更新中'
-              : 'EDINET自動更新の初期設定待ち'}
-          </strong>
+          <strong>{financialSnapshot?.status === 'ready' ? 'EDINET財務データを自動更新中' : 'EDINET自動更新の初期設定待ち'}</strong>
           <span>
             {financialSnapshot?.status === 'ready'
               ? `${financialSnapshot.stats.companies.toLocaleString('ja-JP')}社を収録 / 最終生成 ${new Date(financialSnapshot.generatedAt ?? '').toLocaleString('ja-JP')}`
@@ -128,28 +123,32 @@ export default function Dashboard() {
             <Layers3 size={20} />
           </div>
           <div className="chart-wrap chart-wrap--bar">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={industryData} margin={{ left: -12, right: 8, top: 8 }} accessibilityLayer={false}>
-                <XAxis dataKey="name" tick={{ fill: '#8E8E93', fontSize: 10 }} interval={0} angle={-18} textAnchor="end" height={58} />
-                <YAxis tick={{ fill: '#8E8E93', fontSize: 11 }} allowDecimals={false} />
-                <Tooltip cursor={{ fill: 'rgba(0,122,255,0.05)' }} contentStyle={{ background: 'rgba(255,255,255,0.96)', color: '#1C1C1E', border: '1px solid rgba(60,60,67,0.14)', borderRadius: 14, boxShadow: '0 12px 32px rgba(31,38,55,0.12)' }} />
-                <Bar dataKey="value" name="企業数" fill="#007AFF" radius={[7, 7, 2, 2]} isAnimationActive animationBegin={120} animationDuration={720} animationEasing="ease-out" />
-              </BarChart>
-            </ResponsiveContainer>
+            <ChartReveal className="chart-reveal--bar">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={industryData} margin={{ left: -12, right: 8, top: 8 }} accessibilityLayer={false}>
+                  <XAxis dataKey="name" tick={{ fill: '#8E8E93', fontSize: 10 }} interval={0} angle={-18} textAnchor="end" height={58} />
+                  <YAxis tick={{ fill: '#8E8E93', fontSize: 11 }} allowDecimals={false} />
+                  <Tooltip cursor={{ fill: 'rgba(0,122,255,0.05)' }} contentStyle={{ background: 'rgba(255,255,255,0.96)', color: '#1C1C1E', border: '1px solid rgba(60,60,67,0.14)', borderRadius: 14, boxShadow: '0 12px 32px rgba(31,38,55,0.12)' }} />
+                  <Bar dataKey="value" name="企業数" fill="#007AFF" radius={[7, 7, 2, 2]} isAnimationActive animationBegin={80} animationDuration={860} animationEasing="ease-out" />
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartReveal>
           </div>
         </article>
 
         <article className="panel">
           <div className="panel__heading"><div><span className="section-kicker">THEMES</span><h2>注目テーマ</h2></div></div>
           <div className="theme-chart">
-            <ResponsiveContainer width="100%" height={210}>
-              <PieChart accessibilityLayer={false}>
-                <Pie data={themeData.slice(0, 5)} innerRadius={58} outerRadius={88} paddingAngle={3} dataKey="value" isAnimationActive animationBegin={120} animationDuration={760} animationEasing="ease-out">
-                  {themeData.slice(0, 5).map((entry, index) => <Cell key={entry.name} fill={pieColors[index]} />)}
-                </Pie>
-                <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.96)', color: '#1C1C1E', border: '1px solid rgba(60,60,67,0.14)', borderRadius: 14, boxShadow: '0 12px 32px rgba(31,38,55,0.12)' }} />
-              </PieChart>
-            </ResponsiveContainer>
+            <ChartReveal className="chart-reveal--pie">
+              <ResponsiveContainer width="100%" height={210}>
+                <PieChart accessibilityLayer={false}>
+                  <Pie data={themeData.slice(0, 5)} innerRadius={58} outerRadius={88} paddingAngle={3} dataKey="value" startAngle={90} endAngle={-270} isAnimationActive animationBegin={80} animationDuration={920} animationEasing="ease-out">
+                    {themeData.slice(0, 5).map((entry, index) => <Cell key={entry.name} fill={pieColors[index]} />)}
+                  </Pie>
+                  <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.96)', color: '#1C1C1E', border: '1px solid rgba(60,60,67,0.14)', borderRadius: 14, boxShadow: '0 12px 32px rgba(31,38,55,0.12)' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </ChartReveal>
             <div className="theme-list">
               {themeData.slice(0, 5).map((theme, index) => (
                 <div key={theme.name}><i style={{ background: pieColors[index] }} /><span>{theme.name}</span><strong>{theme.value}</strong></div>
