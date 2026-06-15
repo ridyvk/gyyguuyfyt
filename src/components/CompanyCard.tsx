@@ -1,11 +1,17 @@
 import { Bookmark, ChevronRight, GitCompareArrows } from 'lucide-react'
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from 'react'
 import { Link } from 'react-router-dom'
 import {
   formatChangePercent,
   formatMetric,
   formatStockPrice,
 } from '../lib/formatters'
+import { hasFinancialData } from '../lib/liveData'
 import type { Company, ScoreKey } from '../types'
 import MiniTrendChart from './MiniTrendChart'
 import RadarScoreChart from './RadarScoreChart'
@@ -41,7 +47,9 @@ export default function CompanyCard({
   onToggleCompare,
 }: CompanyCardProps) {
   const expanded = variant === 'expanded'
-  const financialAvailable = company.dataSource === 'EDINET'
+  const financialAvailable = hasFinancialData(company)
+  const sourceLabel =
+    company.dataSource === 'TDnet' ? 'TDnet決算短信' : 'EDINET実データ'
   const cardRef = useRef<HTMLElement>(null)
   const [visible, setVisible] = useState(false)
 
@@ -55,6 +63,7 @@ export default function CompanyCard({
         setVisible(true)
         return
       }
+
       observer = new IntersectionObserver(
         ([entry]) => {
           if (!entry.isIntersecting) return
@@ -82,7 +91,11 @@ export default function CompanyCard({
     <article
       ref={cardRef}
       className={`company-card company-card--${variant} company-card--motion${company.hasWarning ? ' company-card--has-warning' : ''}${visible ? ' is-visible' : ''}`}
-      style={{ '--card-delay': `${(motionIndex % 6) * 52}ms` } as CSSProperties}
+      style={
+        {
+          '--card-delay': `${(motionIndex % 6) * 52}ms`,
+        } as CSSProperties
+      }
     >
       <div className="company-card__header">
         <div>
@@ -95,9 +108,9 @@ export default function CompanyCard({
           </Link>
           <p className="company-card__industry">{company.industry}</p>
           <span
-            className={`data-badge data-badge--${financialAvailable ? 'edinet' : 'unavailable'}`}
+            className={`data-badge data-badge--${financialAvailable ? company.dataSource?.toLowerCase() : 'unavailable'}`}
           >
-            {financialAvailable ? 'EDINET実データ' : '財務データ未取得'}
+            {financialAvailable ? sourceLabel : '財務データ未取得'}
           </span>
         </div>
         <ScoreBadge
@@ -134,7 +147,11 @@ export default function CompanyCard({
             <strong>{formatStockPrice(company.stockPrice.close)}</strong>
           </div>
           <span
-            className={`stock-quote__change ${(company.stockPrice.changePercent ?? 0) >= 0 ? 'stock-quote__change--up' : 'stock-quote__change--down'}`}
+            className={`stock-quote__change ${
+              (company.stockPrice.changePercent ?? 0) >= 0
+                ? 'stock-quote__change--up'
+                : 'stock-quote__change--down'
+            }`}
           >
             {formatChangePercent(company.stockPrice.changePercent)}
           </span>
@@ -143,11 +160,26 @@ export default function CompanyCard({
       )}
 
       <div className="company-card__metrics">
-        <div><span>PER</span><strong>{formatMetric(company.metrics.per)}</strong></div>
-        <div><span>PBR</span><strong>{formatMetric(company.metrics.pbr)}</strong></div>
-        <div><span>ROE</span><strong>{formatMetric(company.metrics.roe)}</strong></div>
-        <div><span>営業利益率</span><strong>{formatMetric(company.metrics.operatingMargin)}</strong></div>
-        <div><span>自己資本比率</span><strong>{formatMetric(company.metrics.equityRatio)}</strong></div>
+        <div>
+          <span>PER</span>
+          <strong>{formatMetric(company.metrics.per)}</strong>
+        </div>
+        <div>
+          <span>PBR</span>
+          <strong>{formatMetric(company.metrics.pbr)}</strong>
+        </div>
+        <div>
+          <span>ROE</span>
+          <strong>{formatMetric(company.metrics.roe)}</strong>
+        </div>
+        <div>
+          <span>営業利益率</span>
+          <strong>{formatMetric(company.metrics.operatingMargin)}</strong>
+        </div>
+        <div>
+          <span>自己資本比率</span>
+          <strong>{formatMetric(company.metrics.equityRatio)}</strong>
+        </div>
       </div>
 
       {expanded && financialAvailable && (
@@ -159,7 +191,11 @@ export default function CompanyCard({
             <div className="company-card__trend">
               <span className="section-kicker">営業利益率トレンド</span>
               <strong>{formatMetric(company.metrics.operatingMargin)}</strong>
-              <MiniTrendChart data={company.metrics.operatingMargin.trend} height={100} showTooltip />
+              <MiniTrendChart
+                data={company.metrics.operatingMargin.trend}
+                height={100}
+                showTooltip
+              />
               <p>{company.analysisComment}</p>
             </div>
           </div>
@@ -167,7 +203,9 @@ export default function CompanyCard({
             <div>
               <span className="section-kicker">強み</span>
               <ul className="strength-list">
-                {company.strengths.slice(0, 3).map((strength) => <li key={strength}>{strength}</li>)}
+                {company.strengths.slice(0, 3).map((strength) => (
+                  <li key={strength}>{strength}</li>
+                ))}
               </ul>
             </div>
             <div>
@@ -180,7 +218,7 @@ export default function CompanyCard({
 
       {expanded && !financialAvailable && (
         <div className="company-card__unavailable">
-          EDINETから比較可能な財務データを取得できていません。架空値は表示しません。
+          EDINET・TDnetから比較可能な財務データを取得できていません。架空値は表示しません。
         </div>
       )}
 
@@ -189,7 +227,9 @@ export default function CompanyCard({
           {!financialAvailable ? (
             <span className="flag flag--unknown">判定不能</span>
           ) : company.hasWarning ? (
-            <span className="flag flag--warning">注意 {company.warnings.length}件</span>
+            <span className="flag flag--warning">
+              注意 {company.warnings.length}件
+            </span>
           ) : (
             <span className="flag flag--clear">注意なし</span>
           )}
@@ -213,11 +253,16 @@ export default function CompanyCard({
             onClick={onToggleCompare}
           >
             <GitCompareArrows size={16} />
-            {!financialAvailable ? '比較不可' : compared ? '比較中' : '比較に追加'}
+            {!financialAvailable
+              ? '比較不可'
+              : compared
+                ? '比較中'
+                : '比較に追加'}
           </button>
         )}
         <Link className="button button--ghost" to={`/company/${company.id}`}>
-          詳細<ChevronRight size={16} />
+          詳細
+          <ChevronRight size={16} />
         </Link>
       </div>
     </article>
