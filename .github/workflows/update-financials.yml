@@ -7,6 +7,7 @@ on:
     paths:
       - .github/workflows/update-financials.yml
       - scripts/update_edinet_financials.py
+      - scripts/update_tdnet_financials.py
       - public/data/financials.json
       - public/data/market.json
   schedule:
@@ -61,7 +62,6 @@ jobs:
           fi
 
       - name: Setup Python
-        if: steps.credentials.outputs.edinet_enabled == 'true' || steps.credentials.outputs.market_enabled == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -77,6 +77,10 @@ jobs:
             --lookback-days "$LOOKBACK_DAYS" \
             --bootstrap-days "$BOOTSTRAP_DAYS"
 
+      - name: Supplement with TDnet earnings
+        continue-on-error: true
+        run: python scripts/update_tdnet_financials.py --lookback-days 31
+
       - name: Update market snapshot
         if: steps.credentials.outputs.market_enabled == 'true'
         env:
@@ -84,7 +88,6 @@ jobs:
         run: python scripts/update_market_prices.py
 
       - name: Commit updated snapshot
-        if: steps.credentials.outputs.edinet_enabled == 'true' || steps.credentials.outputs.market_enabled == 'true'
         run: |
           git config user.name "kpi-scope-bot"
           git config user.email "actions@users.noreply.github.com"
