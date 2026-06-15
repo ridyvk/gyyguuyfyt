@@ -1,14 +1,220 @@
 import { BarChart3, GitCompareArrows, Plus, RotateCcw, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { Bar, BarChart, CartesianGrid, Cell, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import RadarScoreChart from '../components/RadarScoreChart'
 import ScoreBadge from '../components/ScoreBadge'
 import WarningList from '../components/WarningList'
 import { useApp } from '../context/AppContext'
 import { formatMetric } from '../lib/formatters'
 import type { Company, KpiKey, ScoreKey } from '../types'
-const colors=['#007AFF','#5856D6','#FF9F0A','#AF52DE','#FF375F']
-const scoreMetrics:{key:ScoreKey|'overall';label:string;higher:boolean}[]=[{key:'overall',label:'総合スコア',higher:true},{key:'growth',label:'成長性',higher:true},{key:'profitability',label:'収益性',higher:true},{key:'safety',label:'安全性',higher:true},{key:'cashGeneration',label:'CF創出力',higher:true},{key:'valuation',label:'割安性',higher:true}]
-const kpiMetrics:{key:KpiKey;label:string;higher:boolean}[]=[{key:'revenueGrowth',label:'売上成長率',higher:true},{key:'operatingMargin',label:'営業利益率',higher:true},{key:'roe',label:'ROE',higher:true},{key:'equityRatio',label:'自己資本比率',higher:true},{key:'operatingCfMargin',label:'営業CFマージン',higher:true},{key:'per',label:'PER',higher:false},{key:'pbr',label:'PBR',higher:false},{key:'debtRatio',label:'有利子負債倍率',higher:false}]
-const isBest=(company:Company,companies:Company[],key:KpiKey,higher:boolean)=>{if(company.metrics[key].available===false)return false;const values=companies.map(i=>i.metrics[key]).filter(m=>m.available!==false).map(m=>m.value);if(!values.length)return false;const best=higher?Math.max(...values):Math.min(...values);return company.metrics[key].value===best}
-export default function Compare(){const{companies,compareList,toggleCompare,removeFromCompare,clearCompare}=useApp();const[selectedId,setSelectedId]=useState('');const comparedCompanies=useMemo(()=>compareList.map(id=>companies.find(c=>c.id===id)).filter(c=>c!==undefined),[companies,compareList]);const availableCompanies=companies.filter(c=>!compareList.includes(c.id));const barData=scoreMetrics.map(metric=>({metric:metric.label,...Object.fromEntries(comparedCompanies.map((company,index)=>[`series${index}`,Math.round(company.scores[metric.key])]))}));return <div className="page"><header className="page-header page-header--split"><div><span className="page-eyebrow">COMPARE / MAX 5</span><h1>企業の形を、並べて比べる</h1><p>単純な順位ではなく、強みと弱みの組み合わせを比較します。</p></div>{comparedCompanies.length>0&&<button type="button" className="button button--ghost" onClick={clearCompare}><RotateCcw size={16}/>比較をクリア</button>}</header><section className="compare-picker"><div className="compare-picker__slots">{Array.from({length:5},(_,index)=>{const company=comparedCompanies[index];return company?<div className="compare-chip" key={company.id} style={{'--chip-color':colors[index]} as React.CSSProperties}><i/><span><strong>{company.name}</strong><small>{company.code}</small></span><button type="button" onClick={()=>removeFromCompare(company.id)} aria-label={`${company.name}を比較から外す`}><X size={15}/></button></div>:<div className="compare-slot" key={index}>空き {index+1}</div>})}</div><div className="compare-picker__add"><select value={selectedId} onChange={e=>setSelectedId(e.target.value)} disabled={compareList.length>=5}><option value="">企業を選択...</option>{availableCompanies.map(c=><option value={c.id} key={c.id}>{c.code} {c.name}</option>)}</select><button type="button" className="button button--primary" disabled={!selectedId||compareList.length>=5} onClick={()=>{if(selectedId){toggleCompare(selectedId);setSelectedId('')}}}><Plus size={16}/>追加</button></div></section>{comparedCompanies.length?<><section className="compare-chart-grid"><article className="panel"><div className="panel__heading"><div><span className="section-kicker">SCORE BARS</span><h2>スコア比較</h2></div><BarChart3 size={20}/></div><div className="chart-wrap chart-wrap--compare"><ResponsiveContainer width="100%" height="100%"><BarChart data={barData} layout="vertical" margin={{left:22,right:12,top:8,bottom:8}}><CartesianGrid stroke="rgba(60,60,67,0.13)" strokeDasharray="4 4" horizontal={false}/><XAxis type="number" domain={[0,100]}/><YAxis type="category" dataKey="metric" width={78}/><Tooltip/><Legend/>{comparedCompanies.map((company,index)=><Bar key={company.id} dataKey={`series${index}`} name={company.name} fill={colors[index]} radius={[0,5,5,0]} barSize={9} isAnimationActive={false}>{barData.map(entry=><Cell key={entry.metric} fill={colors[index]}/>)}</Bar>)}</BarChart></ResponsiveContainer></div></article><article className="panel"><div className="panel__heading"><div><span className="section-kicker">SHAPE</span><h2>レーダー比較</h2></div></div><RadarScoreChart companies={comparedCompanies} height={360}/></article></section><section className="section-block"><div className="section-heading"><div><span className="section-kicker">COMPARISON CARDS</span><h2>KPI比較カード</h2></div><p>Bestは比較中の企業内で判定</p></div><div className="comparison-cards">{comparedCompanies.map((company,companyIndex)=><article className="comparison-card" key={company.id}><div className="comparison-card__head" style={{'--company-color':colors[companyIndex]} as React.CSSProperties}><i/><div><span>{company.code} / {company.industry}</span><h3>{company.name}</h3></div><ScoreBadge score={company.scores.overall} compact/></div><div className="comparison-card__scores">{scoreMetrics.slice(1).map(metric=>{const score=company.scores[metric.key];const best=score===Math.max(...comparedCompanies.map(item=>item.scores[metric.key]));return <div key={metric.key}><span>{metric.label}</span><strong>{Math.round(score)}</strong>{best&&<b>Best</b>}</div>})}</div><div className="comparison-card__kpis">{kpiMetrics.map(metric=><div key={metric.key}><span>{metric.label}</span><strong>{formatMetric(company.metrics[metric.key])}</strong>{isBest(company,comparedCompanies,metric.key,metric.higher)&&<b>Best</b>}</div>)}</div><div className="comparison-card__warnings"><span>注意フラグ {company.warnings.length}件</span><WarningList warnings={company.warnings.slice(0,2)} compact/></div></article>)}</div></section></>:<div className="empty-state empty-state--large"><span className="empty-state__icon"><GitCompareArrows size={30}/></span><h2>比較する企業を追加してください</h2><p>上のセレクター、またはWatchlistとCompany Detailから最大5社を追加できます。</p></div>}</div>}
+
+const colors = ['#007AFF', '#5856D6', '#FF9F0A', '#AF52DE', '#FF375F']
+const scoreMetrics: { key: ScoreKey | 'overall'; label: string; higher: boolean }[] = [
+  { key: 'overall', label: '総合スコア', higher: true },
+  { key: 'growth', label: '成長性', higher: true },
+  { key: 'profitability', label: '収益性', higher: true },
+  { key: 'safety', label: '安全性', higher: true },
+  { key: 'cashGeneration', label: 'CF創出力', higher: true },
+  { key: 'valuation', label: '割安性', higher: true },
+]
+const kpiMetrics: { key: KpiKey; label: string; higher: boolean }[] = [
+  { key: 'revenueGrowth', label: '売上成長率', higher: true },
+  { key: 'operatingMargin', label: '営業利益率', higher: true },
+  { key: 'roe', label: 'ROE', higher: true },
+  { key: 'equityRatio', label: '自己資本比率', higher: true },
+  { key: 'operatingCfMargin', label: '営業CFマージン', higher: true },
+  { key: 'per', label: 'PER', higher: false },
+  { key: 'pbr', label: 'PBR', higher: false },
+  { key: 'debtRatio', label: '有利子負債倍率', higher: false },
+]
+
+const isBest = (
+  company: Company,
+  companies: Company[],
+  key: KpiKey,
+  higher: boolean,
+) => {
+  if (company.metrics[key].available === false) return false
+  const values = companies
+    .map((item) => item.metrics[key])
+    .filter((metric) => metric.available !== false)
+    .map((metric) => metric.value)
+  if (!values.length) return false
+  const best = higher ? Math.max(...values) : Math.min(...values)
+  return company.metrics[key].value === best
+}
+
+export default function Compare() {
+  const {
+    companies,
+    compareList,
+    toggleCompare,
+    removeFromCompare,
+    clearCompare,
+  } = useApp()
+  const [selectedId, setSelectedId] = useState('')
+  const comparedCompanies = useMemo(
+    () =>
+      compareList
+        .map((id) => companies.find((company) => company.id === id))
+        .filter((company) => company !== undefined),
+    [companies, compareList],
+  )
+  const availableCompanies = companies.filter(
+    (company) =>
+      company.dataSource === 'EDINET' && !compareList.includes(company.id),
+  )
+  const chartCompanies = comparedCompanies.filter(
+    (company) => company.dataSource === 'EDINET',
+  )
+  const barData = scoreMetrics.map((metric) => ({
+    metric: metric.label,
+    ...Object.fromEntries(
+      chartCompanies.map((company, index) => [
+        `series${index}`,
+        Math.round(company.scores[metric.key]),
+      ]),
+    ),
+  }))
+
+  return (
+    <div className="page">
+      <header className="page-header page-header--split">
+        <div>
+          <span className="page-eyebrow">COMPARE / MAX 5</span>
+          <h1>企業の形を、並べて比べる</h1>
+          <p>単純な順位ではなく、強みと弱みの組み合わせを比較します。</p>
+        </div>
+        {comparedCompanies.length > 0 && (
+          <button type="button" className="button button--ghost" onClick={clearCompare}>
+            <RotateCcw size={16} />比較をクリア
+          </button>
+        )}
+      </header>
+
+      <section className="compare-picker">
+        <div className="compare-picker__slots">
+          {Array.from({ length: 5 }, (_, index) => {
+            const company = comparedCompanies[index]
+            return company ? (
+              <div className="compare-chip" key={company.id} style={{ '--chip-color': colors[index] } as React.CSSProperties}>
+                <i /><span><strong>{company.name}</strong><small>{company.code}</small></span>
+                <button type="button" onClick={() => removeFromCompare(company.id)} aria-label={`${company.name}を比較から外す`}><X size={15} /></button>
+              </div>
+            ) : (
+              <div className="compare-slot" key={index}>空き {index + 1}</div>
+            )
+          })}
+        </div>
+        <div className="compare-picker__add">
+          <select value={selectedId} onChange={(event) => setSelectedId(event.target.value)} disabled={compareList.length >= 5}>
+            <option value="">企業を選択...</option>
+            {availableCompanies.map((company) => (
+              <option value={company.id} key={company.id}>{company.code} {company.name}</option>
+            ))}
+          </select>
+          <button
+            type="button"
+            className="button button--primary"
+            disabled={!selectedId || compareList.length >= 5}
+            onClick={() => {
+              if (selectedId) {
+                toggleCompare(selectedId)
+                setSelectedId('')
+              }
+            }}
+          >
+            <Plus size={16} />追加
+          </button>
+        </div>
+      </section>
+
+      {comparedCompanies.length ? (
+        <>
+          <section className="compare-chart-grid">
+            <article className="panel">
+              <div className="panel__heading"><div><span className="section-kicker">SCORE BARS</span><h2>スコア比較</h2></div><BarChart3 size={20} /></div>
+              <div className="chart-wrap chart-wrap--compare">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={barData} layout="vertical" margin={{ left: 22, right: 12, top: 8, bottom: 8 }}>
+                    <CartesianGrid stroke="rgba(60,60,67,0.13)" strokeDasharray="4 4" horizontal={false} />
+                    <XAxis type="number" domain={[0, 100]} tick={{ fill: '#8E8E93', fontSize: 11 }} />
+                    <YAxis type="category" dataKey="metric" width={78} tick={{ fill: '#636366', fontSize: 11 }} />
+                    <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.96)', color: '#1C1C1E', border: '1px solid rgba(60,60,67,0.14)', borderRadius: 14, boxShadow: '0 12px 32px rgba(31,38,55,0.12)' }} />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    {chartCompanies.map((company, index) => (
+                      <Bar key={company.id} dataKey={`series${index}`} name={company.name} fill={colors[index]} radius={[0, 5, 5, 0]} barSize={9} isAnimationActive={false}>
+                        {barData.map((entry) => <Cell key={entry.metric} fill={colors[index]} />)}
+                      </Bar>
+                    ))}
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </article>
+            <article className="panel">
+              <div className="panel__heading"><div><span className="section-kicker">SHAPE</span><h2>レーダー比較</h2></div></div>
+              {chartCompanies.length ? (
+                <RadarScoreChart companies={chartCompanies} height={360} />
+              ) : (
+                <div className="chart-empty">比較可能な財務データがありません</div>
+              )}
+            </article>
+          </section>
+
+          <section className="section-block">
+            <div className="section-heading"><div><span className="section-kicker">COMPARISON CARDS</span><h2>KPI比較カード</h2></div><p>Bestは比較中の企業内で判定</p></div>
+            <div className="comparison-cards">
+              {comparedCompanies.map((company, companyIndex) => (
+                <article className="comparison-card" key={company.id}>
+                  <div className="comparison-card__head" style={{ '--company-color': colors[companyIndex] } as React.CSSProperties}>
+                    <i /><div><span>{company.code} / {company.industry}</span><h3>{company.name}</h3></div>
+                    <ScoreBadge score={company.scores.overall} compact available={company.dataSource === 'EDINET'} />
+                  </div>
+                  <div className="comparison-card__scores">
+                    {scoreMetrics.slice(1).map((metric) => {
+                      const score = company.scores[metric.key]
+                      const comparable = comparedCompanies.filter((item) => item.dataSource === 'EDINET')
+                      const best =
+                        company.dataSource === 'EDINET' &&
+                        score === Math.max(...comparable.map((item) => item.scores[metric.key]))
+                      return <div key={metric.key}><span>{metric.label}</span><strong>{company.dataSource === 'EDINET' ? Math.round(score) : '—'}</strong>{best && <b>Best</b>}</div>
+                    })}
+                  </div>
+                  <div className="comparison-card__kpis">
+                    {kpiMetrics.map((metric) => (
+                      <div key={metric.key}>
+                        <span>{metric.label}</span>
+                        <strong>{formatMetric(company.metrics[metric.key])}</strong>
+                        {isBest(company, comparedCompanies, metric.key, metric.higher) && <b>Best</b>}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="comparison-card__warnings">
+                    <span>{company.dataSource === 'EDINET' ? `注意フラグ ${company.warnings.length}件` : '注意フラグ 判定不能'}</span>
+                    <WarningList warnings={company.warnings.slice(0, 2)} compact unavailable={company.dataSource !== 'EDINET'} />
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        </>
+      ) : (
+        <div className="empty-state empty-state--large">
+          <span className="empty-state__icon"><GitCompareArrows size={30} /></span>
+          <h2>比較する企業を追加してください</h2>
+          <p>上のセレクター、またはWatchlistとCompany Detailから最大5社を追加できます。</p>
+        </div>
+      )}
+    </div>
+  )
+}
