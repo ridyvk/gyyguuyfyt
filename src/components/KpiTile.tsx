@@ -1,4 +1,5 @@
 import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { formatDelta, formatMetric, statusLabel } from '../lib/formatters'
 import type { KpiMetric } from '../types'
 import MiniTrendChart from './MiniTrendChart'
@@ -16,11 +17,36 @@ const statusColors = {
 }
 
 export default function KpiTile({ label, metric }: KpiTileProps) {
+  const tileRef = useRef<HTMLElement>(null)
+  const [visible, setVisible] = useState(false)
   const delta = metric.value - metric.previousValue
   const DeltaIcon = delta > 0.05 ? ArrowUpRight : delta < -0.05 ? ArrowDownRight : Minus
 
+  useEffect(() => {
+    const tile = tileRef.current
+    if (!tile || !('IntersectionObserver' in window)) {
+      setVisible(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        setVisible(true)
+        observer.unobserve(entry.target)
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -6% 0px' },
+    )
+
+    observer.observe(tile)
+    return () => observer.disconnect()
+  }, [])
+
   return (
-    <article className={`kpi-tile kpi-tile--${metric.status}`}>
+    <article
+      ref={tileRef}
+      className={`kpi-tile kpi-tile--${metric.status} kpi-tile--motion${visible ? ' is-visible' : ''}`}
+    >
       <div className="kpi-tile__top">
         <span className="kpi-tile__label">{label}</span>
         <span className={`status-pill status-pill--${metric.status}`}>
@@ -39,11 +65,15 @@ export default function KpiTile({ label, metric }: KpiTileProps) {
           前年差 {formatDelta(metric)}
         </div>
       )}
-      <MiniTrendChart
-        data={metric.trend}
-        color={statusColors[metric.status]}
-        height={52}
-      />
+      {visible ? (
+        <MiniTrendChart
+          data={metric.trend}
+          color={statusColors[metric.status]}
+          height={52}
+        />
+      ) : (
+        <div style={{ height: 52 }} aria-hidden="true" />
+      )}
       <p>{metric.comment}</p>
     </article>
   )
