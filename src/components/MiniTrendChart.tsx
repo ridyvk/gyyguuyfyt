@@ -63,7 +63,10 @@ export default function MiniTrendChart({
             strokeWidth={2}
             fill={`url(#mini-${color.replace('#', '')})`}
             dot={false}
-            isAnimationActive={false}
+            isAnimationActive
+            animationBegin={80}
+            animationDuration={620}
+            animationEasing="ease-out"
           />
         </AreaChart>
       </ResponsiveContainer>
