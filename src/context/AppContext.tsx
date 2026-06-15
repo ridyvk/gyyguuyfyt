@@ -16,6 +16,7 @@ import {
 import type { Company } from '../types'
 import type { FinancialSnapshot } from '../types'
 import {
+  hasFinancialData,
   loadFinancialSnapshot,
   loadMarketSnapshot,
   mergeLiveCompanies,
@@ -62,26 +63,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
           snapshot,
           marketSnapshot,
         ]) => {
-          if (!active) return
-          const loadedCompanies = mergeLiveCompanies(
-            companyModule.companies,
-            snapshot,
-            marketSnapshot,
-          )
-          setCompanies(loadedCompanies)
-          setFinancialSnapshot(snapshot)
-          const validIds = new Set(
-            loadedCompanies.map((company) => company.id),
-          )
-          setWatchlist(storedWatchlist.filter((id) => validIds.has(id)))
-          const comparableIds = new Set(
-            loadedCompanies
-              .filter((company) => company.dataSource === 'EDINET')
-              .map((company) => company.id),
-          )
-          setCompareList(
-            storedCompare.filter((id) => comparableIds.has(id)).slice(0, 5),
-          )
+        if (!active) return
+        const loadedCompanies = mergeLiveCompanies(
+          companyModule.companies,
+          snapshot,
+          marketSnapshot,
+        )
+        setCompanies(loadedCompanies)
+        setFinancialSnapshot(snapshot)
+        const validIds = new Set(
+          loadedCompanies.map((company) => company.id),
+        )
+        setWatchlist(storedWatchlist.filter((id) => validIds.has(id)))
+        const comparableIds = new Set(
+          loadedCompanies
+            .filter(hasFinancialData)
+            .map((company) => company.id),
+        )
+        setCompareList(
+          storedCompare.filter((id) => comparableIds.has(id)).slice(0, 5),
+        )
         },
       )
       .finally(() => {
