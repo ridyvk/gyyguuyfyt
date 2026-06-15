@@ -14,6 +14,7 @@ import { NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import StartupSplash from './components/StartupSplash'
 import { useApp } from './context/AppContext'
 import { listedCompanySource } from './lib/companySource'
+import { hasFinancialData } from './lib/liveData'
 
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Universe = lazy(() => import('./pages/Universe'))
@@ -29,43 +30,87 @@ const navigation = [
 ]
 
 export default function App() {
-  const { watchlist, compareList, storageReady, financialSnapshot } = useApp()
+  const {
+    companies,
+    watchlist,
+    compareList,
+    storageReady,
+    financialSnapshot,
+  } = useApp()
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
+  const financialCompanyCount = companies.filter(
+    hasFinancialData,
+  ).length
 
   return (
     <>
       <StartupSplash />
       <div className="app-shell">
         <header className="topbar">
-          <NavLink className="brand" to="/" onClick={() => setMenuOpen(false)}>
-            <span className="brand__mark"><ScanSearch size={22} /></span>
-            <span><strong>KPI Scope</strong><small>Company intelligence</small></span>
-          </NavLink>
-          <button type="button" className="mobile-menu-button" onClick={() => setMenuOpen((open) => !open)} aria-label="メニューを開く">
-            {menuOpen ? <X /> : <Menu />}
-          </button>
-          <nav className={menuOpen ? 'main-nav is-open' : 'main-nav'}>
-            {navigation.map(({ to, label, icon: Icon }) => (
-              <NavLink key={to} to={to} end={to === '/'} onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'is-active' : '')}>
-                <Icon size={17} /><span>{label}</span>
-                {label === 'Watchlist' && <b>{storageReady ? watchlist.length : '·'}</b>}
-                {label === 'Compare' && compareList.length > 0 && <b>{compareList.length}</b>}
-              </NavLink>
-            ))}
-          </nav>
-          <div className="topbar__signal">
-            {financialSnapshot?.status === 'ready' ? <DatabaseZap size={16} /> : <CircleAlert size={16} />}
-            {financialSnapshot?.status === 'ready'
-              ? `EDINET ${financialSnapshot.stats.companies.toLocaleString('ja-JP')}社`
-              : `JPX ${listedCompanySource.date.slice(0, 4)}.${listedCompanySource.date.slice(4, 6)}`}
-          </div>
+        <NavLink className="brand" to="/" onClick={() => setMenuOpen(false)}>
+          <span className="brand__mark">
+            <ScanSearch size={22} />
+          </span>
+          <span>
+            <strong>KPI Scope</strong>
+            <small>Company intelligence</small>
+          </span>
+        </NavLink>
+        <button
+          type="button"
+          className="mobile-menu-button"
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-label="メニューを開く"
+        >
+          {menuOpen ? <X /> : <Menu />}
+        </button>
+        <nav className={menuOpen ? 'main-nav is-open' : 'main-nav'}>
+          {navigation.map(({ to, label, icon: Icon }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={to === '/'}
+              onClick={() => setMenuOpen(false)}
+              className={({ isActive }) => (isActive ? 'is-active' : '')}
+            >
+              <Icon size={17} />
+              <span>{label}</span>
+              {label === 'Watchlist' && (
+                <b>{storageReady ? watchlist.length : '·'}</b>
+              )}
+              {label === 'Compare' && compareList.length > 0 && (
+                <b>{compareList.length}</b>
+              )}
+            </NavLink>
+          ))}
+        </nav>
+        <div className="topbar__signal">
+          {financialSnapshot?.status === 'ready' ? (
+            <DatabaseZap size={16} />
+          ) : (
+            <CircleAlert size={16} />
+          )}
+          {financialSnapshot?.status === 'ready'
+            ? `EDINET・TDnet ${financialCompanyCount.toLocaleString('ja-JP')}社`
+            : `JPX ${listedCompanySource.date.slice(0, 4)}.${listedCompanySource.date.slice(4, 6)}`}
+        </div>
         </header>
 
         <main className="page-frame">
-          <Suspense fallback={<div className="route-loader"><span />KPIを読み込んでいます</div>}>
+        <Suspense
+          fallback={
+            <div className="route-loader">
+              <span />
+              KPIを読み込んでいます
+            </div>
+          }
+          >
             {storageReady ? (
-              <div key={`${location.pathname}${location.search}`} className="route-transition">
+              <div
+                key={`${location.pathname}${location.search}`}
+                className="route-transition"
+              >
                 <Routes location={location}>
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/universe" element={<Universe />} />
@@ -75,10 +120,13 @@ export default function App() {
                   <Route path="*" element={<Universe />} />
                 </Routes>
               </div>
-            ) : (
-              <div className="route-loader"><span />上場企業データを読み込んでいます</div>
-            )}
-          </Suspense>
+          ) : (
+            <div className="route-loader">
+              <span />
+              上場企業データを読み込んでいます
+            </div>
+          )}
+        </Suspense>
         </main>
 
         <footer className="app-footer">
@@ -86,8 +134,8 @@ export default function App() {
           <span>
             企業マスター: JPX / 財務KPI:{' '}
             {financialSnapshot?.status === 'ready'
-              ? `EDINET（${financialSnapshot.stats.companies.toLocaleString('ja-JP')}社）`
-              : 'モック（EDINET設定待ち）'}
+              ? `EDINET・TDnet開示（${financialCompanyCount.toLocaleString('ja-JP')}社）`
+              : '財務データ未取得'}
           </span>
         </footer>
       </div>
