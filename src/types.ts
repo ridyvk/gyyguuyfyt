@@ -78,7 +78,7 @@ export interface Company {
   warnings: string[]
   analysisComment: string
   hasWarning: boolean
-  dataSource?: 'EDINET' | 'mock' | 'unavailable'
+  dataSource?: 'EDINET' | 'TDnet' | 'mock' | 'unavailable'
   dataUpdatedAt?: string
   financialPeriod?: string
   financialSourceUrl?: string
@@ -98,6 +98,7 @@ export interface LiveFinancialRecord {
   documentId: string
   filedAt: string
   periodEnd: string
+  source?: 'EDINET' | 'TDnet'
   sourceUrl: string
   metrics: Partial<Record<KpiKey, LiveMetricValue>>
   history: FinancialYearPoint[]
@@ -106,7 +107,7 @@ export interface LiveFinancialRecord {
 export interface FinancialSnapshot {
   schemaVersion: 1 | 2
   generatedAt: string | null
-  source: 'EDINET'
+  source: 'EDINET' | 'EDINET+TDnet'
   status: 'ready' | 'setup-required' | 'error'
   message: string
   records: Record<string, LiveFinancialRecord>
@@ -114,6 +115,8 @@ export interface FinancialSnapshot {
     companies: number
     documentsScanned: number
     documentsUpdated: number
+    tdnetDocumentsScanned?: number
+    tdnetDocumentsUpdated?: number
   }
 }
 
