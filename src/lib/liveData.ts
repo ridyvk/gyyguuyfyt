@@ -48,6 +48,15 @@ const neutralMetrics: RawMetrics = {
   pbr: 1.5,
 }
 
+const unavailableScores: Scores = {
+  growth: 0,
+  profitability: 0,
+  safety: 0,
+  cashGeneration: 0,
+  valuation: 0,
+  overall: 0,
+}
+
 const units: Record<KpiKey, KpiMetric['unit']> = {
   revenueGrowth: '%',
   operatingMargin: '%',
@@ -114,7 +123,7 @@ const createUnavailableMetric = (key: KpiKey): KpiMetric => ({
   previousValue: 0,
   unit: units[key],
   status: 'unknown',
-  comment: '開示データから取得できません',
+  comment: 'EDINET開示から取得できません',
   trend: [],
   available: false,
 })
@@ -136,6 +145,19 @@ const createLiveMetric = (
     trend: trend.map((point) => round(point)),
     available: true,
   }
+}
+
+const isUsableLiveMetric = (key: KpiKey, value: number) => {
+  if (!Number.isFinite(value)) return false
+  if (
+    ['revenueGrowth', 'inventoryGrowth', 'receivablesGrowth'].includes(key) &&
+    value < -100
+  ) {
+    return false
+  }
+  if (key === 'debtRatio' && value < 0) return false
+  if (key === 'equityRatio' && (value < -100 || value > 100)) return false
+  return true
 }
 
 const calculateLiveScores = (
@@ -179,9 +201,7 @@ const calculateLiveScores = (
 const valuationMetrics = (
   quote?: MarketQuote,
   fundamentals?: MarketFundamentals,
-): Partial<
-  Record<KpiKey, { value: number; previousValue?: number; trend?: number[] }>
-> => {
+): Partial<Record<KpiKey, { value: number; previousValue?: number; trend?: number[] }>> => {
   if (!quote || !fundamentals) return {}
   const metrics: Partial<
     Record<KpiKey, { value: number; previousValue?: number; trend?: number[] }>
@@ -225,6 +245,12 @@ const mergeRecord = (
     ...record.metrics,
     ...valuationMetrics(quote, fundamentals),
   }
+  kpiKeys.forEach((key) => {
+    const metric = recordMetrics[key]
+    if (metric && !isUsableLiveMetric(key, metric.value)) {
+      delete recordMetrics[key]
+    }
+  })
   const available = new Set(
     kpiKeys.filter((key) => recordMetrics[key] !== undefined),
   )
@@ -234,12 +260,7 @@ const mergeRecord = (
       return [
         key,
         live
-          ? createLiveMetric(
-              key,
-              live.value,
-              live.previousValue,
-              live.trend,
-            )
+          ? createLiveMetric(key, live.value, live.previousValue, live.trend)
           : createUnavailableMetric(key),
       ]
     }),
@@ -262,6 +283,7 @@ const mergeRecord = (
     ...company,
     metrics,
     history,
+    industryKpis: [],
     scores: calculateLiveScores(rawMetrics, available),
     strengths: buildStrengths(rawMetrics, available),
     warnings,
@@ -275,10 +297,35 @@ const mergeRecord = (
     dataSource: 'EDINET',
     dataUpdatedAt: record.filedAt,
     financialPeriod: record.periodEnd,
+    financialSourceUrl: record.sourceUrl,
     liveMetricCount: available.size,
     stockPrice: quote,
   }
 }
+
+const createUnavailableCompany = (
+  company: Company,
+  quote?: MarketQuote,
+): Company => ({
+  ...company,
+  metrics: Object.fromEntries(
+    kpiKeys.map((key) => [key, createUnavailableMetric(key)]),
+  ) as CompanyMetrics,
+  history: [],
+  industryKpis: [],
+  scores: { ...unavailableScores },
+  strengths: [],
+  warnings: [],
+  analysisComment:
+    'EDINETからこの企業の比較可能な財務データを取得できていないため、分析コメントは生成していません。',
+  hasWarning: false,
+  dataSource: 'unavailable',
+  dataUpdatedAt: undefined,
+  financialPeriod: undefined,
+  financialSourceUrl: undefined,
+  liveMetricCount: 0,
+  stockPrice: quote,
+})
 
 export const loadFinancialSnapshot = async (): Promise<FinancialSnapshot> => {
   const url = `${import.meta.env.BASE_URL}data/financials.json?v=${Date.now()}`
@@ -300,16 +347,14 @@ export const loadMarketSnapshot = async (): Promise<MarketSnapshot> => {
 
 export const mergeLiveCompanies = (
   companies: Company[],
-  snapshot: FinancialSnapshot,
+  snapshot: FinancialSnapshot | null,
   marketSnapshot: MarketSnapshot | null = null,
 ) =>
   companies.map((company) => {
-    const record = snapshot.records[company.code]
+    const record = snapshot?.records[company.code]
     const quote = marketSnapshot?.quotes[company.code]
     const fundamentals = marketSnapshot?.fundamentals[company.code]
-    return record
+    return record && record.code === company.code
       ? mergeRecord(company, record, quote, fundamentals)
-      : quote
-        ? { ...company, stockPrice: quote }
-        : company
+      : createUnavailableCompany(company, quote)
   })
