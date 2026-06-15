@@ -1,0 +1,31 @@
+.recharts-wrapper,
+.recharts-wrapper *,
+.recharts-surface,
+.recharts-layer {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.recharts-wrapper [tabindex],
+.recharts-wrapper [tabindex]:focus,
+.recharts-wrapper [tabindex]:focus-visible,
+.recharts-wrapper svg:focus,
+.recharts-wrapper svg:focus-visible,
+.recharts-wrapper path:focus,
+.recharts-wrapper path:focus-visible,
+.recharts-wrapper rect:focus,
+.recharts-wrapper rect:focus-visible,
+.recharts-wrapper g:focus,
+.recharts-wrapper g:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.recharts-wrapper svg,
+.recharts-wrapper path,
+.recharts-wrapper rect,
+.recharts-wrapper g,
+.recharts-wrapper text {
+  -webkit-user-select: none;
+  user-select: none;
+}
