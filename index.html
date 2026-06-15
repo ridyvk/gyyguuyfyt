@@ -7,16 +7,89 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="KPI Scope" />
-    <link rel="icon" type="image/svg+xml" href="./icon.svg" />
-    <link rel="manifest" href="./manifest.webmanifest" />
     <meta
       name="description"
       content="日本の上場企業をKPIタイルで読み解く企業分析アプリ"
     />
     <title>KPI Scope</title>
+    <style>
+      html, body { min-height: 100%; margin: 0; background: #f2f2f7; color: #1c1c1e; }
+      body { font-family: 'Yu Mincho', 'YuMincho', 'Hiragino Mincho ProN', serif; }
+      .boot { min-height: 100vh; display: grid; place-items: center; padding: 24px; box-sizing: border-box; }
+      .boot > div { width: min(420px, 100%); text-align: center; }
+      .boot strong { display: block; margin-bottom: 10px; font-size: 18px; }
+      .boot p { margin: 0; color: #8e8e93; font-size: 12px; line-height: 1.8; }
+      .boot button { margin-top: 18px; padding: 10px 18px; border: 0; border-radius: 999px; color: white; background: #007aff; font: inherit; }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <div id="root" class="boot"><div><strong>KPI Scope</strong><p>データを読み込んでいます...</p></div></div>
+    <script type="module">
+      const repository = 'ridyvk/gyyguuyfyt'
+      const fallbackSha = '209ba858781f03af090c744ffabe8f9d11042aae'
+      const root = document.getElementById('root')
+
+      const showError = () => {
+        root.className = 'boot'
+        root.innerHTML = '<div><strong>KPI Scopeを読み込めませんでした</strong><p>通信状態を確認して、もう一度お試しください。</p><button type="button" id="reload">再読み込み</button></div>'
+        document.getElementById('reload').addEventListener('click', () => location.reload())
+      }
+
+      try {
+        let sha = fallbackSha
+        try {
+          const commitResponse = await fetch(
+            `https://api.github.com/repos/${repository}/commits/gh-pages`,
+            { cache: 'no-store', headers: { Accept: 'application/vnd.github+json' } },
+          )
+          if (commitResponse.ok) {
+            const commit = await commitResponse.json()
+            if (commit.sha) sha = commit.sha
+          }
+        } catch {
+          // The fallback build remains available if GitHub's API is temporarily unavailable.
+        }
+
+        const baseUrl = `https://cdn.jsdelivr.net/gh/${repository}@${sha}/`
+        const indexResponse = await fetch(`${baseUrl}index.html`)
+        if (!indexResponse.ok) throw new Error('Build index is unavailable')
+
+        const buildDocument = new DOMParser().parseFromString(
+          await indexResponse.text(),
+          'text/html',
+        )
+        const scriptPath = buildDocument.querySelector('script[type="module"]')?.getAttribute('src')
+        const stylePaths = Array.from(
+          buildDocument.querySelectorAll('link[rel="stylesheet"]'),
+          (link) => link.getAttribute('href'),
+        ).filter(Boolean)
+        if (!scriptPath) throw new Error('Build entry is missing')
+
+        const base = document.createElement('base')
+        base.href = baseUrl
+        document.head.prepend(base)
+
+        await Promise.all(
+          stylePaths.map(
+            (path) =>
+              new Promise((resolve, reject) => {
+                const link = document.createElement('link')
+                link.rel = 'stylesheet'
+                link.href = new URL(path, baseUrl).href
+                link.onload = resolve
+                link.onerror = reject
+                document.head.append(link)
+              }),
+          ),
+        )
+
+        root.className = ''
+        root.replaceChildren()
+        await import(new URL(scriptPath, baseUrl).href)
+      } catch (error) {
+        console.error('KPI Scope bootstrap failed', error)
+        showError()
+      }
+    </script>
   </body>
 </html>
