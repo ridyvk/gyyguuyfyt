@@ -74,7 +74,10 @@ export default function RadarScoreChart({
               fill="#007AFF"
               fillOpacity={0.22}
               strokeWidth={2}
-              isAnimationActive={false}
+              isAnimationActive
+              animationBegin={100}
+              animationDuration={720}
+              animationEasing="ease-out"
             />
           )}
           {companies.map((company, index) => (
@@ -86,7 +89,10 @@ export default function RadarScoreChart({
               fill={colors[index]}
               fillOpacity={index === 0 ? 0.13 : 0.04}
               strokeWidth={2}
-              isAnimationActive={false}
+              isAnimationActive
+              animationBegin={100 + index * 70}
+              animationDuration={720}
+              animationEasing="ease-out"
             />
           ))}
         </RadarChart>
