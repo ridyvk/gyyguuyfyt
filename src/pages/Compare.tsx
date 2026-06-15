@@ -1,4 +1,10 @@
-import { BarChart3, GitCompareArrows, Plus, RotateCcw, X } from 'lucide-react'
+import {
+  BarChart3,
+  GitCompareArrows,
+  Plus,
+  RotateCcw,
+  X,
+} from 'lucide-react'
 import { useMemo, useState } from 'react'
 import {
   Bar,
@@ -16,6 +22,7 @@ import ScoreBadge from '../components/ScoreBadge'
 import WarningList from '../components/WarningList'
 import { useApp } from '../context/AppContext'
 import { formatMetric } from '../lib/formatters'
+import { hasFinancialData } from '../lib/liveData'
 import type { Company, KpiKey, ScoreKey } from '../types'
 
 const colors = ['#007AFF', '#5856D6', '#FF9F0A', '#AF52DE', '#FF375F']
@@ -72,10 +79,11 @@ export default function Compare() {
   )
   const availableCompanies = companies.filter(
     (company) =>
-      company.dataSource === 'EDINET' && !compareList.includes(company.id),
+      hasFinancialData(company) &&
+      !compareList.includes(company.id),
   )
   const chartCompanies = comparedCompanies.filter(
-    (company) => company.dataSource === 'EDINET',
+    hasFinancialData,
   )
   const barData = scoreMetrics.map((metric) => ({
     metric: metric.label,
@@ -146,14 +154,26 @@ export default function Compare() {
               <div className="panel__heading"><div><span className="section-kicker">SCORE BARS</span><h2>スコア比較</h2></div><BarChart3 size={20} /></div>
               <div className="chart-wrap chart-wrap--compare">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={barData} layout="vertical" margin={{ left: 22, right: 12, top: 8, bottom: 8 }}>
+                  <BarChart
+                    data={barData}
+                    layout="vertical"
+                    margin={{ left: 22, right: 12, top: 8, bottom: 8 }}
+                  >
                     <CartesianGrid stroke="rgba(60,60,67,0.13)" strokeDasharray="4 4" horizontal={false} />
                     <XAxis type="number" domain={[0, 100]} tick={{ fill: '#8E8E93', fontSize: 11 }} />
                     <YAxis type="category" dataKey="metric" width={78} tick={{ fill: '#636366', fontSize: 11 }} />
                     <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.96)', color: '#1C1C1E', border: '1px solid rgba(60,60,67,0.14)', borderRadius: 14, boxShadow: '0 12px 32px rgba(31,38,55,0.12)' }} />
                     <Legend wrapperStyle={{ fontSize: 11 }} />
                     {chartCompanies.map((company, index) => (
-                      <Bar key={company.id} dataKey={`series${index}`} name={company.name} fill={colors[index]} radius={[0, 5, 5, 0]} barSize={9} isAnimationActive={false}>
+                      <Bar
+                        key={company.id}
+                        dataKey={`series${index}`}
+                        name={company.name}
+                        fill={colors[index]}
+                        radius={[0, 5, 5, 0]}
+                        barSize={9}
+                        isAnimationActive={false}
+                      >
                         {barData.map((entry) => <Cell key={entry.metric} fill={colors[index]} />)}
                       </Bar>
                     ))}
@@ -178,16 +198,22 @@ export default function Compare() {
                 <article className="comparison-card" key={company.id}>
                   <div className="comparison-card__head" style={{ '--company-color': colors[companyIndex] } as React.CSSProperties}>
                     <i /><div><span>{company.code} / {company.industry}</span><h3>{company.name}</h3></div>
-                    <ScoreBadge score={company.scores.overall} compact available={company.dataSource === 'EDINET'} />
+                    <ScoreBadge
+                      score={company.scores.overall}
+                      compact
+                      available={hasFinancialData(company)}
+                    />
                   </div>
                   <div className="comparison-card__scores">
                     {scoreMetrics.slice(1).map((metric) => {
                       const score = company.scores[metric.key]
-                      const comparable = comparedCompanies.filter((item) => item.dataSource === 'EDINET')
+                      const comparable = comparedCompanies.filter(
+                        hasFinancialData,
+                      )
                       const best =
-                        company.dataSource === 'EDINET' &&
+                        hasFinancialData(company) &&
                         score === Math.max(...comparable.map((item) => item.scores[metric.key]))
-                      return <div key={metric.key}><span>{metric.label}</span><strong>{company.dataSource === 'EDINET' ? Math.round(score) : '—'}</strong>{best && <b>Best</b>}</div>
+                      return <div key={metric.key}><span>{metric.label}</span><strong>{hasFinancialData(company) ? Math.round(score) : '—'}</strong>{best && <b>Best</b>}</div>
                     })}
                   </div>
                   <div className="comparison-card__kpis">
@@ -200,8 +226,16 @@ export default function Compare() {
                     ))}
                   </div>
                   <div className="comparison-card__warnings">
-                    <span>{company.dataSource === 'EDINET' ? `注意フラグ ${company.warnings.length}件` : '注意フラグ 判定不能'}</span>
-                    <WarningList warnings={company.warnings.slice(0, 2)} compact unavailable={company.dataSource !== 'EDINET'} />
+                    <span>
+                      {hasFinancialData(company)
+                        ? `注意フラグ ${company.warnings.length}件`
+                        : '注意フラグ 判定不能'}
+                    </span>
+                    <WarningList
+                      warnings={company.warnings.slice(0, 2)}
+                      compact
+                      unavailable={!hasFinancialData(company)}
+                    />
                   </div>
                 </article>
               ))}
