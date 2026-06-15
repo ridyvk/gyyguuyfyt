@@ -78,9 +78,10 @@ export interface Company {
   warnings: string[]
   analysisComment: string
   hasWarning: boolean
-  dataSource?: 'EDINET' | 'mock'
+  dataSource?: 'EDINET' | 'mock' | 'unavailable'
   dataUpdatedAt?: string
   financialPeriod?: string
+  financialSourceUrl?: string
   liveMetricCount?: number
   stockPrice?: MarketQuote
 }
