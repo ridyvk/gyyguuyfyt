@@ -54,6 +54,16 @@
   background: rgba(99, 99, 102, 0.1);
 }
 
+.score-badge--unknown {
+  color: var(--muted);
+  background: rgba(99, 99, 102, 0.04);
+}
+
+.flag--unknown {
+  color: var(--muted);
+  background: rgba(99, 99, 102, 0.09);
+}
+
 .company-card__unavailable {
   margin-top: 14px;
   padding: 14px;
