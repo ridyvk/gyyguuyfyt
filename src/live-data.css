@@ -49,19 +49,14 @@
   background: rgba(255, 159, 10, 0.1);
 }
 
+.data-badge--tdnet {
+  color: #126187;
+  background: rgba(57, 153, 201, 0.11);
+}
+
 .data-badge--unavailable {
   color: #686873;
   background: rgba(99, 99, 102, 0.1);
-}
-
-.score-badge--unknown {
-  color: var(--muted);
-  background: rgba(99, 99, 102, 0.04);
-}
-
-.flag--unknown {
-  color: var(--muted);
-  background: rgba(99, 99, 102, 0.09);
 }
 
 .company-card__unavailable {
