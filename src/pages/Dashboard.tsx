@@ -99,40 +99,20 @@ export default function Dashboard() {
       </section>
 
       <section className="summary-grid">
-        <Link
-          className="summary-card summary-card--link"
-          to="/universe?sort=code-asc"
-          aria-label="全企業を証券コード順で見る"
-          style={{ color: 'inherit', textDecoration: 'none' }}
-        >
+        <Link className="summary-card summary-card--link" to="/universe?sort=code-asc" aria-label="全企業を証券コード順で見る" style={{ color: 'inherit', textDecoration: 'none' }}>
           <span className="summary-card__icon"><Building2 /></span>
-          <div>
-            <small>全企業数</small>
-            <strong>{companies.length.toLocaleString('ja-JP')}</strong>
-          </div>
-          <span className="summary-card__note">
-            コード順で見る <ArrowRight size={14} />
-          </span>
+          <div><small>全企業数</small><strong>{companies.length.toLocaleString('ja-JP')}</strong></div>
+          <span className="summary-card__note">コード順で見る <ArrowRight size={14} /></span>
         </Link>
         <article className="summary-card">
           <span className="summary-card__icon summary-card__icon--blue"><Bookmark /></span>
           <div><small>ウォッチリスト</small><strong>{watchlist.length}</strong></div>
           <Link to="/watchlist">深く見る <ArrowRight size={14} /></Link>
         </article>
-        <Link
-          className="summary-card summary-card--link"
-          to="/universe?warnings=1&sort=code-asc"
-          aria-label="注意フラグ企業を見る"
-          style={{ color: 'inherit', textDecoration: 'none' }}
-        >
+        <Link className="summary-card summary-card--link" to="/universe?warnings=1&sort=code-asc" aria-label="注意フラグ企業を見る" style={{ color: 'inherit', textDecoration: 'none' }}>
           <span className="summary-card__icon summary-card__icon--red"><AlertTriangle /></span>
-          <div>
-            <small>注意フラグ企業</small>
-            <strong>{warningCount.toLocaleString('ja-JP')}</strong>
-          </div>
-          <span className="summary-card__note">
-            対象企業を見る <ArrowRight size={14} />
-          </span>
+          <div><small>注意フラグ企業</small><strong>{warningCount.toLocaleString('ja-JP')}</strong></div>
+          <span className="summary-card__note">対象企業を見る <ArrowRight size={14} /></span>
         </Link>
         <article className="summary-card">
           <span className="summary-card__icon summary-card__icon--yellow"><Gauge /></span>
@@ -149,42 +129,30 @@ export default function Dashboard() {
           </div>
           <div className="chart-wrap chart-wrap--bar">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={industryData}
-                margin={{ left: -12, right: 8, top: 8 }}
-                accessibilityLayer={false}
-              >
+              <BarChart data={industryData} margin={{ left: -12, right: 8, top: 8 }} accessibilityLayer={false}>
                 <XAxis dataKey="name" tick={{ fill: '#8E8E93', fontSize: 10 }} interval={0} angle={-18} textAnchor="end" height={58} />
                 <YAxis tick={{ fill: '#8E8E93', fontSize: 11 }} allowDecimals={false} />
                 <Tooltip cursor={{ fill: 'rgba(0,122,255,0.05)' }} contentStyle={{ background: 'rgba(255,255,255,0.96)', color: '#1C1C1E', border: '1px solid rgba(60,60,67,0.14)', borderRadius: 14, boxShadow: '0 12px 32px rgba(31,38,55,0.12)' }} />
-                <Bar dataKey="value" name="企業数" fill="#007AFF" radius={[7, 7, 2, 2]} isAnimationActive={false} />
+                <Bar dataKey="value" name="企業数" fill="#007AFF" radius={[7, 7, 2, 2]} isAnimationActive animationBegin={120} animationDuration={720} animationEasing="ease-out" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </article>
 
         <article className="panel">
-          <div className="panel__heading">
-            <div><span className="section-kicker">THEMES</span><h2>注目テーマ</h2></div>
-          </div>
+          <div className="panel__heading"><div><span className="section-kicker">THEMES</span><h2>注目テーマ</h2></div></div>
           <div className="theme-chart">
             <ResponsiveContainer width="100%" height={210}>
               <PieChart accessibilityLayer={false}>
-                <Pie data={themeData.slice(0, 5)} innerRadius={58} outerRadius={88} paddingAngle={3} dataKey="value" isAnimationActive={false}>
-                  {themeData.slice(0, 5).map((entry, index) => (
-                    <Cell key={entry.name} fill={pieColors[index]} />
-                  ))}
+                <Pie data={themeData.slice(0, 5)} innerRadius={58} outerRadius={88} paddingAngle={3} dataKey="value" isAnimationActive animationBegin={120} animationDuration={760} animationEasing="ease-out">
+                  {themeData.slice(0, 5).map((entry, index) => <Cell key={entry.name} fill={pieColors[index]} />)}
                 </Pie>
                 <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.96)', color: '#1C1C1E', border: '1px solid rgba(60,60,67,0.14)', borderRadius: 14, boxShadow: '0 12px 32px rgba(31,38,55,0.12)' }} />
               </PieChart>
             </ResponsiveContainer>
             <div className="theme-list">
               {themeData.slice(0, 5).map((theme, index) => (
-                <div key={theme.name}>
-                  <i style={{ background: pieColors[index] }} />
-                  <span>{theme.name}</span>
-                  <strong>{theme.value}</strong>
-                </div>
+                <div key={theme.name}><i style={{ background: pieColors[index] }} /><span>{theme.name}</span><strong>{theme.value}</strong></div>
               ))}
             </div>
           </div>
