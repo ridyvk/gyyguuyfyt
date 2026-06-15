@@ -1,14 +1,25 @@
-import { AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { AlertCircle, AlertTriangle, CheckCircle2 } from 'lucide-react'
 
 interface WarningListProps {
   warnings: string[]
   compact?: boolean
+  unavailable?: boolean
 }
 
 export default function WarningList({
   warnings,
   compact = false,
+  unavailable = false,
 }: WarningListProps) {
+  if (unavailable) {
+    return (
+      <div className="empty-signal empty-signal--unknown">
+        <AlertCircle size={18} />
+        財務データ未取得のため判定できません
+      </div>
+    )
+  }
+
   if (!warnings.length) {
     return (
       <div className="empty-signal">
