@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - .github/workflows/update-financials.yml
+      - scripts/update_edinet_financials.py
       - public/data/financials.json
       - public/data/market.json
   schedule:
@@ -91,7 +92,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No snapshot changes."
           else
-            git commit -m "Update financial and market snapshots"
+            git commit -m "Update EDINET financial snapshot"
             git push
           fi
 
