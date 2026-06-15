@@ -6,6 +6,7 @@ import { AppProvider } from './context/AppContext'
 import './styles.css'
 import './live-data.css'
 import './chart-focus.css'
+import './motion.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
