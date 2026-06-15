@@ -149,7 +149,11 @@ export default function Dashboard() {
           </div>
           <div className="chart-wrap chart-wrap--bar">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={industryData} margin={{ left: -12, right: 8, top: 8 }}>
+              <BarChart
+                data={industryData}
+                margin={{ left: -12, right: 8, top: 8 }}
+                accessibilityLayer={false}
+              >
                 <XAxis dataKey="name" tick={{ fill: '#8E8E93', fontSize: 10 }} interval={0} angle={-18} textAnchor="end" height={58} />
                 <YAxis tick={{ fill: '#8E8E93', fontSize: 11 }} allowDecimals={false} />
                 <Tooltip cursor={{ fill: 'rgba(0,122,255,0.05)' }} contentStyle={{ background: 'rgba(255,255,255,0.96)', color: '#1C1C1E', border: '1px solid rgba(60,60,67,0.14)', borderRadius: 14, boxShadow: '0 12px 32px rgba(31,38,55,0.12)' }} />
@@ -165,7 +169,7 @@ export default function Dashboard() {
           </div>
           <div className="theme-chart">
             <ResponsiveContainer width="100%" height={210}>
-              <PieChart>
+              <PieChart accessibilityLayer={false}>
                 <Pie data={themeData.slice(0, 5)} innerRadius={58} outerRadius={88} paddingAngle={3} dataKey="value" isAnimationActive={false}>
                   {themeData.slice(0, 5).map((entry, index) => (
                     <Cell key={entry.name} fill={pieColors[index]} />
