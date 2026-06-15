@@ -20,7 +20,9 @@ from pathlib import Path
 
 API = "https://api.edinet-fsa.go.jp/api/v2"
 SNAPSHOT = Path(__file__).resolve().parents[1] / "public/data/financials.json"
-COMPANY_MASTER = Path(__file__).resolve().parents[1] / "src/data/listedCompanies.json"
+COMPANY_MASTER = (
+    Path(__file__).resolve().parents[1] / "src/data/listedCompanies.json"
+)
 SNAPSHOT_SCHEMA_VERSION = 2
 
 FACT_NAMES = {
@@ -228,7 +230,11 @@ def values_for(
     names: tuple[str, ...],
     duration: bool,
 ) -> dict[str, float]:
-    source = [fact for name in names for fact in facts.get(name, [])]
+    source = [
+        fact
+        for name in names
+        for fact in facts.get(name, [])
+    ]
     grouped: dict[str, list[tuple[str, float]]] = defaultdict(list)
     for context_id, value in source:
         context = contexts[context_id]
@@ -265,11 +271,19 @@ def at(values: dict[str, float], period_end: str) -> float | None:
 
 
 def percent(top: float | None, bottom: float | None) -> float | None:
-    return None if top is None or bottom is None or bottom <= 0 else top / bottom * 100
+    return (
+        None
+        if top is None or bottom is None or bottom <= 0
+        else top / bottom * 100
+    )
 
 
 def growth(current: float | None, prior: float | None) -> float | None:
-    return None if current is None or prior is None or prior <= 0 else (current / prior - 1) * 100
+    return (
+        None
+        if current is None or prior is None or prior <= 0
+        else (current / prior - 1) * 100
+    )
 
 
 def add_metric(metrics: dict, key: str, value: float | None, prior: float | None = None) -> None:
@@ -284,12 +298,7 @@ def build_record(filing: dict, data: bytes) -> dict:
     contexts, facts = parse_xbrl(data)
     period_end = str(filing["periodEnd"])
     series = {
-        key: values_for(
-            contexts,
-            facts,
-            names,
-            key in {"revenue", "operatingIncome", "profit", "operatingCf"},
-        )
+        key: values_for(contexts, facts, names, key in {"revenue", "operatingIncome", "profit", "operatingCf"})
         for key, names in FACT_NAMES.items()
     }
     if not series["debt"]:
@@ -355,7 +364,11 @@ def build_record(filing: dict, data: bytes) -> dict:
         else (current["cash"] - current["debt"]) / 100_000_000,
     )
     add_metric(metrics, "inventoryGrowth", growth(current["inventory"], prior["inventory"]))
-    add_metric(metrics, "receivablesGrowth", growth(current["receivables"], prior["receivables"]))
+    add_metric(
+        metrics,
+        "receivablesGrowth",
+        growth(current["receivables"], prior["receivables"]),
+    )
 
     history = []
     for year_end in sorted(series["revenue"])[-3:]:
@@ -376,12 +389,7 @@ def build_record(filing: dict, data: bytes) -> dict:
             "operatingCfMargin": percent(series["operatingCf"].get(year_end), revenue),
         }
         if all(value is not None for value in point.values()):
-            history.append(
-                {
-                    key: round(value, 2) if isinstance(value, float) else value
-                    for key, value in point.items()
-                }
-            )
+            history.append({key: round(value, 2) if isinstance(value, float) else value for key, value in point.items()})
     for key in ("operatingMargin", "netMargin", "roe", "operatingCfMargin"):
         if key in metrics and history:
             metrics[key]["trend"] = [point[key] for point in history]
@@ -392,6 +400,7 @@ def build_record(filing: dict, data: bytes) -> dict:
         "documentId": str(filing["docID"]),
         "filedAt": str(filing.get("submitDateTime") or ""),
         "periodEnd": period_end,
+        "source": "EDINET",
         "sourceUrl": f"https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?{filing['docID']}",
         "metrics": metrics,
         "history": history,
@@ -421,10 +430,20 @@ def main() -> int:
     snapshot = load_snapshot()
     records = snapshot.setdefault("records", {})
     current_codes = load_company_codes()
-    records = {code: record for code, record in records.items() if code in current_codes}
+    records = {
+        code: record
+        for code, record in records.items()
+        if code in current_codes
+    }
     snapshot["records"] = records
-    needs_schema_backfill = int(snapshot.get("schemaVersion") or 0) < SNAPSHOT_SCHEMA_VERSION
-    days = args.bootstrap_days if not records or needs_schema_backfill else args.lookback_days
+    needs_schema_backfill = (
+        int(snapshot.get("schemaVersion") or 0) < SNAPSHOT_SCHEMA_VERSION
+    )
+    days = (
+        args.bootstrap_days
+        if not records or needs_schema_backfill
+        else args.lookback_days
+    )
     filings, scanned = list_filings(api_key, days)
     pending = [
         filing
@@ -437,7 +456,13 @@ def main() -> int:
         try:
             archive = get(f"{API}/documents/{filing['docID']}?type=1", api_key)
             record = build_record(filing, xbrl_from_zip(archive))
-            if record["metrics"]:
+            existing = records.get(record["code"])
+            existing_key = (
+                str((existing or {}).get("periodEnd") or ""),
+                str((existing or {}).get("filedAt") or ""),
+            )
+            record_key = (record["periodEnd"], record["filedAt"])
+            if record["metrics"] and record_key >= existing_key:
                 records[record["code"]] = record
                 updated += 1
         except Exception as error:
@@ -450,7 +475,14 @@ def main() -> int:
         {
             "schemaVersion": SNAPSHOT_SCHEMA_VERSION,
             "generatedAt": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-            "source": "EDINET",
+            "source": (
+                "EDINET+TDnet"
+                if any(
+                    record.get("source") == "TDnet"
+                    for record in records.values()
+                )
+                else "EDINET"
+            ),
             "status": "ready",
             "message": "EDINET有価証券報告書から自動更新中。PER・PBRはJ-Quants連携時に計算します。",
             "records": records,
