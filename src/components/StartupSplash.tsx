@@ -19,7 +19,10 @@ export default function StartupSplash() {
   }, [])
 
   useEffect(() => {
-    if (!visible) document.body.classList.remove('startup-active')
+    if (!visible) {
+      document.body.classList.remove('startup-active')
+      window.dispatchEvent(new Event('kpi-startup-complete'))
+    }
   }, [visible])
 
   if (!visible) return null
