@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom'
 import {
   Bar,
   BarChart,
+  CartesianGrid,
   Cell,
   Pie,
   PieChart,
@@ -23,8 +24,15 @@ import ChartReveal from '../components/ChartReveal'
 import ScoreBadge from '../components/ScoreBadge'
 import { useApp } from '../context/AppContext'
 import { listedCompanySource } from '../lib/companySource'
+import '../dashboard-charts.css'
 
-const pieColors = ['#007AFF', '#5856D6', '#FF9F0A', '#AF52DE', '#FF375F']
+const themePalette = [
+  { from: '#78BEF4', to: '#3A8FD8' },
+  { from: '#8DDDD4', to: '#4BAEA9' },
+  { from: '#AAA8ED', to: '#7570D4' },
+  { from: '#DAB4E8', to: '#AA75C5' },
+  { from: '#F4CCA2', to: '#E4A263' },
+]
 
 export default function Dashboard() {
   const { companies, watchlist, financialSnapshot } = useApp()
@@ -81,10 +89,16 @@ export default function Dashboard() {
         </div>
       </section>
 
-      <section className={`data-status data-status--${financialSnapshot?.status ?? 'error'}`}>
+      <section
+        className={`data-status data-status--${financialSnapshot?.status ?? 'error'}`}
+      >
         <RefreshCw size={18} />
         <div>
-          <strong>{financialSnapshot?.status === 'ready' ? 'EDINET財務データを自動更新中' : 'EDINET自動更新の初期設定待ち'}</strong>
+          <strong>
+            {financialSnapshot?.status === 'ready'
+              ? 'EDINET財務データを自動更新中'
+              : 'EDINET自動更新の初期設定待ち'}
+          </strong>
           <span>
             {financialSnapshot?.status === 'ready'
               ? `${financialSnapshot.stats.companies.toLocaleString('ja-JP')}社を収録 / 最終生成 ${new Date(financialSnapshot.generatedAt ?? '').toLocaleString('ja-JP')}`
@@ -94,20 +108,40 @@ export default function Dashboard() {
       </section>
 
       <section className="summary-grid">
-        <Link className="summary-card summary-card--link" to="/universe?sort=code-asc" aria-label="全企業を証券コード順で見る" style={{ color: 'inherit', textDecoration: 'none' }}>
+        <Link
+          className="summary-card summary-card--link"
+          to="/universe?sort=code-asc"
+          aria-label="全企業を証券コード順で見る"
+          style={{ color: 'inherit', textDecoration: 'none' }}
+        >
           <span className="summary-card__icon"><Building2 /></span>
-          <div><small>全企業数</small><strong>{companies.length.toLocaleString('ja-JP')}</strong></div>
-          <span className="summary-card__note">コード順で見る <ArrowRight size={14} /></span>
+          <div>
+            <small>全企業数</small>
+            <strong>{companies.length.toLocaleString('ja-JP')}</strong>
+          </div>
+          <span className="summary-card__note">
+            コード順で見る <ArrowRight size={14} />
+          </span>
         </Link>
         <article className="summary-card">
           <span className="summary-card__icon summary-card__icon--blue"><Bookmark /></span>
           <div><small>ウォッチリスト</small><strong>{watchlist.length}</strong></div>
           <Link to="/watchlist">深く見る <ArrowRight size={14} /></Link>
         </article>
-        <Link className="summary-card summary-card--link" to="/universe?warnings=1&sort=code-asc" aria-label="注意フラグ企業を見る" style={{ color: 'inherit', textDecoration: 'none' }}>
+        <Link
+          className="summary-card summary-card--link"
+          to="/universe?warnings=1&sort=code-asc"
+          aria-label="注意フラグ企業を見る"
+          style={{ color: 'inherit', textDecoration: 'none' }}
+        >
           <span className="summary-card__icon summary-card__icon--red"><AlertTriangle /></span>
-          <div><small>注意フラグ企業</small><strong>{warningCount.toLocaleString('ja-JP')}</strong></div>
-          <span className="summary-card__note">対象企業を見る <ArrowRight size={14} /></span>
+          <div>
+            <small>注意フラグ企業</small>
+            <strong>{warningCount.toLocaleString('ja-JP')}</strong>
+          </div>
+          <span className="summary-card__note">
+            対象企業を見る <ArrowRight size={14} />
+          </span>
         </Link>
         <article className="summary-card">
           <span className="summary-card__icon summary-card__icon--yellow"><Gauge /></span>
@@ -125,11 +159,67 @@ export default function Dashboard() {
           <div className="chart-wrap chart-wrap--bar">
             <ChartReveal className="chart-reveal--bar">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={industryData} margin={{ left: -12, right: 8, top: 8 }} accessibilityLayer={false}>
-                  <XAxis dataKey="name" tick={{ fill: '#8E8E93', fontSize: 10 }} interval={0} angle={-18} textAnchor="end" height={58} />
-                  <YAxis tick={{ fill: '#8E8E93', fontSize: 11 }} allowDecimals={false} />
-                  <Tooltip cursor={{ fill: 'rgba(0,122,255,0.05)' }} contentStyle={{ background: 'rgba(255,255,255,0.96)', color: '#1C1C1E', border: '1px solid rgba(60,60,67,0.14)', borderRadius: 14, boxShadow: '0 12px 32px rgba(31,38,55,0.12)' }} />
-                  <Bar dataKey="value" name="企業数" fill="#007AFF" radius={[7, 7, 2, 2]} isAnimationActive animationBegin={80} animationDuration={860} animationEasing="ease-out" />
+                <BarChart
+                  data={industryData}
+                  margin={{ left: -16, right: 8, top: 14, bottom: 0 }}
+                  accessibilityLayer={false}
+                >
+                  <defs>
+                    <linearGradient id="industryBarGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#4BA7E7" stopOpacity={0.92} />
+                      <stop offset="62%" stopColor="#7FC9EA" stopOpacity={0.68} />
+                      <stop offset="100%" stopColor="#B8E6EE" stopOpacity={0.38} />
+                    </linearGradient>
+                    <filter id="industryBarShadow" x="-40%" y="-20%" width="180%" height="150%">
+                      <feDropShadow dx="0" dy="5" stdDeviation="5" floodColor="#4BA7E7" floodOpacity="0.14" />
+                    </filter>
+                  </defs>
+                  <CartesianGrid
+                    vertical={false}
+                    stroke="rgba(88, 116, 136, 0.11)"
+                    strokeDasharray="2 8"
+                  />
+                  <XAxis
+                    dataKey="name"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#87959F', fontSize: 10 }}
+                    interval={0}
+                    angle={-18}
+                    textAnchor="end"
+                    height={58}
+                    tickMargin={9}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#9AA5AD', fontSize: 10 }}
+                    allowDecimals={false}
+                    tickMargin={8}
+                  />
+                  <Tooltip
+                    cursor={{ fill: 'rgba(91, 174, 219, 0.055)' }}
+                    contentStyle={{
+                      backdropFilter: 'blur(18px)',
+                      background: 'rgba(255,255,255,0.84)',
+                      color: '#25333B',
+                      border: '1px solid rgba(104,148,174,0.16)',
+                      borderRadius: 13,
+                      boxShadow: '0 14px 35px rgba(44,79,99,0.12)',
+                    }}
+                  />
+                  <Bar
+                    dataKey="value"
+                    name="企業数"
+                    fill="url(#industryBarGradient)"
+                    radius={[10, 10, 10, 10]}
+                    barSize={18}
+                    style={{ filter: 'url(#industryBarShadow)' }}
+                    isAnimationActive
+                    animationBegin={80}
+                    animationDuration={860}
+                    animationEasing="ease-out"
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </ChartReveal>
@@ -137,21 +227,82 @@ export default function Dashboard() {
         </article>
 
         <article className="panel">
-          <div className="panel__heading"><div><span className="section-kicker">THEMES</span><h2>注目テーマ</h2></div></div>
+          <div className="panel__heading">
+            <div><span className="section-kicker">THEMES</span><h2>注目テーマ</h2></div>
+          </div>
           <div className="theme-chart">
-            <ChartReveal className="chart-reveal--pie">
-              <ResponsiveContainer width="100%" height={210}>
-                <PieChart accessibilityLayer={false}>
-                  <Pie data={themeData.slice(0, 5)} innerRadius={58} outerRadius={88} paddingAngle={3} dataKey="value" startAngle={90} endAngle={-270} isAnimationActive animationBegin={80} animationDuration={920} animationEasing="ease-out">
-                    {themeData.slice(0, 5).map((entry, index) => <Cell key={entry.name} fill={pieColors[index]} />)}
-                  </Pie>
-                  <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.96)', color: '#1C1C1E', border: '1px solid rgba(60,60,67,0.14)', borderRadius: 14, boxShadow: '0 12px 32px rgba(31,38,55,0.12)' }} />
-                </PieChart>
-              </ResponsiveContainer>
-            </ChartReveal>
+            <div className="theme-chart__donut">
+              <ChartReveal className="chart-reveal--pie">
+                <ResponsiveContainer width="100%" height={210}>
+                  <PieChart accessibilityLayer={false}>
+                    <defs>
+                      {themePalette.map((color, index) => (
+                        <linearGradient
+                          id={`themeGradient${index}`}
+                          key={color.from}
+                          x1="0"
+                          y1="0"
+                          x2="1"
+                          y2="1"
+                        >
+                          <stop offset="0%" stopColor={color.from} stopOpacity={0.9} />
+                          <stop offset="100%" stopColor={color.to} stopOpacity={0.72} />
+                        </linearGradient>
+                      ))}
+                    </defs>
+                    <Pie
+                      data={themeData.slice(0, 5)}
+                      innerRadius={66}
+                      outerRadius={87}
+                      paddingAngle={5}
+                      cornerRadius={7}
+                      dataKey="value"
+                      startAngle={90}
+                      endAngle={-270}
+                      stroke="rgba(255,255,255,0.88)"
+                      strokeWidth={2}
+                      isAnimationActive
+                      animationBegin={80}
+                      animationDuration={920}
+                      animationEasing="ease-out"
+                    >
+                      {themeData.slice(0, 5).map((entry, index) => (
+                        <Cell
+                          key={entry.name}
+                          fill={`url(#themeGradient${index})`}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backdropFilter: 'blur(18px)',
+                        background: 'rgba(255,255,255,0.84)',
+                        color: '#25333B',
+                        border: '1px solid rgba(104,148,174,0.16)',
+                        borderRadius: 13,
+                        boxShadow: '0 14px 35px rgba(44,79,99,0.12)',
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </ChartReveal>
+              <div className="theme-chart__center" aria-hidden="true">
+                <small>TOP</small>
+                <strong>5</strong>
+              </div>
+            </div>
             <div className="theme-list">
               {themeData.slice(0, 5).map((theme, index) => (
-                <div key={theme.name}><i style={{ background: pieColors[index] }} /><span>{theme.name}</span><strong>{theme.value}</strong></div>
+                <div key={theme.name}>
+                  <i
+                    style={{
+                      background: `linear-gradient(135deg, ${themePalette[index].from}, ${themePalette[index].to})`,
+                      boxShadow: `0 0 0 4px ${themePalette[index].from}18`,
+                    }}
+                  />
+                  <span>{theme.name}</span>
+                  <strong>{theme.value}</strong>
+                </div>
               ))}
             </div>
           </div>
