@@ -25,7 +25,11 @@ import ScoreBar, { scoreLabels } from '../components/ScoreBar'
 import WarningList from '../components/WarningList'
 import { useApp } from '../context/AppContext'
 import { loadNote, saveNote } from '../lib/storage'
-import { formatChangePercent, formatStockPrice } from '../lib/formatters'
+import {
+  formatChangePercent,
+  formatStockPrice,
+} from '../lib/formatters'
+import { hasFinancialData } from '../lib/liveData'
 import type { CompanyNote, KpiKey, ScoreKey } from '../types'
 
 const kpiLabels: Record<KpiKey, string> = {
@@ -81,12 +85,15 @@ export default function CompanyDetail() {
     toggleWatchlist,
     toggleCompare,
   } = useApp()
-  const company = useMemo(() => {
-    const exact = companies.find((item) => item.id === companyId)
-    if (exact) return exact
-    const legacyIndex = companyId?.match(/^company-(\d+)$/)?.[1]
-    return legacyIndex ? companies[Number(legacyIndex) - 1] : undefined
-  }, [companies, companyId])
+  const company = useMemo(
+    () => {
+      const exact = companies.find((item) => item.id === companyId)
+      if (exact) return exact
+      const legacyIndex = companyId?.match(/^company-(\d+)$/)?.[1]
+      return legacyIndex ? companies[Number(legacyIndex) - 1] : undefined
+    },
+    [companies, companyId],
+  )
   const [note, setNote] = useState<CompanyNote>(emptyNote)
   const [saved, setSaved] = useState(false)
 
@@ -111,7 +118,9 @@ export default function CompanyDetail() {
 
   const watched = isWatched(company.id)
   const compared = isCompared(company.id)
-  const financialAvailable = company.dataSource === 'EDINET'
+  const financialAvailable = hasFinancialData(company)
+  const sourceLabel =
+    company.dataSource === 'TDnet' ? 'TDnet決算短信' : 'EDINET実データ'
   const handleSave = async () => {
     await saveNote(company.id, note)
     setSaved(true)
@@ -133,30 +142,54 @@ export default function CompanyDetail() {
           </div>
           <p>{company.analysisComment}</p>
           <div className="company-data-line">
-            <span className={`data-badge data-badge--${financialAvailable ? 'edinet' : 'unavailable'}`}>
-              {financialAvailable ? 'EDINET実データ' : '財務データ未取得'}
+            <span
+              className={`data-badge data-badge--${financialAvailable ? company.dataSource?.toLowerCase() : 'unavailable'}`}
+            >
+              {financialAvailable ? sourceLabel : '財務データ未取得'}
             </span>
             {company.financialPeriod && <span>対象期 {company.financialPeriod}</span>}
             {company.dataUpdatedAt && (
-              <span>開示 {new Date(company.dataUpdatedAt).toLocaleDateString('ja-JP')}</span>
+              <span>
+                開示 {new Date(company.dataUpdatedAt).toLocaleDateString('ja-JP')}
+              </span>
             )}
             {company.financialSourceUrl && (
-              <a href={company.financialSourceUrl} target="_blank" rel="noreferrer">EDINET原文</a>
+              <a
+                href={company.financialSourceUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {company.dataSource === 'TDnet' ? '決算短信原文' : 'EDINET原文'}
+              </a>
             )}
           </div>
           {company.stockPrice && (
             <div className="stock-quote stock-quote--hero">
-              <div><span>最新終値</span><strong>{formatStockPrice(company.stockPrice.close)}</strong></div>
-              <span className={`stock-quote__change ${(company.stockPrice.changePercent ?? 0) >= 0 ? 'stock-quote__change--up' : 'stock-quote__change--down'}`}>
+              <div>
+                <span>最新終値</span>
+                <strong>{formatStockPrice(company.stockPrice.close)}</strong>
+              </div>
+              <span
+                className={`stock-quote__change ${
+                  (company.stockPrice.changePercent ?? 0) >= 0
+                    ? 'stock-quote__change--up'
+                    : 'stock-quote__change--down'
+                }`}
+              >
                 {formatChangePercent(company.stockPrice.changePercent)}
               </span>
-              <small>{company.stockPrice.date} · J-Quants</small>
+              <small>
+                {company.stockPrice.date} · J-Quants
+              </small>
             </div>
           )}
         </div>
         <div className="company-hero__score">
           <span>総合スコア</span>
-          <ScoreBadge score={company.scores.overall} available={financialAvailable} />
+          <ScoreBadge
+            score={company.scores.overall}
+            available={financialAvailable}
+          />
           <small>
             {financialAvailable
               ? `実データ ${company.liveMetricCount ?? 0}/12 KPI`
@@ -182,7 +215,11 @@ export default function CompanyDetail() {
             }}
           >
             <GitCompareArrows size={17} />
-            {!financialAvailable ? '財務データ未取得' : compared ? '比較から外す' : '比較に追加'}
+            {!financialAvailable
+              ? '財務データ未取得'
+              : compared
+                ? '比較から外す'
+                : '比較に追加'}
           </button>
         </div>
       </section>
@@ -193,7 +230,9 @@ export default function CompanyDetail() {
           {financialAvailable ? (
             <RadarScoreChart scores={company.scores} height={300} />
           ) : (
-            <div className="chart-empty">財務データ未取得のためスコア形状を表示できません</div>
+            <div className="chart-empty">
+              財務データ未取得のためスコア形状を表示できません
+            </div>
           )}
         </article>
         <article className="panel score-list-panel">
@@ -215,7 +254,9 @@ export default function CompanyDetail() {
       <section className="section-block">
         <div className="section-heading"><div><span className="section-kicker">KEY METRICS</span><h2>KPIタイル</h2></div><p>数値・前年差・状態・短期トレンド</p></div>
         <div className="kpi-grid">
-          {kpiKeys.map((key) => <KpiTile key={key} label={kpiLabels[key]} metric={company.metrics[key]} />)}
+          {kpiKeys.map((key) => (
+            <KpiTile key={key} label={kpiLabels[key]} metric={company.metrics[key]} />
+          ))}
         </div>
       </section>
 
@@ -227,7 +268,10 @@ export default function CompanyDetail() {
               <div className="chart-empty">3年分の比較可能データがありません</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={company.history} margin={{ top: 10, right: 16, left: -8, bottom: 0 }}>
+                <LineChart
+                  data={company.history}
+                  margin={{ top: 10, right: 16, left: -8, bottom: 0 }}
+                >
                   <CartesianGrid stroke="rgba(60,60,67,0.13)" strokeDasharray="4 4" vertical={false} />
                   <XAxis dataKey="year" tick={{ fill: '#8E8E93', fontSize: 11 }} />
                   <YAxis tick={{ fill: '#8E8E93', fontSize: 11 }} />
@@ -252,7 +296,9 @@ export default function CompanyDetail() {
                 </div>
               ))
             ) : (
-              <div className="empty-signal empty-signal--unknown">業種別KPIは現在データソース未連携です</div>
+              <div className="empty-signal empty-signal--unknown">
+                業種別KPIは現在データソース未連携です
+              </div>
             )}
           </div>
         </article>
@@ -271,7 +317,10 @@ export default function CompanyDetail() {
         </article>
         <article className="panel">
           <div className="panel__heading"><div><span className="section-kicker">WATCH SIGNALS</span><h2>注意点</h2></div></div>
-          <WarningList warnings={company.warnings} unavailable={!financialAvailable} />
+          <WarningList
+            warnings={company.warnings}
+            unavailable={!financialAvailable}
+          />
         </article>
         <article className="panel analysis-comment">
           <span className="analysis-comment__icon"><Lightbulb /></span>
