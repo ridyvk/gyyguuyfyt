@@ -56,6 +56,10 @@ export const filterCompanies = (
         case 'operatingMargin-desc':
           return compareMetric(a, b, 'operatingMargin', 'desc')
         default:
+          if (a.dataSource !== 'EDINET') {
+            return b.dataSource !== 'EDINET' ? 0 : 1
+          }
+          if (b.dataSource !== 'EDINET') return -1
           return b.scores.overall - a.scores.overall
       }
     })
