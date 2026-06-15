@@ -25,6 +25,7 @@ import AnimatedNumber from '../components/AnimatedNumber'
 import ScoreBadge from '../components/ScoreBadge'
 import { useApp } from '../context/AppContext'
 import { listedCompanySource } from '../lib/companySource'
+import { hasFinancialData } from '../lib/liveData'
 import '../dashboard-charts.css'
 
 const themePalette = [
@@ -38,7 +39,7 @@ const themePalette = [
 export default function Dashboard() {
   const { companies, watchlist, financialSnapshot } = useApp()
   const analyzableCompanies = companies.filter(
-    (company) => company.dataSource === 'EDINET',
+    hasFinancialData,
   )
   const warningCount = analyzableCompanies.filter(
     (company) => company.hasWarning,
@@ -96,7 +97,7 @@ export default function Dashboard() {
           />
           <small>
             {financialSnapshot?.status === 'ready'
-              ? `比較可能なEDINETデータ ${analyzableCompanies.length.toLocaleString('ja-JP')}社`
+              ? `比較可能な開示データ ${analyzableCompanies.length.toLocaleString('ja-JP')}社`
               : '財務データ取得待ち'}
           </small>
         </div>
@@ -109,13 +110,13 @@ export default function Dashboard() {
         <div>
           <strong>
             {financialSnapshot?.status === 'ready'
-              ? 'EDINET有価証券報告書を自動更新中'
+              ? 'EDINET・TDnet財務データを自動更新中'
               : 'EDINET自動更新の初期設定待ち'}
           </strong>
           <span>
             {financialSnapshot?.status === 'ready'
-              ? `${analyzableCompanies.length.toLocaleString('ja-JP')}社を表示可能 / 未取得 ${(companies.length - analyzableCompanies.length).toLocaleString('ja-JP')}社 / 決算短信より反映が遅れる場合があります / 最終生成 ${new Date(financialSnapshot.generatedAt ?? '').toLocaleString('ja-JP')}`
-              : 'EDINETデータを取得できていない企業は、架空値ではなく未取得として表示します。'}
+              ? `${analyzableCompanies.length.toLocaleString('ja-JP')}社を表示可能 / 未取得 ${(companies.length - analyzableCompanies.length).toLocaleString('ja-JP')}社 / TDnet決算短信を優先補完 / 最終生成 ${new Date(financialSnapshot.generatedAt ?? '').toLocaleString('ja-JP')}`
+              : 'EDINET・TDnetから取得できていない企業は、架空値ではなく未取得として表示します。'}
           </span>
         </div>
       </section>
@@ -187,7 +188,11 @@ export default function Dashboard() {
                       <feDropShadow dx="0" dy="5" stdDeviation="5" floodColor="#4BA7E7" floodOpacity="0.14" />
                     </filter>
                   </defs>
-                  <CartesianGrid vertical={false} stroke="rgba(88, 116, 136, 0.11)" strokeDasharray="2 8" />
+                  <CartesianGrid
+                    vertical={false}
+                    stroke="rgba(88, 116, 136, 0.11)"
+                    strokeDasharray="2 8"
+                  />
                   <XAxis
                     dataKey="name"
                     axisLine={false}
@@ -246,7 +251,14 @@ export default function Dashboard() {
                   <PieChart accessibilityLayer={false}>
                     <defs>
                       {themePalette.map((color, index) => (
-                        <linearGradient id={`themeGradient${index}`} key={color.from} x1="0" y1="0" x2="1" y2="1">
+                        <linearGradient
+                          id={`themeGradient${index}`}
+                          key={color.from}
+                          x1="0"
+                          y1="0"
+                          x2="1"
+                          y2="1"
+                        >
                           <stop offset="0%" stopColor={color.from} stopOpacity={0.9} />
                           <stop offset="100%" stopColor={color.to} stopOpacity={0.72} />
                         </linearGradient>
@@ -269,7 +281,10 @@ export default function Dashboard() {
                       animationEasing="ease-out"
                     >
                       {themeData.slice(0, 5).map((entry, index) => (
-                        <Cell key={entry.name} fill={`url(#themeGradient${index})`} />
+                        <Cell
+                          key={entry.name}
+                          fill={`url(#themeGradient${index})`}
+                        />
                       ))}
                     </Pie>
                     <Tooltip
