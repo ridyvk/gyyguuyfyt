@@ -1,4 +1,5 @@
 import { Bookmark, ChevronRight, GitCompareArrows } from 'lucide-react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import {
   formatChangePercent,
@@ -17,6 +18,7 @@ interface CompanyCardProps {
   watched: boolean
   compared?: boolean
   variant?: 'compact' | 'expanded'
+  motionIndex?: number
   onToggleWatch: () => void
   onToggleCompare?: () => void
 }
@@ -34,13 +36,54 @@ export default function CompanyCard({
   watched,
   compared = false,
   variant = 'compact',
+  motionIndex = 0,
   onToggleWatch,
   onToggleCompare,
 }: CompanyCardProps) {
   const expanded = variant === 'expanded'
+  const financialAvailable = company.dataSource === 'EDINET'
+  const cardRef = useRef<HTMLElement>(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const card = cardRef.current
+    if (!card) return
+
+    let observer: IntersectionObserver | undefined
+    const observe = () => {
+      if (!('IntersectionObserver' in window)) {
+        setVisible(true)
+        return
+      }
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return
+          setVisible(true)
+          observer?.disconnect()
+        },
+        { threshold: 0.06, rootMargin: '0px 0px -4% 0px' },
+      )
+      observer.observe(card)
+    }
+
+    if (document.body.classList.contains('startup-active')) {
+      window.addEventListener('kpi-startup-complete', observe, { once: true })
+    } else {
+      observe()
+    }
+
+    return () => {
+      window.removeEventListener('kpi-startup-complete', observe)
+      observer?.disconnect()
+    }
+  }, [])
 
   return (
-    <article className={`company-card company-card--${variant}`}>
+    <article
+      ref={cardRef}
+      className={`company-card company-card--${variant} company-card--motion${company.hasWarning ? ' company-card--has-warning' : ''}${visible ? ' is-visible' : ''}`}
+      style={{ '--card-delay': `${(motionIndex % 6) * 52}ms` } as CSSProperties}
+    >
       <div className="company-card__header">
         <div>
           <div className="company-card__eyebrow">
@@ -52,12 +95,16 @@ export default function CompanyCard({
           </Link>
           <p className="company-card__industry">{company.industry}</p>
           <span
-            className={`data-badge data-badge--${company.dataSource === 'EDINET' ? 'edinet' : 'mock'}`}
+            className={`data-badge data-badge--${financialAvailable ? 'edinet' : 'unavailable'}`}
           >
-            {company.dataSource === 'EDINET' ? 'EDINET実データ' : 'モック'}
+            {financialAvailable ? 'EDINET実データ' : '財務データ未取得'}
           </span>
         </div>
-        <ScoreBadge score={company.scores.overall} compact={!expanded} />
+        <ScoreBadge
+          score={company.scores.overall}
+          compact={!expanded}
+          available={financialAvailable}
+        />
       </div>
 
       <div className="tag-row">
@@ -75,6 +122,7 @@ export default function CompanyCard({
             label={scoreLabels[key]}
             score={company.scores[key]}
             compact
+            available={financialAvailable}
           />
         ))}
       </div>
@@ -86,11 +134,7 @@ export default function CompanyCard({
             <strong>{formatStockPrice(company.stockPrice.close)}</strong>
           </div>
           <span
-            className={`stock-quote__change ${
-              (company.stockPrice.changePercent ?? 0) >= 0
-                ? 'stock-quote__change--up'
-                : 'stock-quote__change--down'
-            }`}
+            className={`stock-quote__change ${(company.stockPrice.changePercent ?? 0) >= 0 ? 'stock-quote__change--up' : 'stock-quote__change--down'}`}
           >
             {formatChangePercent(company.stockPrice.changePercent)}
           </span>
@@ -106,10 +150,12 @@ export default function CompanyCard({
         <div><span>自己資本比率</span><strong>{formatMetric(company.metrics.equityRatio)}</strong></div>
       </div>
 
-      {expanded && (
+      {expanded && financialAvailable && (
         <>
           <div className="company-card__visuals">
-            <div className="company-card__radar"><RadarScoreChart scores={company.scores} height={220} /></div>
+            <div className="company-card__radar">
+              <RadarScoreChart scores={company.scores} height={220} />
+            </div>
             <div className="company-card__trend">
               <span className="section-kicker">営業利益率トレンド</span>
               <strong>{formatMetric(company.metrics.operatingMargin)}</strong>
@@ -120,21 +166,59 @@ export default function CompanyCard({
           <div className="company-card__insights">
             <div>
               <span className="section-kicker">強み</span>
-              <ul className="strength-list">{company.strengths.slice(0, 3).map((strength) => <li key={strength}>{strength}</li>)}</ul>
+              <ul className="strength-list">
+                {company.strengths.slice(0, 3).map((strength) => <li key={strength}>{strength}</li>)}
+              </ul>
             </div>
-            <div><span className="section-kicker">注意点</span><WarningList warnings={company.warnings.slice(0, 2)} compact /></div>
+            <div>
+              <span className="section-kicker">注意点</span>
+              <WarningList warnings={company.warnings.slice(0, 2)} compact />
+            </div>
           </div>
         </>
       )}
 
-      {!expanded && <div className="company-card__warning">{company.hasWarning ? <span className="flag flag--warning">注意 {company.warnings.length}件</span> : <span className="flag flag--clear">注意なし</span>}</div>}
+      {expanded && !financialAvailable && (
+        <div className="company-card__unavailable">
+          EDINETから比較可能な財務データを取得できていません。架空値は表示しません。
+        </div>
+      )}
+
+      {!expanded && (
+        <div className="company-card__warning">
+          {!financialAvailable ? (
+            <span className="flag flag--unknown">判定不能</span>
+          ) : company.hasWarning ? (
+            <span className="flag flag--warning">注意 {company.warnings.length}件</span>
+          ) : (
+            <span className="flag flag--clear">注意なし</span>
+          )}
+        </div>
+      )}
 
       <div className="company-card__actions">
-        <button type="button" className={`button ${watched ? 'button--active' : 'button--secondary'}`} onClick={onToggleWatch}>
-          <Bookmark size={16} fill={watched ? 'currentColor' : 'none'} />{watched ? '登録済み' : 'ウォッチ'}
+        <button
+          type="button"
+          className={`button ${watched ? 'button--active' : 'button--secondary'}`}
+          onClick={onToggleWatch}
+        >
+          <Bookmark size={16} fill={watched ? 'currentColor' : 'none'} />
+          {watched ? '登録済み' : 'ウォッチ'}
         </button>
-        {expanded && onToggleCompare && <button type="button" className={`button ${compared ? 'button--active' : 'button--secondary'}`} onClick={onToggleCompare}><GitCompareArrows size={16} />{compared ? '比較中' : '比較に追加'}</button>}
-        <Link className="button button--ghost" to={`/company/${company.id}`}>詳細<ChevronRight size={16} /></Link>
+        {expanded && onToggleCompare && (
+          <button
+            type="button"
+            className={`button ${compared ? 'button--active' : 'button--secondary'}`}
+            disabled={!financialAvailable}
+            onClick={onToggleCompare}
+          >
+            <GitCompareArrows size={16} />
+            {!financialAvailable ? '比較不可' : compared ? '比較中' : '比較に追加'}
+          </button>
+        )}
+        <Link className="button button--ghost" to={`/company/${company.id}`}>
+          詳細<ChevronRight size={16} />
+        </Link>
       </div>
     </article>
   )
