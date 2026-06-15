@@ -1,4 +1,5 @@
 import type { Company, CompanyFilter } from '../types'
+import { hasFinancialData } from './liveData'
 
 const compareMetric = (
   a: Company,
@@ -56,10 +57,10 @@ export const filterCompanies = (
         case 'operatingMargin-desc':
           return compareMetric(a, b, 'operatingMargin', 'desc')
         default:
-          if (a.dataSource !== 'EDINET') {
-            return b.dataSource !== 'EDINET' ? 0 : 1
+          if (!hasFinancialData(a)) {
+            return hasFinancialData(b) ? 1 : 0
           }
-          if (b.dataSource !== 'EDINET') return -1
+          if (!hasFinancialData(b)) return -1
           return b.scores.overall - a.scores.overall
       }
     })
