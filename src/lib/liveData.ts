@@ -246,7 +246,7 @@ const mergeRecord = (
 ): Company => {
   const recordMetrics = {
     ...record.metrics,
-    ...valuationMetrics(quote, fundamentals),
+    ...valuationMetrics(quote, fundamentals ?? record.valuation),
   }
   kpiKeys.forEach((key) => {
     const metric = recordMetrics[key]
