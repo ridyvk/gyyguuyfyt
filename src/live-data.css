@@ -44,11 +44,6 @@
   font-weight: 600;
 }
 
-.data-badge--mock {
-  color: #8a5700;
-  background: rgba(255, 159, 10, 0.1);
-}
-
 .data-badge--tdnet {
   color: #126187;
   background: rgba(57, 153, 201, 0.11);
