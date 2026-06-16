@@ -36,11 +36,15 @@ export default function App() {
     compareList,
     storageReady,
     financialSnapshot,
+    marketSnapshot,
   } = useApp()
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
   const financialCompanyCount = companies.filter(
     hasFinancialData,
+  ).length
+  const stockQuoteCount = companies.filter(
+    (company) => company.stockPrice,
   ).length
 
   return (
@@ -92,8 +96,10 @@ export default function App() {
             <CircleAlert size={16} />
           )}
           {financialSnapshot?.status === 'ready'
-            ? `EDINET・TDnet ${financialCompanyCount.toLocaleString('ja-JP')}社`
-            : `JPX ${listedCompanySource.date.slice(0, 4)}.${listedCompanySource.date.slice(4, 6)}`}
+            ? `財務 ${financialCompanyCount.toLocaleString('ja-JP')}社 / 株価 ${stockQuoteCount.toLocaleString('ja-JP')}社`
+            : marketSnapshot?.status === 'ready'
+              ? `株価 ${stockQuoteCount.toLocaleString('ja-JP')}社`
+              : `JPX ${listedCompanySource.date.slice(0, 4)}.${listedCompanySource.date.slice(4, 6)}`}
         </div>
         </header>
 
@@ -136,6 +142,10 @@ export default function App() {
             {financialSnapshot?.status === 'ready'
               ? `EDINET・TDnet開示（${financialCompanyCount.toLocaleString('ja-JP')}社）`
               : '財務データ未取得'}
+            {' '} / 株価:{' '}
+            {marketSnapshot?.status === 'ready'
+              ? `${marketSnapshot.source}終値（${stockQuoteCount.toLocaleString('ja-JP')}社）`
+              : '未取得'}
           </span>
         </footer>
       </div>
