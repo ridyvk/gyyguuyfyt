@@ -179,7 +179,7 @@ export default function CompanyDetail() {
                 {formatChangePercent(company.stockPrice.changePercent)}
               </span>
               <small>
-                {company.stockPrice.date} · J-Quants
+                {company.stockPrice.date} · {company.stockPrice.source}
               </small>
             </div>
           )}
