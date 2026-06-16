@@ -94,7 +94,7 @@ python scripts/update_jpx_companies.py
 src/
   components/  共通UI・チャート
   context/     ウォッチリストと比較状態
-  lib/         モック生成、分析、スコア、検索、保存
+  lib/         企業マスター、分析、スコア、検索、保存
   pages/       5つの画面
   types.ts     共通型
 ```
