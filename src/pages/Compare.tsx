@@ -19,6 +19,7 @@ import {
 } from 'recharts'
 import RadarScoreChart from '../components/RadarScoreChart'
 import ScoreBadge from '../components/ScoreBadge'
+import StockQuoteCard from '../components/StockQuoteCard'
 import WarningList from '../components/WarningList'
 import { useApp } from '../context/AppContext'
 import { formatMetric } from '../lib/formatters'
@@ -204,6 +205,10 @@ export default function Compare() {
                       available={hasFinancialData(company)}
                     />
                   </div>
+                  <StockQuoteCard
+                    quote={company.stockPrice}
+                    variant="compare"
+                  />
                   <div className="comparison-card__scores">
                     {scoreMetrics.slice(1).map((metric) => {
                       const score = company.scores[metric.key]
