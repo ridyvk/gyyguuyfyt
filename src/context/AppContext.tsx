@@ -13,8 +13,7 @@ import {
   saveCompareList,
   saveWatchlist,
 } from '../lib/storage'
-import type { Company } from '../types'
-import type { FinancialSnapshot } from '../types'
+import type { Company, FinancialSnapshot, MarketSnapshot } from '../types'
 import {
   hasFinancialData,
   loadFinancialSnapshot,
@@ -28,6 +27,7 @@ interface AppContextValue {
   compareList: string[]
   storageReady: boolean
   financialSnapshot: FinancialSnapshot | null
+  marketSnapshot: MarketSnapshot | null
   toggleWatchlist: (companyId: string) => void
   toggleCompare: (companyId: string) => boolean
   removeFromCompare: (companyId: string) => void
@@ -45,6 +45,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [storageReady, setStorageReady] = useState(false)
   const [financialSnapshot, setFinancialSnapshot] =
     useState<FinancialSnapshot | null>(null)
+  const [marketSnapshot, setMarketSnapshot] = useState<MarketSnapshot | null>(
+    null,
+  )
 
   useEffect(() => {
     let active = true
@@ -71,6 +74,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         )
         setCompanies(loadedCompanies)
         setFinancialSnapshot(snapshot)
+        setMarketSnapshot(marketSnapshot)
         const validIds = new Set(
           loadedCompanies.map((company) => company.id),
         )
@@ -140,6 +144,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       compareList,
       storageReady,
       financialSnapshot,
+      marketSnapshot,
       toggleWatchlist,
       toggleCompare,
       removeFromCompare,
@@ -153,6 +158,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       compareList,
       storageReady,
       financialSnapshot,
+      marketSnapshot,
       toggleWatchlist,
       toggleCompare,
       removeFromCompare,
