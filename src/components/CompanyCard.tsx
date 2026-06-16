@@ -6,17 +6,14 @@ import {
   type CSSProperties,
 } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  formatChangePercent,
-  formatMetric,
-  formatStockPrice,
-} from '../lib/formatters'
+import { formatMetric } from '../lib/formatters'
 import { hasFinancialData } from '../lib/liveData'
 import type { Company, ScoreKey } from '../types'
 import MiniTrendChart from './MiniTrendChart'
 import RadarScoreChart from './RadarScoreChart'
 import ScoreBadge from './ScoreBadge'
 import ScoreBar, { scoreLabels } from './ScoreBar'
+import StockQuoteCard from './StockQuoteCard'
 import WarningList from './WarningList'
 
 interface CompanyCardProps {
@@ -141,24 +138,11 @@ export default function CompanyCard({
       </div>
 
       {company.stockPrice && (
-        <div className="stock-quote">
-          <div>
-            <span>終値</span>
-            <strong>{formatStockPrice(company.stockPrice.close)}</strong>
-          </div>
-          <span
-            className={`stock-quote__change ${
-              (company.stockPrice.changePercent ?? 0) >= 0
-                ? 'stock-quote__change--up'
-                : 'stock-quote__change--down'
-            }`}
-          >
-            {formatChangePercent(company.stockPrice.changePercent)}
-          </span>
-          <small>
-            {company.stockPrice.date} · {company.stockPrice.source}
-          </small>
-        </div>
+        <StockQuoteCard
+          quote={company.stockPrice}
+          label="終値"
+          variant={expanded ? 'hero' : 'card'}
+        />
       )}
 
       <div className="company-card__metrics">
