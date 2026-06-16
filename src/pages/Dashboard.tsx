@@ -23,6 +23,7 @@ import {
 import ChartReveal from '../components/ChartReveal'
 import AnimatedNumber from '../components/AnimatedNumber'
 import ScoreBadge from '../components/ScoreBadge'
+import StockQuoteCard from '../components/StockQuoteCard'
 import { useApp } from '../context/AppContext'
 import { listedCompanySource } from '../lib/companySource'
 import { hasFinancialData } from '../lib/liveData'
@@ -37,7 +38,7 @@ const themePalette = [
 ]
 
 export default function Dashboard() {
-  const { companies, watchlist, financialSnapshot } = useApp()
+  const { companies, watchlist, financialSnapshot, marketSnapshot } = useApp()
   const analyzableCompanies = companies.filter(
     hasFinancialData,
   )
@@ -74,6 +75,14 @@ export default function Dashboard() {
   const topCompanies = [...analyzableCompanies]
     .sort((a, b) => b.scores.overall - a.scores.overall)
     .slice(0, 5)
+  const marketPulseCompanies = [...companies]
+    .filter((company) => company.stockPrice)
+    .sort(
+      (a, b) =>
+        Math.abs(b.stockPrice?.changePercent ?? 0) -
+        Math.abs(a.stockPrice?.changePercent ?? 0),
+    )
+    .slice(0, 3)
 
   return (
     <div className="page">
@@ -118,6 +127,42 @@ export default function Dashboard() {
               ? `${analyzableCompanies.length.toLocaleString('ja-JP')}社を表示可能 / 未取得 ${(companies.length - analyzableCompanies.length).toLocaleString('ja-JP')}社 / TDnet決算短信を優先補完 / 最終生成 ${new Date(financialSnapshot.generatedAt ?? '').toLocaleString('ja-JP')}`
               : 'EDINET・TDnetから取得できていない企業は、架空値ではなく未取得として表示します。'}
           </span>
+        </div>
+      </section>
+
+      <section className="market-pulse">
+        <div className="market-pulse__head">
+          <div>
+            <span className="section-kicker">MARKET PULSE</span>
+            <h2>株価データ</h2>
+          </div>
+          <span>
+            {marketSnapshot?.status === 'ready'
+              ? `${marketSnapshot.source} / ${marketSnapshot.latestTradingDate ?? '更新日未取得'}`
+              : '自動更新待ち'}
+          </span>
+        </div>
+        <div className="market-pulse__grid">
+          {marketPulseCompanies.length ? (
+            marketPulseCompanies.map((company) => (
+              <Link
+                to={`/company/${company.id}`}
+                className="market-pulse__item"
+                key={company.id}
+              >
+                <span>
+                  {company.code}
+                  <b>{company.name}</b>
+                </span>
+                <StockQuoteCard quote={company.stockPrice} variant="mini" />
+              </Link>
+            ))
+          ) : (
+            <div className="market-pulse__empty">
+              <strong>株価データは次回の自動更新で表示されます</strong>
+              <span>最新終値、前日比、出来高をカードで表示します。</span>
+            </div>
+          )}
         </div>
       </section>
 
