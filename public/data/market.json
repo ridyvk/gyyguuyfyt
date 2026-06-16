@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "generatedAt": null,
-  "source": "J-Quants",
+  "source": "Yahoo Finance",
   "status": "setup-required",
-  "message": "GitHub ActionsのJQUANTS_API_KEYを設定すると株価の自動更新が始まります。",
+  "message": "次回の自動更新でYahoo Financeの日足終値を取得し、PER/PBRを計算します。",
   "latestTradingDate": null,
   "quotes": {},
   "fundamentals": {},
