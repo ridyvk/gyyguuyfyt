@@ -78,7 +78,7 @@ export interface Company {
   warnings: string[]
   analysisComment: string
   hasWarning: boolean
-  dataSource?: 'EDINET' | 'TDnet' | 'mock' | 'unavailable'
+  dataSource?: 'EDINET' | 'TDnet' | 'unavailable'
   dataUpdatedAt?: string
   financialPeriod?: string
   financialSourceUrl?: string
