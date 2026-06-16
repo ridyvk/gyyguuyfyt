@@ -8,6 +8,7 @@ on:
       - .github/workflows/update-financials.yml
       - scripts/update_edinet_financials.py
       - scripts/update_tdnet_financials.py
+      - scripts/update_market_prices.py
       - public/data/financials.json
       - public/data/market.json
   schedule:
@@ -42,23 +43,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check data API keys
+      - name: Check EDINET API key
         id: credentials
         env:
           EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
-          JQUANTS_API_KEY: ${{ secrets.JQUANTS_API_KEY }}
         run: |
           if [ -n "$EDINET_API_KEY" ]; then
             echo "edinet_enabled=true" >> "$GITHUB_OUTPUT"
           else
             echo "edinet_enabled=false" >> "$GITHUB_OUTPUT"
             echo "::warning::EDINET_API_KEY is not configured. The updater was skipped."
-          fi
-          if [ -n "$JQUANTS_API_KEY" ]; then
-            echo "market_enabled=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "market_enabled=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::JQUANTS_API_KEY is not configured. The market updater was skipped."
           fi
 
       - name: Setup Python
@@ -82,9 +76,7 @@ jobs:
         run: python scripts/update_tdnet_financials.py --lookback-days 31
 
       - name: Update market snapshot
-        if: steps.credentials.outputs.market_enabled == 'true'
-        env:
-          JQUANTS_API_KEY: ${{ secrets.JQUANTS_API_KEY }}
+        continue-on-error: true
         run: python scripts/update_market_prices.py
 
       - name: Commit updated snapshot
