@@ -39,6 +39,17 @@ export const formatChangePercent = (value?: number) => {
   return `${sign}${formatNumber(value, 2)}%`
 }
 
+export const formatVolume = (value?: number) => {
+  if (value === undefined) return '出来高なし'
+  if (value >= 100_000_000) {
+    return `${formatNumber(value / 100_000_000, 1)}億株`
+  }
+  if (value >= 10_000) {
+    return `${formatNumber(value / 10_000, 1)}万株`
+  }
+  return `${Math.round(value).toLocaleString('ja-JP')}株`
+}
+
 export const statusLabel = {
   good: '良好',
   normal: '普通',
