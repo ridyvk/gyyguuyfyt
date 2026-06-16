@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight, Database, Sparkles } from 'lucide-react'
 import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import CompanyCard from '../components/CompanyCard'
+import AnimatedNumber from '../components/AnimatedNumber'
 import FilterPanel from '../components/FilterPanel'
 import SearchBox from '../components/SearchBox'
 import { useApp } from '../context/AppContext'
@@ -43,6 +44,15 @@ export default function Universe() {
   )
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
   const visibleCompanies = filtered.slice((page - 1) * pageSize, page * pageSize)
+  const resultsKey = [
+    deferredQuery,
+    filter.market,
+    filter.industry,
+    filter.theme,
+    filter.warningsOnly,
+    filter.sort,
+    page,
+  ].join('|')
 
   useEffect(() => {
     setPage(1)
@@ -67,7 +77,10 @@ export default function Universe() {
         <div className="universe-stat">
           <Database size={18} />
           <span>
-            <strong>{filtered.length.toLocaleString('ja-JP')}</strong> /{' '}
+            <strong>
+              <AnimatedNumber value={filtered.length} duration={460} />
+            </strong>{' '}
+            /{' '}
             {companies.length.toLocaleString('ja-JP')} companies
           </span>
         </div>
@@ -88,18 +101,23 @@ export default function Universe() {
               JPX {listedCompanySource.date.slice(0, 4)}年
               {Number(listedCompanySource.date.slice(4, 6))}月末 /{' '}
               {financialSnapshot?.status === 'ready'
-                ? `EDINET ${financialSnapshot.stats.companies.toLocaleString('ja-JP')}社`
-                : 'KPIはモック'}
+                ? `EDINET・TDnet ${financialSnapshot.stats.companies.toLocaleString('ja-JP')}社`
+                : 'KPIは未取得'}
             </div>
           </div>
 
           {visibleCompanies.length ? (
-            <div className="company-grid">
-              {visibleCompanies.map((company) => (
+            <div
+              key={resultsKey}
+              className="company-grid company-grid--refresh"
+              aria-live="polite"
+            >
+              {visibleCompanies.map((company, index) => (
                 <CompanyCard
-                  key={company.id}
+                  key={`${resultsKey}:${company.id}`}
                   company={company}
                   watched={isWatched(company.id)}
+                  motionIndex={index}
                   onToggleWatch={() => toggleWatchlist(company.id)}
                 />
               ))}
