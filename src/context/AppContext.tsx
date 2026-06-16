@@ -49,7 +49,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let active = true
     Promise.all([
-      import('../lib/mockGenerator'),
+      import('../lib/companyUniverse'),
       loadWatchlist(),
       loadCompareList(),
       loadFinancialSnapshot().catch(() => null),
