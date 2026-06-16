@@ -155,7 +155,9 @@ export default function CompanyCard({
           >
             {formatChangePercent(company.stockPrice.changePercent)}
           </span>
-          <small>{company.stockPrice.date} · J-Quants</small>
+          <small>
+            {company.stockPrice.date} · {company.stockPrice.source}
+          </small>
         </div>
       )}
 
