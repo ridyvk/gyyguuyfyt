@@ -1,5 +1,5 @@
 import { RotateCcw, SlidersHorizontal } from 'lucide-react'
-import { industriesList, marketsList, themeList } from '../lib/mockGenerator'
+import { industriesList, marketsList, themeList } from '../lib/companyUniverse'
 import type { CompanyFilter } from '../types'
 
 interface FilterPanelProps {
