@@ -22,13 +22,10 @@ import KpiTile from '../components/KpiTile'
 import RadarScoreChart from '../components/RadarScoreChart'
 import ScoreBadge from '../components/ScoreBadge'
 import ScoreBar, { scoreLabels } from '../components/ScoreBar'
+import StockQuoteCard from '../components/StockQuoteCard'
 import WarningList from '../components/WarningList'
 import { useApp } from '../context/AppContext'
 import { loadNote, saveNote } from '../lib/storage'
-import {
-  formatChangePercent,
-  formatStockPrice,
-} from '../lib/formatters'
 import { hasFinancialData } from '../lib/liveData'
 import type { CompanyNote, KpiKey, ScoreKey } from '../types'
 
@@ -163,26 +160,7 @@ export default function CompanyDetail() {
               </a>
             )}
           </div>
-          {company.stockPrice && (
-            <div className="stock-quote stock-quote--hero">
-              <div>
-                <span>最新終値</span>
-                <strong>{formatStockPrice(company.stockPrice.close)}</strong>
-              </div>
-              <span
-                className={`stock-quote__change ${
-                  (company.stockPrice.changePercent ?? 0) >= 0
-                    ? 'stock-quote__change--up'
-                    : 'stock-quote__change--down'
-                }`}
-              >
-                {formatChangePercent(company.stockPrice.changePercent)}
-              </span>
-              <small>
-                {company.stockPrice.date} · {company.stockPrice.source}
-              </small>
-            </div>
-          )}
+          <StockQuoteCard quote={company.stockPrice} variant="hero" />
         </div>
         <div className="company-hero__score">
           <span>総合スコア</span>
