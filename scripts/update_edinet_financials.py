@@ -23,7 +23,7 @@ SNAPSHOT = Path(__file__).resolve().parents[1] / "public/data/financials.json"
 COMPANY_MASTER = (
     Path(__file__).resolve().parents[1] / "src/data/listedCompanies.json"
 )
-SNAPSHOT_SCHEMA_VERSION = 2
+SNAPSHOT_SCHEMA_VERSION = 3
 
 FACT_NAMES = {
     "revenue": (
@@ -85,6 +85,22 @@ FACT_NAMES = {
         "InterestBearingDebt",
         "InterestBearingLiabilities",
         "BondsAndBorrowings",
+    ),
+}
+VALUATION_FACT_NAMES = {
+    "eps": (
+        "BasicEarningsLossPerShare",
+        "BasicEarningsPerShare",
+        "BasicEarningsLossPerShareSummaryOfBusinessResults",
+        "BasicEarningsPerShareSummaryOfBusinessResults",
+        "BasicEarningsLossPerShareIFRS",
+        "BasicEarningsPerShareIFRS",
+    ),
+    "bps": (
+        "NetAssetsPerShare",
+        "NetAssetsPerShareSummaryOfBusinessResults",
+        "EquityAttributableToOwnersOfParentPerShareIFRS",
+        "BookValuePerShare",
     ),
 }
 DEBT_COMPONENTS = (
@@ -394,7 +410,21 @@ def build_record(filing: dict, data: bytes) -> dict:
         if key in metrics and history:
             metrics[key]["trend"] = [point[key] for point in history]
 
-    return {
+    valuation: dict[str, float] = {}
+    eps = at(
+        values_for(contexts, facts, VALUATION_FACT_NAMES["eps"], True),
+        period_end,
+    )
+    bps = at(
+        values_for(contexts, facts, VALUATION_FACT_NAMES["bps"], False),
+        period_end,
+    )
+    if eps is not None and math.isfinite(eps):
+        valuation["eps"] = round(eps, 4)
+    if bps is not None and math.isfinite(bps):
+        valuation["bps"] = round(bps, 4)
+
+    record = {
         "code": str(filing["secCode"])[:4],
         "companyName": str(filing.get("filerName") or ""),
         "documentId": str(filing["docID"]),
@@ -405,6 +435,9 @@ def build_record(filing: dict, data: bytes) -> dict:
         "metrics": metrics,
         "history": history,
     }
+    if valuation:
+        record["valuation"] = valuation
+    return record
 
 
 def load_snapshot() -> dict:
@@ -484,7 +517,10 @@ def main() -> int:
                 else "EDINET"
             ),
             "status": "ready",
-            "message": "EDINET有価証券報告書から自動更新中。PER・PBRはJ-Quants連携時に計算します。",
+            "message": (
+                "EDINET有価証券報告書から自動更新中。PER・PBRは"
+                "株価自動更新とEPS/BPSから計算します。"
+            ),
             "records": records,
             "stats": {
                 "companies": len(records),
