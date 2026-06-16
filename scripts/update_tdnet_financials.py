@@ -51,6 +51,30 @@ TDNET_FACT_NAMES = {
         "TradeAndOtherReceivablesCurrentIFRS",
     ),
 }
+TDNET_VALUATION_FACT_NAMES = {
+    "eps": (
+        "BasicEarningsLossPerShare",
+        "BasicEarningsPerShare",
+        "BasicEarningsLossPerShareIFRS",
+        "BasicEarningsPerShareIFRS",
+        "BasicEarningsLossPerShareSummaryOfBusinessResults",
+        "BasicEarningsPerShareSummaryOfBusinessResults",
+    ),
+    "forecastEps": (
+        "ForecastBasicEarningsLossPerShare",
+        "ForecastBasicEarningsPerShare",
+        "BasicEarningsLossPerShareForecasts",
+        "BasicEarningsPerShareForecasts",
+        "ForecastBasicEarningsLossPerShareIFRS",
+        "ForecastBasicEarningsPerShareIFRS",
+    ),
+    "bps": (
+        "NetAssetsPerShare",
+        "NetAssetsPerShareSummaryOfBusinessResults",
+        "EquityAttributableToOwnersOfParentPerShareIFRS",
+        "BookValuePerShare",
+    ),
+}
 TDNET_DEBT_COMPONENTS = DEBT_COMPONENTS + (
     "BorrowingsCLIFRS",
     "BorrowingsNCLIFRS",
@@ -511,7 +535,32 @@ def build_record(filing: dict, archive_data: bytes) -> dict:
         if key in metrics and history:
             metrics[key]["trend"] = [point[key] for point in history]
 
-    return {
+    valuation: dict[str, float] = {}
+    eps = at(
+        values_for(contexts, facts, TDNET_VALUATION_FACT_NAMES["eps"], True),
+        period_end,
+    )
+    forecast_eps = at(
+        values_for(
+            contexts,
+            facts,
+            TDNET_VALUATION_FACT_NAMES["forecastEps"],
+            True,
+        ),
+        period_end,
+    )
+    bps = at(
+        values_for(contexts, facts, TDNET_VALUATION_FACT_NAMES["bps"], False),
+        period_end,
+    )
+    if eps is not None and math.isfinite(eps):
+        valuation["eps"] = round(eps, 4)
+    if forecast_eps is not None and math.isfinite(forecast_eps):
+        valuation["forecastEps"] = round(forecast_eps, 4)
+    if bps is not None and math.isfinite(bps):
+        valuation["bps"] = round(bps, 4)
+
+    record = {
         "code": filing["code"],
         "companyName": filing["companyName"],
         "documentId": filing["documentId"],
@@ -522,6 +571,9 @@ def build_record(filing: dict, archive_data: bytes) -> dict:
         "metrics": metrics,
         "history": history,
     }
+    if valuation:
+        record["valuation"] = valuation
+    return record
 
 
 def merge_history(existing: dict | None, record: dict) -> None:
@@ -608,10 +660,20 @@ def main() -> int:
     for index, filing in enumerate(candidates, 1):
         try:
             existing = records.get(filing["code"])
-            if (existing or {}).get("documentId") == filing["documentId"]:
+            same_document = (
+                (existing or {}).get("documentId") == filing["documentId"]
+            )
+            if same_document and (existing or {}).get("valuation"):
                 continue
             record = build_record(filing, get(filing["xbrlUrl"]))
-            if record["metrics"] and should_replace(existing, record):
+            needs_valuation_backfill = (
+                same_document
+                and record.get("valuation")
+                and not (existing or {}).get("valuation")
+            )
+            if record["metrics"] and (
+                should_replace(existing, record) or needs_valuation_backfill
+            ):
                 merge_history(existing, record)
                 records[record["code"]] = record
                 updated += 1
