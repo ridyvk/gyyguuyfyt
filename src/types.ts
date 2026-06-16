@@ -92,6 +92,14 @@ export interface LiveMetricValue {
   trend?: number[]
 }
 
+export interface ValuationBasis {
+  disclosedDate?: string
+  disclosedAt?: string
+  eps?: number
+  forecastEps?: number
+  bps?: number
+}
+
 export interface LiveFinancialRecord {
   code: string
   companyName: string
@@ -102,10 +110,11 @@ export interface LiveFinancialRecord {
   sourceUrl: string
   metrics: Partial<Record<KpiKey, LiveMetricValue>>
   history: FinancialYearPoint[]
+  valuation?: ValuationBasis
 }
 
 export interface FinancialSnapshot {
-  schemaVersion: 1 | 2
+  schemaVersion: 1 | 2 | 3
   generatedAt: string | null
   source: 'EDINET' | 'EDINET+TDnet'
   status: 'ready' | 'setup-required' | 'error'
@@ -126,20 +135,15 @@ export interface MarketQuote {
   previousClose?: number
   changePercent?: number
   volume?: number
-  source: 'J-Quants'
+  source: 'Yahoo Finance' | 'J-Quants'
 }
 
-export interface MarketFundamentals {
-  disclosedDate: string
-  eps?: number
-  forecastEps?: number
-  bps?: number
-}
+export type MarketFundamentals = ValuationBasis
 
 export interface MarketSnapshot {
   schemaVersion: 1
   generatedAt: string | null
-  source: 'J-Quants'
+  source: 'Yahoo Finance' | 'J-Quants'
   status: 'ready' | 'setup-required' | 'error'
   message: string
   latestTradingDate: string | null
