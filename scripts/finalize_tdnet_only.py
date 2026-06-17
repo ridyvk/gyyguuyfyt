@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Finalize KPI Scope snapshot as a TDnet-only MVP dataset."""
+"""Finalize KPI Scope snapshot as a strict TDnet full-year dataset."""
 
 from __future__ import annotations
 
@@ -21,19 +21,22 @@ def main() -> int:
     snapshot = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
     original_records = snapshot.get("records", {}) or {}
 
-    tdnet_records = {
+    strict_records = {
         str(code): record
         for code, record in original_records.items()
-        if isinstance(record, dict) and record.get("source") == "TDnet"
+        if isinstance(record, dict)
+        and record.get("source") == "TDnet"
+        and record.get("documentType") == "FullYearEarnings"
     }
-    dropped = len(original_records) - len(tdnet_records)
+    dropped = len(original_records) - len(strict_records)
 
     stats = {**snapshot.get("stats", {})}
     stats.update(
         {
-            "companies": len(tdnet_records),
+            "companies": len(strict_records),
             "tdnetOnly": True,
-            "nonTdnetRecordsDropped": dropped,
+            "acceptedDocumentType": "FullYearEarnings",
+            "nonStrictRecordsDropped": dropped,
         }
     )
 
@@ -44,32 +47,40 @@ def main() -> int:
             "status": "ready",
             "message": (
                 "TDnet決算短信ベースで更新中。"
-                "EDINET有価証券報告書データとは統合していません。"
+                "四半期・中間短信とEDINET有価証券報告書データは統合していません。"
             ),
             "dataPolicy": {
-                "mode": "tdnet-only-mvp",
+                "mode": "tdnet-only-full-year-strict",
                 "primarySource": "TDnet決算短信XBRL",
+                "acceptedDocumentType": "FullYearEarnings",
                 "edinetMerged": False,
+                "quarterlyMerged": False,
                 "note": (
-                    "速報KPIの齟齬を減らすため、当面はTDnetレコードのみを公開します。"
-                    "EDINETは有報ベースの確定値確認用として、将来別レイヤーで扱います。"
+                    "年次KPIの齟齬を減らすため、TDnetの通期決算短信のみを公開します。"
+                    "四半期・中間短信は対象期と年次KPIの混在を避けるため除外します。"
                 ),
             },
-            "records": tdnet_records,
+            "records": strict_records,
             "stats": stats,
         }
     )
 
     status = {
         "generatedAt": generated_at,
-        "mode": "tdnet-only-mvp",
+        "mode": "tdnet-only-full-year-strict",
         "source": "TDnet",
+        "acceptedDocumentType": "FullYearEarnings",
         "edinetMerged": False,
-        "companies": len(tdnet_records),
-        "nonTdnetRecordsDropped": dropped,
-        "tdnetDocumentsScanned": stats.get("tdnetDocumentsScanned", 0),
+        "quarterlyMerged": False,
+        "companies": len(strict_records),
+        "nonStrictRecordsDropped": dropped,
+        "tdnetRowsScanned": stats.get("tdnetRowsScanned", 0),
+        "tdnetEarningsRows": stats.get("tdnetEarningsRows", 0),
+        "tdnetQuarterlyRowsSkipped": stats.get("tdnetQuarterlyRowsSkipped", 0),
+        "tdnetFullYearFilings": stats.get("tdnetFullYearFilings", 0),
         "tdnetDocumentsUpdated": stats.get("tdnetDocumentsUpdated", 0),
-        "message": "TDnet決算短信ベースで更新中。EDINETとは統合していません。",
+        "tdnetStrictFailures": stats.get("tdnetStrictFailures", 0),
+        "message": "TDnetの通期決算短信のみで更新中。四半期・中間短信とEDINETは統合していません。",
     }
 
     SNAPSHOT.write_text(
@@ -81,8 +92,8 @@ def main() -> int:
         encoding="utf-8",
     )
     print(
-        "Finalized TDnet-only snapshot: "
-        f"{len(tdnet_records)} TDnet records, dropped {dropped} non-TDnet records."
+        "Finalized strict TDnet snapshot: "
+        f"{len(strict_records)} full-year records, dropped {dropped} non-strict records."
     )
     return 0
 
