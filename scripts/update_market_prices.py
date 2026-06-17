@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Update KPI Scope's daily market snapshot without an API key.
+"""Update KPI Scope's market snapshot without an API key.
 
-Prices are read from Yahoo Finance's public chart endpoint. EPS/BPS are
-provided by the EDINET/TDnet financial snapshot, so no user-side stock data
-account or secret is required.
+Prices are read from Yahoo Finance's public chart endpoint. The updater fetches
+quotes for the listed-company universe, while PER/PBR are calculated only when
+EPS/BPS are available from the financial snapshot.
 """
 
 from __future__ import annotations
@@ -64,12 +64,18 @@ def load_json(path: Path) -> dict:
 
 
 def company_codes() -> list[str]:
-    financials = load_json(FINANCIALS)
-    records = financials.get("records", {})
-    if records:
-        return sorted(str(code) for code in records)
+    """Return the quote universe.
+
+    Quotes should not be limited to financial records. A stock can have a latest
+    price even when EPS/BPS are still missing, so the listed-company master is
+    the primary source. Financial records are used only as a fallback.
+    """
     master = load_json(COMPANY_MASTER)
-    return sorted(str(company["code"]) for company in master.get("companies", []))
+    master_codes = sorted(str(company["code"]) for company in master.get("companies", []))
+    if master_codes:
+        return master_codes
+    financials = load_json(FINANCIALS)
+    return sorted(str(code) for code in financials.get("records", {}))
 
 
 def valuation_fundamentals() -> dict[str, dict]:
@@ -81,6 +87,8 @@ def valuation_fundamentals() -> dict[str, dict]:
             continue
         valuation.setdefault("disclosedDate", record.get("periodEnd"))
         valuation.setdefault("disclosedAt", record.get("filedAt"))
+        valuation.setdefault("financialSource", record.get("source"))
+        valuation.setdefault("financialDocumentType", record.get("documentType"))
         fundamentals[str(code)] = valuation
     return fundamentals
 
@@ -104,24 +112,39 @@ def fetch_quote(code: str) -> tuple[str, dict]:
         for timestamp, close, volume in zip(timestamps, closes, volumes)
         if number(close) is not None and number(close) > 0
     ]
-    if not points:
-        close = number(meta.get("regularMarketPrice"))
-        if close is None or close <= 0:
-            raise RuntimeError("close price not found")
-        timestamp = int(meta.get("regularMarketTime") or time.time())
-        points = [(timestamp, close, number(meta.get("regularMarketVolume")))]
 
-    latest_time, close, volume = points[-1]
-    previous_close = points[-2][1] if len(points) > 1 else number(
-        meta.get("chartPreviousClose")
-    )
+    meta_price = number(meta.get("regularMarketPrice"))
+    meta_time = int(meta.get("regularMarketTime") or 0)
+    meta_volume = number(meta.get("regularMarketVolume"))
+
+    if points:
+        latest_time, close, volume = points[-1]
+        previous_close = points[-2][1] if len(points) > 1 else number(
+            meta.get("chartPreviousClose")
+        )
+        price_type = "daily-close"
+        # When Yahoo exposes a newer regularMarketPrice, use it as the most
+        # recent public quote and keep the daily bar as fallback.
+        if meta_price is not None and meta_price > 0 and meta_time >= int(latest_time):
+            latest_time, close, volume = meta_time, meta_price, meta_volume or volume
+            previous_close = number(meta.get("chartPreviousClose")) or previous_close
+            price_type = "regular-market-price"
+    else:
+        if meta_price is None or meta_price <= 0:
+            raise RuntimeError("close price not found")
+        latest_time, close, volume = meta_time or int(time.time()), meta_price, meta_volume
+        previous_close = number(meta.get("chartPreviousClose"))
+        price_type = "regular-market-price"
+
+    timestamp_jst = datetime.fromtimestamp(int(latest_time), JST)
     quote_payload = {
-        "date": datetime.fromtimestamp(int(latest_time), JST)
-        .date()
-        .isoformat(),
+        "date": timestamp_jst.date().isoformat(),
+        "timestamp": timestamp_jst.isoformat(),
         "close": round(float(close), 4),
         "volume": volume,
         "source": "Yahoo Finance",
+        "priceType": price_type,
+        "isRealtime": False,
     }
     if previous_close is not None and previous_close > 0:
         quote_payload["previousClose"] = round(float(previous_close), 4)
@@ -172,25 +195,36 @@ def main() -> int:
         {quote["date"] for quote in merged_quotes.values() if quote.get("date")},
         reverse=True,
     )
+    latest_timestamps = sorted(
+        {
+            quote["timestamp"]
+            for quote in merged_quotes.values()
+            if quote.get("timestamp")
+        },
+        reverse=True,
+    )
     snapshot = {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "generatedAt": datetime.now(timezone.utc)
         .isoformat()
         .replace("+00:00", "Z"),
         "source": "Yahoo Finance",
         "status": "ready",
         "message": (
-            "Yahoo Financeの日足終値とEDINET・TDnetのEPS/BPSから"
-            "PER・PBRを自動計算しています。"
+            "Yahoo Financeの公開株価データとEDINET・TDnetのEPS/BPSから"
+            "PER・PBRを自動計算しています。株価はリアルタイム保証ではありません。"
         ),
         "latestTradingDate": latest_dates[0] if latest_dates else None,
+        "latestQuoteTimestamp": latest_timestamps[0] if latest_timestamps else None,
         "quotes": merged_quotes,
         "fundamentals": fundamentals,
         "stats": {
+            "quoteUniverse": len(codes),
             "companies": len(merged_quotes),
             "tradingDates": latest_dates[:5],
             "fundamentals": len(fundamentals),
             "quoteFailures": len(failures),
+            "freshQuotesFetched": len(quotes),
         },
     }
     SNAPSHOT.write_text(
