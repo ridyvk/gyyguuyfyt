@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT = ROOT / "public/data/financials.json"
 STATUS = ROOT / "public/data/update-status.json"
+MIN_TARGET_COMPANIES = 3000
 
 
 def utc_now() -> str:
@@ -38,6 +39,17 @@ def main() -> int:
     tdnet_count = sum(1 for record in annual_records.values() if record.get("source") == "TDnet")
 
     stats = {**snapshot.get("stats", {})}
+    pending_before_batch = int(stats.get("edinetPendingBeforeBatch") or 0)
+    batch_size = int(stats.get("edinetBatchSize") or 0)
+    estimated_remaining = max(0, pending_before_batch - batch_size)
+    is_building = edinet_count < MIN_TARGET_COMPANIES and estimated_remaining > 0
+    status_text = "building" if is_building else "ready"
+    progress_message = (
+        "EDINET年次ベースラインを分割構築中。"
+        if is_building
+        else "EDINET年次ベースライン＋TDnet通期決算短信オーバーレイで更新済み。"
+    )
+
     stats.update(
         {
             "companies": len(annual_records),
@@ -45,6 +57,8 @@ def main() -> int:
             "tdnetCompanies": tdnet_count,
             "annualOnly": True,
             "nonAnnualRecordsDropped": dropped,
+            "edinetEstimatedRemaining": estimated_remaining,
+            "targetCompanies": MIN_TARGET_COMPANIES,
         }
     )
 
@@ -52,21 +66,24 @@ def main() -> int:
         {
             "generatedAt": generated_at,
             "source": "EDINET+TDnet",
-            "status": "ready",
+            "status": status_text,
             "message": (
-                "EDINET有価証券報告書ベースの年次データを基礎DBにし、"
+                progress_message
+                + "EDINET有価証券報告書ベースの年次データを基礎DBにし、"
                 "TDnetの通期決算短信で直近分のみ上書きしています。"
                 "四半期・中間短信は統合していません。"
             ),
             "dataPolicy": {
-                "mode": "edinet-annual-baseline-tdnet-full-year-overlay",
+                "mode": "edinet-annual-baseline-tdnet-full-year-overlay-batched",
                 "baselineSource": "EDINET有価証券報告書XBRL",
                 "overlaySource": "TDnet通期決算短信XBRL",
                 "edinetMerged": True,
                 "tdnetOverlay": True,
                 "quarterlyMerged": False,
+                "batched": True,
                 "note": (
                     "上場全社級のカバレッジを確保するため、EDINET年次データを基礎DBとして使います。"
+                    "長時間実行を避けるため、EDINETは複数回に分けて構築します。"
                     "TDnetは通期決算短信だけを採用し、四半期・中間短信は年次KPIとの混在を避けるため除外します。"
                 ),
             },
@@ -77,16 +94,25 @@ def main() -> int:
 
     status = {
         "generatedAt": generated_at,
-        "mode": "edinet-annual-baseline-tdnet-full-year-overlay",
+        "mode": "edinet-annual-baseline-tdnet-full-year-overlay-batched",
+        "status": status_text,
         "source": "EDINET+TDnet",
         "baselineSource": "EDINET有価証券報告書XBRL",
         "overlaySource": "TDnet通期決算短信XBRL",
         "edinetMerged": True,
         "tdnetOverlay": True,
         "quarterlyMerged": False,
+        "batched": True,
         "companies": len(annual_records),
+        "targetCompanies": MIN_TARGET_COMPANIES,
         "edinetCompanies": edinet_count,
         "tdnetCompanies": tdnet_count,
+        "edinetDocumentsScanned": stats.get("edinetDocumentsScanned", 0),
+        "edinetPendingBeforeBatch": pending_before_batch,
+        "edinetBatchSize": batch_size,
+        "edinetDocumentsUpdated": stats.get("edinetDocumentsUpdated", 0),
+        "edinetEstimatedRemaining": estimated_remaining,
+        "edinetBatchFailures": stats.get("edinetBatchFailures", 0),
         "nonAnnualRecordsDropped": dropped,
         "tdnetRowsScanned": stats.get("tdnetRowsScanned", 0),
         "tdnetEarningsRows": stats.get("tdnetEarningsRows", 0),
@@ -94,7 +120,7 @@ def main() -> int:
         "tdnetFullYearFilings": stats.get("tdnetFullYearFilings", 0),
         "tdnetDocumentsUpdated": stats.get("tdnetDocumentsUpdated", 0),
         "tdnetStrictFailures": stats.get("tdnetStrictFailures", 0),
-        "message": "EDINET年次ベースライン＋TDnet通期決算短信オーバーレイで更新中。四半期・中間短信は統合していません。",
+        "message": progress_message + "四半期・中間短信は統合していません。",
     }
 
     SNAPSHOT.write_text(
@@ -108,7 +134,7 @@ def main() -> int:
     print(
         "Finalized annual dataset: "
         f"{len(annual_records)} companies, EDINET {edinet_count}, TDnet {tdnet_count}, "
-        f"dropped {dropped} non-annual records."
+        f"remaining about {estimated_remaining}, dropped {dropped} non-annual records."
     )
     return 0
 
