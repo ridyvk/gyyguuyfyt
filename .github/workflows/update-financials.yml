@@ -1,4 +1,4 @@
-name: Update EDINET financials
+name: Update TDnet financials
 
 on:
   push:
@@ -6,23 +6,20 @@ on:
       - main
     paths:
       - .github/workflows/update-financials.yml
-      - scripts/update_edinet_financials.py
       - scripts/update_tdnet_financials.py
       - scripts/update_market_prices.py
+      - scripts/finalize_tdnet_only.py
       - public/data/financials.json
       - public/data/market.json
+      - public/data/update-status.json
   schedule:
     - cron: '17 */3 * * *'
   workflow_dispatch:
     inputs:
       lookback_days:
-        description: Days to scan when data already exists
+        description: Days to scan in public TDnet listing pages
         required: false
-        default: '7'
-      bootstrap_days:
-        description: Days to scan on the first run
-        required: false
-        default: '460'
+        default: '31'
 
 permissions:
   contents: write
@@ -30,7 +27,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: edinet-financial-update
+  group: tdnet-financial-update
   cancel-in-progress: true
 
 jobs:
@@ -43,51 +40,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check EDINET API key
-        id: credentials
-        env:
-          EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
-        run: |
-          if [ -n "$EDINET_API_KEY" ]; then
-            echo "edinet_enabled=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "edinet_enabled=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::EDINET_API_KEY is not configured. The updater was skipped."
-          fi
-
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Update financial snapshot
-        if: steps.credentials.outputs.edinet_enabled == 'true'
+      - name: Update TDnet financial snapshot
         env:
-          EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
-          LOOKBACK_DAYS: ${{ inputs.lookback_days || '7' }}
-          BOOTSTRAP_DAYS: ${{ inputs.bootstrap_days || '460' }}
+          LOOKBACK_DAYS: ${{ inputs.lookback_days || '31' }}
         run: |
-          python scripts/update_edinet_financials.py \
-            --lookback-days "$LOOKBACK_DAYS" \
-            --bootstrap-days "$BOOTSTRAP_DAYS"
-
-      - name: Supplement with TDnet earnings
-        continue-on-error: true
-        run: python scripts/update_tdnet_financials.py --lookback-days 31
+          python scripts/update_tdnet_financials.py \
+            --lookback-days "$LOOKBACK_DAYS"
 
       - name: Update market snapshot
         continue-on-error: true
         run: python scripts/update_market_prices.py
 
+      - name: Finalize TDnet-only dataset
+        run: python scripts/finalize_tdnet_only.py
+
       - name: Commit updated snapshot
         run: |
           git config user.name "kpi-scope-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add public/data/financials.json public/data/market.json
+          git add public/data/financials.json public/data/market.json public/data/update-status.json
           if git diff --cached --quiet; then
             echo "No snapshot changes."
           else
-            git commit -m "Update EDINET financial snapshot"
+            git commit -m "Update TDnet financial snapshot"
             git push
           fi
 
