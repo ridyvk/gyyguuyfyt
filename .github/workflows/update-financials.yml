@@ -30,7 +30,7 @@ on:
       edinet_batch_size:
         description: Maximum EDINET annual filings to process in one run
         required: false
-        default: '350'
+        default: '700'
 
 permissions:
   contents: write
@@ -63,7 +63,7 @@ jobs:
         env:
           EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
           EDINET_SCAN_DAYS: ${{ inputs.edinet_scan_days || '460' }}
-          EDINET_BATCH_SIZE: ${{ inputs.edinet_batch_size || '350' }}
+          EDINET_BATCH_SIZE: ${{ inputs.edinet_batch_size || '700' }}
         run: |
           if [ -z "$EDINET_API_KEY" ]; then
             echo "EDINET key is not configured. Skipping annual baseline batch."
