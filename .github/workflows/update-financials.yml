@@ -7,27 +7,29 @@ on:
     paths:
       - .github/workflows/update-financials.yml
       - scripts/update_edinet_financials.py
-      - scripts/run_edinet_financials_strict.py
+      - scripts/update_edinet_financials_batched.py
       - scripts/update_tdnet_financials.py
       - scripts/update_tdnet_financials_strict.py
       - scripts/update_tdnet_financials_overlay_strict.py
-      - scripts/update_market_prices.py
       - scripts/finalize_annual_dataset.py
       - public/data/financials.json
-      - public/data/market.json
       - public/data/update-status.json
   schedule:
     - cron: '17 */3 * * *'
   workflow_dispatch:
     inputs:
       lookback_days:
-        description: Days to scan
+        description: Days to scan TDnet listings
         required: false
         default: '31'
-      bootstrap_days:
-        description: EDINET bootstrap days
+      edinet_scan_days:
+        description: Days to scan EDINET filings
         required: false
         default: '460'
+      edinet_batch_size:
+        description: Maximum EDINET annual filings to process in one run
+        required: false
+        default: '350'
 
 permissions:
   contents: write
@@ -53,19 +55,19 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Update EDINET annual baseline
+      - name: Update EDINET annual baseline batch
         continue-on-error: true
         env:
           EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
-          LOOKBACK_DAYS: ${{ inputs.lookback_days || '31' }}
-          BOOTSTRAP_DAYS: ${{ inputs.bootstrap_days || '460' }}
+          EDINET_SCAN_DAYS: ${{ inputs.edinet_scan_days || '460' }}
+          EDINET_BATCH_SIZE: ${{ inputs.edinet_batch_size || '350' }}
         run: |
           if [ -z "$EDINET_API_KEY" ]; then
-            echo "EDINET key is not configured. Skipping annual baseline update."
+            echo "EDINET key is not configured. Skipping annual baseline batch."
           else
-            python scripts/run_edinet_financials_strict.py \
-              --lookback-days "$LOOKBACK_DAYS" \
-              --bootstrap-days "$BOOTSTRAP_DAYS"
+            python scripts/update_edinet_financials_batched.py \
+              --scan-days "$EDINET_SCAN_DAYS" \
+              --max-documents "$EDINET_BATCH_SIZE"
           fi
 
       - name: Overlay strict TDnet full-year financials
@@ -75,22 +77,18 @@ jobs:
           python scripts/update_tdnet_financials_overlay_strict.py \
             --lookback-days "$LOOKBACK_DAYS"
 
-      - name: Update market snapshot
-        continue-on-error: true
-        run: python scripts/update_market_prices.py
-
       - name: Finalize annual dataset
         run: python scripts/finalize_annual_dataset.py
 
-      - name: Commit updated snapshot
+      - name: Commit updated financial snapshot
         run: |
           git config user.name "kpi-scope-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add public/data/financials.json public/data/market.json public/data/update-status.json
+          git add public/data/financials.json public/data/update-status.json
           if git diff --cached --quiet; then
-            echo "No snapshot changes."
+            echo "No financial snapshot changes."
           else
-            git commit -m "Update annual financial snapshot"
+            git commit -m "Update annual financial snapshot batch"
             git push
           fi
 
