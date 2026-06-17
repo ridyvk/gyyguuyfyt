@@ -8,6 +8,7 @@ on:
       - .github/workflows/update-financials.yml
       - scripts/update_tdnet_financials.py
       - scripts/update_tdnet_financials_strict.py
+      - scripts/run_tdnet_financials_strict.py
       - scripts/update_market_prices.py
       - scripts/finalize_tdnet_only.py
       - public/data/financials.json
@@ -50,7 +51,7 @@ jobs:
         env:
           LOOKBACK_DAYS: ${{ inputs.lookback_days || '31' }}
         run: |
-          python scripts/update_tdnet_financials_strict.py \
+          python scripts/run_tdnet_financials_strict.py \
             --lookback-days "$LOOKBACK_DAYS"
 
       - name: Update market snapshot
