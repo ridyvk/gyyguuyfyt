@@ -1,0 +1,11 @@
+{
+  "generatedAt": null,
+  "mode": "tdnet-only-mvp",
+  "source": "TDnet",
+  "edinetMerged": false,
+  "companies": 0,
+  "nonTdnetRecordsDropped": 0,
+  "tdnetDocumentsScanned": 0,
+  "tdnetDocumentsUpdated": 0,
+  "message": "TDnet決算短信ベースで更新中。EDINETとは統合していません。"
+}
