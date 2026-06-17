@@ -1,4 +1,4 @@
-name: Update TDnet financials
+name: Update annual financials
 
 on:
   push:
@@ -6,11 +6,13 @@ on:
       - main
     paths:
       - .github/workflows/update-financials.yml
+      - scripts/update_edinet_financials.py
+      - scripts/run_edinet_financials_strict.py
       - scripts/update_tdnet_financials.py
       - scripts/update_tdnet_financials_strict.py
-      - scripts/run_tdnet_financials_strict.py
+      - scripts/update_tdnet_financials_overlay_strict.py
       - scripts/update_market_prices.py
-      - scripts/finalize_tdnet_only.py
+      - scripts/finalize_annual_dataset.py
       - public/data/financials.json
       - public/data/market.json
       - public/data/update-status.json
@@ -19,9 +21,13 @@ on:
   workflow_dispatch:
     inputs:
       lookback_days:
-        description: Days to scan in public TDnet listing pages
+        description: Days to scan
         required: false
         default: '31'
+      bootstrap_days:
+        description: EDINET bootstrap days
+        required: false
+        default: '460'
 
 permissions:
   contents: write
@@ -29,7 +35,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: tdnet-financial-update
+  group: annual-financial-update
   cancel-in-progress: true
 
 jobs:
@@ -47,19 +53,34 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Update strict TDnet full-year financial snapshot
+      - name: Update EDINET annual baseline
+        continue-on-error: true
+        env:
+          EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
+          LOOKBACK_DAYS: ${{ inputs.lookback_days || '31' }}
+          BOOTSTRAP_DAYS: ${{ inputs.bootstrap_days || '460' }}
+        run: |
+          if [ -z "$EDINET_API_KEY" ]; then
+            echo "EDINET key is not configured. Skipping annual baseline update."
+          else
+            python scripts/run_edinet_financials_strict.py \
+              --lookback-days "$LOOKBACK_DAYS" \
+              --bootstrap-days "$BOOTSTRAP_DAYS"
+          fi
+
+      - name: Overlay strict TDnet full-year financials
         env:
           LOOKBACK_DAYS: ${{ inputs.lookback_days || '31' }}
         run: |
-          python scripts/run_tdnet_financials_strict.py \
+          python scripts/update_tdnet_financials_overlay_strict.py \
             --lookback-days "$LOOKBACK_DAYS"
 
       - name: Update market snapshot
         continue-on-error: true
         run: python scripts/update_market_prices.py
 
-      - name: Finalize strict TDnet-only dataset
-        run: python scripts/finalize_tdnet_only.py
+      - name: Finalize annual dataset
+        run: python scripts/finalize_annual_dataset.py
 
       - name: Commit updated snapshot
         run: |
@@ -69,7 +90,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No snapshot changes."
           else
-            git commit -m "Update strict TDnet financial snapshot"
+            git commit -m "Update annual financial snapshot"
             git push
           fi
 
