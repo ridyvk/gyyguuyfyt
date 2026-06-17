@@ -1,0 +1,76 @@
+name: Update market prices
+
+on:
+  schedule:
+    - cron: '45 7 * * 1-5'
+    - cron: '45 9 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      max_companies:
+        description: Maximum companies to fetch quotes for
+        required: false
+        default: '4500'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: market-price-update
+  cancel-in-progress: true
+
+jobs:
+  update-market:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Update market snapshot
+        env:
+          MAX_COMPANIES: ${{ inputs.max_companies || '4500' }}
+        run: |
+          python scripts/update_market_prices.py \
+            --max-companies "$MAX_COMPANIES" \
+            --max-workers 8
+
+      - name: Commit updated market snapshot
+        run: |
+          git config user.name "kpi-scope-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/data/market.json
+          if git diff --cached --quiet; then
+            echo "No market snapshot changes."
+          else
+            git commit -m "Update market price snapshot"
+            git push
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build application
+        run: npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
