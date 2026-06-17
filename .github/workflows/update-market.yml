@@ -29,6 +29,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -52,7 +54,8 @@ jobs:
             echo "No market snapshot changes."
           else
             git commit -m "Update market price snapshot"
-            git push
+            git pull --rebase origin main
+            git push origin HEAD:main
           fi
 
       - name: Setup Node
