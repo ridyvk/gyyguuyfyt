@@ -1,11 +1,17 @@
 {
-  "generatedAt": "2026-06-17T01:43:57.229015Z",
-  "mode": "tdnet-only-mvp",
+  "generatedAt": "2026-06-17T01:52:15.792285Z",
+  "mode": "tdnet-only-full-year-strict",
   "source": "TDnet",
+  "acceptedDocumentType": "FullYearEarnings",
   "edinetMerged": false,
-  "companies": 278,
-  "nonTdnetRecordsDropped": 2946,
-  "tdnetDocumentsScanned": 500,
-  "tdnetDocumentsUpdated": 5,
-  "message": "TDnet決算短信ベースで更新中。EDINETとは統合していません。"
+  "quarterlyMerged": false,
+  "companies": 161,
+  "nonStrictRecordsDropped": 0,
+  "tdnetRowsScanned": 500,
+  "tdnetEarningsRows": 400,
+  "tdnetQuarterlyRowsSkipped": 206,
+  "tdnetFullYearFilings": 185,
+  "tdnetDocumentsUpdated": 161,
+  "tdnetStrictFailures": 0,
+  "message": "TDnetの通期決算短信のみで更新中。四半期・中間短信とEDINETは統合していません。"
 }
