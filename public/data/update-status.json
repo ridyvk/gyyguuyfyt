@@ -1,11 +1,11 @@
 {
-  "generatedAt": null,
+  "generatedAt": "2026-06-17T01:43:57.229015Z",
   "mode": "tdnet-only-mvp",
   "source": "TDnet",
   "edinetMerged": false,
-  "companies": 0,
-  "nonTdnetRecordsDropped": 0,
-  "tdnetDocumentsScanned": 0,
-  "tdnetDocumentsUpdated": 0,
+  "companies": 278,
+  "nonTdnetRecordsDropped": 2946,
+  "tdnetDocumentsScanned": 500,
+  "tdnetDocumentsUpdated": 5,
   "message": "TDnet決算短信ベースで更新中。EDINETとは統合していません。"
 }
