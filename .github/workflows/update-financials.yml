@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - .github/workflows/update-financials.yml
+      - .github/triggers/financials-batch.txt
       - scripts/update_edinet_financials.py
       - scripts/update_edinet_financials_batched.py
       - scripts/update_tdnet_financials.py
