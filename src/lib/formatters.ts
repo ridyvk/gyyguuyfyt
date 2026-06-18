@@ -10,6 +10,9 @@ export const formatNumber = (value: number, digits = 1) =>
     minimumFractionDigits: digits,
   }).format(value)
 
+export const hasPreviousMetricValue = (metric: KpiMetric) =>
+  metric.previousValue !== undefined && Number.isFinite(metric.previousValue)
+
 export const formatMetric = (metric: KpiMetric) => {
   if (metric.available === false) return '—'
   const sign = metric.unit === '億円' && metric.value > 0 ? '+' : ''
@@ -17,8 +20,10 @@ export const formatMetric = (metric: KpiMetric) => {
 }
 
 export const formatDelta = (metric: KpiMetric) => {
-  if (metric.available === false) return '前年差なし'
-  const delta = metric.value - metric.previousValue
+  if (metric.available === false || !hasPreviousMetricValue(metric)) {
+    return '前年差なし'
+  }
+  const delta = metric.value - metric.previousValue!
   const sign = delta > 0 ? '+' : ''
   const suffix = metric.unit === '%' ? 'pt' : metric.unit
   return `${sign}${formatNumber(delta)}${suffix}`
