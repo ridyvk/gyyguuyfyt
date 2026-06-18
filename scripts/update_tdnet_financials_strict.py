@@ -16,7 +16,7 @@ import math
 import sys
 import time
 from collections import defaultdict
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from update_edinet_financials import (
