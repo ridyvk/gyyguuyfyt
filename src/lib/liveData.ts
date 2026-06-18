@@ -6,6 +6,7 @@ import type {
   KpiMetric,
   KpiStatus,
   LiveFinancialRecord,
+  LiveMetricValue,
   MarketFundamentals,
   MarketQuote,
   MarketSnapshot,
@@ -92,6 +93,9 @@ const round = (value: number, digits = 1) => {
   return Math.round(value * factor) / factor
 }
 
+const hasFiniteNumber = (value: number | undefined): value is number =>
+  value !== undefined && Number.isFinite(value)
+
 const metricStatus = (key: KpiKey, value: number): KpiStatus => {
   const thresholds: Record<KpiKey, [number, number, boolean]> = {
     revenueGrowth: [3, 10, true],
@@ -120,7 +124,6 @@ const metricStatus = (key: KpiKey, value: number): KpiStatus => {
 
 const createUnavailableMetric = (key: KpiKey): KpiMetric => ({
   value: 0,
-  previousValue: 0,
   unit: units[key],
   status: 'unknown',
   comment: '開示データから取得できません',
@@ -131,18 +134,27 @@ const createUnavailableMetric = (key: KpiKey): KpiMetric => ({
 const createLiveMetric = (
   key: KpiKey,
   value: number,
-  previousValue = value,
-  trend: number[] = [previousValue, value],
+  previousValue?: number,
+  trend?: number[],
 ): KpiMetric => {
   const status = metricStatus(key, value)
   const commentIndex = status === 'good' ? 0 : status === 'normal' ? 1 : 2
+  const normalizedTrend =
+    trend && trend.length >= 2
+      ? trend
+      : hasFiniteNumber(previousValue)
+        ? [previousValue, value]
+        : []
+
   return {
     value: round(value),
-    previousValue: round(previousValue),
+    ...(hasFiniteNumber(previousValue)
+      ? { previousValue: round(previousValue) }
+      : {}),
     unit: units[key],
     status,
     comment: comments[key][commentIndex],
-    trend: trend.map((point) => round(point)),
+    trend: normalizedTrend.map((point) => round(point)),
     available: true,
   }
 }
@@ -204,14 +216,9 @@ const calculateLiveScores = (
 const valuationMetrics = (
   quote?: MarketQuote,
   fundamentals?: MarketFundamentals,
-): Partial<Record<KpiKey, { value: number; previousValue?: number; trend?: number[] }>> => {
+): Partial<Record<KpiKey, LiveMetricValue>> => {
   if (!quote || !fundamentals) return {}
-  const metrics: Partial<
-    Record<KpiKey, { value: number; previousValue?: number; trend?: number[] }>
-  > = {}
-  const prices = [quote.previousClose, quote.close].filter(
-    (value): value is number => value !== undefined,
-  )
+  const metrics: Partial<Record<KpiKey, LiveMetricValue>> = {}
   const eps =
     fundamentals.forecastEps && fundamentals.forecastEps > 0
       ? fundamentals.forecastEps
@@ -220,19 +227,23 @@ const valuationMetrics = (
   if (eps !== undefined && eps > 0) {
     metrics.per = {
       value: quote.close / eps,
-      previousValue: quote.previousClose
-        ? quote.previousClose / eps
-        : quote.close / eps,
-      trend: prices.map((price) => price / eps),
+      ...(quote.previousClose !== undefined
+        ? {
+            previousValue: quote.previousClose / eps,
+            trend: [quote.previousClose / eps, quote.close / eps],
+          }
+        : {}),
     }
   }
   if (bps !== undefined && bps > 0) {
     metrics.pbr = {
       value: quote.close / bps,
-      previousValue: quote.previousClose
-        ? quote.previousClose / bps
-        : quote.close / bps,
-      trend: prices.map((price) => price / bps),
+      ...(quote.previousClose !== undefined
+        ? {
+            previousValue: quote.previousClose / bps,
+            trend: [quote.previousClose / bps, quote.close / bps],
+          }
+        : {}),
     }
   }
   return metrics
@@ -244,7 +255,7 @@ const mergeRecord = (
   quote?: MarketQuote,
   fundamentals?: MarketFundamentals,
 ): Company => {
-  const recordMetrics = {
+  const recordMetrics: Partial<Record<KpiKey, LiveMetricValue>> = {
     ...record.metrics,
     ...valuationMetrics(quote, fundamentals ?? record.valuation),
   }
@@ -277,10 +288,13 @@ const mergeRecord = (
   kpiKeys.forEach((key) => {
     rawMetrics[key] = recordMetrics[key]?.value ?? neutralMetrics[key]
   })
+  const history = record.history ?? []
   const previousOperatingMargin =
     recordMetrics.operatingMargin?.previousValue ??
+    (history.length >= 2
+      ? history[history.length - 2]?.operatingMargin
+      : undefined) ??
     rawMetrics.operatingMargin
-  const history = record.history
   const warnings = buildWarnings(
     rawMetrics,
     previousOperatingMargin,
