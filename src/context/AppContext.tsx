@@ -13,11 +13,17 @@ import {
   saveCompareList,
   saveWatchlist,
 } from '../lib/storage'
-import type { Company, FinancialSnapshot, MarketSnapshot } from '../types'
+import type {
+  Company,
+  FinancialSnapshot,
+  MarketSnapshot,
+  UpdateStatus,
+} from '../types'
 import {
   hasFinancialData,
   loadFinancialSnapshot,
   loadMarketSnapshot,
+  loadUpdateStatus,
   mergeLiveCompanies,
 } from '../lib/liveData'
 
@@ -28,6 +34,7 @@ interface AppContextValue {
   storageReady: boolean
   financialSnapshot: FinancialSnapshot | null
   marketSnapshot: MarketSnapshot | null
+  updateStatus: UpdateStatus | null
   toggleWatchlist: (companyId: string) => void
   toggleCompare: (companyId: string) => boolean
   removeFromCompare: (companyId: string) => void
@@ -48,6 +55,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [marketSnapshot, setMarketSnapshot] = useState<MarketSnapshot | null>(
     null,
   )
+  const [updateStatus, setUpdateStatus] = useState<UpdateStatus | null>(null)
 
   useEffect(() => {
     let active = true
@@ -57,6 +65,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       loadCompareList(),
       loadFinancialSnapshot().catch(() => null),
       loadMarketSnapshot().catch(() => null),
+      loadUpdateStatus().catch(() => null),
     ])
       .then(
         ([
@@ -65,6 +74,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           storedCompare,
           snapshot,
           marketSnapshot,
+          updateStatus,
         ]) => {
         if (!active) return
         const loadedCompanies = mergeLiveCompanies(
@@ -75,6 +85,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setCompanies(loadedCompanies)
         setFinancialSnapshot(snapshot)
         setMarketSnapshot(marketSnapshot)
+        setUpdateStatus(updateStatus)
         const validIds = new Set(
           loadedCompanies.map((company) => company.id),
         )
@@ -145,6 +156,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       storageReady,
       financialSnapshot,
       marketSnapshot,
+      updateStatus,
       toggleWatchlist,
       toggleCompare,
       removeFromCompare,
@@ -159,6 +171,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       storageReady,
       financialSnapshot,
       marketSnapshot,
+      updateStatus,
       toggleWatchlist,
       toggleCompare,
       removeFromCompare,
