@@ -1,6 +1,11 @@
 import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { formatDelta, formatMetric, statusLabel } from '../lib/formatters'
+import {
+  formatDelta,
+  formatMetric,
+  hasPreviousMetricValue,
+  statusLabel,
+} from '../lib/formatters'
 import type { KpiMetric } from '../types'
 import MiniTrendChart from './MiniTrendChart'
 
@@ -19,7 +24,8 @@ const statusColors = {
 export default function KpiTile({ label, metric }: KpiTileProps) {
   const tileRef = useRef<HTMLElement>(null)
   const [visible, setVisible] = useState(false)
-  const delta = metric.value - metric.previousValue
+  const hasPreviousValue = hasPreviousMetricValue(metric)
+  const delta = hasPreviousValue ? metric.value - metric.previousValue! : 0
   const DeltaIcon = delta > 0.05 ? ArrowUpRight : delta < -0.05 ? ArrowDownRight : Minus
 
   useEffect(() => {
@@ -54,7 +60,7 @@ export default function KpiTile({ label, metric }: KpiTileProps) {
         </span>
       </div>
       <div className="kpi-tile__value">{formatMetric(metric)}</div>
-      {metric.available === false ? (
+      {metric.available === false || !hasPreviousValue ? (
         <div className="kpi-tile__delta">
           <Minus size={14} />
           {formatDelta(metric)}
