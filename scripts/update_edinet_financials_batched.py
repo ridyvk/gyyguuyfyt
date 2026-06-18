@@ -77,6 +77,34 @@ def filing_sort_key(filing: dict) -> tuple[str, str, str]:
     )
 
 
+def collect_processed_doc_ids(snapshot: dict, records: dict[str, dict]) -> set[str]:
+    """Return EDINET document IDs already attempted or represented in records.
+
+    A company can keep a newer TDnet record as the displayed financial record.
+    In that case, the older EDINET annual filing should still be considered
+    processed so future batches do not download and parse the same ZIP forever.
+    """
+    stats = snapshot.get("stats", {}) or {}
+    processed = {str(doc_id) for doc_id in stats.get("edinetProcessedDocumentIds", []) if doc_id}
+    for record in records.values():
+        if not isinstance(record, dict):
+            continue
+        if record.get("source") == "EDINET" and record.get("documentId"):
+            processed.add(str(record["documentId"]))
+        if record.get("edinetBaselineDocumentId"):
+            processed.add(str(record["edinetBaselineDocumentId"]))
+    return processed
+
+
+def mark_tdnet_record_with_edinet_baseline(existing: dict, record: dict) -> None:
+    """Mark a newer TDnet record as having an EDINET annual baseline processed."""
+    existing["edinetBaselineDocumentId"] = record.get("documentId")
+    existing["edinetBaselinePeriodEnd"] = record.get("periodEnd")
+    existing["edinetBaselineFiledAt"] = record.get("filedAt")
+    existing["edinetBaselineSourceUrl"] = record.get("sourceUrl")
+    existing.setdefault("quality", {})["edinetAnnualBaselineProcessed"] = True
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--scan-days", type=int, default=460)
@@ -92,12 +120,22 @@ def main() -> int:
     edinet.FACT_NAMES = STRICT_FACT_NAMES
     snapshot = normalize_snapshot(load_json(SNAPSHOT), load_company_codes())
     records = snapshot.setdefault("records", {})
+    processed_doc_ids = collect_processed_doc_ids(snapshot, records)
 
     filings, scanned = edinet.list_filings(api_key, args.scan_days)
     candidates = []
+    already_done = 0
     for code, filing in filings.items():
+        doc_id = str(filing.get("docID") or "")
         existing = records.get(str(code)) or {}
-        if existing.get("source") == "EDINET" and existing.get("documentId") == filing.get("docID"):
+        if not doc_id:
+            continue
+        if doc_id in processed_doc_ids:
+            already_done += 1
+            continue
+        if existing.get("source") == "EDINET" and existing.get("documentId") == doc_id:
+            processed_doc_ids.add(doc_id)
+            already_done += 1
             continue
         candidates.append(filing)
     candidates.sort(key=filing_sort_key, reverse=True)
@@ -105,11 +143,17 @@ def main() -> int:
     batch = candidates[: max(0, args.max_documents)]
 
     updated = 0
+    processed_this_batch = 0
+    baseline_marked = 0
+    no_metrics = 0
     failures: list[str] = []
     for index, filing in enumerate(batch, 1):
+        doc_id = str(filing.get("docID") or "")
         try:
             archive = edinet.get(f"{edinet.API}/documents/{filing['docID']}?type=1", api_key)
             record = annotate_record(edinet.build_record(filing, edinet.xbrl_from_zip(archive)))
+            processed_doc_ids.add(doc_id)
+            processed_this_batch += 1
             existing = records.get(record["code"])
             existing_key = (
                 str((existing or {}).get("periodEnd") or ""),
@@ -119,6 +163,11 @@ def main() -> int:
             if record.get("metrics") and record_key >= existing_key:
                 records[record["code"]] = record
                 updated += 1
+            elif record.get("metrics") and existing and existing.get("source") == "TDnet":
+                mark_tdnet_record_with_edinet_baseline(existing, record)
+                baseline_marked += 1
+            else:
+                no_metrics += 1
         except Exception as error:
             failures.append(f"{filing.get('secCode')}:{filing.get('docID')}: {error}")
         if index % 50 == 0:
@@ -145,6 +194,7 @@ def main() -> int:
                 "quarterlyMerged": False,
                 "note": (
                     "GitHub Actionsの長時間実行を避けるため、EDINET年次データを複数回に分けて構築します。"
+                    "一度処理したEDINET書類IDを記録し、同じXBRLを繰り返し処理しません。"
                     "OrdinaryIncomeは売上として使いません。"
                 ),
             },
@@ -158,6 +208,11 @@ def main() -> int:
                 "edinetPendingBeforeBatch": pending_total,
                 "edinetBatchSize": len(batch),
                 "edinetDocumentsUpdated": updated,
+                "edinetDocumentsProcessedThisBatch": processed_this_batch,
+                "edinetDocumentsAlreadyProcessed": already_done,
+                "edinetTdnetBaselineMarked": baseline_marked,
+                "edinetNoMetricDocuments": no_metrics,
+                "edinetProcessedDocumentIds": sorted(processed_doc_ids),
                 "edinetBatchFailures": len(failures),
                 "edinetBatchGeneratedAt": generated_at,
             },
@@ -170,7 +225,9 @@ def main() -> int:
     print(
         f"Saved annual baseline batch: records={len(records)}, "
         f"EDINET={edinet_count}, TDnet={tdnet_count}, "
-        f"pending_before_batch={pending_total}, updated={updated}, failures={len(failures)}."
+        f"pending_before_batch={pending_total}, processed={processed_this_batch}, "
+        f"updated={updated}, tdnet_baseline_marked={baseline_marked}, "
+        f"failures={len(failures)}."
     )
     for failure in failures[:30]:
         print(f"warning: {failure}", file=sys.stderr)
