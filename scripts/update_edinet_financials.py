@@ -72,7 +72,6 @@ FACT_NAMES = {
     "inventory": (
         "Inventories",
         "InventoriesIFRS",
-        "MerchandiseAndFinishedGoods",
     ),
     "receivables": (
         "NotesAndAccountsReceivableTradeAndContractAssets",
@@ -116,6 +115,17 @@ DEBT_COMPONENTS = (
     "BorrowingsNoncurrent",
     "BorrowingsNoncurrentIFRS",
 )
+INVENTORY_COMPONENTS = (
+    "MerchandiseAndFinishedGoods",
+    "Merchandise",
+    "FinishedGoods",
+    "SemiFinishedGoods",
+    "WorkInProcess",
+    "RawMaterialsAndSupplies",
+    "RawMaterials",
+    "Supplies",
+)
+DURATION_KEYS = {"revenue", "operatingIncome", "profit", "operatingCf"}
 
 
 def local_name(tag: str) -> str:
@@ -274,6 +284,19 @@ def values_for(
     }
 
 
+def summed_values_for(
+    contexts: dict,
+    facts: dict,
+    names: tuple[str, ...],
+    duration: bool = False,
+) -> dict[str, float]:
+    result: dict[str, float] = defaultdict(float)
+    for name in names:
+        for period_end, value in values_for(contexts, facts, (name,), duration).items():
+            result[period_end] += value
+    return dict(result)
+
+
 def previous(values: dict[str, float], period_end: str) -> float | None:
     candidates = [(key, value) for key, value in values.items() if key < period_end]
     return max(candidates, default=(None, None))[1]
@@ -314,15 +337,13 @@ def build_record(filing: dict, data: bytes) -> dict:
     contexts, facts = parse_xbrl(data)
     period_end = str(filing["periodEnd"])
     series = {
-        key: values_for(contexts, facts, names, key in {"revenue", "operatingIncome", "profit", "operatingCf"})
+        key: values_for(contexts, facts, names, key in DURATION_KEYS)
         for key, names in FACT_NAMES.items()
     }
     if not series["debt"]:
-        debt: dict[str, float] = defaultdict(float)
-        for name in DEBT_COMPONENTS:
-            for key, value in values_for(contexts, facts, (name,), False).items():
-                debt[key] += value
-        series["debt"] = dict(debt)
+        series["debt"] = summed_values_for(contexts, facts, DEBT_COMPONENTS)
+    if not series["inventory"]:
+        series["inventory"] = summed_values_for(contexts, facts, INVENTORY_COMPONENTS)
 
     current = {key: at(values, period_end) for key, values in series.items()}
     prior = {key: previous(values, period_end) for key, values in series.items()}
