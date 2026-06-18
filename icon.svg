@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="KPI Scope icon">
+  <rect width="512" height="512" fill="#f2f2f7"/>
+  <rect x="64" y="64" width="384" height="384" fill="none" stroke="#1c1c1e" stroke-width="18"/>
+  <text x="256" y="292" text-anchor="middle" font-family="Yu Mincho, YuMincho, Hiragino Mincho ProN, serif" font-size="92" fill="#1c1c1e">KPI</text>
+</svg>
