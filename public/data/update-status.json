@@ -10,7 +10,9 @@
   "quarterlyMerged": false,
   "batched": true,
   "companies": 3225,
-  "targetCompanies": 3000,
+  "targetCompanies": 3734,
+  "missingCompanies": 509,
+  "coverageRatio": 86.37,
   "edinetCompanies": 3087,
   "tdnetCompanies": 138,
   "edinetDocumentsScanned": 104860,
@@ -26,5 +28,5 @@
   "tdnetFullYearFilings": 187,
   "tdnetDocumentsUpdated": 132,
   "tdnetStrictFailures": 0,
-  "message": "EDINET年次ベースライン＋TDnet通期決算短信オーバーレイで更新済み。四半期・中間短信は統合していません。"
+  "message": "EDINET年次ベースライン＋TDnet通期決算短信オーバーレイで更新済み。四半期・中間短信は統合していません。対象3,734社中3,225社を取得済み、未取得509社。"
 }
