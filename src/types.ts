@@ -21,6 +21,7 @@ export interface Scores extends Record<ScoreKey, number> {
 }
 
 export type KpiStatus = 'good' | 'normal' | 'warning' | 'unknown'
+export type KpiComparisonLabel = '前年差' | '前日差'
 
 export type KpiKey =
   | 'revenueGrowth'
@@ -39,6 +40,7 @@ export type KpiKey =
 export interface KpiMetric {
   value: number
   previousValue?: number
+  comparisonLabel?: KpiComparisonLabel
   unit: '%' | '倍' | '億円'
   status: KpiStatus
   comment: string
@@ -89,6 +91,7 @@ export interface Company {
 export interface LiveMetricValue {
   value: number
   previousValue?: number
+  comparisonLabel?: KpiComparisonLabel
   trend?: number[]
 }
 
@@ -113,49 +116,67 @@ export interface LiveFinancialRecord {
   valuation?: ValuationBasis
 }
 
+export interface FinancialDataPolicy {
+  mode?: string
+  baselineSource?: string
+  overlaySource?: string
+  primarySource?: string
+  acceptedDocumentType?: string
+  edinetMerged?: boolean
+  tdnetOverlay?: boolean
+  quarterlyMerged?: boolean
+  batched?: boolean
+  note?: string
+}
+
+export interface FinancialStats {
+  companies: number
+  targetCompanies?: number
+  missingCompanies?: number
+  coverageRatio?: number
+  documentsScanned?: number
+  documentsUpdated?: number
+  edinetCompanies?: number
+  tdnetCompanies?: number
+  edinetDocumentsScanned?: number
+  edinetDocumentsUpdated?: number
+  edinetPendingBeforeBatch?: number
+  edinetBatchSize?: number
+  edinetEstimatedRemaining?: number
+  edinetBatchFailures?: number
+  tdnetDocumentsScanned?: number
+  tdnetDocumentsUpdated?: number
+  tdnetRowsScanned?: number
+  tdnetEarningsRows?: number
+  tdnetQuarterlyRowsSkipped?: number
+  tdnetFullYearFilings?: number
+  tdnetStrictFailures?: number
+  nonAnnualRecordsDropped?: number
+}
+
 export interface FinancialSnapshot {
   schemaVersion: 1 | 2 | 3
   generatedAt: string | null
   source: 'EDINET' | 'EDINET+TDnet' | 'TDnet'
   status: 'ready' | 'building' | 'setup-required' | 'error'
   message: string
-  dataPolicy?: {
-    mode?: string
-    baselineSource?: string
-    overlaySource?: string
-    primarySource?: string
-    acceptedDocumentType?: string
-    edinetMerged?: boolean
-    tdnetOverlay?: boolean
-    quarterlyMerged?: boolean
-    batched?: boolean
-    note?: string
-  }
+  dataPolicy?: FinancialDataPolicy
   records: Record<string, LiveFinancialRecord>
-  stats: {
-    companies: number
-    targetCompanies?: number
-    missingCompanies?: number
-    coverageRatio?: number
-    documentsScanned?: number
-    documentsUpdated?: number
-    edinetCompanies?: number
-    tdnetCompanies?: number
-    edinetDocumentsScanned?: number
-    edinetDocumentsUpdated?: number
-    edinetPendingBeforeBatch?: number
-    edinetBatchSize?: number
-    edinetEstimatedRemaining?: number
-    edinetBatchFailures?: number
-    tdnetDocumentsScanned?: number
-    tdnetDocumentsUpdated?: number
-    tdnetRowsScanned?: number
-    tdnetEarningsRows?: number
-    tdnetQuarterlyRowsSkipped?: number
-    tdnetFullYearFilings?: number
-    tdnetStrictFailures?: number
-    nonAnnualRecordsDropped?: number
-  }
+  stats: FinancialStats
+}
+
+export interface UpdateStatus extends Partial<FinancialStats> {
+  generatedAt?: string | null
+  mode?: string
+  status?: 'ready' | 'building' | 'setup-required' | 'error'
+  source?: 'EDINET' | 'EDINET+TDnet' | 'TDnet'
+  baselineSource?: string
+  overlaySource?: string
+  edinetMerged?: boolean
+  tdnetOverlay?: boolean
+  quarterlyMerged?: boolean
+  batched?: boolean
+  message?: string
 }
 
 export interface MarketQuote {
