@@ -19,13 +19,14 @@ export default function MiniTrendChart({
   height = 48,
   showTooltip = false,
 }: MiniTrendChartProps) {
-  if (data.length === 0) {
-    return <div className="mini-trend-empty" style={{ height }}>データなし</div>
+  const validData = data.filter((value) => Number.isFinite(value))
+  if (validData.length < 2) {
+    return <div className="mini-trend-empty" style={{ height }}>推移なし</div>
   }
-  const chartData = data.map((value, index) => ({ index, value }))
+  const chartData = validData.map((value, index) => ({ index, value }))
   const domain = [
-    Math.min(...data) - Math.abs(Math.min(...data)) * 0.08 - 0.5,
-    Math.max(...data) + Math.abs(Math.max(...data)) * 0.08 + 0.5,
+    Math.min(...validData) - Math.abs(Math.min(...validData)) * 0.08 - 0.5,
+    Math.max(...validData) + Math.abs(Math.max(...validData)) * 0.08 + 0.5,
   ]
 
   return (
