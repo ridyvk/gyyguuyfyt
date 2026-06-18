@@ -1,6 +1,7 @@
 import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import {
+  comparisonLabelForMetric,
   formatDelta,
   formatMetric,
   hasPreviousMetricValue,
@@ -25,6 +26,7 @@ export default function KpiTile({ label, metric }: KpiTileProps) {
   const tileRef = useRef<HTMLElement>(null)
   const [visible, setVisible] = useState(false)
   const hasPreviousValue = hasPreviousMetricValue(metric)
+  const comparisonLabel = comparisonLabelForMetric(metric)
   const delta = hasPreviousValue ? metric.value - metric.previousValue! : 0
   const DeltaIcon = delta > 0.05 ? ArrowUpRight : delta < -0.05 ? ArrowDownRight : Minus
 
@@ -68,7 +70,7 @@ export default function KpiTile({ label, metric }: KpiTileProps) {
       ) : (
         <div className={`kpi-tile__delta ${delta >= 0 ? 'is-up' : 'is-down'}`}>
           <DeltaIcon size={14} />
-          前年差 {formatDelta(metric)}
+          {comparisonLabel} {formatDelta(metric)}
         </div>
       )}
       {visible ? (
