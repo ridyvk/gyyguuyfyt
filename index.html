@@ -7,6 +7,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="KPI Scope" />
+    <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+    <link rel="manifest" href="./manifest.webmanifest" />
     <meta
       name="description"
       content="日本の上場企業をKPIタイルで読み解く企業分析アプリ"
@@ -24,6 +26,15 @@
   </head>
   <body>
     <div id="root" class="boot"><div><strong>KPI Scope</strong><p>データを読み込んでいます...</p></div></div>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch((error) => {
+            console.warn('KPI Scope service worker registration failed', error)
+          })
+        })
+      }
+    </script>
     <script type="module">
       const repository = 'ridyvk/gyyguuyfyt'
       const fallbackSha = '209ba858781f03af090c744ffabe8f9d11042aae'
