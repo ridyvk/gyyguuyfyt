@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT = ROOT / "public/data/financials.json"
 COMPANY_MASTER = ROOT / "src/data/listedCompanies.json"
 SNAPSHOT_SCHEMA_VERSION = 3
+INVENTORY_MODEL_VERSION = 2
 
 STRICT_FACT_NAMES = {
     **edinet.FACT_NAMES,
@@ -58,7 +59,7 @@ def annotate_record(record: dict) -> dict:
     record.setdefault("documentType", "AnnualSecuritiesReport")
     record.setdefault("periodType", "annual")
     record.setdefault("sourceDetail", "EDINET有価証券報告書XBRL・年次")
-    record.setdefault(
+    quality = record.setdefault(
         "quality",
         {
             "policy": "strict-annual-baseline-batched",
@@ -66,6 +67,8 @@ def annotate_record(record: dict) -> dict:
             "ambiguousRevenueTagsExcluded": ["OrdinaryIncome"],
         },
     )
+    quality["inventoryPolicy"] = "Inventoriesタグを優先し、無い場合は商品・製品、仕掛品、原材料等を合算"
+    quality["inventoryModelVersion"] = INVENTORY_MODEL_VERSION
     return record
 
 
@@ -77,13 +80,20 @@ def filing_sort_key(filing: dict) -> tuple[str, str, str]:
     )
 
 
-def collect_processed_doc_ids(snapshot: dict, records: dict[str, dict]) -> set[str]:
+def collect_processed_doc_ids(
+    snapshot: dict,
+    records: dict[str, dict],
+    inventory_model_upgraded: bool,
+) -> set[str]:
     """Return EDINET document IDs already attempted or represented in records.
 
-    A company can keep a newer TDnet record as the displayed financial record.
-    In that case, the older EDINET annual filing should still be considered
-    processed so future batches do not download and parse the same ZIP forever.
+    When the inventory model changes, return an empty set so existing EDINET
+    filings are reprocessed in future batches and inventoryGrowth is rebuilt
+    from total inventories rather than only merchandise/finished goods.
     """
+    if inventory_model_upgraded:
+        return set()
+
     stats = snapshot.get("stats", {}) or {}
     processed = {str(doc_id) for doc_id in stats.get("edinetProcessedDocumentIds", []) if doc_id}
     for record in records.values():
@@ -102,7 +112,9 @@ def mark_tdnet_record_with_edinet_baseline(existing: dict, record: dict) -> None
     existing["edinetBaselinePeriodEnd"] = record.get("periodEnd")
     existing["edinetBaselineFiledAt"] = record.get("filedAt")
     existing["edinetBaselineSourceUrl"] = record.get("sourceUrl")
-    existing.setdefault("quality", {})["edinetAnnualBaselineProcessed"] = True
+    quality = existing.setdefault("quality", {})
+    quality["edinetAnnualBaselineProcessed"] = True
+    quality["inventoryModelVersion"] = INVENTORY_MODEL_VERSION
 
 
 def main() -> int:
@@ -120,7 +132,13 @@ def main() -> int:
     edinet.FACT_NAMES = STRICT_FACT_NAMES
     snapshot = normalize_snapshot(load_json(SNAPSHOT), load_company_codes())
     records = snapshot.setdefault("records", {})
-    processed_doc_ids = collect_processed_doc_ids(snapshot, records)
+    stats = snapshot.get("stats", {}) or {}
+    inventory_model_upgraded = int(stats.get("inventoryModelVersion") or 0) < INVENTORY_MODEL_VERSION
+    processed_doc_ids = collect_processed_doc_ids(
+        snapshot,
+        records,
+        inventory_model_upgraded,
+    )
 
     filings, scanned = edinet.list_filings(api_key, args.scan_days)
     candidates = []
@@ -133,7 +151,7 @@ def main() -> int:
         if doc_id in processed_doc_ids:
             already_done += 1
             continue
-        if existing.get("source") == "EDINET" and existing.get("documentId") == doc_id:
+        if existing.get("source") == "EDINET" and existing.get("documentId") == doc_id and not inventory_model_upgraded:
             processed_doc_ids.add(doc_id)
             already_done += 1
             continue
@@ -160,7 +178,7 @@ def main() -> int:
                 str((existing or {}).get("filedAt") or ""),
             )
             record_key = (record["periodEnd"], record["filedAt"])
-            if record.get("metrics") and record_key >= existing_key:
+            if record.get("metrics") and (record_key >= existing_key or inventory_model_upgraded):
                 records[record["code"]] = record
                 updated += 1
             elif record.get("metrics") and existing and existing.get("source") == "TDnet":
@@ -196,6 +214,7 @@ def main() -> int:
                     "GitHub Actionsの長時間実行を避けるため、EDINET年次データを複数回に分けて構築します。"
                     "一度処理したEDINET書類IDを記録し、同じXBRLを繰り返し処理しません。"
                     "OrdinaryIncomeは売上として使いません。"
+                    "棚卸資産はInventoriesタグを優先し、無い場合は商品・製品、仕掛品、原材料等を合算します。"
                 ),
             },
             "records": records,
@@ -215,6 +234,8 @@ def main() -> int:
                 "edinetProcessedDocumentIds": sorted(processed_doc_ids),
                 "edinetBatchFailures": len(failures),
                 "edinetBatchGeneratedAt": generated_at,
+                "inventoryModelVersion": INVENTORY_MODEL_VERSION,
+                "inventoryModelRefresh": inventory_model_upgraded,
             },
         }
     )
@@ -227,7 +248,7 @@ def main() -> int:
         f"EDINET={edinet_count}, TDnet={tdnet_count}, "
         f"pending_before_batch={pending_total}, processed={processed_this_batch}, "
         f"updated={updated}, tdnet_baseline_marked={baseline_marked}, "
-        f"failures={len(failures)}."
+        f"failures={len(failures)}, inventory_refresh={inventory_model_upgraded}."
     )
     for failure in failures[:30]:
         print(f"warning: {failure}", file=sys.stderr)
