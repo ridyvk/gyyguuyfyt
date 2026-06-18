@@ -36,7 +36,7 @@ export default function StartupSplash() {
       <div className="startup-splash__glow" />
       <div className="startup-splash__content">
         <div className="startup-splash__logo">
-          <img src="./icon.svg" alt="" />
+          <img src="/gyyguuyfyt/icon-512.jpg" alt="" />
           <span className="startup-splash__shine" />
         </div>
         <div className="startup-splash__wordmark">
