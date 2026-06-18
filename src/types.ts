@@ -38,7 +38,7 @@ export type KpiKey =
 
 export interface KpiMetric {
   value: number
-  previousValue: number
+  previousValue?: number
   unit: '%' | '倍' | '億円'
   status: KpiStatus
   comment: string
@@ -116,16 +116,45 @@ export interface LiveFinancialRecord {
 export interface FinancialSnapshot {
   schemaVersion: 1 | 2 | 3
   generatedAt: string | null
-  source: 'EDINET' | 'EDINET+TDnet'
-  status: 'ready' | 'setup-required' | 'error'
+  source: 'EDINET' | 'EDINET+TDnet' | 'TDnet'
+  status: 'ready' | 'building' | 'setup-required' | 'error'
   message: string
+  dataPolicy?: {
+    mode?: string
+    baselineSource?: string
+    overlaySource?: string
+    primarySource?: string
+    acceptedDocumentType?: string
+    edinetMerged?: boolean
+    tdnetOverlay?: boolean
+    quarterlyMerged?: boolean
+    batched?: boolean
+    note?: string
+  }
   records: Record<string, LiveFinancialRecord>
   stats: {
     companies: number
-    documentsScanned: number
-    documentsUpdated: number
+    targetCompanies?: number
+    missingCompanies?: number
+    coverageRatio?: number
+    documentsScanned?: number
+    documentsUpdated?: number
+    edinetCompanies?: number
+    tdnetCompanies?: number
+    edinetDocumentsScanned?: number
+    edinetDocumentsUpdated?: number
+    edinetPendingBeforeBatch?: number
+    edinetBatchSize?: number
+    edinetEstimatedRemaining?: number
+    edinetBatchFailures?: number
     tdnetDocumentsScanned?: number
     tdnetDocumentsUpdated?: number
+    tdnetRowsScanned?: number
+    tdnetEarningsRows?: number
+    tdnetQuarterlyRowsSkipped?: number
+    tdnetFullYearFilings?: number
+    tdnetStrictFailures?: number
+    nonAnnualRecordsDropped?: number
   }
 }
 
