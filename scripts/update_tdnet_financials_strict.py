@@ -19,7 +19,14 @@ from collections import defaultdict
 from datetime import date, datetime, timezone
 from pathlib import Path
 
-from update_edinet_financials import add_metric, at, growth, percent, previous
+from update_edinet_financials import (
+    INVENTORY_COMPONENTS,
+    add_metric,
+    at,
+    growth,
+    percent,
+    previous,
+)
 from update_tdnet_financials import (
     BASE_URL,
     COMPANY_MASTER,
@@ -91,7 +98,6 @@ STRICT_TDNET_FACT_NAMES = {
     "inventory": (
         "Inventories",
         "InventoriesIFRS",
-        "MerchandiseAndFinishedGoods",
     ),
     "receivables": (
         "NotesAndAccountsReceivableTradeAndContractAssets",
@@ -197,6 +203,19 @@ def values_for(
     }
 
 
+def summed_values_for(
+    contexts: dict,
+    facts: dict,
+    names: tuple[str, ...],
+    duration: bool = False,
+) -> dict[str, float]:
+    result: dict[str, float] = defaultdict(float)
+    for name in names:
+        for period_end, value in values_for(contexts, facts, (name,), duration).items():
+            result[period_end] += value
+    return dict(result)
+
+
 def infer_period_end(contexts: dict) -> str:
     candidates: list[str] = []
     for context_id, context in contexts.items():
@@ -282,11 +301,9 @@ def build_record(filing: dict, archive_data: bytes) -> dict:
         for key, names in STRICT_TDNET_FACT_NAMES.items()
     }
     if not series["debt"]:
-        debt: dict[str, float] = defaultdict(float)
-        for name in TDNET_DEBT_COMPONENTS:
-            for key, value in values_for(contexts, facts, (name,), False).items():
-                debt[key] += value
-        series["debt"] = dict(debt)
+        series["debt"] = summed_values_for(contexts, facts, TDNET_DEBT_COMPONENTS)
+    if not series["inventory"]:
+        series["inventory"] = summed_values_for(contexts, facts, INVENTORY_COMPONENTS)
 
     current = {key: at(values, period_end) for key, values in series.items()}
     prior = {key: previous(values, period_end) for key, values in series.items()}
@@ -409,6 +426,7 @@ def build_record(filing: dict, archive_data: bytes) -> dict:
             "quarterlySkipped": True,
             "edinetMerged": False,
             "ambiguousRevenueTagsExcluded": ["OrdinaryIncome"],
+            "inventoryPolicy": "Inventoriesタグを優先し、無い場合は商品・製品、仕掛品、原材料等を合算",
         },
     }
     if valuation:
