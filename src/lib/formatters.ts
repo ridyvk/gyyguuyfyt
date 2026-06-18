@@ -10,6 +10,9 @@ export const formatNumber = (value: number, digits = 1) =>
     minimumFractionDigits: digits,
   }).format(value)
 
+export const comparisonLabelForMetric = (metric: KpiMetric) =>
+  metric.comparisonLabel ?? '前年差'
+
 export const hasPreviousMetricValue = (metric: KpiMetric) =>
   metric.previousValue !== undefined && Number.isFinite(metric.previousValue)
 
@@ -21,7 +24,7 @@ export const formatMetric = (metric: KpiMetric) => {
 
 export const formatDelta = (metric: KpiMetric) => {
   if (metric.available === false || !hasPreviousMetricValue(metric)) {
-    return '前年差なし'
+    return `${comparisonLabelForMetric(metric)}なし`
   }
   const delta = metric.value - metric.previousValue!
   const sign = delta > 0 ? '+' : ''
