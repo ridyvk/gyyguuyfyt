@@ -2,6 +2,7 @@ import type {
   Company,
   CompanyMetrics,
   FinancialSnapshot,
+  KpiComparisonLabel,
   KpiKey,
   KpiMetric,
   KpiStatus,
@@ -11,6 +12,7 @@ import type {
   MarketQuote,
   MarketSnapshot,
   Scores,
+  UpdateStatus,
 } from '../types'
 import {
   buildAnalysisComment,
@@ -96,6 +98,13 @@ const round = (value: number, digits = 1) => {
 const hasFiniteNumber = (value: number | undefined): value is number =>
   value !== undefined && Number.isFinite(value)
 
+const isReliableDailyQuoteComparison = (quote: MarketQuote) => {
+  if (!hasFiniteNumber(quote.previousClose) || quote.previousClose <= 0) return false
+  if (!Number.isFinite(quote.close) || quote.close <= 0) return false
+  const change = Math.abs(quote.close / quote.previousClose - 1)
+  return change <= 0.35
+}
+
 const metricStatus = (key: KpiKey, value: number): KpiStatus => {
   const thresholds: Record<KpiKey, [number, number, boolean]> = {
     revenueGrowth: [3, 10, true],
@@ -136,6 +145,7 @@ const createLiveMetric = (
   value: number,
   previousValue?: number,
   trend?: number[],
+  comparisonLabel: KpiComparisonLabel = '前年差',
 ): KpiMetric => {
   const status = metricStatus(key, value)
   const commentIndex = status === 'good' ? 0 : status === 'normal' ? 1 : 2
@@ -149,8 +159,8 @@ const createLiveMetric = (
   return {
     value: round(value),
     ...(hasFiniteNumber(previousValue)
-      ? { previousValue: round(previousValue) }
-      : {}),
+      ? { previousValue: round(previousValue), comparisonLabel }
+      : { comparisonLabel }),
     unit: units[key],
     status,
     comment: comments[key][commentIndex],
@@ -219,6 +229,7 @@ const valuationMetrics = (
 ): Partial<Record<KpiKey, LiveMetricValue>> => {
   if (!quote || !fundamentals) return {}
   const metrics: Partial<Record<KpiKey, LiveMetricValue>> = {}
+  const canCompareDay = isReliableDailyQuoteComparison(quote)
   const eps =
     fundamentals.forecastEps && fundamentals.forecastEps > 0
       ? fundamentals.forecastEps
@@ -227,10 +238,11 @@ const valuationMetrics = (
   if (eps !== undefined && eps > 0) {
     metrics.per = {
       value: quote.close / eps,
-      ...(quote.previousClose !== undefined
+      comparisonLabel: '前日差',
+      ...(canCompareDay
         ? {
-            previousValue: quote.previousClose / eps,
-            trend: [quote.previousClose / eps, quote.close / eps],
+            previousValue: quote.previousClose! / eps,
+            trend: [quote.previousClose! / eps, quote.close / eps],
           }
         : {}),
     }
@@ -238,10 +250,11 @@ const valuationMetrics = (
   if (bps !== undefined && bps > 0) {
     metrics.pbr = {
       value: quote.close / bps,
-      ...(quote.previousClose !== undefined
+      comparisonLabel: '前日差',
+      ...(canCompareDay
         ? {
-            previousValue: quote.previousClose / bps,
-            trend: [quote.previousClose / bps, quote.close / bps],
+            previousValue: quote.previousClose! / bps,
+            trend: [quote.previousClose! / bps, quote.close / bps],
           }
         : {}),
     }
@@ -279,6 +292,7 @@ const mergeRecord = (
               live.value,
               live.previousValue,
               live.trend,
+              live.comparisonLabel,
             )
           : createUnavailableMetric(key),
       ]
@@ -360,6 +374,15 @@ export const loadFinancialSnapshot = async (): Promise<FinancialSnapshot> => {
     throw new Error(`Financial snapshot could not be loaded: ${response.status}`)
   }
   return response.json() as Promise<FinancialSnapshot>
+}
+
+export const loadUpdateStatus = async (): Promise<UpdateStatus> => {
+  const url = `${import.meta.env.BASE_URL}data/update-status.json?v=${Date.now()}`
+  const response = await fetch(url, { cache: 'no-store' })
+  if (!response.ok) {
+    throw new Error(`Update status could not be loaded: ${response.status}`)
+  }
+  return response.json() as Promise<UpdateStatus>
 }
 
 export const loadMarketSnapshot = async (): Promise<MarketSnapshot> => {
