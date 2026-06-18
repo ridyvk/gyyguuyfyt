@@ -1,5 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="KPI Scope icon">
-  <rect width="512" height="512" fill="#f2f2f7"/>
-  <rect x="64" y="64" width="384" height="384" fill="none" stroke="#1c1c1e" stroke-width="18"/>
-  <text x="256" y="292" text-anchor="middle" font-family="Yu Mincho, YuMincho, Hiragino Mincho ProN, serif" font-size="92" fill="#1c1c1e">KPI</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 1536" role="img" aria-label="KPI Scope icon">
+  <rect width="1536" height="1536" fill="#f7f9fc"/>
+  <rect x="270" y="246" width="996" height="996" rx="178" fill="#f4f8ff" fill-opacity="0.58" stroke="#9bc4f0" stroke-width="10"/>
+  <rect x="286" y="262" width="964" height="964" rx="164" fill="none" stroke="#dceeff" stroke-width="8" opacity="0.9"/>
+  <circle cx="715" cy="627" r="292" fill="#eef7ff" fill-opacity="0.72" stroke="#7eb0e9" stroke-width="12"/>
+  <circle cx="715" cy="627" r="266" fill="#f7fbff" fill-opacity="0.88" stroke="#c8def7" stroke-width="8"/>
+  <path d="M474 623c67-105 182-163 300-146 103 15 178 80 204 160-69-32-146-28-223 14-86 47-173 48-281-28Z" fill="#0f79de" opacity="0.72"/>
+  <path d="M506 758c77-3 127-42 184-83 82-60 168-82 279-22-38 91-134 170-252 187-87 12-162-14-211-82Z" fill="#5aa9f2" opacity="0.45"/>
+  <path d="M543 486c97 85 157 76 246 41 80-31 141-18 205 37-33-94-133-163-252-160-75 2-143 31-199 82Z" fill="#ffffff" opacity="0.72"/>
+  <path d="M506 690c93-1 134-44 190-87 74-56 141-55 222 9-66 6-111 41-162 81-77 59-153 70-250-3Z" fill="#ffffff" opacity="0.72"/>
+  <path d="M590 828c95-69 160-58 237-24 83 36 135 12 187-42-42 101-140 169-264 176-69 4-123-31-160-110Z" fill="#ffffff" opacity="0.55"/>
+  <circle cx="715" cy="627" r="292" fill="none" stroke="#eaf5ff" stroke-width="18" opacity="0.75"/>
+  <path d="M908 837l47-47 238 238c26 26 26 69 0 95l-28 28c-26 26-69 26-95 0L832 913l47-47Z" fill="#f6fbff" fill-opacity="0.66" stroke="#8ebbea" stroke-width="10"/>
+  <path d="M956 790l-75 75" stroke="#d8ecff" stroke-width="18" stroke-linecap="round" opacity="0.8"/>
+  <ellipse cx="768" cy="1226" rx="430" ry="60" fill="#b6cce8" opacity="0.18"/>
 </svg>
