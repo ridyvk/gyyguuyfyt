@@ -28,15 +28,10 @@ export default function StartupSplash() {
   if (!visible) return null
 
   return (
-    <div
-      className={`startup-splash${leaving ? ' is-leaving' : ''}`}
-      role="status"
-      aria-label="KPI Scopeを起動しています"
-    >
+    <div className={`startup-splash${leaving ? ' is-leaving' : ''}`} role="status" aria-label="KPI Scopeを起動しています">
       <div className="startup-splash__glow" />
       <div className="startup-splash__content">
         <div className="startup-splash__logo">
-          <img src="/gyyguuyfyt/icon-512.jpg" alt="" />
           <span className="startup-splash__shine" />
         </div>
         <div className="startup-splash__wordmark">
