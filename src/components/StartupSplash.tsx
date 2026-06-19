@@ -11,13 +11,13 @@ export default function StartupSplash() {
       setVisible(false)
       document.body.classList.remove('startup-active')
       window.dispatchEvent(new Event('kpi-startup-complete'))
-    }, 1300)
+    }, 1500)
 
     const safetyTimer = window.setTimeout(() => {
       setVisible(false)
       document.body.classList.remove('startup-active')
       window.dispatchEvent(new Event('kpi-startup-complete'))
-    }, 1700)
+    }, 1900)
 
     return () => {
       window.clearTimeout(timer)
@@ -30,11 +30,11 @@ export default function StartupSplash() {
 
   return (
     <div className="startup-splash" aria-hidden="true">
-      <div className="startup-splash__scan" />
-      <div className="startup-splash__dots">
-        <span />
-        <span />
-        <span />
+      <div className="startup-splash__grid" />
+      <div className="startup-splash__boot">
+        <span className="startup-splash__core" />
+        <span className="startup-splash__ring" />
+        <span className="startup-splash__beam" />
       </div>
     </div>
   )
