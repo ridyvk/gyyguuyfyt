@@ -1,4 +1,4 @@
-const KPI_SCOPE_SW_VERSION = '20260619-glass-icon-1'
+const KPI_SCOPE_SW_VERSION = '20260619-photo1'
 
 self.addEventListener('install', () => self.skipWaiting())
 
