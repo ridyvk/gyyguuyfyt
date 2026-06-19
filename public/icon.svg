@@ -1,26 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="KPI Scope app icon">
   <defs>
-    <linearGradient id="bg" x1="116" y1="76" x2="890" y2="940" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#5AC8FA"/>
-      <stop offset=".45" stop-color="#007AFF"/>
-      <stop offset="1" stop-color="#5856D6"/>
+    <radialGradient id="lens" cx="34%" cy="26%" r="78%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.96"/>
+      <stop offset="0.34" stop-color="#dff3ff" stop-opacity="0.70"/>
+      <stop offset="0.68" stop-color="#69b7ff" stop-opacity="0.58"/>
+      <stop offset="1" stop-color="#0a84ff" stop-opacity="0.78"/>
+    </radialGradient>
+    <linearGradient id="stroke" x1="180" y1="110" x2="770" y2="820" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="0.42" stop-color="#9fd8ff" stop-opacity="0.72"/>
+      <stop offset="1" stop-color="#006fe6" stop-opacity="0.84"/>
     </linearGradient>
-    <linearGradient id="glass" x1="320" y1="258" x2="706" y2="714" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#FFFFFF" stop-opacity=".98"/>
-      <stop offset="1" stop-color="#FFFFFF" stop-opacity=".78"/>
+    <linearGradient id="handle" x1="560" y1="610" x2="900" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff" stop-opacity="0.82"/>
+      <stop offset="0.48" stop-color="#9fd8ff" stop-opacity="0.62"/>
+      <stop offset="1" stop-color="#007aff" stop-opacity="0.86"/>
     </linearGradient>
-    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="30" stdDeviation="34" flood-color="#102A70" flood-opacity=".22"/>
+    <filter id="softShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="28" stdDeviation="30" flood-color="#006fe6" flood-opacity="0.22"/>
+      <feDropShadow dx="0" dy="4" stdDeviation="10" flood-color="#1d1d1f" flood-opacity="0.08"/>
+    </filter>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="16" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
   </defs>
-  <rect width="1024" height="1024" rx="228" fill="url(#bg)"/>
-  <path d="M142 298C260 116 493 68 676 146c136 58 216 168 247 289-78-79-194-127-322-127-184 0-344 98-430 244-47-76-57-169-29-254Z" fill="#FFFFFF" opacity=".12"/>
-  <g filter="url(#shadow)">
-    <circle cx="468" cy="459" r="241" fill="url(#glass)"/>
-    <circle cx="468" cy="459" r="190" fill="#F8FBFF" stroke="#D9E9FF" stroke-width="12"/>
-    <path d="M322 568h74V438h-74v130Zm109 0h74V342h-74v226Zm109 0h74V392h-74v176Z" fill="#007AFF"/>
-    <path d="m632 625 171 171" fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-width="92"/>
-    <path d="m632 625 171 171" fill="none" stroke="#D8E8FF" stroke-linecap="round" stroke-width="52"/>
+  <g filter="url(#softShadow)">
+    <rect x="582" y="598" width="328" height="118" rx="59" fill="url(#handle)" opacity="0.92" transform="rotate(45 582 598)"/>
+    <rect x="614" y="628" width="240" height="42" rx="21" fill="#ffffff" opacity="0.34" transform="rotate(45 614 628)"/>
+    <circle cx="410" cy="388" r="286" fill="url(#lens)" opacity="0.94"/>
+    <circle cx="410" cy="388" r="286" fill="none" stroke="url(#stroke)" stroke-width="28" opacity="0.92"/>
+    <circle cx="410" cy="388" r="226" fill="none" stroke="#ffffff" stroke-width="5" opacity="0.42"/>
+    <ellipse cx="308" cy="252" rx="120" ry="58" fill="#ffffff" opacity="0.58" transform="rotate(-32 308 252)" filter="url(#glow)"/>
+    <ellipse cx="510" cy="490" rx="132" ry="86" fill="#ffffff" opacity="0.16" transform="rotate(-28 510 490)"/>
+    <circle cx="285" cy="560" r="22" fill="#ffffff" opacity="0.48"/>
   </g>
-  <circle cx="468" cy="459" r="241" fill="none" stroke="#FFFFFF" stroke-opacity=".58" stroke-width="10"/>
 </svg>
