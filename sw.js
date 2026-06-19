@@ -1,3 +1,5 @@
+const KPI_SCOPE_SW_VERSION = '20260619-glass-icon-1'
+
 self.addEventListener('install', () => self.skipWaiting())
 
 self.addEventListener('activate', (event) => {
