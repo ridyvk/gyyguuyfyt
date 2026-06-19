@@ -11,77 +11,174 @@ body.startup-active {
   pointer-events: none;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 42%, rgba(0, 122, 255, 0.10), transparent 28rem),
-    linear-gradient(145deg, #f9faff 0%, #f3f5fb 55%, #eef2fa 100%);
-  animation: startup-fade-out 1300ms ease forwards;
+    radial-gradient(circle at 50% 46%, rgba(0, 122, 255, 0.12), transparent 25rem),
+    radial-gradient(circle at 50% 100%, rgba(88, 86, 214, 0.08), transparent 18rem),
+    linear-gradient(145deg, #fbfcff 0%, #f4f6fb 56%, #eef2fa 100%);
+  animation: startup-fade-out 1500ms ease forwards;
 }
 
-.startup-splash__scan {
+.startup-splash__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 122, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 122, 255, 0.035) 1px, transparent 1px);
+  background-size: 42px 42px;
+  opacity: 0;
+  transform: scale(1.04);
+  animation: startup-grid 1100ms ease forwards;
+  mask-image: radial-gradient(circle at center, black 0%, black 34%, transparent 72%);
+  -webkit-mask-image: radial-gradient(circle at center, black 0%, black 34%, transparent 72%);
+}
+
+.startup-splash__boot {
   position: relative;
-  width: min(42vw, 190px);
-  height: 1px;
-  overflow: hidden;
-  background: rgba(60, 60, 67, 0.08);
+  width: min(52vw, 210px);
+  height: 96px;
+  display: grid;
+  place-items: center;
+  transform: translateY(6px) scale(0.94);
+  opacity: 0;
+  filter: blur(4px);
+  animation: startup-boot-in 620ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.startup-splash__scan::after {
+.startup-splash__core {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(0, 122, 255, 0.86);
+  box-shadow:
+    0 0 0 0 rgba(0, 122, 255, 0.26),
+    0 0 22px rgba(0, 122, 255, 0.48);
+  animation: startup-core 1050ms 80ms ease forwards;
+}
+
+.startup-splash__ring {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 122, 255, 0.32);
+  opacity: 0;
+  transform: scale(0.35);
+  animation: startup-ring 1000ms 160ms ease forwards;
+}
+
+.startup-splash__beam {
+  position: absolute;
+  width: min(48vw, 196px);
+  height: 2px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(60, 60, 67, 0.08);
+  transform: scaleX(0.05);
+  opacity: 0;
+  animation: startup-beam 980ms 260ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.startup-splash__beam::after {
   position: absolute;
   inset: 0;
   content: '';
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(0, 122, 255, 0.75),
-    rgba(88, 86, 214, 0.55),
+    rgba(0, 122, 255, 0.86),
+    rgba(88, 86, 214, 0.62),
     transparent
   );
   transform: translateX(-110%);
-  animation: startup-scan 900ms ease forwards;
+  animation: startup-light-sweep 820ms 420ms ease forwards;
 }
 
-.startup-splash__dots {
-  position: absolute;
-  top: calc(50% + 22px);
-  display: flex;
-  gap: 7px;
+@keyframes startup-boot-in {
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
+  }
 }
 
-.startup-splash__dots span {
-  width: 4px;
-  height: 4px;
-  border-radius: 999px;
-  background: rgba(0, 122, 255, 0.35);
-  animation: startup-dot 900ms ease-in-out infinite;
+@keyframes startup-core {
+  0% {
+    transform: scale(0.55);
+    opacity: 0;
+    box-shadow:
+      0 0 0 0 rgba(0, 122, 255, 0),
+      0 0 0 rgba(0, 122, 255, 0);
+  }
+
+  34% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow:
+      0 0 0 12px rgba(0, 122, 255, 0.12),
+      0 0 24px rgba(0, 122, 255, 0.5);
+  }
+
+  100% {
+    transform: scale(0.82);
+    opacity: 0;
+    box-shadow:
+      0 0 0 48px rgba(0, 122, 255, 0),
+      0 0 36px rgba(0, 122, 255, 0.08);
+  }
 }
 
-.startup-splash__dots span:nth-child(2) {
-  animation-delay: 120ms;
+@keyframes startup-ring {
+  0% {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+
+  40% {
+    opacity: 0.85;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(3.2);
+  }
 }
 
-.startup-splash__dots span:nth-child(3) {
-  animation-delay: 240ms;
+@keyframes startup-beam {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.05);
+  }
+
+  36% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
 }
 
-@keyframes startup-scan {
+@keyframes startup-light-sweep {
   to {
     transform: translateX(110%);
   }
 }
 
-@keyframes startup-dot {
-  0%, 100% {
-    opacity: 0.25;
-    transform: scale(0.85);
+@keyframes startup-grid {
+  0% {
+    opacity: 0;
+    transform: scale(1.04);
   }
 
-  50% {
-    opacity: 0.8;
+  100% {
+    opacity: 0.42;
     transform: scale(1);
   }
 }
 
 @keyframes startup-fade-out {
-  0%, 72% {
+  0%, 74% {
     opacity: 1;
     visibility: visible;
   }
