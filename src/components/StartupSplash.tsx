@@ -35,7 +35,11 @@ export default function StartupSplash() {
         <span className="startup-splash__core" />
         <span className="startup-splash__wave startup-splash__wave--one" />
         <span className="startup-splash__wave startup-splash__wave--two" />
+        <span className="startup-splash__wave startup-splash__wave--three" />
         <span className="startup-splash__wash" />
+        <span className="startup-splash__glint startup-splash__glint--one" />
+        <span className="startup-splash__glint startup-splash__glint--two" />
+        <span className="startup-splash__glint startup-splash__glint--three" />
       </div>
     </div>
   )
