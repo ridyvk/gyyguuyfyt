@@ -11,174 +11,168 @@ body.startup-active {
   pointer-events: none;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 46%, rgba(0, 122, 255, 0.12), transparent 25rem),
-    radial-gradient(circle at 50% 100%, rgba(88, 86, 214, 0.08), transparent 18rem),
+    radial-gradient(circle at 50% 48%, rgba(0, 122, 255, 0.10), transparent 24rem),
     linear-gradient(145deg, #fbfcff 0%, #f4f6fb 56%, #eef2fa 100%);
-  animation: startup-fade-out 1500ms ease forwards;
+  animation: startup-fade-out 1550ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.startup-splash__grid {
+.startup-splash__depth {
   position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(0, 122, 255, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 122, 255, 0.035) 1px, transparent 1px);
-  background-size: 42px 42px;
+  inset: -20%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.88) 0%, rgba(0, 122, 255, 0.08) 22%, transparent 58%),
+    repeating-radial-gradient(circle at 50% 50%, rgba(0, 122, 255, 0.045) 0 1px, transparent 1px 42px);
   opacity: 0;
-  transform: scale(1.04);
-  animation: startup-grid 1100ms ease forwards;
-  mask-image: radial-gradient(circle at center, black 0%, black 34%, transparent 72%);
-  -webkit-mask-image: radial-gradient(circle at center, black 0%, black 34%, transparent 72%);
+  transform: scale(0.9);
+  filter: blur(10px);
+  animation: startup-depth 1350ms 90ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.startup-splash__boot {
+.startup-splash__portal {
   position: relative;
-  width: min(52vw, 210px);
-  height: 96px;
+  width: min(64vw, 260px);
+  aspect-ratio: 1;
   display: grid;
   place-items: center;
-  transform: translateY(6px) scale(0.94);
+  transform: scale(0.58);
   opacity: 0;
-  filter: blur(4px);
-  animation: startup-boot-in 620ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  filter: blur(8px);
+  animation: startup-portal-in 520ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .startup-splash__core {
   position: absolute;
-  width: 12px;
-  height: 12px;
+  width: 18px;
+  height: 18px;
   border-radius: 999px;
-  background: rgba(0, 122, 255, 0.86);
+  background: rgba(255, 255, 255, 0.94);
   box-shadow:
-    0 0 0 0 rgba(0, 122, 255, 0.26),
-    0 0 22px rgba(0, 122, 255, 0.48);
-  animation: startup-core 1050ms 80ms ease forwards;
+    0 0 18px rgba(255, 255, 255, 0.95),
+    0 0 36px rgba(0, 122, 255, 0.42),
+    0 0 0 0 rgba(0, 122, 255, 0.22);
+  animation: startup-core-bloom 1180ms 80ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.startup-splash__ring {
+.startup-splash__wave {
+  position: absolute;
+  width: 42px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 122, 255, 0.28);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.50), rgba(0, 122, 255, 0.05) 46%, transparent 68%);
+  box-shadow:
+    inset 0 0 24px rgba(255, 255, 255, 0.65),
+    0 0 30px rgba(0, 122, 255, 0.18);
+  opacity: 0;
+  transform: scale(0.25);
+}
+
+.startup-splash__wave--one {
+  animation: startup-wave 1120ms 120ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.startup-splash__wave--two {
+  animation: startup-wave 1180ms 260ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.startup-splash__wash {
   position: absolute;
   width: 36px;
-  height: 36px;
-  border-radius: 999px;
-  border: 1px solid rgba(0, 122, 255, 0.32);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.92) 0%, rgba(0, 122, 255, 0.14) 36%, transparent 70%);
   opacity: 0;
-  transform: scale(0.35);
-  animation: startup-ring 1000ms 160ms ease forwards;
+  transform: scale(0.3);
+  filter: blur(5px);
+  animation: startup-wash 1280ms 360ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.startup-splash__beam {
-  position: absolute;
-  width: min(48vw, 196px);
-  height: 2px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(60, 60, 67, 0.08);
-  transform: scaleX(0.05);
-  opacity: 0;
-  animation: startup-beam 980ms 260ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.startup-splash__beam::after {
-  position: absolute;
-  inset: 0;
-  content: '';
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(0, 122, 255, 0.86),
-    rgba(88, 86, 214, 0.62),
-    transparent
-  );
-  transform: translateX(-110%);
-  animation: startup-light-sweep 820ms 420ms ease forwards;
-}
-
-@keyframes startup-boot-in {
+@keyframes startup-portal-in {
   to {
     opacity: 1;
     filter: blur(0);
-    transform: translateY(0) scale(1);
+    transform: scale(1);
   }
 }
 
-@keyframes startup-core {
+@keyframes startup-core-bloom {
   0% {
-    transform: scale(0.55);
     opacity: 0;
-    box-shadow:
-      0 0 0 0 rgba(0, 122, 255, 0),
-      0 0 0 rgba(0, 122, 255, 0);
+    transform: scale(0.3);
   }
 
-  34% {
-    transform: scale(1);
+  22% {
     opacity: 1;
+    transform: scale(1);
+  }
+
+  62% {
+    opacity: 0.82;
+    transform: scale(1.35);
     box-shadow:
-      0 0 0 12px rgba(0, 122, 255, 0.12),
-      0 0 24px rgba(0, 122, 255, 0.5);
+      0 0 22px rgba(255, 255, 255, 0.95),
+      0 0 44px rgba(0, 122, 255, 0.34),
+      0 0 0 34px rgba(0, 122, 255, 0.06);
   }
 
   100% {
-    transform: scale(0.82);
     opacity: 0;
-    box-shadow:
-      0 0 0 48px rgba(0, 122, 255, 0),
-      0 0 36px rgba(0, 122, 255, 0.08);
+    transform: scale(0.2);
   }
 }
 
-@keyframes startup-ring {
+@keyframes startup-wave {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+
+  26% {
+    opacity: 0.78;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(7.8);
+  }
+}
+
+@keyframes startup-wash {
   0% {
     opacity: 0;
     transform: scale(0.35);
   }
 
-  40% {
-    opacity: 0.85;
+  42% {
+    opacity: 0.86;
   }
 
   100% {
     opacity: 0;
-    transform: scale(3.2);
+    transform: scale(12);
   }
 }
 
-@keyframes startup-beam {
+@keyframes startup-depth {
   0% {
     opacity: 0;
-    transform: scaleX(0.05);
+    transform: scale(0.9);
+    filter: blur(12px);
   }
 
-  36% {
-    opacity: 1;
+  48% {
+    opacity: 0.55;
   }
 
   100% {
-    opacity: 1;
-    transform: scaleX(1);
-  }
-}
-
-@keyframes startup-light-sweep {
-  to {
-    transform: translateX(110%);
-  }
-}
-
-@keyframes startup-grid {
-  0% {
     opacity: 0;
-    transform: scale(1.04);
-  }
-
-  100% {
-    opacity: 0.42;
-    transform: scale(1);
+    transform: scale(1.18);
+    filter: blur(22px);
   }
 }
 
 @keyframes startup-fade-out {
-  0%, 74% {
+  0%, 76% {
     opacity: 1;
     visibility: visible;
   }
