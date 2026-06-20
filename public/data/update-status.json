@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-19T22:21:03.588680Z",
+  "generatedAt": "2026-06-20T04:48:37.171681Z",
   "mode": "edinet-annual-baseline-tdnet-full-year-overlay-batched",
   "status": "ready",
   "source": "EDINET+TDnet",
@@ -15,7 +15,7 @@
   "coverageRatio": 86.48,
   "edinetCompanies": 3083,
   "tdnetCompanies": 146,
-  "edinetDocumentsScanned": 106377,
+  "edinetDocumentsScanned": 106077,
   "edinetPendingBeforeBatch": 0,
   "edinetBatchSize": 0,
   "edinetDocumentsUpdated": 0,
