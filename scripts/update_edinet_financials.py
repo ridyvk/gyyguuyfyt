@@ -297,6 +297,29 @@ def percent(top: float | None, bottom: float | None) -> float | None:
     )
 
 
+def period_before(values: dict[str, float], period_end: str) -> str | None:
+    candidates = [key for key in values if key < period_end]
+    return max(candidates, default=None)
+
+
+def roe_for_period(
+    profit_values: dict[str, float],
+    equity_values: dict[str, float],
+    period_end: str | None,
+) -> float | None:
+    if period_end is None:
+        return None
+    profit = at(profit_values, period_end)
+    closing_equity = at(equity_values, period_end)
+    opening_equity = previous(equity_values, period_end)
+    average_equity = (
+        (closing_equity + opening_equity) / 2
+        if closing_equity is not None and opening_equity is not None
+        else closing_equity
+    )
+    return percent(profit, average_equity)
+
+
 def growth(current: float | None, prior: float | None) -> float | None:
     return (
         None
@@ -332,11 +355,7 @@ def build_record(filing: dict, data: bytes) -> dict:
 
     current = {key: at(values, period_end) for key, values in series.items()}
     prior = {key: previous(values, period_end) for key, values in series.items()}
-    average_equity = (
-        (current["equity"] + prior["equity"]) / 2
-        if current["equity"] is not None and prior["equity"] is not None
-        else current["equity"]
-    )
+    prior_profit_period_end = period_before(series["profit"], period_end)
     metrics: dict[str, dict] = {}
     add_metric(metrics, "revenueGrowth", growth(current["revenue"], prior["revenue"]))
     add_metric(
@@ -354,8 +373,12 @@ def build_record(filing: dict, data: bytes) -> dict:
     add_metric(
         metrics,
         "roe",
-        percent(current["profit"], average_equity),
-        percent(prior["profit"], prior["equity"]),
+        roe_for_period(series["profit"], series["equity"], period_end),
+        roe_for_period(
+            series["profit"],
+            series["equity"],
+            prior_profit_period_end,
+        ),
     )
     add_metric(
         metrics,
@@ -395,19 +418,16 @@ def build_record(filing: dict, data: bytes) -> dict:
     history = []
     for year_end in sorted(series["revenue"])[-3:]:
         revenue = series["revenue"].get(year_end)
-        equity = series["equity"].get(year_end)
-        prior_equity = previous(series["equity"], year_end)
-        average = (
-            (equity + prior_equity) / 2
-            if equity is not None and prior_equity is not None
-            else equity
-        )
         point = {
             "year": year_end[:7].replace("-", "/"),
             "revenue": round(revenue / 100_000_000) if revenue is not None else None,
             "operatingMargin": percent(series["operatingIncome"].get(year_end), revenue),
             "netMargin": percent(series["profit"].get(year_end), revenue),
-            "roe": percent(series["profit"].get(year_end), average),
+            "roe": roe_for_period(
+                series["profit"],
+                series["equity"],
+                year_end,
+            ),
             "operatingCfMargin": percent(series["operatingCf"].get(year_end), revenue),
         }
         if all(value is not None for value in point.values()):

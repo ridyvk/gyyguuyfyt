@@ -28,7 +28,7 @@ SNAPSHOT = ROOT / "public/data/financials.json"
 COMPANY_MASTER = ROOT / "src/data/listedCompanies.json"
 SNAPSHOT_SCHEMA_VERSION = 3
 INVENTORY_MODEL_VERSION = 2
-DATA_MODEL_VERSION = 3
+DATA_MODEL_VERSION = 4
 
 STRICT_FACT_NAMES = {
     **edinet.FACT_NAMES,
@@ -199,7 +199,6 @@ def main() -> int:
                 raise ValueError(f"record validation failed: {validation_error}")
             if record.get("metrics") and (
                 record_order_key(record) >= record_order_key(existing)
-                or data_model_upgraded
             ):
                 records[record["code"]] = record
                 updated += 1
