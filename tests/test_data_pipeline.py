@@ -211,6 +211,55 @@ class TdnetRoeDisclosureTests(unittest.TestCase):
             ["1400", "146A"],
         )
 
+    def test_backfill_advances_past_previously_attempted_documents(self) -> None:
+        old = (datetime.now(timezone.utc) - timedelta(days=60)).isoformat()
+        filings = {
+            "130A": {"code": "130A", "filedAt": old, "documentId": "DOC130"},
+            "140A": {"code": "140A", "filedAt": old, "documentId": "DOC140"},
+            "146A": {"code": "146A", "filedAt": old, "documentId": "DOC146"},
+        }
+        records = {
+            code: {"source": "EDINET", "quality": {}}
+            for code in filings
+        }
+        attempted = {"DOC130", "DOC140"}
+
+        candidates = update_tdnet_financials_overlay_strict.select_candidates(
+            filings,
+            records,
+            lookback_days=31,
+            backfill_limit=1,
+            max_documents=10,
+            attempted_document_ids=attempted,
+        )
+
+        self.assertEqual([candidate["code"] for candidate in candidates], ["146A"])
+        self.assertEqual(attempted, {"DOC130", "DOC140"})
+
+    def test_backfill_retries_after_all_documents_were_attempted(self) -> None:
+        old = (datetime.now(timezone.utc) - timedelta(days=60)).isoformat()
+        filings = {
+            "130A": {"code": "130A", "filedAt": old, "documentId": "DOC130"},
+            "146A": {"code": "146A", "filedAt": old, "documentId": "DOC146"},
+        }
+        records = {
+            code: {"source": "EDINET", "quality": {}}
+            for code in filings
+        }
+        attempted = {"DOC130", "DOC146"}
+
+        candidates = update_tdnet_financials_overlay_strict.select_candidates(
+            filings,
+            records,
+            lookback_days=31,
+            backfill_limit=1,
+            max_documents=10,
+            attempted_document_ids=attempted,
+        )
+
+        self.assertEqual([candidate["code"] for candidate in candidates], ["130A"])
+        self.assertEqual(attempted, set())
+
     def test_same_period_tdnet_roe_enriches_newer_edinet_record(self) -> None:
         existing = record("146A", "2025-12-31")
         existing["metrics"]["roe"] = {
