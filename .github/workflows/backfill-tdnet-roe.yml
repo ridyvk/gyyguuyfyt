@@ -7,6 +7,10 @@ on:
         description: Historical TDnet filings to attempt
         required: false
         default: '200'
+      priority_code:
+        description: Security code to verify first
+        required: false
+        default: '146A'
   push:
     branches:
       - main
@@ -38,11 +42,13 @@ jobs:
       - name: Backfill disclosed TDnet ROE
         env:
           BACKFILL_LIMIT: ${{ inputs.backfill_limit || '200' }}
+          PRIORITY_CODE: ${{ inputs.priority_code || '146A' }}
         run: |
           python scripts/update_tdnet_financials_overlay_strict.py \
             --lookback-days 31 \
             --backfill-lookback-days 460 \
-            --backfill-limit "$BACKFILL_LIMIT"
+            --backfill-limit "$BACKFILL_LIMIT" \
+            --priority-code "$PRIORITY_CODE"
 
       - name: Finalize annual dataset
         run: python scripts/finalize_annual_dataset.py

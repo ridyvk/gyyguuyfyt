@@ -1,3 +1,3 @@
-TDnet ROE backfill marker: 2026-06-20T21:22:00Z
+TDnet ROE backfill marker: 2026-06-20T21:28:00Z
 
-Reason: advance historical disclosed ROE enrichment without repeating the EDINET baseline scan.
+Reason: run priority diagnosis for security code 146A.

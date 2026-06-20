@@ -77,6 +77,7 @@ def select_candidates(
     backfill_limit: int,
     max_documents: int,
     attempted_document_ids: set[str] | None = None,
+    priority_codes: list[str] | None = None,
 ) -> list[dict]:
     cutoff = (
         datetime.now(timezone.utc) - timedelta(days=max(0, lookback_days))
@@ -108,6 +109,11 @@ def select_candidates(
         ):
             backfill_pool.append(filing)
 
+    priority = set(priority_codes or [])
+    backfill_pool.sort(
+        key=lambda filing: str(filing.get("code") or "") not in priority
+    )
+
     attempted = attempted_document_ids if attempted_document_ids is not None else set()
     unseen = [
         filing
@@ -134,6 +140,7 @@ def main() -> int:
     parser.add_argument("--backfill-lookback-days", type=int, default=460)
     parser.add_argument("--backfill-limit", type=int, default=50)
     parser.add_argument("--max-documents", type=int, default=1500)
+    parser.add_argument("--priority-code", action="append", default=[])
     args = parser.parse_args()
 
     snapshot = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
@@ -167,6 +174,7 @@ def main() -> int:
         args.backfill_limit,
         args.max_documents,
         attempted_document_ids,
+        args.priority_code,
     )
     for index, filing in enumerate(candidates, 1):
         try:
@@ -235,6 +243,9 @@ def main() -> int:
                 "tdnetDocumentsUpdated": updated,
                 "tdnetRoeDisclosuresMerged": roe_enriched,
                 "tdnetRoeBackfillAttemptedDocumentIds": sorted(attempted_document_ids),
+                "tdnetRoePriorityCodesMissing": sorted(
+                    set(args.priority_code) - set(eligible_filings)
+                ),
                 "tdnetStrictFailures": len(failures),
                 "nonAnnualExistingRecordsDropped": dropped_existing,
             },
