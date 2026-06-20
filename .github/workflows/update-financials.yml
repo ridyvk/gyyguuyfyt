@@ -1,6 +1,10 @@
 name: Update annual financials
 
 on:
+  workflow_run:
+    workflows:
+      - Update JPX company master
+    types: [completed]
   push:
     branches:
       - main
@@ -9,10 +13,13 @@ on:
       - .github/triggers/financials-batch.txt
       - scripts/update_edinet_financials.py
       - scripts/update_edinet_financials_batched.py
+      - scripts/data_quality.py
+      - scripts/validate_datasets.py
       - scripts/update_tdnet_financials.py
       - scripts/update_tdnet_financials_strict.py
       - scripts/update_tdnet_financials_overlay_strict.py
       - scripts/finalize_annual_dataset.py
+      - src/data/listedCompanies.json
       - public/data/financials.json
       - public/data/update-status.json
   schedule:
@@ -34,8 +41,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
   group: annual-financial-update
@@ -43,15 +48,14 @@ concurrency:
 
 jobs:
   update:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: main
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -59,14 +63,14 @@ jobs:
           python-version: '3.12'
 
       - name: Update EDINET annual baseline batch
-        continue-on-error: true
         env:
           EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
           EDINET_SCAN_DAYS: ${{ inputs.edinet_scan_days || '460' }}
           EDINET_BATCH_SIZE: ${{ inputs.edinet_batch_size || '700' }}
         run: |
           if [ -z "$EDINET_API_KEY" ]; then
-            echo "EDINET key is not configured. Skipping annual baseline batch."
+            echo "EDINET_API_KEY is required." >&2
+            exit 1
           else
             python scripts/update_edinet_financials_batched.py \
               --scan-days "$EDINET_SCAN_DAYS" \
@@ -83,6 +87,9 @@ jobs:
       - name: Finalize annual dataset
         run: python scripts/finalize_annual_dataset.py
 
+      - name: Validate financial dataset
+        run: python scripts/validate_datasets.py --scope financial
+
       - name: Commit updated financial snapshot
         run: |
           git config user.name "kpi-scope-bot"
@@ -95,23 +102,3 @@ jobs:
             git pull --rebase origin main
             git push origin HEAD:main
           fi
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install dependencies
-        run: npm install --no-audit --no-fund
-
-      - name: Build application
-        run: npm run build
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4

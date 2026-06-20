@@ -12,7 +12,9 @@ import listedCompanyData from '../data/listedCompanies.json'
 
 const markets: Market[] = ['プライム', 'スタンダード', 'グロース']
 const companyMaster =
-  listedCompanyData.companies as ListedCompanyMaster[]
+  (listedCompanyData.companies as ListedCompanyMaster[]).filter(
+    (company) => /^[0-9A-Z]{4}$/.test(company.code),
+  )
 const industries: Industry[] = Array.from(
   new Set(companyMaster.map((company) => company.industry)),
 ).sort((a, b) => a.localeCompare(b, 'ja'))

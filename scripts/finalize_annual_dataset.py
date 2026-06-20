@@ -4,8 +4,11 @@
 from __future__ import annotations
 
 import json
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
+
+from data_quality import normalize_security_code, validate_financial_record
 
 ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT = ROOT / "public/data/financials.json"
@@ -18,41 +21,51 @@ def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
-def target_company_count() -> int:
+def load_company_codes() -> set[str]:
     try:
         payload = json.loads(COMPANY_MASTER.read_text(encoding="utf-8"))
-        explicit_count = int(payload.get("companyCount") or 0)
-        if explicit_count > 0:
-            return explicit_count
-        companies = payload.get("companies", [])
-        if isinstance(companies, list) and companies:
-            return len(companies)
+        return {
+            str(company["code"])
+            for company in payload.get("companies", [])
+            if isinstance(company, dict)
+            and company.get("code")
+            and normalize_security_code(company["code"]) == str(company["code"])
+        }
     except Exception:
-        pass
-    return FALLBACK_TARGET_COMPANIES
+        return set()
 
 
-def is_annual_record(record: dict) -> bool:
-    if not isinstance(record, dict):
-        return False
-    if record.get("source") == "EDINET":
-        return True
-    return record.get("source") == "TDnet" and record.get("documentType") == "FullYearEarnings"
+def validated_records(
+    records: dict,
+    current_codes: set[str],
+) -> tuple[dict[str, dict], Counter[str]]:
+    valid: dict[str, dict] = {}
+    failures: Counter[str] = Counter()
+    for raw_code, record in records.items():
+        code = str(raw_code)
+        error = validate_financial_record(code, record, current_codes)
+        if error:
+            failures[error] += 1
+        else:
+            valid[code] = record
+    return valid, failures
 
 
 def main() -> int:
     generated_at = utc_now()
     snapshot = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
     original_records = snapshot.get("records", {}) or {}
-    annual_records = {
-        str(code): record
-        for code, record in original_records.items()
-        if is_annual_record(record)
-    }
+    current_codes = load_company_codes()
+    if not current_codes:
+        raise RuntimeError("Company master is empty or invalid.")
+    annual_records, validation_failures = validated_records(
+        original_records,
+        current_codes,
+    )
     dropped = len(original_records) - len(annual_records)
     edinet_count = sum(1 for record in annual_records.values() if record.get("source") == "EDINET")
     tdnet_count = sum(1 for record in annual_records.values() if record.get("source") == "TDnet")
-    target_companies = target_company_count()
+    target_companies = len(current_codes)
     missing_companies = max(0, target_companies - len(annual_records))
     coverage_ratio = (
         round(len(annual_records) / target_companies * 100, 2)
@@ -64,8 +77,22 @@ def main() -> int:
     pending_before_batch = int(stats.get("edinetPendingBeforeBatch") or 0)
     batch_size = int(stats.get("edinetBatchSize") or 0)
     estimated_remaining = max(0, pending_before_batch - batch_size)
-    is_building = edinet_count < FALLBACK_TARGET_COMPANIES and estimated_remaining > 0
-    status_text = "building" if is_building else "ready"
+    pipeline_failures = int(stats.get("edinetBatchFailures") or 0) + int(
+        stats.get("tdnetStrictFailures") or 0
+    )
+    is_building = estimated_remaining > 0 or edinet_count < min(
+        FALLBACK_TARGET_COMPANIES,
+        target_companies,
+    )
+    status_text = "partial" if pipeline_failures else "building" if is_building else "ready"
+    data_updated_at = max(
+        (str(record.get("filedAt") or "") for record in annual_records.values()),
+        default="",
+    ) or None
+    latest_period_end = max(
+        (str(record.get("periodEnd") or "") for record in annual_records.values()),
+        default="",
+    ) or None
     progress_message = (
         "EDINET年次ベースラインを分割構築中。"
         if is_building
@@ -79,16 +106,23 @@ def main() -> int:
             "tdnetCompanies": tdnet_count,
             "annualOnly": True,
             "nonAnnualRecordsDropped": dropped,
+            "invalidRecordsDropped": dropped,
+            "validationFailures": dict(validation_failures),
             "edinetEstimatedRemaining": estimated_remaining,
             "targetCompanies": target_companies,
             "missingCompanies": missing_companies,
             "coverageRatio": coverage_ratio,
+            "dataUpdatedAt": data_updated_at,
+            "latestPeriodEnd": latest_period_end,
+            "lastCheckedAt": generated_at,
         }
     )
 
     snapshot.update(
         {
             "generatedAt": generated_at,
+            "dataUpdatedAt": data_updated_at,
+            "latestPeriodEnd": latest_period_end,
             "source": "EDINET+TDnet",
             "status": status_text,
             "message": (
@@ -120,6 +154,8 @@ def main() -> int:
 
     status = {
         "generatedAt": generated_at,
+        "dataUpdatedAt": data_updated_at,
+        "latestPeriodEnd": latest_period_end,
         "mode": "edinet-annual-baseline-tdnet-full-year-overlay-batched",
         "status": status_text,
         "source": "EDINET+TDnet",
@@ -142,6 +178,8 @@ def main() -> int:
         "edinetEstimatedRemaining": estimated_remaining,
         "edinetBatchFailures": stats.get("edinetBatchFailures", 0),
         "nonAnnualRecordsDropped": dropped,
+        "invalidRecordsDropped": dropped,
+        "validationFailures": dict(validation_failures),
         "tdnetRowsScanned": stats.get("tdnetRowsScanned", 0),
         "tdnetEarningsRows": stats.get("tdnetEarningsRows", 0),
         "tdnetQuarterlyRowsSkipped": stats.get("tdnetQuarterlyRowsSkipped", 0),

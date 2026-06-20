@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kpi-scope-v3-photo1'
+const CACHE_NAME = 'kpi-scope-v4-data-integrity'
 const APP_SHELL = [
   './',
   './index.html',

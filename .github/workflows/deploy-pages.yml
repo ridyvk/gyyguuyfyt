@@ -3,40 +3,44 @@ name: Build and deploy KPI Scope
 on:
   push:
     branches: [main]
+  workflow_run:
+    workflows:
+      - Update annual financials
+      - Update market prices
+    types: [completed]
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
-  group: pages-build
+  group: pages
   cancel-in-progress: true
 
 jobs:
-  build:
+  deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: main
 
-      - name: Materialize application source
-        if: hashFiles('.deploy-payload/part-*.txt') != ''
-        shell: bash
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Test and validate data pipelines
         run: |
-          cat .deploy-payload/part-*.txt | base64 --decode > kpi-scope-source.tar.xz
-          tar -xJf kpi-scope-source.tar.xz
-          cp -a kpi-scope/. .
-          rm -rf kpi-scope kpi-scope-source.tar.xz .deploy-payload .site-payload
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          if ! git diff --cached --quiet; then
-            git commit -m "Add KPI Scope application source"
-            git push
-          fi
-
-      - name: Restore Vite entry
-        run: cp app-index.html index.html
+          python -m unittest discover -s tests -p 'test_*.py'
+          python scripts/validate_datasets.py --scope all
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -46,13 +50,17 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
+      - name: Lint
+        run: npm run lint
+
       - name: Build
         run: npm run build
 
-      - name: Publish build branch
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: ./dist
-          force_orphan: true
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

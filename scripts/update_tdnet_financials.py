@@ -19,6 +19,14 @@ from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
+from data_quality import (
+    context_rank as quality_context_rank,
+    dimension_value,
+    is_total_actual_context,
+    normalize_security_code,
+    select_preferred_values,
+)
+
 from update_edinet_financials import (
     DEBT_COMPONENTS,
     FACT_NAMES,
@@ -212,8 +220,8 @@ def list_filings(days: int) -> tuple[dict[str, dict], int]:
         for row in all_rows:
             if "決算短信" not in row.get("title", ""):
                 continue
-            code = row.get("code", "")[:4]
-            if len(code) != 4:
+            code = normalize_security_code(row.get("code"))
+            if not code:
                 continue
             filed_at = filing_timestamp(target, row.get("time", ""))
             filing = {
@@ -302,7 +310,9 @@ def parse_inline_xbrl(
                             }[child_name]
                         ] = text
                     elif child_name in {"explicitMember", "typedMember"}:
-                        context["dimensions"].append(text or "typedMember")
+                        context["dimensions"].append(
+                            dimension_value(child, text or "typedMember")
+                        )
                 contexts[element.attrib["id"]] = context
             for element in root.iter():
                 if local_name(element.tag) != "nonFraction":
@@ -316,26 +326,12 @@ def parse_inline_xbrl(
 
 
 def is_actual_consolidated(context_id: str, context: dict) -> bool:
-    text = context_id + " " + " ".join(context["dimensions"])
-    rejected = (
-        "NonConsolidated",
-        "ForecastMember",
-        "UpperMember",
-        "LowerMember",
-        "NextYear",
-    )
-    return not any(token in text for token in rejected)
+    return is_total_actual_context(context_id, context)
 
 
-def context_rank(context_id: str, context: dict, period_end: str) -> int:
-    text = context_id + " " + " ".join(context["dimensions"])
-    return (
-        (40 if (context["instant"] or context["end"]) == period_end else 0)
-        + (30 if not context["dimensions"] else 0)
-        + (20 if "ConsolidatedMember" in text else 0)
-        + (8 if "ResultMember" in text else 0)
-        + (6 if "CurrentYear" in context_id else 0)
-    )
+def context_rank(context_id: str, context: dict, period_end: str) -> tuple[int, ...]:
+    duration = context.get("end") == period_end and context.get("start") is not None
+    return quality_context_rank(context_id, context, period_end, duration)
 
 
 def values_for(
@@ -344,38 +340,13 @@ def values_for(
     names: tuple[str, ...],
     duration: bool,
 ) -> dict[str, float]:
-    grouped: dict[str, list[tuple[str, float]]] = defaultdict(list)
-    for name in names:
-        for context_id, value in facts.get(name, []):
-            context = contexts[context_id]
-            period_end = context["end"] if duration else context["instant"]
-            if (
-                not period_end
-                or not is_actual_consolidated(context_id, context)
-            ):
-                continue
-            if duration:
-                try:
-                    days = (
-                        date.fromisoformat(context["end"])
-                        - date.fromisoformat(context["start"])
-                    ).days
-                except (TypeError, ValueError):
-                    continue
-                if not 45 <= days <= 460:
-                    continue
-            grouped[period_end].append((context_id, value))
-    return {
-        period_end: max(
-            candidates,
-            key=lambda candidate: context_rank(
-                candidate[0],
-                contexts[candidate[0]],
-                period_end,
-            ),
-        )[1]
-        for period_end, candidates in grouped.items()
-    }
+    return select_preferred_values(
+        contexts,
+        facts,
+        names,
+        duration,
+        duration_range=(45, 460),
+    )
 
 
 def infer_period_end(contexts: dict) -> str:

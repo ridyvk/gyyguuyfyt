@@ -10,11 +10,18 @@
   background: rgba(52, 199, 89, 0.07);
 }
 
+.data-status--partial,
 .data-status--setup-required,
 .data-status--error {
   border-color: rgba(255, 159, 10, 0.2);
   color: #8a5700;
   background: rgba(255, 159, 10, 0.08);
+}
+
+.data-status--building {
+  border-color: rgba(0, 122, 255, 0.18);
+  color: #145da0;
+  background: rgba(0, 122, 255, 0.07);
 }
 
 .data-status div {

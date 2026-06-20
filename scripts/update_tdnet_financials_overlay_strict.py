@@ -12,6 +12,7 @@ from pathlib import Path
 
 import update_tdnet_financials_strict as strict
 from update_tdnet_financials import COMPANY_MASTER, SNAPSHOT, get
+from data_quality import record_order_key, validate_financial_record
 
 # Compatibility patch for the first strict updater version.
 strict.timedelta = timedelta
@@ -28,8 +29,7 @@ def should_keep_existing(code: str, record: dict, current_codes: set[str]) -> bo
 def should_replace(existing: dict | None, record: dict) -> bool:
     if existing is None:
         return True
-    old_key = (str(existing.get("periodEnd") or ""), str(existing.get("filedAt") or ""))
-    return (record["periodEnd"], record["filedAt"]) >= old_key
+    return record_order_key(record) >= record_order_key(existing)
 
 
 def load_company_codes() -> set[str]:
@@ -56,11 +56,17 @@ def main() -> int:
     filings, scan_stats = strict.list_full_year_filings(args.lookback_days)
     updated = 0
     failures: list[str] = []
-    candidates = list(filings.values())[: args.max_documents]
+    candidates = [
+        filing
+        for filing in filings.values()
+        if filing.get("code") in current_codes
+    ][: args.max_documents]
     for index, filing in enumerate(candidates, 1):
         try:
             record = strict.build_record(filing, get(filing["xbrlUrl"]))
-            if (record.get("metrics") or record.get("valuation")) and should_replace(
+            if validate_financial_record(record["code"], record, current_codes) is not None:
+                raise ValueError("TDnet record did not pass annual-record validation")
+            if record.get("metrics") and should_replace(
                 records.get(record["code"]),
                 record,
             ):

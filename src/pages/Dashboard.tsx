@@ -58,12 +58,14 @@ export default function Dashboard() {
           0,
         ) / analyzableCompanies.length
       : 0
-  const statusReady = financialSnapshot?.status === 'ready' || updateStatus?.status === 'ready'
-  const coverageCompanies = updateStatus?.companies ?? financialSnapshot?.stats?.companies ?? analyzableCompanies.length
+  const financialStatus = financialSnapshot?.status ?? updateStatus?.status ?? 'error'
+  const statusReady = analyzableCompanies.length > 0 && ['ready', 'partial', 'building'].includes(financialStatus)
+  const coverageCompanies = analyzableCompanies.length
   const targetCompanies = updateStatus?.targetCompanies ?? financialSnapshot?.stats?.targetCompanies ?? companies.length
   const missingCompanies = updateStatus?.missingCompanies ?? financialSnapshot?.stats?.missingCompanies ?? Math.max(0, targetCompanies - coverageCompanies)
   const coverageRatio = updateStatus?.coverageRatio ?? financialSnapshot?.stats?.coverageRatio ?? (targetCompanies ? coverageCompanies / targetCompanies * 100 : 0)
   const generatedAt = updateStatus?.generatedAt ?? financialSnapshot?.generatedAt
+  const dataUpdatedAt = updateStatus?.dataUpdatedAt ?? financialSnapshot?.dataUpdatedAt
   const sourceLabel = updateStatus?.source ?? financialSnapshot?.source ?? 'EDINET+TDnet'
   const industryData = Object.entries(
     companies.reduce<Record<string, number>>((counts, company) => {
@@ -126,18 +128,22 @@ export default function Dashboard() {
       </section>
 
       <section
-        className={`data-status data-status--${financialSnapshot?.status ?? updateStatus?.status ?? 'error'}`}
+        className={`data-status data-status--${financialStatus}`}
       >
         <RefreshCw size={18} />
         <div>
           <strong>
             {statusReady
-              ? `${sourceLabel} 財務データを自動更新中`
+              ? financialStatus === 'partial'
+                ? `${sourceLabel} 財務データは一部更新に失敗`
+                : financialStatus === 'building'
+                  ? `${sourceLabel} 財務データを構築中`
+                  : `${sourceLabel} 財務データを検証済み`
               : '財務データ自動更新の初期設定待ち'}
           </strong>
           <span>
             {statusReady
-              ? `${coverageCompanies.toLocaleString('ja-JP')}社を表示可能 / 対象 ${targetCompanies.toLocaleString('ja-JP')}社 / 未取得 ${missingCompanies.toLocaleString('ja-JP')}社 / カバレッジ ${coverageRatio.toFixed(2)}% / 最終生成 ${generatedAt ? new Date(generatedAt).toLocaleString('ja-JP') : '未取得'}`
+              ? `${coverageCompanies.toLocaleString('ja-JP')}社を表示可能 / 対象 ${targetCompanies.toLocaleString('ja-JP')}社 / 未取得 ${missingCompanies.toLocaleString('ja-JP')}社 / カバレッジ ${coverageRatio.toFixed(2)}% / 最新開示 ${dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleString('ja-JP') : '未取得'} / 最終検証 ${generatedAt ? new Date(generatedAt).toLocaleString('ja-JP') : '未取得'}`
               : 'EDINET・TDnetから取得できていない企業は、架空値ではなく未取得として表示します。'}
           </span>
         </div>
@@ -150,7 +156,7 @@ export default function Dashboard() {
             <h2>株価データ</h2>
           </div>
           <span>
-            {marketSnapshot?.status === 'ready'
+            {marketSnapshot?.status === 'ready' || marketSnapshot?.status === 'partial'
               ? `${marketSnapshot.source} / ${marketSnapshot.latestTradingDate ?? '更新日未取得'}`
               : '自動更新待ち'}
           </span>
