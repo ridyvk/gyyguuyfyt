@@ -88,7 +88,14 @@ def select_candidates(
     recent_codes = {str(filing.get("code") or "") for filing in recent}
 
     backfill = []
-    for code in sorted(filings):
+    ordered_codes = sorted(
+        filings,
+        key=lambda code: (
+            not any(character.isalpha() for character in code),
+            code,
+        ),
+    )
+    for code in ordered_codes:
         if code in recent_codes or len(backfill) >= max(0, backfill_limit):
             continue
         filing = filings[code]
