@@ -504,6 +504,7 @@ def build_record(filing: dict, archive_data: bytes) -> dict:
         "quality": {
             "policy": "strict-full-year-only",
             "roeModelVersion": 1,
+            "provenanceModelVersion": 1,
             "quarterlySkipped": True,
             "edinetMerged": False,
             "ambiguousRevenueTagsExcluded": ["OrdinaryIncome"],
