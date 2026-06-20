@@ -29,6 +29,7 @@ COMPANY_MASTER = ROOT / "src/data/listedCompanies.json"
 SNAPSHOT_SCHEMA_VERSION = 3
 INVENTORY_MODEL_VERSION = 2
 DATA_MODEL_VERSION = 7
+INITIAL_MODEL_CANARY_SIZE = 50
 
 STRICT_FACT_NAMES = {
     **edinet.FACT_NAMES,
@@ -135,6 +136,17 @@ def candidate_priority_key(filing: dict, records: dict[str, dict]) -> tuple[int,
     return (-priority, code if priority else "")
 
 
+def refresh_batch_size(
+    max_documents: int,
+    data_model_upgraded: bool,
+    has_priority_candidates: bool,
+) -> int:
+    requested = max(0, max_documents)
+    if data_model_upgraded and has_priority_candidates:
+        return min(requested, INITIAL_MODEL_CANARY_SIZE)
+    return requested
+
+
 def collect_processed_doc_ids(
     snapshot: dict,
     records: dict[str, dict],
@@ -219,7 +231,15 @@ def main() -> int:
     candidates.sort(key=filing_sort_key, reverse=True)
     candidates.sort(key=lambda filing: candidate_priority_key(filing, records))
     pending_total = len(candidates)
-    batch = candidates[: max(0, args.max_documents)]
+    has_priority_candidates = bool(
+        candidates and candidate_priority_key(candidates[0], records)[0] < 0
+    )
+    batch_limit = refresh_batch_size(
+        args.max_documents,
+        data_model_upgraded,
+        has_priority_candidates,
+    )
+    batch = candidates[:batch_limit]
 
     updated = 0
     processed_this_batch = 0

@@ -271,6 +271,20 @@ class BatchedMigrationTests(unittest.TestCase):
             (-1, "146A"),
         )
 
+    def test_model_upgrade_uses_small_priority_canary_batch(self) -> None:
+        self.assertEqual(
+            update_edinet_financials_batched.refresh_batch_size(700, True, True),
+            50,
+        )
+        self.assertEqual(
+            update_edinet_financials_batched.refresh_batch_size(700, False, True),
+            700,
+        )
+        self.assertEqual(
+            update_edinet_financials_batched.refresh_batch_size(700, True, False),
+            700,
+        )
+
     def test_old_model_records_are_not_marked_as_processed(self) -> None:
         old_record = record("1000")
         old_record["documentId"] = "OLD"
