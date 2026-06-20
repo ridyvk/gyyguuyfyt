@@ -432,6 +432,7 @@ def build_record(filing: dict, archive_data: bytes) -> dict:
         "history": history,
         "quality": {
             "policy": "strict-full-year-only",
+            "roeModelVersion": 1,
             "quarterlySkipped": True,
             "edinetMerged": False,
             "ambiguousRevenueTagsExcluded": ["OrdinaryIncome"],

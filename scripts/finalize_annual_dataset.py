@@ -15,6 +15,7 @@ SNAPSHOT = ROOT / "public/data/financials.json"
 STATUS = ROOT / "public/data/update-status.json"
 COMPANY_MASTER = ROOT / "src/data/listedCompanies.json"
 FALLBACK_TARGET_COMPANIES = 3000
+MIN_TRUSTED_EDINET_ROE_MODEL_VERSION = 6
 
 
 def utc_now() -> str:
@@ -51,6 +52,34 @@ def validated_records(
     return valid, failures
 
 
+def has_trusted_roe_provenance(record: dict) -> bool:
+    if record.get("source") != "EDINET":
+        return True
+    quality = record.get("quality") or {}
+    if int(quality.get("roeModelVersion") or 0) >= 1:
+        return True
+    return (
+        int(quality.get("dataModelVersion") or 0)
+        >= MIN_TRUSTED_EDINET_ROE_MODEL_VERSION
+    )
+
+
+def quarantine_untrusted_roe(record: dict) -> bool:
+    metrics = record.get("metrics") or {}
+    if "roe" not in metrics or has_trusted_roe_provenance(record):
+        return False
+
+    metrics.pop("roe", None)
+    for point in record.get("history") or []:
+        if isinstance(point, dict):
+            point.pop("roe", None)
+
+    quality = record.setdefault("quality", {})
+    quality["roeStatus"] = "quarantined-stale-model"
+    quality["roeRequiredDataModelVersion"] = MIN_TRUSTED_EDINET_ROE_MODEL_VERSION
+    return True
+
+
 def main() -> int:
     generated_at = utc_now()
     snapshot = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
@@ -63,6 +92,9 @@ def main() -> int:
         current_codes,
     )
     dropped = len(original_records) - len(annual_records)
+    roe_quarantined = sum(
+        1 for record in annual_records.values() if quarantine_untrusted_roe(record)
+    )
     edinet_count = sum(1 for record in annual_records.values() if record.get("source") == "EDINET")
     tdnet_count = sum(1 for record in annual_records.values() if record.get("source") == "TDnet")
     target_companies = len(current_codes)
@@ -108,6 +140,7 @@ def main() -> int:
             "nonAnnualRecordsDropped": dropped,
             "invalidRecordsDropped": dropped,
             "validationFailures": dict(validation_failures),
+            "roeMetricsQuarantined": roe_quarantined,
             "edinetEstimatedRemaining": estimated_remaining,
             "targetCompanies": target_companies,
             "missingCompanies": missing_companies,
@@ -180,6 +213,7 @@ def main() -> int:
         "nonAnnualRecordsDropped": dropped,
         "invalidRecordsDropped": dropped,
         "validationFailures": dict(validation_failures),
+        "roeMetricsQuarantined": roe_quarantined,
         "tdnetRowsScanned": stats.get("tdnetRowsScanned", 0),
         "tdnetEarningsRows": stats.get("tdnetEarningsRows", 0),
         "tdnetQuarterlyRowsSkipped": stats.get("tdnetQuarterlyRowsSkipped", 0),
@@ -205,7 +239,8 @@ def main() -> int:
         "Finalized annual dataset: "
         f"{len(annual_records)} / {target_companies} companies, "
         f"EDINET {edinet_count}, TDnet {tdnet_count}, "
-        f"remaining about {estimated_remaining}, dropped {dropped} non-annual records."
+        f"remaining about {estimated_remaining}, dropped {dropped} non-annual records, "
+        f"quarantined {roe_quarantined} stale ROE metrics."
     )
     return 0
 

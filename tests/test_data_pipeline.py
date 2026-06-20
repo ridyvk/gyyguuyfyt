@@ -76,6 +76,51 @@ class DateAndRecordValidationTests(unittest.TestCase):
         )
 
 
+class RoeQuarantineTests(unittest.TestCase):
+    def test_v5_edinet_roe_is_quarantined_without_dropping_company(self) -> None:
+        stale = record("5987", "2025-06-30")
+        stale["metrics"]["roe"] = {
+            "value": 0.0,
+            "previousValue": -6.96,
+        }
+        stale["history"] = [
+            {"year": "2024/06", "roe": -6.96},
+            {"year": "2025/06", "roe": 0.0},
+        ]
+        stale["quality"] = {"dataModelVersion": 5}
+
+        changed = finalize_annual_dataset.quarantine_untrusted_roe(stale)
+
+        self.assertTrue(changed)
+        self.assertNotIn("roe", stale["metrics"])
+        self.assertTrue(all("roe" not in point for point in stale["history"]))
+        self.assertEqual(
+            stale["quality"]["roeStatus"],
+            "quarantined-stale-model",
+        )
+
+    def test_v6_edinet_roe_remains_available(self) -> None:
+        current = record("1000")
+        current["metrics"]["roe"] = {"value": 12.5}
+        current["quality"] = {"dataModelVersion": 6}
+
+        changed = finalize_annual_dataset.quarantine_untrusted_roe(current)
+
+        self.assertFalse(changed)
+        self.assertEqual(current["metrics"]["roe"]["value"], 12.5)
+
+    def test_tdnet_roe_is_not_quarantined_by_edinet_model_rule(self) -> None:
+        tdnet = record("1000")
+        tdnet["source"] = "TDnet"
+        tdnet["documentType"] = "FullYearEarnings"
+        tdnet["metrics"]["roe"] = {"value": 8.4}
+
+        changed = finalize_annual_dataset.quarantine_untrusted_roe(tdnet)
+
+        self.assertFalse(changed)
+        self.assertEqual(tdnet["metrics"]["roe"]["value"], 8.4)
+
+
 class RoeCalculationTests(unittest.TestCase):
     def test_current_and_previous_roe_both_use_average_equity(self) -> None:
         profits = {

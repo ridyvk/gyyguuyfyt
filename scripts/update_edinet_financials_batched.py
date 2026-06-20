@@ -29,6 +29,7 @@ COMPANY_MASTER = ROOT / "src/data/listedCompanies.json"
 SNAPSHOT_SCHEMA_VERSION = 3
 INVENTORY_MODEL_VERSION = 2
 DATA_MODEL_VERSION = 8
+ROE_MODEL_VERSION = 1
 INITIAL_MODEL_CANARY_SIZE = 50
 
 STRICT_FACT_NAMES = {
@@ -80,6 +81,8 @@ def annotate_record(record: dict) -> dict:
     quality["inventoryPolicy"] = "Inventoriesタグを優先し、無い場合は商品・製品、仕掛品、原材料等を合算"
     quality["inventoryModelVersion"] = INVENTORY_MODEL_VERSION
     quality["dataModelVersion"] = DATA_MODEL_VERSION
+    quality["roeModelVersion"] = ROE_MODEL_VERSION
+    quality["roeModelVersion"] = ROE_MODEL_VERSION
     quality["totalCompanyContextsOnly"] = True
     return record
 

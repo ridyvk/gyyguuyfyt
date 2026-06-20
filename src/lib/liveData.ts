@@ -279,6 +279,15 @@ const valuationMetrics = (
   return metrics
 }
 
+const hasTrustedRoeProvenance = (record: LiveFinancialRecord) => {
+  if (record.source !== 'EDINET') return true
+  const quality = record.quality
+  return (
+    (quality?.roeModelVersion ?? 0) >= 1 ||
+    (quality?.dataModelVersion ?? 0) >= 6
+  )
+}
+
 const mergeRecord = (
   company: Company,
   record: LiveFinancialRecord,
@@ -289,6 +298,9 @@ const mergeRecord = (
   const recordMetrics: Partial<Record<KpiKey, LiveMetricValue>> = {
     ...record.metrics,
     ...valuationMetrics(quote, fundamentals ?? record.valuation),
+  }
+  if (!hasTrustedRoeProvenance(record)) {
+    delete recordMetrics.roe
   }
   const historyMatchesCurrentPeriod =
     history[history.length - 1]?.year === record.periodEnd.slice(0, 7).replace('-', '/')
