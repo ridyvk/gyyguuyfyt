@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-20T22:53:43.065455Z",
+  "generatedAt": "2026-06-20T23:38:23.788Z",
   "dataUpdatedAt": "2026-06-19T17:30:00+09:00",
   "latestPeriodEnd": "2026-05-20",
   "mode": "edinet-annual-baseline-tdnet-full-year-overlay-batched",
@@ -33,5 +33,8 @@
   "tdnetFullYearFilings": 834,
   "tdnetDocumentsUpdated": 144,
   "tdnetStrictFailures": 28,
-  "message": "EDINET年次ベースラインを分割構築中。四半期・中間短信は統合していません。対象3,728社中3,050社を取得済み、未取得678社。"
+  "message": "EDINET年次ベースラインを分割構築中。四半期・中間短信は統合していません。対象3,728社中3,050社を取得済み、未取得678社。",
+  "metricRangeQuarantined": 5,
+  "metricRangeQuarantinedCompanies": 5,
+  "historyTrendQuarantinedCompanies": 8
 }
