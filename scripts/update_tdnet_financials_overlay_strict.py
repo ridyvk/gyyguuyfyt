@@ -96,7 +96,6 @@ def select_candidates(
         quality = existing.get("quality") or {}
         if (
             existing.get("source") == "EDINET"
-            and existing.get("periodEnd") == filing.get("periodEnd")
             and not quality.get("roeDocumentId")
         ):
             backfill.append(filing)
@@ -131,8 +130,6 @@ def main() -> int:
     filings, scan_stats = strict.list_full_year_filings(
         max(args.lookback_days, args.backfill_lookback_days)
     )
-    for filing in filings.values():
-        filing["periodEnd"] = str(filing.get("periodEnd") or "")
     updated = 0
     roe_enriched = 0
     failures: list[str] = []
