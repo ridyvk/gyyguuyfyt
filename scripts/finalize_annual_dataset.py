@@ -8,7 +8,12 @@ from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
-from data_quality import normalize_security_code, validate_financial_record
+from data_quality import (
+    normalize_security_code,
+    quarantine_invalid_metrics,
+    quarantine_misaligned_metric_trends,
+    validate_financial_record,
+)
 from reconcile_financial_sources import reconciliation_totals
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -88,6 +93,9 @@ def main() -> int:
     current_codes = load_company_codes()
     if not current_codes:
         raise RuntimeError("Company master is empty or invalid.")
+    for record in original_records.values():
+        quarantine_invalid_metrics(record)
+        quarantine_misaligned_metric_trends(record)
     annual_records, validation_failures = validated_records(
         original_records,
         current_codes,
@@ -95,6 +103,31 @@ def main() -> int:
     dropped = len(original_records) - len(annual_records)
     roe_quarantined = sum(
         1 for record in annual_records.values() if quarantine_untrusted_roe(record)
+    )
+    metric_range_quarantined = sum(
+        len(
+            (
+                ((record.get("quarantine") or {}).get("metricValidation") or {}).get(
+                    "metrics"
+                )
+                or {}
+            )
+        )
+        for record in annual_records.values()
+    )
+    metric_range_quarantined_companies = sum(
+        1
+        for record in annual_records.values()
+        if (
+            ((record.get("quarantine") or {}).get("metricValidation") or {}).get(
+                "metrics"
+            )
+        )
+    )
+    history_trend_quarantined_companies = sum(
+        1
+        for record in annual_records.values()
+        if (record.get("quarantine") or {}).get("historyTrend")
     )
     edinet_count = sum(1 for record in annual_records.values() if record.get("source") == "EDINET")
     tdnet_count = sum(1 for record in annual_records.values() if record.get("source") == "TDnet")
@@ -121,7 +154,7 @@ def main() -> int:
     )
     status_text = (
         "partial"
-        if pipeline_failures or source_quarantined
+        if pipeline_failures or source_quarantined or metric_range_quarantined
         else "building"
         if is_building
         else "ready"
@@ -150,6 +183,9 @@ def main() -> int:
             "invalidRecordsDropped": dropped,
             "validationFailures": dict(validation_failures),
             "roeMetricsQuarantined": roe_quarantined,
+            "metricRangeQuarantined": metric_range_quarantined,
+            "metricRangeQuarantinedCompanies": metric_range_quarantined_companies,
+            "historyTrendQuarantinedCompanies": history_trend_quarantined_companies,
             **source_reconciliation,
             "edinetEstimatedRemaining": estimated_remaining,
             "targetCompanies": target_companies,
@@ -224,6 +260,9 @@ def main() -> int:
         "invalidRecordsDropped": dropped,
         "validationFailures": dict(validation_failures),
         "roeMetricsQuarantined": roe_quarantined,
+        "metricRangeQuarantined": metric_range_quarantined,
+        "metricRangeQuarantinedCompanies": metric_range_quarantined_companies,
+        "historyTrendQuarantinedCompanies": history_trend_quarantined_companies,
         **source_reconciliation,
         "tdnetRowsScanned": stats.get("tdnetRowsScanned", 0),
         "tdnetEarningsRows": stats.get("tdnetEarningsRows", 0),
@@ -251,7 +290,9 @@ def main() -> int:
         f"{len(annual_records)} / {target_companies} companies, "
         f"EDINET {edinet_count}, TDnet {tdnet_count}, "
         f"remaining about {estimated_remaining}, dropped {dropped} non-annual records, "
-        f"quarantined {roe_quarantined} stale ROE metrics and "
+        f"quarantined {roe_quarantined} stale ROE metrics, "
+        f"{metric_range_quarantined} impossible metrics, "
+        f"{history_trend_quarantined_companies} stale histories and "
         f"{source_quarantined} EDINET/TDnet mismatches."
     )
     return 0
