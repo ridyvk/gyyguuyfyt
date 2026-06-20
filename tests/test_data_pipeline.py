@@ -260,6 +260,28 @@ class TdnetRoeDisclosureTests(unittest.TestCase):
         self.assertEqual([candidate["code"] for candidate in candidates], ["130A"])
         self.assertEqual(attempted, set())
 
+    def test_priority_code_is_selected_before_normal_backfill_order(self) -> None:
+        old = (datetime.now(timezone.utc) - timedelta(days=60)).isoformat()
+        filings = {
+            "130A": {"code": "130A", "filedAt": old, "documentId": "DOC130"},
+            "146A": {"code": "146A", "filedAt": old, "documentId": "DOC146"},
+        }
+        records = {
+            code: {"source": "EDINET", "quality": {}}
+            for code in filings
+        }
+
+        candidates = update_tdnet_financials_overlay_strict.select_candidates(
+            filings,
+            records,
+            lookback_days=31,
+            backfill_limit=1,
+            max_documents=10,
+            priority_codes=["146A"],
+        )
+
+        self.assertEqual([candidate["code"] for candidate in candidates], ["146A"])
+
     def test_same_period_tdnet_roe_enriches_newer_edinet_record(self) -> None:
         existing = record("146A", "2025-12-31")
         existing["metrics"]["roe"] = {
