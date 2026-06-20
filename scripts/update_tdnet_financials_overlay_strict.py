@@ -13,6 +13,10 @@ from pathlib import Path
 import update_tdnet_financials_strict as strict
 from update_tdnet_financials import COMPANY_MASTER, SNAPSHOT, get
 from data_quality import record_order_key, validate_financial_record
+from reconcile_financial_sources import (
+    reconcile_same_period,
+    reconciliation_totals,
+)
 
 # Compatibility patch for the first strict updater version.
 strict.timedelta = timedelta
@@ -158,6 +162,9 @@ def main() -> int:
     )
     updated = 0
     roe_enriched = 0
+    reconciled_companies = 0
+    matched_metrics = 0
+    quarantined_metrics = 0
     failures: list[str] = []
     eligible_filings = {
         code: filing
@@ -182,14 +189,23 @@ def main() -> int:
             if validate_financial_record(record["code"], record, current_codes) is not None:
                 raise ValueError("TDnet record did not pass annual-record validation")
             existing = records.get(record["code"])
-            if record.get("metrics") and should_replace(existing, record):
+            reconciliation = (
+                reconcile_same_period(existing, record)
+                if existing and record.get("metrics")
+                else None
+            )
+            if reconciliation is not None:
+                reconciled_companies += 1
+                matched_metrics += reconciliation.matched
+                quarantined_metrics += reconciliation.quarantined
+                if (
+                    (existing.get("quality") or {}).get("roeDocumentId")
+                    == record.get("documentId")
+                ):
+                    roe_enriched += 1
+            elif record.get("metrics") and should_replace(existing, record):
                 records[record["code"]] = record
                 updated += 1
-            elif record.get("metrics") and merge_same_period_disclosed_roe(
-                existing,
-                record,
-            ):
-                roe_enriched += 1
         except Exception as error:
             failures.append(f"{filing.get('code')}:{filing.get('documentId')}: {error}")
         finally:
@@ -242,6 +258,10 @@ def main() -> int:
                 "tdnetCompanies": tdnet_count,
                 "tdnetDocumentsUpdated": updated,
                 "tdnetRoeDisclosuresMerged": roe_enriched,
+                "sourceReconciliationChecksThisRun": reconciled_companies,
+                "sourceMatchedMetricsThisRun": matched_metrics,
+                "sourceQuarantinedMetricsThisRun": quarantined_metrics,
+                **reconciliation_totals(records),
                 "tdnetRoeBackfillAttemptedDocumentIds": sorted(attempted_document_ids),
                 "tdnetRoePriorityCodesMissing": sorted(
                     set(args.priority_code) - set(eligible_filings)
@@ -258,8 +278,9 @@ def main() -> int:
     print(
         f"Saved {len(records)} annual companies; "
         f"EDINET {edinet_count}, TDnet {tdnet_count}; "
-        f"TDnet updated {updated}; ROE enriched {roe_enriched}; "
-        f"failures {len(failures)}."
+        f"TDnet updated {updated}; reconciled {reconciled_companies}; "
+        f"matched metrics {matched_metrics}; quarantined metrics {quarantined_metrics}; "
+        f"ROE enriched {roe_enriched}; failures {len(failures)}."
     )
     for failure in failures[:30]:
         print(f"warning: {failure}", file=sys.stderr)
