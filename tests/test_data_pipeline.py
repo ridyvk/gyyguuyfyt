@@ -292,6 +292,23 @@ class SourceReconciliationTests(unittest.TestCase):
         self.assertEqual(isolated["operatingMargin"]["tdnet"]["value"], 20.0)
         self.assertEqual(edinet["quality"]["reconciliationStatus"], "quarantined")
 
+    def test_fully_quarantined_company_is_retained_for_audit(self) -> None:
+        edinet = record("1000")
+        edinet["metrics"] = {"operatingMargin": {"value": 10.0}}
+        tdnet = self.tdnet_record()
+        tdnet["metrics"] = {"operatingMargin": {"value": 20.0}}
+
+        reconcile_financial_sources.reconcile_same_period(
+            edinet,
+            tdnet,
+            checked_at="2026-06-20T00:00:00Z",
+        )
+
+        self.assertEqual(edinet["metrics"], {})
+        self.assertIsNone(
+            data_quality.validate_financial_record("1000", edinet, {"1000"})
+        )
+
     def test_different_periods_are_not_reconciled(self) -> None:
         edinet = record("1000", "2026-03-31")
         tdnet = self.tdnet_record()
