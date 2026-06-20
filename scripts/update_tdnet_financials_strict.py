@@ -23,11 +23,11 @@ from update_edinet_financials import (
     INVENTORY_COMPONENTS,
     add_metric,
     at,
+    disclosed_or_calculated_roe,
     growth,
     percent,
     period_before,
     previous,
-    roe_for_period,
 )
 from update_tdnet_financials import (
     BASE_URL,
@@ -65,6 +65,9 @@ STRICT_TDNET_FACT_NAMES = {
         "OperatingIncomeIFRS",
         "OperatingProfitLoss",
         "OperatingProfitLossIFRS",
+    ),
+    "disclosedRoe": (
+        "RateOfReturnOnEquitySummaryOfBusinessResults",
     ),
     "profit": (
         "ProfitLossAttributableToOwnersOfParent",
@@ -135,7 +138,13 @@ FULL_YEAR_EXCLUDED_TITLE_TOKENS = (
     "Q3",
 )
 
-DURATION_KEYS = {"revenue", "operatingIncome", "profit", "operatingCf"}
+DURATION_KEYS = {
+    "revenue",
+    "operatingIncome",
+    "profit",
+    "operatingCf",
+    "disclosedRoe",
+}
 FULL_YEAR_MIN_DAYS = 250
 FULL_YEAR_MAX_DAYS = 460
 
@@ -307,8 +316,14 @@ def build_record(filing: dict, archive_data: bytes) -> dict:
     add_metric(
         metrics,
         "roe",
-        roe_for_period(series["profit"], series["equity"], period_end),
-        roe_for_period(
+        disclosed_or_calculated_roe(
+            series["disclosedRoe"],
+            series["profit"],
+            series["equity"],
+            period_end,
+        ),
+        disclosed_or_calculated_roe(
+            series["disclosedRoe"],
             series["profit"],
             series["equity"],
             prior_profit_period_end,
@@ -353,7 +368,8 @@ def build_record(filing: dict, archive_data: bytes) -> dict:
             "revenue": round(revenue / 100_000_000) if revenue is not None else None,
             "operatingMargin": percent(series["operatingIncome"].get(year_end), revenue),
             "netMargin": percent(series["profit"].get(year_end), revenue),
-            "roe": roe_for_period(
+            "roe": disclosed_or_calculated_roe(
+                series["disclosedRoe"],
                 series["profit"],
                 series["equity"],
                 year_end,
