@@ -28,7 +28,7 @@ SNAPSHOT = ROOT / "public/data/financials.json"
 COMPANY_MASTER = ROOT / "src/data/listedCompanies.json"
 SNAPSHOT_SCHEMA_VERSION = 3
 INVENTORY_MODEL_VERSION = 2
-DATA_MODEL_VERSION = 7
+DATA_MODEL_VERSION = 8
 INITIAL_MODEL_CANARY_SIZE = 50
 
 STRICT_FACT_NAMES = {
@@ -112,8 +112,6 @@ def record_has_roe_history_mismatch(record: object) -> bool:
 
 
 def record_roe_refresh_priority(record: object) -> int:
-    if record_has_roe_history_mismatch(record):
-        return 2
     if not isinstance(record, dict):
         return 0
     quality = record.get("quality") or {}
@@ -124,9 +122,11 @@ def record_roe_refresh_priority(record: object) -> int:
         and isinstance(value, (int, float))
         and abs(float(value)) < 1
     ):
-        return 1
+        # A ratio displayed as a percent is a 100x scale error, so repair it first.
+        return 3
+    if record_has_roe_history_mismatch(record):
+        return 2
     return 0
-
 
 def candidate_priority_key(filing: dict, records: dict[str, dict]) -> tuple[int, str]:
     code = str(filing.get("_normalizedCode") or "")
