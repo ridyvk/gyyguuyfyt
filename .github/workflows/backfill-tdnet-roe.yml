@@ -1,0 +1,64 @@
+name: Backfill TDnet ROE disclosures
+
+on:
+  workflow_dispatch:
+    inputs:
+      backfill_limit:
+        description: Historical TDnet filings to attempt
+        required: false
+        default: '200'
+  push:
+    branches:
+      - main
+    paths:
+      - .github/triggers/tdnet-roe-backfill.txt
+
+permissions:
+  contents: write
+
+concurrency:
+  group: annual-financial-update
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Backfill disclosed TDnet ROE
+        env:
+          BACKFILL_LIMIT: ${{ inputs.backfill_limit || '200' }}
+        run: |
+          python scripts/update_tdnet_financials_overlay_strict.py \
+            --lookback-days 31 \
+            --backfill-lookback-days 460 \
+            --backfill-limit "$BACKFILL_LIMIT"
+
+      - name: Finalize annual dataset
+        run: python scripts/finalize_annual_dataset.py
+
+      - name: Validate financial dataset
+        run: python scripts/validate_datasets.py --scope financial
+
+      - name: Commit updated financial snapshot
+        run: |
+          git config user.name "kpi-scope-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/data/financials.json public/data/update-status.json
+          if git diff --cached --quiet; then
+            echo "No TDnet ROE backfill changes."
+          else
+            git commit -m "Backfill disclosed TDnet ROE"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
