@@ -88,11 +88,33 @@ export interface Company {
   stockPrice?: MarketQuote
 }
 
+export interface XbrlSourceFact {
+  role: string
+  concept: string
+  tag: string
+  namespace?: string
+  contextRef: string
+  periodStart?: string
+  periodEnd: string
+  periodType: 'duration' | 'instant'
+  unitRef?: string
+  scale?: string
+  consolidation: 'consolidated' | 'non-consolidated' | 'unknown'
+  dimensions: string[]
+  rawValue: number
+}
+
+export interface MetricProvenance {
+  formula: string
+  sourceFacts: XbrlSourceFact[]
+}
+
 export interface LiveMetricValue {
   value: number
   previousValue?: number
   comparisonLabel?: KpiComparisonLabel
   trend?: number[]
+  provenance?: MetricProvenance
 }
 
 export interface ValuationBasis {
@@ -117,6 +139,7 @@ export interface LiveFinancialRecord {
   quality?: {
     dataModelVersion?: number
     roeModelVersion?: number
+    provenanceModelVersion?: number
     roeStatus?: string
     roeRequiredDataModelVersion?: number
   }
