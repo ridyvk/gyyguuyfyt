@@ -251,7 +251,7 @@ class BatchedMigrationTests(unittest.TestCase):
 
         self.assertEqual(
             update_edinet_financials_batched.record_roe_refresh_priority(stale),
-            1,
+            3,
         )
 
     def test_candidate_priority_uses_preserved_alphanumeric_code(self) -> None:
@@ -268,7 +268,7 @@ class BatchedMigrationTests(unittest.TestCase):
             update_edinet_financials_batched.candidate_priority_key(
                 filing, {"146A": stale}
             ),
-            (-1, "146A"),
+            (-3, "146A"),
         )
 
     def test_model_upgrade_uses_small_priority_canary_batch(self) -> None:
