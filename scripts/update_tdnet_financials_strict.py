@@ -23,11 +23,11 @@ from update_edinet_financials import (
     INVENTORY_COMPONENTS,
     add_metric,
     at,
-    disclosed_or_calculated_roe,
     growth,
     percent,
     period_before,
     previous,
+    roe_for_period,
 )
 from update_tdnet_financials import (
     BASE_URL,
@@ -193,6 +193,21 @@ def values_for(
     )
 
 
+def disclosed_or_calculated_tdnet_roe(
+    disclosed_values: dict[str, float],
+    profit_values: dict[str, float],
+    equity_values: dict[str, float],
+    period_end: str | None,
+) -> float | None:
+    if period_end is None:
+        return None
+    disclosed = at(disclosed_values, period_end)
+    if disclosed is not None and math.isfinite(disclosed):
+        # TDnet Inline XBRL exposes the displayed percentage (23.5 = 23.5%).
+        return disclosed
+    return roe_for_period(profit_values, equity_values, period_end)
+
+
 def summed_values_for(
     contexts: dict,
     facts: dict,
@@ -316,13 +331,13 @@ def build_record(filing: dict, archive_data: bytes) -> dict:
     add_metric(
         metrics,
         "roe",
-        disclosed_or_calculated_roe(
+        disclosed_or_calculated_tdnet_roe(
             series["disclosedRoe"],
             series["profit"],
             series["equity"],
             period_end,
         ),
-        disclosed_or_calculated_roe(
+        disclosed_or_calculated_tdnet_roe(
             series["disclosedRoe"],
             series["profit"],
             series["equity"],
@@ -368,7 +383,7 @@ def build_record(filing: dict, archive_data: bytes) -> dict:
             "revenue": round(revenue / 100_000_000) if revenue is not None else None,
             "operatingMargin": percent(series["operatingIncome"].get(year_end), revenue),
             "netMargin": percent(series["profit"].get(year_end), revenue),
-            "roe": disclosed_or_calculated_roe(
+            "roe": disclosed_or_calculated_tdnet_roe(
                 series["disclosedRoe"],
                 series["profit"],
                 series["equity"],
