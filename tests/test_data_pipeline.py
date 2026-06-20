@@ -108,8 +108,8 @@ class RoeCalculationTests(unittest.TestCase):
 
     def test_disclosed_roe_takes_precedence_over_recalculation(self) -> None:
         disclosed = {
-            "2024-12-31": 23.2,
-            "2025-12-31": 23.5,
+            "2024-12-31": 0.232,
+            "2025-12-31": 0.235,
         }
         profits = {
             "2024-12-31": 2_238_000_000.0,
@@ -233,6 +233,25 @@ class BatchedMigrationTests(unittest.TestCase):
         )
         self.assertFalse(
             update_edinet_financials_batched.record_has_roe_history_mismatch(consistent)
+        )
+
+    def test_v5_fractional_roe_is_prioritized_for_scale_refresh(self) -> None:
+        stale = record("146A", "2025-12-31")
+        stale["metrics"]["roe"] = {
+            "value": 0.23,
+            "previousValue": 0.23,
+        }
+        stale["history"] = [
+            {"year": "2024/12", "roe": 0.23},
+            {"year": "2025/12", "roe": 0.23},
+        ]
+        stale["quality"] = {
+            "dataModelVersion": update_edinet_financials_batched.DATA_MODEL_VERSION - 1
+        }
+
+        self.assertEqual(
+            update_edinet_financials_batched.record_roe_refresh_priority(stale),
+            1,
         )
 
     def test_old_model_records_are_not_marked_as_processed(self) -> None:

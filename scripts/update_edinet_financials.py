@@ -333,7 +333,8 @@ def disclosed_or_calculated_roe(
         return None
     disclosed = at(disclosed_values, period_end)
     if disclosed is not None and math.isfinite(disclosed):
-        return disclosed
+        # EDINET's pure-unit ROE fact is stored as a ratio (0.235 = 23.5%).
+        return disclosed * 100
     return roe_for_period(profit_values, equity_values, period_end)
 
 
