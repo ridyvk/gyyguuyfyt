@@ -208,6 +208,33 @@ class XbrlContextTests(unittest.TestCase):
 
 
 class BatchedMigrationTests(unittest.TestCase):
+    def test_roe_history_mismatch_is_prioritized_for_refresh(self) -> None:
+        stale = record("146A", "2025-12-31")
+        stale["metrics"]["roe"] = {
+            "value": 23.47,
+            "previousValue": 18.5,
+        }
+        stale["history"] = [
+            {"year": "2024/12", "roe": 23.26},
+            {"year": "2025/12", "roe": 23.47},
+        ]
+        consistent = record("1000", "2025-12-31")
+        consistent["metrics"]["roe"] = {
+            "value": 12.0,
+            "previousValue": 10.0,
+        }
+        consistent["history"] = [
+            {"year": "2024/12", "roe": 10.0},
+            {"year": "2025/12", "roe": 12.0},
+        ]
+
+        self.assertTrue(
+            update_edinet_financials_batched.record_has_roe_history_mismatch(stale)
+        )
+        self.assertFalse(
+            update_edinet_financials_batched.record_has_roe_history_mismatch(consistent)
+        )
+
     def test_old_model_records_are_not_marked_as_processed(self) -> None:
         old_record = record("1000")
         old_record["documentId"] = "OLD"

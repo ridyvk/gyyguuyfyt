@@ -94,6 +94,22 @@ def record_uses_current_model(record: object) -> bool:
     return int(quality.get("dataModelVersion") or 0) >= DATA_MODEL_VERSION
 
 
+def record_has_roe_history_mismatch(record: object) -> bool:
+    if not isinstance(record, dict):
+        return False
+    roe = (record.get("metrics") or {}).get("roe") or {}
+    history = record.get("history") or []
+    if not isinstance(roe, dict) or not isinstance(history, list) or len(history) < 2:
+        return False
+    previous_value = roe.get("previousValue")
+    prior_history_value = (history[-2] or {}).get("roe")
+    if not isinstance(previous_value, (int, float)) or not isinstance(
+        prior_history_value, (int, float)
+    ):
+        return False
+    return abs(float(previous_value) - float(prior_history_value)) >= 0.05
+
+
 def collect_processed_doc_ids(
     snapshot: dict,
     records: dict[str, dict],
@@ -175,7 +191,17 @@ def main() -> int:
             already_done += 1
             continue
         candidates.append(filing)
-    candidates.sort(key=filing_sort_key, reverse=True)
+    candidates.sort(
+        key=lambda filing: (
+            record_has_roe_history_mismatch(
+                records.get(
+                    edinet.normalize_security_code(filing.get("secCode")) or ""
+                )
+            ),
+            filing_sort_key(filing),
+        ),
+        reverse=True,
+    )
     pending_total = len(candidates)
     batch = candidates[: max(0, args.max_documents)]
 
