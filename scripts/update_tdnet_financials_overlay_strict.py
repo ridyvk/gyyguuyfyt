@@ -70,6 +70,40 @@ def merge_same_period_disclosed_roe(existing: dict | None, record: dict) -> bool
     return True
 
 
+def select_candidates(
+    filings: dict[str, dict],
+    records: dict[str, dict],
+    lookback_days: int,
+    backfill_limit: int,
+    max_documents: int,
+) -> list[dict]:
+    cutoff = (
+        datetime.now(timezone.utc) - timedelta(days=max(0, lookback_days))
+    ).date().isoformat()
+    recent = [
+        filing
+        for filing in filings.values()
+        if str(filing.get("filedAt") or "")[:10] >= cutoff
+    ]
+    recent_codes = {str(filing.get("code") or "") for filing in recent}
+
+    backfill = []
+    for code in sorted(filings):
+        if code in recent_codes or len(backfill) >= max(0, backfill_limit):
+            continue
+        filing = filings[code]
+        existing = records.get(code) or {}
+        quality = existing.get("quality") or {}
+        if (
+            existing.get("source") == "EDINET"
+            and not quality.get("roeDocumentId")
+        ):
+            backfill.append(filing)
+
+    combined = recent + backfill
+    return combined[: max(0, max_documents)]
+
+
 def load_company_codes() -> set[str]:
     payload = json.loads(COMPANY_MASTER.read_text(encoding="utf-8"))
     return {str(company["code"]) for company in payload.get("companies", [])}
@@ -78,6 +112,8 @@ def load_company_codes() -> set[str]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--lookback-days", type=int, default=31)
+    parser.add_argument("--backfill-lookback-days", type=int, default=460)
+    parser.add_argument("--backfill-limit", type=int, default=50)
     parser.add_argument("--max-documents", type=int, default=1500)
     args = parser.parse_args()
 
@@ -91,15 +127,24 @@ def main() -> int:
     }
     dropped_existing = len(old_records) - len(records)
 
-    filings, scan_stats = strict.list_full_year_filings(args.lookback_days)
+    filings, scan_stats = strict.list_full_year_filings(
+        max(args.lookback_days, args.backfill_lookback_days)
+    )
     updated = 0
     roe_enriched = 0
     failures: list[str] = []
-    candidates = [
-        filing
-        for filing in filings.values()
-        if filing.get("code") in current_codes
-    ][: args.max_documents]
+    eligible_filings = {
+        code: filing
+        for code, filing in filings.items()
+        if code in current_codes
+    }
+    candidates = select_candidates(
+        eligible_filings,
+        records,
+        args.lookback_days,
+        args.backfill_limit,
+        args.max_documents,
+    )
     for index, filing in enumerate(candidates, 1):
         try:
             record = strict.build_record(filing, get(filing["xbrlUrl"]))
