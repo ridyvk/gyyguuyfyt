@@ -130,8 +130,8 @@ class RoeCalculationTests(unittest.TestCase):
             disclosed, profits, equities, "2024-12-31"
         )
 
-        self.assertEqual(current, 23.5)
-        self.assertEqual(previous, 23.2)
+        self.assertAlmostEqual(current or 0, 23.5)
+        self.assertAlmostEqual(previous or 0, 23.2)
         self.assertEqual(round((current or 0) - (previous or 0), 1), 0.3)
 
     def test_disclosed_roe_falls_back_to_recalculation(self) -> None:
