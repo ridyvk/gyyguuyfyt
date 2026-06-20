@@ -185,6 +185,7 @@ class TdnetRoeDisclosureTests(unittest.TestCase):
         old = (today - timedelta(days=60)).isoformat()
         recent = (today - timedelta(days=1)).isoformat()
         filings = {
+            "1301": {"code": "1301", "filedAt": old},
             "1500": {"code": "1500", "filedAt": old},
             "146A": {"code": "146A", "filedAt": old},
             "1400": {"code": "1400", "filedAt": recent},
