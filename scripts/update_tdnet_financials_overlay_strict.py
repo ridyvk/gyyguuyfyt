@@ -76,6 +76,7 @@ def select_candidates(
     lookback_days: int,
     backfill_limit: int,
     max_documents: int,
+    attempted_document_ids: set[str] | None = None,
 ) -> list[dict]:
     cutoff = (
         datetime.now(timezone.utc) - timedelta(days=max(0, lookback_days))
@@ -87,7 +88,7 @@ def select_candidates(
     ]
     recent_codes = {str(filing.get("code") or "") for filing in recent}
 
-    backfill = []
+    backfill_pool = []
     ordered_codes = sorted(
         filings,
         key=lambda code: (
@@ -96,7 +97,7 @@ def select_candidates(
         ),
     )
     for code in ordered_codes:
-        if code in recent_codes or len(backfill) >= max(0, backfill_limit):
+        if code in recent_codes:
             continue
         filing = filings[code]
         existing = records.get(code) or {}
@@ -105,7 +106,18 @@ def select_candidates(
             existing.get("source") == "EDINET"
             and not quality.get("roeDocumentId")
         ):
-            backfill.append(filing)
+            backfill_pool.append(filing)
+
+    attempted = attempted_document_ids if attempted_document_ids is not None else set()
+    unseen = [
+        filing
+        for filing in backfill_pool
+        if str(filing.get("documentId") or "") not in attempted
+    ]
+    if not unseen and backfill_pool:
+        attempted.clear()
+        unseen = backfill_pool
+    backfill = unseen[: max(0, backfill_limit)]
 
     combined = recent + backfill
     return combined[: max(0, max_documents)]
@@ -145,12 +157,16 @@ def main() -> int:
         for code, filing in filings.items()
         if code in current_codes
     }
+    attempted_document_ids = set(
+        snapshot.get("stats", {}).get("tdnetRoeBackfillAttemptedDocumentIds", [])
+    )
     candidates = select_candidates(
         eligible_filings,
         records,
         args.lookback_days,
         args.backfill_limit,
         args.max_documents,
+        attempted_document_ids,
     )
     for index, filing in enumerate(candidates, 1):
         try:
@@ -168,9 +184,21 @@ def main() -> int:
                 roe_enriched += 1
         except Exception as error:
             failures.append(f"{filing.get('code')}:{filing.get('documentId')}: {error}")
+        finally:
+            document_id = str(filing.get("documentId") or "")
+            if document_id:
+                attempted_document_ids.add(document_id)
         if index % 50 == 0:
             print(f"Processed {index}/{len(candidates)}")
         time.sleep(0.06)
+
+    unresolved_document_ids = {
+        str(filing.get("documentId") or "")
+        for code, filing in eligible_filings.items()
+        if records.get(code, {}).get("source") == "EDINET"
+        and not (records.get(code, {}).get("quality") or {}).get("roeDocumentId")
+    }
+    attempted_document_ids.intersection_update(unresolved_document_ids)
 
     generated_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     edinet_count = sum(1 for record in records.values() if record.get("source") == "EDINET")
@@ -206,6 +234,7 @@ def main() -> int:
                 "tdnetCompanies": tdnet_count,
                 "tdnetDocumentsUpdated": updated,
                 "tdnetRoeDisclosuresMerged": roe_enriched,
+                "tdnetRoeBackfillAttemptedDocumentIds": sorted(attempted_document_ids),
                 "tdnetStrictFailures": len(failures),
                 "nonAnnualExistingRecordsDropped": dropped_existing,
             },
