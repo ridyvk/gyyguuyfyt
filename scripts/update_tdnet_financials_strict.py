@@ -28,6 +28,8 @@ from update_edinet_financials import (
     period_before,
     previous,
     roe_for_period,
+    selected_fact_lists,
+    summed_selected_fact_lists,
 )
 from update_tdnet_financials import (
     BASE_URL,
@@ -43,8 +45,10 @@ from update_tdnet_financials import (
     parse_list_page,
 )
 from data_quality import (
+    attach_metric_provenance,
     context_rank as quality_context_rank,
     normalize_security_code,
+    provenance_inputs,
     select_preferred_values,
 )
 
@@ -305,10 +309,20 @@ def build_record(filing: dict, archive_data: bytes) -> dict:
         key: values_for(contexts, facts, names, key in DURATION_KEYS)
         for key, names in STRICT_TDNET_FACT_NAMES.items()
     }
+    selected_facts = {
+        key: selected_fact_lists(contexts, facts, names, key in DURATION_KEYS)
+        for key, names in STRICT_TDNET_FACT_NAMES.items()
+    }
     if not series["debt"]:
         series["debt"] = summed_values_for(contexts, facts, TDNET_DEBT_COMPONENTS)
+        selected_facts["debt"] = summed_selected_fact_lists(
+            contexts, facts, TDNET_DEBT_COMPONENTS
+        )
     if not series["inventory"]:
         series["inventory"] = summed_values_for(contexts, facts, INVENTORY_COMPONENTS)
+        selected_facts["inventory"] = summed_selected_fact_lists(
+            contexts, facts, INVENTORY_COMPONENTS
+        )
 
     current = {key: at(values, period_end) for key, values in series.items()}
     prior = {key: previous(values, period_end) for key, values in series.items()}
@@ -374,6 +388,63 @@ def build_record(filing: dict, archive_data: bytes) -> dict:
     )
     add_metric(metrics, "inventoryGrowth", growth(current["inventory"], prior["inventory"]))
     add_metric(metrics, "receivablesGrowth", growth(current["receivables"], prior["receivables"]))
+
+    provenance_specs = {
+        "revenueGrowth": (
+            "(revenue.current / revenue.previous - 1) * 100",
+            ("revenue",),
+            True,
+        ),
+        "operatingMargin": (
+            "operatingIncome / revenue * 100",
+            ("operatingIncome", "revenue"),
+            True,
+        ),
+        "netMargin": (
+            "profit / revenue * 100",
+            ("profit", "revenue"),
+            True,
+        ),
+        "roe": (
+            "disclosedRoe; fallback profit / average equity * 100",
+            ("disclosedRoe", "profit", "equity"),
+            True,
+        ),
+        "equityRatio": (
+            "equity / assets * 100",
+            ("equity", "assets"),
+            True,
+        ),
+        "operatingCfMargin": (
+            "operatingCf / revenue * 100",
+            ("operatingCf", "revenue"),
+            True,
+        ),
+        "debtRatio": ("debt / equity", ("debt", "equity"), False),
+        "netCash": ("(cash - debt) / 100000000", ("cash", "debt"), False),
+        "inventoryGrowth": (
+            "(inventory.current / inventory.previous - 1) * 100",
+            ("inventory",),
+            True,
+        ),
+        "receivablesGrowth": (
+            "(receivables.current / receivables.previous - 1) * 100",
+            ("receivables",),
+            True,
+        ),
+    }
+    for key, (formula, inputs, include_previous) in provenance_specs.items():
+        attach_metric_provenance(
+            metrics,
+            key,
+            formula,
+            provenance_inputs(
+                selected_facts,
+                inputs,
+                period_end,
+                include_previous,
+            ),
+        )
 
     history = []
     for year_end in sorted(series["revenue"])[-3:]:
