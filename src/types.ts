@@ -117,6 +117,46 @@ export interface LiveMetricValue {
   provenance?: MetricProvenance
 }
 
+export interface ReconciliationFieldComparison {
+  edinet: number
+  tdnet: number
+  difference: number
+  allowedDifference: number
+  matched: boolean
+}
+
+export interface MetricReconciliation {
+  status: 'matched' | 'quarantined' | 'edinet-only' | 'tdnet-only'
+  selectedSource?: 'EDINET' | 'TDnet' | null
+  fields?: Record<string, ReconciliationFieldComparison>
+}
+
+export interface SourceReconciliation {
+  modelVersion: number
+  checkedAt: string
+  periodEnd: string
+  status: 'matched' | 'quarantined'
+  metrics: Partial<Record<KpiKey, MetricReconciliation>>
+  quarantinedMetrics: KpiKey[]
+}
+
+export interface SourceQuarantine {
+  sourceReconciliation?: {
+    checkedAt: string
+    periodEnd: string
+    metrics: Partial<
+      Record<
+        KpiKey,
+        {
+          reason: string
+          edinet: LiveMetricValue
+          tdnet: LiveMetricValue
+        }
+      >
+    >
+  }
+}
+
 export interface ValuationBasis {
   disclosedDate?: string
   disclosedAt?: string
@@ -136,10 +176,16 @@ export interface LiveFinancialRecord {
   metrics: Partial<Record<KpiKey, LiveMetricValue>>
   history: FinancialYearPoint[]
   valuation?: ValuationBasis
+  reconciliation?: SourceReconciliation
+  quarantine?: SourceQuarantine
   quality?: {
     dataModelVersion?: number
     roeModelVersion?: number
     provenanceModelVersion?: number
+    reconciliationModelVersion?: number
+    reconciliationStatus?: 'matched' | 'quarantined'
+    reconciliationDocumentId?: string
+    reconciliationSourceUrl?: string
     roeStatus?: string
     roeRequiredDataModelVersion?: number
   }
@@ -184,6 +230,12 @@ export interface FinancialStats {
   invalidRecordsDropped?: number
   validationFailures?: Record<string, number>
   roeMetricsQuarantined?: number
+  sourceReconciliationCompanies?: number
+  sourceMatchedMetrics?: number
+  sourceQuarantinedMetrics?: number
+  sourceReconciliationChecksThisRun?: number
+  sourceMatchedMetricsThisRun?: number
+  sourceQuarantinedMetricsThisRun?: number
   dataUpdatedAt?: string | null
   latestPeriodEnd?: string | null
   lastCheckedAt?: string | null
