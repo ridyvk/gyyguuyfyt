@@ -1,0 +1,62 @@
+name: Diagnose EDINET ROE contexts
+
+on:
+  workflow_dispatch:
+    inputs:
+      document_id:
+        description: EDINET document ID
+        required: true
+        default: S100XUIC
+  push:
+    branches:
+      - main
+    paths:
+      - .github/triggers/diagnose-edinet-roe.txt
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Print ROE facts and contexts
+        env:
+          EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
+          DOCUMENT_ID: ${{ inputs.document_id || 'S100XUIC' }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import sys
+
+          sys.path.insert(0, "scripts")
+          from update_edinet_financials import API, get, parse_xbrl, xbrl_from_zip
+
+          api_key = os.environ["EDINET_API_KEY"]
+          document_id = os.environ["DOCUMENT_ID"]
+          archive = get(f"{API}/documents/{document_id}?type=1", api_key)
+          contexts, facts = parse_xbrl(xbrl_from_zip(archive))
+
+          matches = {
+              name: [
+                  {
+                      "contextId": context_id,
+                      "value": value,
+                      "context": contexts.get(context_id),
+                  }
+                  for context_id, value in values
+              ]
+              for name, values in sorted(facts.items())
+              if "ReturnOnEquity" in name
+          }
+          print(json.dumps(matches, ensure_ascii=False, indent=2))
+          PY
