@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-20T21:21:00.901010Z",
+  "generatedAt": "2026-06-20T21:26:26.518198Z",
   "dataUpdatedAt": "2026-06-19T17:30:00+09:00",
   "latestPeriodEnd": "2026-05-20",
   "mode": "edinet-annual-baseline-tdnet-full-year-overlay-batched",
@@ -15,8 +15,8 @@
   "targetCompanies": 3728,
   "missingCompanies": 678,
   "coverageRatio": 81.81,
-  "edinetCompanies": 2680,
-  "tdnetCompanies": 370,
+  "edinetCompanies": 2516,
+  "tdnetCompanies": 534,
   "edinetDocumentsScanned": 106077,
   "edinetPendingBeforeBatch": 3349,
   "edinetBatchSize": 50,
@@ -30,7 +30,7 @@
   "tdnetEarningsRows": 1470,
   "tdnetQuarterlyRowsSkipped": 579,
   "tdnetFullYearFilings": 834,
-  "tdnetDocumentsUpdated": 180,
-  "tdnetStrictFailures": 21,
+  "tdnetDocumentsUpdated": 308,
+  "tdnetStrictFailures": 22,
   "message": "EDINET年次ベースラインを分割構築中。四半期・中間短信は統合していません。対象3,728社中3,050社を取得済み、未取得678社。"
 }
