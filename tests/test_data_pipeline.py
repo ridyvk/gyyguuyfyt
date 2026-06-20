@@ -173,6 +173,7 @@ class DeliveryTests(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertIn("actions/deploy-pages", deploy)
+        self.assertIn("python scripts/finalize_annual_dataset.py", deploy)
         self.assertNotIn("actions/deploy-pages", financial)
         self.assertNotIn("actions/deploy-pages", market)
         self.assertIn("Update annual financials", deploy)
@@ -184,3 +185,4 @@ class DeliveryTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
