@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from data_quality import normalize_security_code, validate_financial_record
+from reconcile_financial_sources import reconciliation_totals
 
 ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT = ROOT / "public/data/financials.json"
@@ -112,11 +113,19 @@ def main() -> int:
     pipeline_failures = int(stats.get("edinetBatchFailures") or 0) + int(
         stats.get("tdnetStrictFailures") or 0
     )
+    source_reconciliation = reconciliation_totals(annual_records)
+    source_quarantined = source_reconciliation["sourceQuarantinedMetrics"]
     is_building = estimated_remaining > 0 or edinet_count < min(
         FALLBACK_TARGET_COMPANIES,
         target_companies,
     )
-    status_text = "partial" if pipeline_failures else "building" if is_building else "ready"
+    status_text = (
+        "partial"
+        if pipeline_failures or source_quarantined
+        else "building"
+        if is_building
+        else "ready"
+    )
     data_updated_at = max(
         (str(record.get("filedAt") or "") for record in annual_records.values()),
         default="",
@@ -141,6 +150,7 @@ def main() -> int:
             "invalidRecordsDropped": dropped,
             "validationFailures": dict(validation_failures),
             "roeMetricsQuarantined": roe_quarantined,
+            **source_reconciliation,
             "edinetEstimatedRemaining": estimated_remaining,
             "targetCompanies": target_companies,
             "missingCompanies": missing_companies,
@@ -214,6 +224,7 @@ def main() -> int:
         "invalidRecordsDropped": dropped,
         "validationFailures": dict(validation_failures),
         "roeMetricsQuarantined": roe_quarantined,
+        **source_reconciliation,
         "tdnetRowsScanned": stats.get("tdnetRowsScanned", 0),
         "tdnetEarningsRows": stats.get("tdnetEarningsRows", 0),
         "tdnetQuarterlyRowsSkipped": stats.get("tdnetQuarterlyRowsSkipped", 0),
@@ -240,7 +251,8 @@ def main() -> int:
         f"{len(annual_records)} / {target_companies} companies, "
         f"EDINET {edinet_count}, TDnet {tdnet_count}, "
         f"remaining about {estimated_remaining}, dropped {dropped} non-annual records, "
-        f"quarantined {roe_quarantined} stale ROE metrics."
+        f"quarantined {roe_quarantined} stale ROE metrics and "
+        f"{source_quarantined} EDINET/TDnet mismatches."
     )
     return 0
 
