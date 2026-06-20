@@ -254,6 +254,23 @@ class BatchedMigrationTests(unittest.TestCase):
             1,
         )
 
+    def test_candidate_priority_uses_preserved_alphanumeric_code(self) -> None:
+        stale = record("146A", "2025-12-31")
+        stale["metrics"]["roe"] = {"value": 0.23}
+        stale["quality"] = {"dataModelVersion": 5}
+        filing = {
+            "secCode": None,
+            "_normalizedCode": "146A",
+            "periodEnd": "2025-12-31",
+        }
+
+        self.assertEqual(
+            update_edinet_financials_batched.candidate_priority_key(
+                filing, {"146A": stale}
+            ),
+            (-1, "146A"),
+        )
+
     def test_old_model_records_are_not_marked_as_processed(self) -> None:
         old_record = record("1000")
         old_record["documentId"] = "OLD"
