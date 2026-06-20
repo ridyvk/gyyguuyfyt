@@ -266,9 +266,9 @@ def inline_number(element: ET.Element) -> float | None:
 
 def parse_inline_xbrl(
     archive_data: bytes,
-) -> tuple[dict[str, dict], dict[str, list[tuple[str, float]]]]:
+) -> tuple[dict[str, dict], dict[str, list[tuple]]]:
     contexts: dict[str, dict] = {}
-    facts: dict[str, list[tuple[str, float]]] = defaultdict(list)
+    facts: dict[str, list[tuple]] = defaultdict(list)
     with zipfile.ZipFile(io.BytesIO(archive_data)) as archive:
         names = [
             name
@@ -318,10 +318,21 @@ def parse_inline_xbrl(
                 if local_name(element.tag) != "nonFraction":
                     continue
                 context_id = element.attrib.get("contextRef")
-                fact_name = local_name(element.attrib.get("name", ""))
+                raw_tag = element.attrib.get("name", "")
+                fact_name = local_name(raw_tag)
                 value = inline_number(element)
                 if context_id in contexts and fact_name and value is not None:
-                    facts[fact_name].append((context_id, value))
+                    facts[fact_name].append(
+                        (
+                            context_id,
+                            value,
+                            {
+                                "tag": raw_tag or fact_name,
+                                "unitRef": element.attrib.get("unitRef"),
+                                "scale": element.attrib.get("scale"),
+                            },
+                        )
+                    )
     return contexts, facts
 
 

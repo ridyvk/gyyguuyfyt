@@ -420,6 +420,72 @@ class XbrlContextTests(unittest.TestCase):
         )
         self.assertEqual(values["2026-03-31"], 100.0)
 
+    def test_selected_fact_retains_audit_metadata(self) -> None:
+        contexts = {
+            "CurrentYearDuration": {
+                "start": "2025-04-01",
+                "end": "2026-03-31",
+                "instant": None,
+                "dimensions": [],
+            }
+        }
+        facts = {
+            "NetSales": [
+                (
+                    "CurrentYearDuration",
+                    100.0,
+                    {
+                        "tag": "jppfs_cor:NetSales",
+                        "unitRef": "JPY",
+                        "scale": "0",
+                    },
+                )
+            ]
+        }
+
+        selected = data_quality.select_preferred_facts(
+            contexts,
+            facts,
+            ("NetSales",),
+            True,
+        )["2026-03-31"]
+
+        self.assertEqual(selected["tag"], "jppfs_cor:NetSales")
+        self.assertEqual(selected["contextRef"], "CurrentYearDuration")
+        self.assertEqual(selected["unitRef"], "JPY")
+        self.assertEqual(selected["scale"], "0")
+        self.assertEqual(selected["consolidation"], "consolidated")
+        self.assertEqual(selected["periodType"], "duration")
+        self.assertEqual(selected["rawValue"], 100.0)
+
+    def test_metric_provenance_references_current_and_previous_facts(self) -> None:
+        selected = {
+            "revenue": {
+                "2025-03-31": [{"concept": "NetSales", "contextRef": "Prior"}],
+                "2026-03-31": [{"concept": "NetSales", "contextRef": "Current"}],
+            }
+        }
+        inputs = data_quality.provenance_inputs(
+            selected,
+            ("revenue",),
+            "2026-03-31",
+            include_previous=True,
+        )
+        metrics = {"revenueGrowth": {"value": 5.0}}
+        data_quality.attach_metric_provenance(
+            metrics,
+            "revenueGrowth",
+            "(revenue.current / revenue.previous - 1) * 100",
+            inputs,
+        )
+
+        provenance = metrics["revenueGrowth"]["provenance"]
+        self.assertEqual(
+            [fact["role"] for fact in provenance["sourceFacts"]],
+            ["revenue.current", "revenue.previous"],
+        )
+        self.assertIn("revenue.previous", provenance["formula"])
+
 
 class BatchedMigrationTests(unittest.TestCase):
     def test_roe_history_mismatch_is_prioritized_for_refresh(self) -> None:

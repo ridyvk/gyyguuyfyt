@@ -19,12 +19,15 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from data_quality import (
+    attach_metric_provenance,
     context_rank as quality_context_rank,
     dimension_value,
     filing_order_key,
     is_iso_date,
     is_total_actual_context,
     normalize_security_code,
+    provenance_inputs,
+    select_preferred_facts,
     select_preferred_values,
 )
 
@@ -229,7 +232,7 @@ def xbrl_from_zip(data: bytes) -> bytes:
 def parse_xbrl(data: bytes) -> tuple[dict, dict]:
     root = ET.fromstring(data)
     contexts: dict[str, dict] = {}
-    facts: dict[str, list[tuple[str, float]]] = defaultdict(list)
+    facts: dict[str, list[tuple]] = defaultdict(list)
     for element in root.iter():
         if local_name(element.tag) != "context" or not element.attrib.get("id"):
             continue
@@ -247,7 +250,23 @@ def parse_xbrl(data: bytes) -> tuple[dict, dict]:
         context_id = element.attrib.get("contextRef")
         value = number(element.text)
         if context_id in contexts and value is not None:
-            facts[local_name(element.tag)].append((context_id, value))
+            concept = local_name(element.tag)
+            namespace = (
+                element.tag[1:].split("}", 1)[0]
+                if str(element.tag).startswith("{") and "}" in str(element.tag)
+                else None
+            )
+            facts[concept].append(
+                (
+                    context_id,
+                    value,
+                    {
+                        "tag": concept,
+                        "namespace": namespace,
+                        "unitRef": element.attrib.get("unitRef"),
+                    },
+                )
+            )
     return contexts, facts
 
 
@@ -267,6 +286,41 @@ def values_for(
     duration: bool,
 ) -> dict[str, float]:
     return select_preferred_values(contexts, facts, names, duration)
+
+
+def selected_fact_lists(
+    contexts: dict,
+    facts: dict,
+    names: tuple[str, ...],
+    duration: bool,
+) -> dict[str, list[dict]]:
+    return {
+        period_end: [fact]
+        for period_end, fact in select_preferred_facts(
+            contexts,
+            facts,
+            names,
+            duration,
+        ).items()
+    }
+
+
+def summed_selected_fact_lists(
+    contexts: dict,
+    facts: dict,
+    names: tuple[str, ...],
+    duration: bool = False,
+) -> dict[str, list[dict]]:
+    result: dict[str, list[dict]] = defaultdict(list)
+    for name in names:
+        for period_end, fact in select_preferred_facts(
+            contexts,
+            facts,
+            (name,),
+            duration,
+        ).items():
+            result[period_end].append(fact)
+    return dict(result)
 
 
 def summed_values_for(
@@ -366,11 +420,27 @@ def build_record(filing: dict, data: bytes) -> dict:
         key: values_for(contexts, facts, names, key in DURATION_KEYS)
         for key, names in FACT_NAMES.items()
     }
+    selected_facts = {
+        key: selected_fact_lists(contexts, facts, names, key in DURATION_KEYS)
+        for key, names in FACT_NAMES.items()
+    }
     if not series["debt"]:
         series["debt"] = summed_values_for(contexts, facts, DEBT_COMPONENTS)
+        selected_facts["debt"] = summed_selected_fact_lists(
+            contexts, facts, DEBT_COMPONENTS
+        )
     if not series["inventory"]:
         series["inventory"] = summed_values_for(contexts, facts, INVENTORY_COMPONENTS)
+        selected_facts["inventory"] = summed_selected_fact_lists(
+            contexts, facts, INVENTORY_COMPONENTS
+        )
     disclosed_roe = values_for(
+        contexts,
+        facts,
+        DISCLOSED_ROE_FACT_NAMES,
+        True,
+    )
+    selected_facts["disclosedRoe"] = selected_fact_lists(
         contexts,
         facts,
         DISCLOSED_ROE_FACT_NAMES,
@@ -444,6 +514,63 @@ def build_record(filing: dict, data: bytes) -> dict:
         "receivablesGrowth",
         growth(current["receivables"], prior["receivables"]),
     )
+
+    provenance_specs = {
+        "revenueGrowth": (
+            "(revenue.current / revenue.previous - 1) * 100",
+            ("revenue",),
+            True,
+        ),
+        "operatingMargin": (
+            "operatingIncome / revenue * 100",
+            ("operatingIncome", "revenue"),
+            True,
+        ),
+        "netMargin": (
+            "profit / revenue * 100",
+            ("profit", "revenue"),
+            True,
+        ),
+        "roe": (
+            "disclosedRoe * 100; fallback profit / average equity * 100",
+            ("disclosedRoe", "profit", "equity"),
+            True,
+        ),
+        "equityRatio": (
+            "equity / assets * 100",
+            ("equity", "assets"),
+            True,
+        ),
+        "operatingCfMargin": (
+            "operatingCf / revenue * 100",
+            ("operatingCf", "revenue"),
+            True,
+        ),
+        "debtRatio": ("debt / equity", ("debt", "equity"), False),
+        "netCash": ("(cash - debt) / 100000000", ("cash", "debt"), False),
+        "inventoryGrowth": (
+            "(inventory.current / inventory.previous - 1) * 100",
+            ("inventory",),
+            True,
+        ),
+        "receivablesGrowth": (
+            "(receivables.current / receivables.previous - 1) * 100",
+            ("receivables",),
+            True,
+        ),
+    }
+    for key, (formula, inputs, include_previous) in provenance_specs.items():
+        attach_metric_provenance(
+            metrics,
+            key,
+            formula,
+            provenance_inputs(
+                selected_facts,
+                inputs,
+                period_end,
+                include_previous,
+            ),
+        )
 
     history = []
     for year_end in sorted(series["revenue"])[-3:]:

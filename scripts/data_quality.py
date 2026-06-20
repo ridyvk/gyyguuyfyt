@@ -106,18 +106,30 @@ def context_rank(
     )
 
 
-def select_preferred_values(
+def consolidation_scope(context_id: str, context: dict) -> str:
+    dimensions = [str(value) for value in context.get("dimensions", [])]
+    text = context_id + " " + " ".join(dimensions)
+    if "NonConsolidated" in text:
+        return "non-consolidated"
+    if "Consolidated" in text or is_total_actual_context(context_id, context):
+        return "consolidated"
+    return "unknown"
+
+
+def select_preferred_facts(
     contexts: dict,
     facts: dict,
     names: tuple[str, ...],
     duration: bool,
     duration_range: tuple[int, int] = (250, 460),
-) -> dict[str, float]:
-    """Select total actual facts, preserving concept priority in ``names``."""
-    result: dict[str, float] = {}
+) -> dict[str, dict]:
+    """Select facts while retaining the XBRL fields needed for an audit trail."""
+    result: dict[str, dict] = {}
     for name in names:
-        grouped: dict[str, list[tuple[str, float]]] = defaultdict(list)
-        for context_id, value in facts.get(name, []):
+        grouped: dict[str, list[tuple[str, float, dict]]] = defaultdict(list)
+        for entry in facts.get(name, []):
+            context_id, value = entry[0], entry[1]
+            detail = entry[2] if len(entry) > 2 and isinstance(entry[2], dict) else {}
             context = contexts.get(context_id)
             if not context or not is_total_actual_context(context_id, context):
                 continue
@@ -128,18 +140,103 @@ def select_preferred_values(
                 days = context_days(context)
                 if days is None or not duration_range[0] <= days <= duration_range[1]:
                     continue
-            grouped[str(period_end)].append((context_id, value))
+            grouped[str(period_end)].append((context_id, value, detail))
 
         for period_end, candidates in grouped.items():
             if period_end in result:
                 continue
-            result[period_end] = max(
+            context_id, value, detail = max(
                 candidates,
                 key=lambda candidate: context_rank(
                     candidate[0], contexts[candidate[0]], period_end, duration
                 ),
-            )[1]
+            )
+            context = contexts[context_id]
+            selected = {
+                "concept": name,
+                "tag": str(detail.get("tag") or name),
+                "contextRef": context_id,
+                "periodStart": context.get("start"),
+                "periodEnd": period_end,
+                "periodType": "duration" if duration else "instant",
+                "unitRef": detail.get("unitRef"),
+                "consolidation": consolidation_scope(context_id, context),
+                "dimensions": list(context.get("dimensions", [])),
+                "rawValue": value,
+            }
+            namespace = detail.get("namespace")
+            if namespace:
+                selected["namespace"] = namespace
+            scale = detail.get("scale")
+            if scale is not None:
+                selected["scale"] = scale
+            result[period_end] = {
+                key: item for key, item in selected.items() if item is not None
+            }
     return result
+
+
+def select_preferred_values(
+    contexts: dict,
+    facts: dict,
+    names: tuple[str, ...],
+    duration: bool,
+    duration_range: tuple[int, int] = (250, 460),
+) -> dict[str, float]:
+    """Select total actual facts, preserving concept priority in ``names``."""
+    return {
+        period_end: fact["rawValue"]
+        for period_end, fact in select_preferred_facts(
+            contexts,
+            facts,
+            names,
+            duration,
+            duration_range,
+        ).items()
+    }
+
+
+def provenance_inputs(
+    selected: dict[str, dict[str, list[dict]]],
+    series_names: tuple[str, ...],
+    period_end: str,
+    include_previous: bool = False,
+) -> list[dict]:
+    inputs: list[dict] = []
+    for series_name in series_names:
+        periods = selected.get(series_name, {})
+        selected_periods: list[tuple[str, str]] = [("current", period_end)]
+        if include_previous:
+            previous_period = max(
+                (candidate for candidate in periods if candidate < period_end),
+                default=None,
+            )
+            if previous_period:
+                selected_periods.append(("previous", previous_period))
+        for period_role, selected_period in selected_periods:
+            for fact in periods.get(selected_period, []):
+                inputs.append(
+                    {
+                        **fact,
+                        "role": f"{series_name}.{period_role}",
+                    }
+                )
+    return inputs
+
+
+def attach_metric_provenance(
+    metrics: dict,
+    key: str,
+    formula: str,
+    source_facts: list[dict],
+) -> None:
+    metric = metrics.get(key)
+    if not isinstance(metric, dict):
+        return
+    metric["provenance"] = {
+        "formula": formula,
+        "sourceFacts": source_facts,
+    }
 
 
 def validate_financial_record(
