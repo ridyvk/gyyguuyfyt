@@ -13,6 +13,8 @@ import finalize_annual_dataset
 import update_edinet_financials
 import update_edinet_financials_batched
 import update_market_prices
+import update_tdnet_financials_overlay_strict
+import update_tdnet_financials_strict
 
 
 def record(code: str, period_end: str = "2026-03-31") -> dict:
@@ -156,6 +158,71 @@ class RoeCalculationTests(unittest.TestCase):
         )
         self.assertAlmostEqual(roe or 0, 200 / 1_100 * 100)
         self.assertNotAlmostEqual(roe or 0, 200 / 1_200 * 100)
+
+
+class TdnetRoeDisclosureTests(unittest.TestCase):
+    def test_disclosed_roe_fact_is_parsed_as_a_duration_value(self) -> None:
+        self.assertIn(
+            "RateOfReturnOnEquitySummaryOfBusinessResults",
+            update_tdnet_financials_strict.STRICT_TDNET_FACT_NAMES["disclosedRoe"],
+        )
+        self.assertIn(
+            "disclosedRoe",
+            update_tdnet_financials_strict.DURATION_KEYS,
+        )
+
+    def test_tdnet_disclosed_roe_is_already_a_percentage(self) -> None:
+        value = update_tdnet_financials_strict.disclosed_or_calculated_tdnet_roe(
+            {"2025-12-31": 23.5},
+            {"2025-12-31": 100.0},
+            {"2024-12-31": 400.0, "2025-12-31": 500.0},
+            "2025-12-31",
+        )
+        self.assertEqual(value, 23.5)
+
+    def test_same_period_tdnet_roe_enriches_newer_edinet_record(self) -> None:
+        existing = record("146A", "2025-12-31")
+        existing["metrics"]["roe"] = {
+            "value": 23.46,
+            "previousValue": 23.26,
+            "trend": [23.26, 23.46],
+        }
+        existing["history"] = [
+            {"year": "2024/12", "roe": 23.26},
+            {"year": "2025/12", "roe": 23.46},
+        ]
+        tdnet = {
+            "periodEnd": "2025-12-31",
+            "documentId": "TDNET1",
+            "sourceUrl": "https://example.test/tdnet.pdf",
+            "metrics": {
+                "roe": {
+                    "value": 23.5,
+                    "previousValue": 23.2,
+                    "trend": [23.2, 23.5],
+                }
+            },
+            "history": [
+                {"year": "2024/12", "roe": 23.2},
+                {"year": "2025/12", "roe": 23.5},
+            ],
+        }
+
+        changed = (
+            update_tdnet_financials_overlay_strict.merge_same_period_disclosed_roe(
+                existing,
+                tdnet,
+            )
+        )
+
+        self.assertTrue(changed)
+        self.assertEqual(existing["metrics"]["roe"]["value"], 23.5)
+        self.assertEqual(existing["metrics"]["roe"]["previousValue"], 23.2)
+        self.assertEqual(
+            [point["roe"] for point in existing["history"]],
+            [23.2, 23.5],
+        )
+        self.assertEqual(existing["quality"]["roeDocumentId"], "TDNET1")
 
 
 class XbrlContextTests(unittest.TestCase):

@@ -66,6 +66,9 @@ STRICT_TDNET_FACT_NAMES = {
         "OperatingProfitLoss",
         "OperatingProfitLossIFRS",
     ),
+    "disclosedRoe": (
+        "RateOfReturnOnEquitySummaryOfBusinessResults",
+    ),
     "profit": (
         "ProfitLossAttributableToOwnersOfParent",
         "ProfitLossAttributableToOwnersOfParentIFRS",
@@ -135,7 +138,13 @@ FULL_YEAR_EXCLUDED_TITLE_TOKENS = (
     "Q3",
 )
 
-DURATION_KEYS = {"revenue", "operatingIncome", "profit", "operatingCf"}
+DURATION_KEYS = {
+    "revenue",
+    "operatingIncome",
+    "profit",
+    "operatingCf",
+    "disclosedRoe",
+}
 FULL_YEAR_MIN_DAYS = 250
 FULL_YEAR_MAX_DAYS = 460
 
@@ -182,6 +191,21 @@ def values_for(
         duration,
         duration_range=(FULL_YEAR_MIN_DAYS, FULL_YEAR_MAX_DAYS),
     )
+
+
+def disclosed_or_calculated_tdnet_roe(
+    disclosed_values: dict[str, float],
+    profit_values: dict[str, float],
+    equity_values: dict[str, float],
+    period_end: str | None,
+) -> float | None:
+    if period_end is None:
+        return None
+    disclosed = at(disclosed_values, period_end)
+    if disclosed is not None and math.isfinite(disclosed):
+        # TDnet Inline XBRL exposes the displayed percentage (23.5 = 23.5%).
+        return disclosed
+    return roe_for_period(profit_values, equity_values, period_end)
 
 
 def summed_values_for(
@@ -307,8 +331,14 @@ def build_record(filing: dict, archive_data: bytes) -> dict:
     add_metric(
         metrics,
         "roe",
-        roe_for_period(series["profit"], series["equity"], period_end),
-        roe_for_period(
+        disclosed_or_calculated_tdnet_roe(
+            series["disclosedRoe"],
+            series["profit"],
+            series["equity"],
+            period_end,
+        ),
+        disclosed_or_calculated_tdnet_roe(
+            series["disclosedRoe"],
             series["profit"],
             series["equity"],
             prior_profit_period_end,
@@ -353,7 +383,8 @@ def build_record(filing: dict, archive_data: bytes) -> dict:
             "revenue": round(revenue / 100_000_000) if revenue is not None else None,
             "operatingMargin": percent(series["operatingIncome"].get(year_end), revenue),
             "netMargin": percent(series["profit"].get(year_end), revenue),
-            "roe": roe_for_period(
+            "roe": disclosed_or_calculated_tdnet_roe(
+                series["disclosedRoe"],
                 series["profit"],
                 series["equity"],
                 year_end,

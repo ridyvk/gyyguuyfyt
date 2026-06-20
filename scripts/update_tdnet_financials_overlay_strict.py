@@ -32,6 +32,44 @@ def should_replace(existing: dict | None, record: dict) -> bool:
     return record_order_key(record) >= record_order_key(existing)
 
 
+def merge_same_period_disclosed_roe(existing: dict | None, record: dict) -> bool:
+    """Merge TDnet's displayed ROE into a newer EDINET record for the same year."""
+    if not existing or existing.get("periodEnd") != record.get("periodEnd"):
+        return False
+    tdnet_roe = (record.get("metrics") or {}).get("roe") or {}
+    if not all(
+        isinstance(tdnet_roe.get(key), (int, float))
+        for key in ("value", "previousValue")
+    ):
+        return False
+
+    existing_metrics = existing.setdefault("metrics", {})
+    existing_metrics["roe"] = {
+        key: list(value) if isinstance(value, list) else value
+        for key, value in tdnet_roe.items()
+    }
+
+    tdnet_history = {
+        point.get("year"): point.get("roe")
+        for point in record.get("history", [])
+        if point.get("year") and isinstance(point.get("roe"), (int, float))
+    }
+    for point in existing.get("history", []):
+        year = point.get("year")
+        if year in tdnet_history:
+            point["roe"] = tdnet_history[year]
+
+    quality = existing.setdefault("quality", {})
+    quality.update(
+        {
+            "roeSource": "TDnet通期決算短信XBRL",
+            "roeSourceUrl": record.get("sourceUrl"),
+            "roeDocumentId": record.get("documentId"),
+        }
+    )
+    return True
+
+
 def load_company_codes() -> set[str]:
     payload = json.loads(COMPANY_MASTER.read_text(encoding="utf-8"))
     return {str(company["code"]) for company in payload.get("companies", [])}
@@ -55,6 +93,7 @@ def main() -> int:
 
     filings, scan_stats = strict.list_full_year_filings(args.lookback_days)
     updated = 0
+    roe_enriched = 0
     failures: list[str] = []
     candidates = [
         filing
@@ -66,12 +105,15 @@ def main() -> int:
             record = strict.build_record(filing, get(filing["xbrlUrl"]))
             if validate_financial_record(record["code"], record, current_codes) is not None:
                 raise ValueError("TDnet record did not pass annual-record validation")
-            if record.get("metrics") and should_replace(
-                records.get(record["code"]),
-                record,
-            ):
+            existing = records.get(record["code"])
+            if record.get("metrics") and should_replace(existing, record):
                 records[record["code"]] = record
                 updated += 1
+            elif record.get("metrics") and merge_same_period_disclosed_roe(
+                existing,
+                record,
+            ):
+                roe_enriched += 1
         except Exception as error:
             failures.append(f"{filing.get('code')}:{filing.get('documentId')}: {error}")
         if index % 50 == 0:
@@ -111,6 +153,7 @@ def main() -> int:
                 "edinetCompanies": edinet_count,
                 "tdnetCompanies": tdnet_count,
                 "tdnetDocumentsUpdated": updated,
+                "tdnetRoeDisclosuresMerged": roe_enriched,
                 "tdnetStrictFailures": len(failures),
                 "nonAnnualExistingRecordsDropped": dropped_existing,
             },
@@ -123,7 +166,8 @@ def main() -> int:
     print(
         f"Saved {len(records)} annual companies; "
         f"EDINET {edinet_count}, TDnet {tdnet_count}; "
-        f"TDnet updated {updated}; failures {len(failures)}."
+        f"TDnet updated {updated}; ROE enriched {roe_enriched}; "
+        f"failures {len(failures)}."
     )
     for failure in failures[:30]:
         print(f"warning: {failure}", file=sys.stderr)
