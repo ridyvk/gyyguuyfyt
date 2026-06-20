@@ -28,7 +28,7 @@ SNAPSHOT = ROOT / "public/data/financials.json"
 COMPANY_MASTER = ROOT / "src/data/listedCompanies.json"
 SNAPSHOT_SCHEMA_VERSION = 3
 INVENTORY_MODEL_VERSION = 2
-DATA_MODEL_VERSION = 4
+DATA_MODEL_VERSION = 5
 
 STRICT_FACT_NAMES = {
     **edinet.FACT_NAMES,

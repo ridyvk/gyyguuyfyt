@@ -96,6 +96,9 @@ FACT_NAMES = {
         "BondsAndBorrowings",
     ),
 }
+DISCLOSED_ROE_FACT_NAMES = (
+    "RateOfReturnOnEquitySummaryOfBusinessResults",
+)
 VALUATION_FACT_NAMES = {
     "eps": (
         "BasicEarningsLossPerShare",
@@ -320,6 +323,20 @@ def roe_for_period(
     return percent(profit, average_equity)
 
 
+def disclosed_or_calculated_roe(
+    disclosed_values: dict[str, float],
+    profit_values: dict[str, float],
+    equity_values: dict[str, float],
+    period_end: str | None,
+) -> float | None:
+    if period_end is None:
+        return None
+    disclosed = at(disclosed_values, period_end)
+    if disclosed is not None and math.isfinite(disclosed):
+        return disclosed
+    return roe_for_period(profit_values, equity_values, period_end)
+
+
 def growth(current: float | None, prior: float | None) -> float | None:
     return (
         None
@@ -352,6 +369,12 @@ def build_record(filing: dict, data: bytes) -> dict:
         series["debt"] = summed_values_for(contexts, facts, DEBT_COMPONENTS)
     if not series["inventory"]:
         series["inventory"] = summed_values_for(contexts, facts, INVENTORY_COMPONENTS)
+    disclosed_roe = values_for(
+        contexts,
+        facts,
+        DISCLOSED_ROE_FACT_NAMES,
+        True,
+    )
 
     current = {key: at(values, period_end) for key, values in series.items()}
     prior = {key: previous(values, period_end) for key, values in series.items()}
@@ -373,8 +396,14 @@ def build_record(filing: dict, data: bytes) -> dict:
     add_metric(
         metrics,
         "roe",
-        roe_for_period(series["profit"], series["equity"], period_end),
-        roe_for_period(
+        disclosed_or_calculated_roe(
+            disclosed_roe,
+            series["profit"],
+            series["equity"],
+            period_end,
+        ),
+        disclosed_or_calculated_roe(
+            disclosed_roe,
             series["profit"],
             series["equity"],
             prior_profit_period_end,
@@ -423,7 +452,8 @@ def build_record(filing: dict, data: bytes) -> dict:
             "revenue": round(revenue / 100_000_000) if revenue is not None else None,
             "operatingMargin": percent(series["operatingIncome"].get(year_end), revenue),
             "netMargin": percent(series["profit"].get(year_end), revenue),
-            "roe": roe_for_period(
+            "roe": disclosed_or_calculated_roe(
+                disclosed_roe,
                 series["profit"],
                 series["equity"],
                 year_end,
