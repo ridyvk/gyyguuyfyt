@@ -18,6 +18,7 @@ on:
       - scripts/update_tdnet_financials.py
       - scripts/update_tdnet_financials_strict.py
       - scripts/update_tdnet_financials_overlay_strict.py
+      - scripts/reconcile_financial_sources.py
       - scripts/finalize_annual_dataset.py
       - src/data/listedCompanies.json
       - public/data/financials.json
