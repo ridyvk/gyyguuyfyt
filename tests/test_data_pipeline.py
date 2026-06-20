@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 import unittest
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -181,19 +181,13 @@ class TdnetRoeDisclosureTests(unittest.TestCase):
         self.assertEqual(value, 23.5)
 
     def test_backfill_candidates_are_bounded_and_code_ordered(self) -> None:
+        today = datetime.now(timezone.utc)
+        old = (today - timedelta(days=60)).isoformat()
+        recent = (today - timedelta(days=1)).isoformat()
         filings = {
-            "1500": {
-                "code": "1500",
-                "filedAt": "2026-02-10T10:00:00+09:00",
-            },
-            "146A": {
-                "code": "146A",
-                "filedAt": "2026-02-12T10:00:00+09:00",
-            },
-            "1400": {
-                "code": "1400",
-                "filedAt": "2026-06-19T10:00:00+09:00",
-            },
+            "1500": {"code": "1500", "filedAt": old},
+            "146A": {"code": "146A", "filedAt": old},
+            "1400": {"code": "1400", "filedAt": recent},
         }
         records = {
             code: {
