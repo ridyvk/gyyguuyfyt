@@ -28,7 +28,7 @@ SNAPSHOT = ROOT / "public/data/financials.json"
 COMPANY_MASTER = ROOT / "src/data/listedCompanies.json"
 SNAPSHOT_SCHEMA_VERSION = 3
 INVENTORY_MODEL_VERSION = 2
-DATA_MODEL_VERSION = 6
+DATA_MODEL_VERSION = 7
 
 STRICT_FACT_NAMES = {
     **edinet.FACT_NAMES,
@@ -119,7 +119,7 @@ def record_roe_refresh_priority(record: object) -> int:
     roe = (record.get("metrics") or {}).get("roe") or {}
     value = roe.get("value") if isinstance(roe, dict) else None
     if (
-        int(quality.get("dataModelVersion") or 0) == DATA_MODEL_VERSION - 1
+        int(quality.get("dataModelVersion") or 0) < DATA_MODEL_VERSION
         and isinstance(value, (int, float))
         and abs(float(value)) < 1
     ):
@@ -128,7 +128,9 @@ def record_roe_refresh_priority(record: object) -> int:
 
 
 def candidate_priority_key(filing: dict, records: dict[str, dict]) -> tuple[int, str]:
-    code = edinet.normalize_security_code(filing.get("secCode")) or ""
+    code = str(filing.get("_normalizedCode") or "")
+    if not code:
+        code = edinet.normalize_security_code(filing.get("secCode")) or ""
     priority = record_roe_refresh_priority(records.get(code))
     return (-priority, code if priority else "")
 
@@ -213,7 +215,7 @@ def main() -> int:
             processed_doc_ids.add(doc_id)
             already_done += 1
             continue
-        candidates.append(filing)
+        candidates.append({**filing, "_normalizedCode": str(code)})
     candidates.sort(key=filing_sort_key, reverse=True)
     candidates.sort(key=lambda filing: candidate_priority_key(filing, records))
     pending_total = len(candidates)
