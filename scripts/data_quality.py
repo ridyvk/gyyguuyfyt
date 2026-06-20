@@ -261,8 +261,14 @@ def validate_financial_record(
     if source not in {"EDINET", "TDnet"}:
         return "unsupported-source"
     metrics = record.get("metrics")
-    if not isinstance(metrics, dict) or not metrics:
+    if not isinstance(metrics, dict):
         return "missing-metrics"
+    if not metrics:
+        quarantine = record.get("quarantine") or {}
+        source_quarantine = quarantine.get("sourceReconciliation") or {}
+        disputed_metrics = source_quarantine.get("metrics") or {}
+        if not isinstance(disputed_metrics, dict) or not disputed_metrics:
+            return "missing-metrics"
     for metric in metrics.values():
         value = metric.get("value") if isinstance(metric, dict) else None
         if not isinstance(value, (int, float)) or not math.isfinite(value):

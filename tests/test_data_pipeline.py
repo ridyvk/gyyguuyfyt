@@ -10,6 +10,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import data_quality
 import finalize_annual_dataset
+import reconcile_financial_sources
 import update_edinet_financials
 import update_edinet_financials_batched
 import update_market_prices
@@ -203,6 +204,142 @@ class RoeCalculationTests(unittest.TestCase):
         )
         self.assertAlmostEqual(roe or 0, 200 / 1_100 * 100)
         self.assertNotAlmostEqual(roe or 0, 200 / 1_200 * 100)
+
+
+class SourceReconciliationTests(unittest.TestCase):
+    def tdnet_record(self) -> dict:
+        return {
+            "code": "1000",
+            "companyName": "Example",
+            "documentId": "TDNET1",
+            "documentType": "FullYearEarnings",
+            "filedAt": "2026-05-10T15:00:00+09:00",
+            "periodEnd": "2026-03-31",
+            "source": "TDnet",
+            "sourceUrl": "https://example.test/tdnet",
+            "metrics": {},
+            "history": [],
+        }
+
+    def test_matching_metrics_keep_edinet_and_prefer_disclosed_tdnet_roe(self) -> None:
+        edinet = record("1000")
+        edinet["metrics"] = {
+            "operatingMargin": {"value": 10.0, "previousValue": 9.0},
+            "roe": {"value": 12.2, "previousValue": 11.0},
+        }
+        edinet["history"] = [
+            {"year": "2025/03", "roe": 11.0},
+            {"year": "2026/03", "roe": 12.2},
+        ]
+        tdnet = self.tdnet_record()
+        tdnet["metrics"] = {
+            "operatingMargin": {"value": 10.2, "previousValue": 9.1},
+            "roe": {"value": 12.4, "previousValue": 11.2},
+        }
+        tdnet["history"] = [
+            {"year": "2025/03", "roe": 11.2},
+            {"year": "2026/03", "roe": 12.4},
+        ]
+
+        summary = reconcile_financial_sources.reconcile_same_period(
+            edinet,
+            tdnet,
+            checked_at="2026-06-20T00:00:00Z",
+        )
+
+        self.assertIsNotNone(summary)
+        self.assertEqual(summary.matched, 2)
+        self.assertEqual(summary.quarantined, 0)
+        self.assertEqual(edinet["metrics"]["operatingMargin"]["value"], 10.0)
+        self.assertEqual(edinet["metrics"]["roe"]["value"], 12.4)
+        self.assertEqual([point["roe"] for point in edinet["history"]], [11.2, 12.4])
+        self.assertEqual(edinet["reconciliation"]["status"], "matched")
+        self.assertNotIn("quarantine", edinet)
+
+    def test_mismatch_quarantines_only_the_disputed_metric(self) -> None:
+        edinet = record("1000")
+        edinet["metrics"] = {
+            "operatingMargin": {
+                "value": 10.0,
+                "provenance": {"formula": "edinet", "sourceFacts": []},
+            },
+            "netMargin": {"value": 4.0},
+        }
+        edinet["history"] = [
+            {"year": "2026/03", "operatingMargin": 10.0, "netMargin": 4.0}
+        ]
+        tdnet = self.tdnet_record()
+        tdnet["metrics"] = {
+            "operatingMargin": {
+                "value": 20.0,
+                "provenance": {"formula": "tdnet", "sourceFacts": []},
+            },
+            "netMargin": {"value": 4.1},
+        }
+
+        summary = reconcile_financial_sources.reconcile_same_period(
+            edinet,
+            tdnet,
+            checked_at="2026-06-20T00:00:00Z",
+        )
+
+        self.assertEqual(summary.quarantined, 1)
+        self.assertNotIn("operatingMargin", edinet["metrics"])
+        self.assertEqual(edinet["metrics"]["netMargin"]["value"], 4.0)
+        self.assertNotIn("operatingMargin", edinet["history"][0])
+        isolated = edinet["quarantine"]["sourceReconciliation"]["metrics"]
+        self.assertEqual(isolated["operatingMargin"]["edinet"]["value"], 10.0)
+        self.assertEqual(isolated["operatingMargin"]["tdnet"]["value"], 20.0)
+        self.assertEqual(edinet["quality"]["reconciliationStatus"], "quarantined")
+
+    def test_fully_quarantined_company_is_retained_for_audit(self) -> None:
+        edinet = record("1000")
+        edinet["metrics"] = {"operatingMargin": {"value": 10.0}}
+        tdnet = self.tdnet_record()
+        tdnet["metrics"] = {"operatingMargin": {"value": 20.0}}
+
+        reconcile_financial_sources.reconcile_same_period(
+            edinet,
+            tdnet,
+            checked_at="2026-06-20T00:00:00Z",
+        )
+
+        self.assertEqual(edinet["metrics"], {})
+        self.assertIsNone(
+            data_quality.validate_financial_record("1000", edinet, {"1000"})
+        )
+
+    def test_different_periods_are_not_reconciled(self) -> None:
+        edinet = record("1000", "2026-03-31")
+        tdnet = self.tdnet_record()
+        tdnet["periodEnd"] = "2025-03-31"
+
+        self.assertIsNone(
+            reconcile_financial_sources.reconcile_same_period(edinet, tdnet)
+        )
+        self.assertNotIn("reconciliation", edinet)
+
+    def test_reconciliation_totals_count_only_compared_results(self) -> None:
+        records = {
+            "1000": {
+                "reconciliation": {
+                    "metrics": {
+                        "roe": {"status": "matched"},
+                        "netMargin": {"status": "quarantined"},
+                        "netCash": {"status": "edinet-only"},
+                    }
+                }
+            }
+        }
+
+        self.assertEqual(
+            reconcile_financial_sources.reconciliation_totals(records),
+            {
+                "sourceReconciliationCompanies": 1,
+                "sourceMatchedMetrics": 1,
+                "sourceQuarantinedMetrics": 1,
+            },
+        )
 
 
 class TdnetRoeDisclosureTests(unittest.TestCase):
