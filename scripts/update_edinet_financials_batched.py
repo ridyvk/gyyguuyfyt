@@ -28,8 +28,9 @@ SNAPSHOT = ROOT / "public/data/financials.json"
 COMPANY_MASTER = ROOT / "src/data/listedCompanies.json"
 SNAPSHOT_SCHEMA_VERSION = 3
 INVENTORY_MODEL_VERSION = 2
-DATA_MODEL_VERSION = 8
+DATA_MODEL_VERSION = 9
 ROE_MODEL_VERSION = 1
+PROVENANCE_MODEL_VERSION = 1
 INITIAL_MODEL_CANARY_SIZE = 50
 
 STRICT_FACT_NAMES = {
@@ -82,7 +83,7 @@ def annotate_record(record: dict) -> dict:
     quality["inventoryModelVersion"] = INVENTORY_MODEL_VERSION
     quality["dataModelVersion"] = DATA_MODEL_VERSION
     quality["roeModelVersion"] = ROE_MODEL_VERSION
-    quality["roeModelVersion"] = ROE_MODEL_VERSION
+    quality["provenanceModelVersion"] = PROVENANCE_MODEL_VERSION
     quality["totalCompanyContextsOnly"] = True
     return record
 
