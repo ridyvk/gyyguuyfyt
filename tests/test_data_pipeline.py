@@ -171,6 +171,15 @@ class TdnetRoeDisclosureTests(unittest.TestCase):
             update_tdnet_financials_strict.DURATION_KEYS,
         )
 
+    def test_tdnet_disclosed_roe_is_already_a_percentage(self) -> None:
+        value = update_tdnet_financials_strict.disclosed_or_calculated_tdnet_roe(
+            {"2025-12-31": 23.5},
+            {"2025-12-31": 100.0},
+            {"2024-12-31": 400.0, "2025-12-31": 500.0},
+            "2025-12-31",
+        )
+        self.assertEqual(value, 23.5)
+
     def test_same_period_tdnet_roe_enriches_newer_edinet_record(self) -> None:
         existing = record("146A", "2025-12-31")
         existing["metrics"]["roe"] = {
