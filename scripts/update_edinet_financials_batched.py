@@ -28,7 +28,7 @@ SNAPSHOT = ROOT / "public/data/financials.json"
 COMPANY_MASTER = ROOT / "src/data/listedCompanies.json"
 SNAPSHOT_SCHEMA_VERSION = 3
 INVENTORY_MODEL_VERSION = 2
-DATA_MODEL_VERSION = 5
+DATA_MODEL_VERSION = 6
 
 STRICT_FACT_NAMES = {
     **edinet.FACT_NAMES,
@@ -108,6 +108,29 @@ def record_has_roe_history_mismatch(record: object) -> bool:
     ):
         return False
     return abs(float(previous_value) - float(prior_history_value)) >= 0.05
+
+
+def record_roe_refresh_priority(record: object) -> int:
+    if record_has_roe_history_mismatch(record):
+        return 2
+    if not isinstance(record, dict):
+        return 0
+    quality = record.get("quality") or {}
+    roe = (record.get("metrics") or {}).get("roe") or {}
+    value = roe.get("value") if isinstance(roe, dict) else None
+    if (
+        int(quality.get("dataModelVersion") or 0) == DATA_MODEL_VERSION - 1
+        and isinstance(value, (int, float))
+        and abs(float(value)) < 1
+    ):
+        return 1
+    return 0
+
+
+def candidate_priority_key(filing: dict, records: dict[str, dict]) -> tuple[int, str]:
+    code = edinet.normalize_security_code(filing.get("secCode")) or ""
+    priority = record_roe_refresh_priority(records.get(code))
+    return (-priority, code if priority else "")
 
 
 def collect_processed_doc_ids(
@@ -191,17 +214,8 @@ def main() -> int:
             already_done += 1
             continue
         candidates.append(filing)
-    candidates.sort(
-        key=lambda filing: (
-            record_has_roe_history_mismatch(
-                records.get(
-                    edinet.normalize_security_code(filing.get("secCode")) or ""
-                )
-            ),
-            filing_sort_key(filing),
-        ),
-        reverse=True,
-    )
+    candidates.sort(key=filing_sort_key, reverse=True)
+    candidates.sort(key=lambda filing: candidate_priority_key(filing, records))
     pending_total = len(candidates)
     batch = candidates[: max(0, args.max_documents)]
 
