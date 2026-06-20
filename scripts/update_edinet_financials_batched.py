@@ -17,12 +17,18 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import update_edinet_financials as edinet
+from data_quality import (
+    filing_order_key,
+    record_order_key,
+    validate_financial_record,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT = ROOT / "public/data/financials.json"
 COMPANY_MASTER = ROOT / "src/data/listedCompanies.json"
 SNAPSHOT_SCHEMA_VERSION = 3
 INVENTORY_MODEL_VERSION = 2
+DATA_MODEL_VERSION = 3
 
 STRICT_FACT_NAMES = {
     **edinet.FACT_NAMES,
@@ -50,8 +56,11 @@ def normalize_snapshot(snapshot: dict, current_codes: set[str]) -> dict:
     snapshot["records"] = {
         str(code): record
         for code, record in records.items()
-        if str(code) in current_codes and isinstance(record, dict)
+        if validate_financial_record(str(code), record, current_codes) is None
     }
+    snapshot.setdefault("stats", {})["invalidExistingRecordsDropped"] = (
+        len(records) - len(snapshot["records"])
+    )
     return snapshot
 
 
@@ -69,35 +78,39 @@ def annotate_record(record: dict) -> dict:
     )
     quality["inventoryPolicy"] = "Inventoriesタグを優先し、無い場合は商品・製品、仕掛品、原材料等を合算"
     quality["inventoryModelVersion"] = INVENTORY_MODEL_VERSION
+    quality["dataModelVersion"] = DATA_MODEL_VERSION
+    quality["totalCompanyContextsOnly"] = True
     return record
 
 
 def filing_sort_key(filing: dict) -> tuple[str, str, str]:
-    return (
-        str(filing.get("periodEnd") or ""),
-        str(filing.get("submitDateTime") or ""),
-        str(filing.get("docID") or ""),
-    )
+    return filing_order_key(filing)
+
+
+def record_uses_current_model(record: object) -> bool:
+    if not isinstance(record, dict):
+        return False
+    quality = record.get("quality") or {}
+    return int(quality.get("dataModelVersion") or 0) >= DATA_MODEL_VERSION
 
 
 def collect_processed_doc_ids(
     snapshot: dict,
     records: dict[str, dict],
-    inventory_model_upgraded: bool,
+    data_model_upgraded: bool,
 ) -> set[str]:
     """Return EDINET document IDs already attempted or represented in records.
 
-    When the inventory model changes, return an empty set so existing EDINET
-    filings are reprocessed in future batches and inventoryGrowth is rebuilt
-    from total inventories rather than only merchandise/finished goods.
+    When the data model changes, return an empty set so existing EDINET
+    filings are reprocessed with the current context and metric policy.
     """
-    if inventory_model_upgraded:
+    if data_model_upgraded:
         return set()
 
     stats = snapshot.get("stats", {}) or {}
     processed = {str(doc_id) for doc_id in stats.get("edinetProcessedDocumentIds", []) if doc_id}
     for record in records.values():
-        if not isinstance(record, dict):
+        if not record_uses_current_model(record):
             continue
         if record.get("source") == "EDINET" and record.get("documentId"):
             processed.add(str(record["documentId"]))
@@ -115,6 +128,7 @@ def mark_tdnet_record_with_edinet_baseline(existing: dict, record: dict) -> None
     quality = existing.setdefault("quality", {})
     quality["edinetAnnualBaselineProcessed"] = True
     quality["inventoryModelVersion"] = INVENTORY_MODEL_VERSION
+    quality["dataModelVersion"] = DATA_MODEL_VERSION
 
 
 def main() -> int:
@@ -126,18 +140,19 @@ def main() -> int:
 
     api_key = os.environ.get("EDINET_API_KEY", "").strip()
     if not api_key:
-        print("EDINET_API_KEY is not configured. Skipping EDINET batched update.")
-        return 0
+        print("EDINET_API_KEY is not configured.", file=sys.stderr)
+        return 2
 
     edinet.FACT_NAMES = STRICT_FACT_NAMES
-    snapshot = normalize_snapshot(load_json(SNAPSHOT), load_company_codes())
+    current_codes = load_company_codes()
+    snapshot = normalize_snapshot(load_json(SNAPSHOT), current_codes)
     records = snapshot.setdefault("records", {})
     stats = snapshot.get("stats", {}) or {}
-    inventory_model_upgraded = int(stats.get("inventoryModelVersion") or 0) < INVENTORY_MODEL_VERSION
+    data_model_upgraded = int(stats.get("dataModelVersion") or 0) < DATA_MODEL_VERSION
     processed_doc_ids = collect_processed_doc_ids(
         snapshot,
         records,
-        inventory_model_upgraded,
+        data_model_upgraded,
     )
 
     filings, scanned = edinet.list_filings(api_key, args.scan_days)
@@ -146,12 +161,16 @@ def main() -> int:
     for code, filing in filings.items():
         doc_id = str(filing.get("docID") or "")
         existing = records.get(str(code)) or {}
-        if not doc_id:
+        if not doc_id or code not in current_codes:
             continue
-        if doc_id in processed_doc_ids:
+        if doc_id in processed_doc_ids and existing:
             already_done += 1
             continue
-        if existing.get("source") == "EDINET" and existing.get("documentId") == doc_id and not inventory_model_upgraded:
+        if (
+            existing.get("source") == "EDINET"
+            and existing.get("documentId") == doc_id
+            and record_uses_current_model(existing)
+        ):
             processed_doc_ids.add(doc_id)
             already_done += 1
             continue
@@ -173,12 +192,15 @@ def main() -> int:
             processed_doc_ids.add(doc_id)
             processed_this_batch += 1
             existing = records.get(record["code"])
-            existing_key = (
-                str((existing or {}).get("periodEnd") or ""),
-                str((existing or {}).get("filedAt") or ""),
+            validation_error = validate_financial_record(
+                record["code"], record, current_codes
             )
-            record_key = (record["periodEnd"], record["filedAt"])
-            if record.get("metrics") and (record_key >= existing_key or inventory_model_upgraded):
+            if validation_error:
+                raise ValueError(f"record validation failed: {validation_error}")
+            if record.get("metrics") and (
+                record_order_key(record) >= record_order_key(existing)
+                or data_model_upgraded
+            ):
                 records[record["code"]] = record
                 updated += 1
             elif record.get("metrics") and existing and existing.get("source") == "TDnet":
@@ -200,7 +222,11 @@ def main() -> int:
             "schemaVersion": SNAPSHOT_SCHEMA_VERSION,
             "generatedAt": generated_at,
             "source": "EDINET+TDnet" if tdnet_count else "EDINET",
-            "status": "building" if pending_total > len(batch) else "ready",
+            "status": (
+                "partial"
+                if failures
+                else "building" if pending_total > len(batch) else "ready"
+            ),
             "message": (
                 "EDINET有価証券報告書ベースの年次データを分割更新中。"
                 "TDnet通期決算短信は別ステップで直近分のみ上書きします。"
@@ -215,6 +241,7 @@ def main() -> int:
                     "一度処理したEDINET書類IDを記録し、同じXBRLを繰り返し処理しません。"
                     "OrdinaryIncomeは売上として使いません。"
                     "棚卸資産はInventoriesタグを優先し、無い場合は商品・製品、仕掛品、原材料等を合算します。"
+                    "全社実績コンテキストだけを採用し、セグメント軸と予想値を除外します。"
                 ),
             },
             "records": records,
@@ -235,7 +262,8 @@ def main() -> int:
                 "edinetBatchFailures": len(failures),
                 "edinetBatchGeneratedAt": generated_at,
                 "inventoryModelVersion": INVENTORY_MODEL_VERSION,
-                "inventoryModelRefresh": inventory_model_upgraded,
+                "dataModelVersion": DATA_MODEL_VERSION,
+                "dataModelRefresh": data_model_upgraded,
             },
         }
     )
@@ -248,7 +276,7 @@ def main() -> int:
         f"EDINET={edinet_count}, TDnet={tdnet_count}, "
         f"pending_before_batch={pending_total}, processed={processed_this_batch}, "
         f"updated={updated}, tdnet_baseline_marked={baseline_marked}, "
-        f"failures={len(failures)}, inventory_refresh={inventory_model_upgraded}."
+        f"failures={len(failures)}, data_model_refresh={data_model_upgraded}."
     )
     for failure in failures[:30]:
         print(f"warning: {failure}", file=sys.stderr)

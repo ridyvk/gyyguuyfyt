@@ -152,13 +152,20 @@ export interface FinancialStats {
   tdnetFullYearFilings?: number
   tdnetStrictFailures?: number
   nonAnnualRecordsDropped?: number
+  invalidRecordsDropped?: number
+  validationFailures?: Record<string, number>
+  dataUpdatedAt?: string | null
+  latestPeriodEnd?: string | null
+  lastCheckedAt?: string | null
 }
 
 export interface FinancialSnapshot {
   schemaVersion: 1 | 2 | 3
   generatedAt: string | null
+  dataUpdatedAt?: string | null
+  latestPeriodEnd?: string | null
   source: 'EDINET' | 'EDINET+TDnet' | 'TDnet'
-  status: 'ready' | 'building' | 'setup-required' | 'error'
+  status: 'ready' | 'partial' | 'building' | 'setup-required' | 'error'
   message: string
   dataPolicy?: FinancialDataPolicy
   records: Record<string, LiveFinancialRecord>
@@ -167,8 +174,10 @@ export interface FinancialSnapshot {
 
 export interface UpdateStatus extends Partial<FinancialStats> {
   generatedAt?: string | null
+  dataUpdatedAt?: string | null
+  latestPeriodEnd?: string | null
   mode?: string
-  status?: 'ready' | 'building' | 'setup-required' | 'error'
+  status?: 'ready' | 'partial' | 'building' | 'setup-required' | 'error'
   source?: 'EDINET' | 'EDINET+TDnet' | 'TDnet'
   baselineSource?: string
   overlaySource?: string
@@ -181,20 +190,24 @@ export interface UpdateStatus extends Partial<FinancialStats> {
 
 export interface MarketQuote {
   date: string
+  timestamp?: string
   close: number
   previousClose?: number
   changePercent?: number
   volume?: number
   source: 'Yahoo Finance' | 'J-Quants'
+  priceType?: 'daily-close' | 'regular-market-price'
+  isRealtime?: boolean
+  stale?: boolean
 }
 
 export type MarketFundamentals = ValuationBasis
 
 export interface MarketSnapshot {
-  schemaVersion: 1
+  schemaVersion: 1 | 2 | 3
   generatedAt: string | null
   source: 'Yahoo Finance' | 'J-Quants'
-  status: 'ready' | 'setup-required' | 'error'
+  status: 'ready' | 'partial' | 'setup-required' | 'error'
   message: string
   latestTradingDate: string | null
   quotes: Record<string, MarketQuote>
@@ -203,6 +216,11 @@ export interface MarketSnapshot {
     companies: number
     tradingDates: string[]
     fundamentals: number
+    quoteUniverse?: number
+    quoteFailures?: number
+    freshQuotesFetched?: number
+    fallbackQuotes?: number
+    staleQuotesDropped?: number
   }
 }
 

@@ -18,6 +18,16 @@ from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
+from data_quality import (
+    context_rank as quality_context_rank,
+    dimension_value,
+    filing_order_key,
+    is_iso_date,
+    is_total_actual_context,
+    normalize_security_code,
+    select_preferred_values,
+)
+
 API = "https://api.edinet-fsa.go.jp/api/v2"
 SNAPSHOT = Path(__file__).resolve().parents[1] / "public/data/financials.json"
 COMPANY_MASTER = (
@@ -181,18 +191,19 @@ def list_filings(api_key: str, days: int) -> tuple[dict[str, dict], int]:
         scanned += len(results)
         for item in results:
             description = str(item.get("docDescription") or "")
+            code = normalize_security_code(item.get("secCode"))
+            period_end = str(item.get("periodEnd") or "")
             if not (
-                item.get("secCode")
+                code
+                and is_iso_date(period_end)
                 and str(item.get("xbrlFlag")) == "1"
                 and str(item.get("docTypeCode")) in {"120", "130"}
                 and "有価証券報告書" in description
             ):
                 continue
-            code = str(item["secCode"])[:4]
-            if str(item.get("submitDateTime") or "") > str(
-                latest.get(code, {}).get("submitDateTime") or ""
-            ):
-                latest[code] = item
+            filing = {**item, "periodEnd": period_end}
+            if filing_order_key(filing) > filing_order_key(latest.get(code, {})):
+                latest[code] = filing
     return latest, scanned
 
 
@@ -225,7 +236,9 @@ def parse_xbrl(data: bytes) -> tuple[dict, dict]:
             if name in {"startDate", "endDate", "instant"}:
                 context[{"startDate": "start", "endDate": "end", "instant": "instant"}[name]] = text
             elif name in {"explicitMember", "typedMember"}:
-                context["dimensions"].append(text or "typedMember")
+                context["dimensions"].append(
+                    dimension_value(child, text or "typedMember")
+                )
         contexts[element.attrib["id"]] = context
     for element in root.iter():
         context_id = element.attrib.get("contextRef")
@@ -236,18 +249,12 @@ def parse_xbrl(data: bytes) -> tuple[dict, dict]:
 
 
 def is_consolidated(context_id: str, context: dict) -> bool:
-    text = context_id + " " + " ".join(context["dimensions"])
-    return "NonConsolidated" not in text
+    return is_total_actual_context(context_id, context)
 
 
-def rank(context_id: str, context: dict, period_end: str) -> int:
-    text = context_id + " " + " ".join(context["dimensions"])
-    return (
-        (30 if (context["instant"] or context["end"]) == period_end else 0)
-        + (20 if "ConsolidatedMember" in text else 0)
-        + (12 if not context["dimensions"] else 0)
-        + (8 if "CurrentYear" in context_id else 0)
-    )
+def rank(context_id: str, context: dict, period_end: str) -> tuple[int, ...]:
+    duration = context.get("end") == period_end and context.get("start") is not None
+    return quality_context_rank(context_id, context, period_end, duration)
 
 
 def values_for(
@@ -256,32 +263,7 @@ def values_for(
     names: tuple[str, ...],
     duration: bool,
 ) -> dict[str, float]:
-    source = [
-        fact
-        for name in names
-        for fact in facts.get(name, [])
-    ]
-    grouped: dict[str, list[tuple[str, float]]] = defaultdict(list)
-    for context_id, value in source:
-        context = contexts[context_id]
-        period_end = context["end"] if duration else context["instant"]
-        if not period_end or not is_consolidated(context_id, context):
-            continue
-        if duration:
-            try:
-                days = (date.fromisoformat(context["end"]) - date.fromisoformat(context["start"])).days
-            except (TypeError, ValueError):
-                continue
-            if not 250 <= days <= 460:
-                continue
-        grouped[period_end].append((context_id, value))
-    return {
-        period_end: max(
-            candidates,
-            key=lambda candidate: rank(candidate[0], contexts[candidate[0]], period_end),
-        )[1]
-        for period_end, candidates in grouped.items()
-    }
+    return select_preferred_values(contexts, facts, names, duration)
 
 
 def summed_values_for(
@@ -303,10 +285,8 @@ def previous(values: dict[str, float], period_end: str) -> float | None:
 
 
 def at(values: dict[str, float], period_end: str) -> float | None:
-    if period_end in values:
-        return values[period_end]
-    candidates = [(key, value) for key, value in values.items() if key <= period_end]
-    return max(candidates, default=(None, None))[1]
+    # Never label an older fact as the requested fiscal period.
+    return values.get(period_end)
 
 
 def percent(top: float | None, bottom: float | None) -> float | None:
@@ -335,7 +315,12 @@ def add_metric(metrics: dict, key: str, value: float | None, prior: float | None
 
 def build_record(filing: dict, data: bytes) -> dict:
     contexts, facts = parse_xbrl(data)
-    period_end = str(filing["periodEnd"])
+    period_end = str(filing.get("periodEnd") or "")
+    code = normalize_security_code(filing.get("secCode"))
+    if not is_iso_date(period_end):
+        raise ValueError("EDINET filing has no valid annual period end")
+    if not code:
+        raise ValueError("EDINET filing has no valid security code")
     series = {
         key: values_for(contexts, facts, names, key in DURATION_KEYS)
         for key, names in FACT_NAMES.items()
@@ -446,7 +431,7 @@ def build_record(filing: dict, data: bytes) -> dict:
         valuation["bps"] = round(bps, 4)
 
     record = {
-        "code": str(filing["secCode"])[:4],
+        "code": code,
         "companyName": str(filing.get("filerName") or ""),
         "documentId": str(filing["docID"]),
         "filedAt": str(filing.get("submitDateTime") or ""),

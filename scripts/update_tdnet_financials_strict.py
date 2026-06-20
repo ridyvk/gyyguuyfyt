@@ -40,6 +40,11 @@ from update_tdnet_financials import (
     parse_inline_xbrl,
     parse_list_page,
 )
+from data_quality import (
+    context_rank as quality_context_rank,
+    normalize_security_code,
+    select_preferred_values,
+)
 
 STRICT_TDNET_FACT_NAMES = {
     "revenue": (
@@ -159,15 +164,7 @@ def is_full_year_duration(context: dict) -> bool:
 
 
 def context_rank(context_id: str, context: dict, period_end: str, duration: bool) -> tuple[int, int, int, int, int]:
-    text = context_id + " " + " ".join(context["dimensions"])
-    days = context_days(context) or 0
-    return (
-        1 if (context["end"] if duration else context["instant"]) == period_end else 0,
-        1 if "ConsolidatedMember" in text else 0,
-        1 if "CurrentYear" in context_id else 0,
-        min(days, 370) if duration else 0,
-        1 if not context["dimensions"] else 0,
-    )
+    return quality_context_rank(context_id, context, period_end, duration)
 
 
 def values_for(
@@ -176,31 +173,13 @@ def values_for(
     names: tuple[str, ...],
     duration: bool,
 ) -> dict[str, float]:
-    grouped: dict[str, list[tuple[str, float]]] = defaultdict(list)
-    for name in names:
-        for context_id, value in facts.get(name, []):
-            context = contexts[context_id]
-            if not is_actual_consolidated(context_id, context):
-                continue
-            period_end = context["end"] if duration else context["instant"]
-            if not period_end:
-                continue
-            if duration and not is_full_year_duration(context):
-                continue
-            grouped[period_end].append((context_id, value))
-
-    return {
-        period_end: max(
-            candidates,
-            key=lambda candidate: context_rank(
-                candidate[0],
-                contexts[candidate[0]],
-                period_end,
-                duration,
-            ),
-        )[1]
-        for period_end, candidates in grouped.items()
-    }
+    return select_preferred_values(
+        contexts,
+        facts,
+        names,
+        duration,
+        duration_range=(FULL_YEAR_MIN_DAYS, FULL_YEAR_MAX_DAYS),
+    )
 
 
 def summed_values_for(
@@ -266,8 +245,8 @@ def list_full_year_filings(days: int) -> tuple[dict[str, dict], dict[str, int]]:
             if not is_full_year_earnings_title(title):
                 stats["tdnetQuarterlyRowsSkipped"] += 1
                 continue
-            code = row.get("code", "")[:4]
-            if len(code) != 4:
+            code = normalize_security_code(row.get("code"))
+            if not code:
                 continue
             filed_at = filing_timestamp(target, row.get("time", ""))
             filing = {

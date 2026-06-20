@@ -90,12 +90,12 @@ export default function App() {
           ))}
         </nav>
         <div className="topbar__signal">
-          {financialSnapshot?.status === 'ready' ? (
+          {financialSnapshot && ['ready', 'partial', 'building'].includes(financialSnapshot.status) ? (
             <DatabaseZap size={16} />
           ) : (
             <CircleAlert size={16} />
           )}
-          {financialSnapshot?.status === 'ready'
+          {financialSnapshot && ['ready', 'partial', 'building'].includes(financialSnapshot.status)
             ? `財務 ${financialCompanyCount.toLocaleString('ja-JP')}社 / 株価 ${stockQuoteCount.toLocaleString('ja-JP')}社`
             : marketSnapshot?.status === 'ready'
               ? `株価 ${stockQuoteCount.toLocaleString('ja-JP')}社`
@@ -139,11 +139,11 @@ export default function App() {
           <p>このスコアは投資判断ではなく分析補助の目安です。</p>
           <span>
             企業マスター: JPX / 財務KPI:{' '}
-            {financialSnapshot?.status === 'ready'
+            {financialSnapshot && ['ready', 'partial', 'building'].includes(financialSnapshot.status)
               ? `EDINET・TDnet開示（${financialCompanyCount.toLocaleString('ja-JP')}社）`
               : '財務データ未取得'}
             {' '} / 株価:{' '}
-            {marketSnapshot?.status === 'ready'
+            {marketSnapshot?.status === 'ready' || marketSnapshot?.status === 'partial'
               ? `${marketSnapshot.source}終値（${stockQuoteCount.toLocaleString('ja-JP')}社）`
               : '未取得'}
           </span>

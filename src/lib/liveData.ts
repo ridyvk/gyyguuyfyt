@@ -98,6 +98,23 @@ const round = (value: number, digits = 1) => {
 const hasFiniteNumber = (value: number | undefined): value is number =>
   value !== undefined && Number.isFinite(value)
 
+const isIsoDate = (value: string | undefined) =>
+  Boolean(value && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value)))
+
+const isValidRecordForCompany = (
+  company: Company,
+  record: LiveFinancialRecord | undefined,
+): record is LiveFinancialRecord =>
+  Boolean(
+    record &&
+      record.code === company.code &&
+      isIsoDate(record.periodEnd) &&
+      isIsoDate(record.filedAt?.slice(0, 10)) &&
+      Object.values(record.metrics ?? {}).some(
+        (metric) => metric && Number.isFinite(metric.value),
+      ),
+  )
+
 const isReliableDailyQuoteComparison = (quote: MarketQuote) => {
   if (!hasFiniteNumber(quote.previousClose) || quote.previousClose <= 0) return false
   if (!Number.isFinite(quote.close) || quote.close <= 0) return false
@@ -403,7 +420,7 @@ export const mergeLiveCompanies = (
     const record = snapshot?.records[company.code]
     const quote = marketSnapshot?.quotes[company.code]
     const fundamentals = marketSnapshot?.fundamentals[company.code]
-    return record && record.code === company.code
+    return isValidRecordForCompany(company, record)
       ? mergeRecord(company, record, quote, fundamentals)
       : createUnavailableCompany(company, quote)
   })

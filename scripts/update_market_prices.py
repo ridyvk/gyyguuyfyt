@@ -16,8 +16,10 @@ import time
 import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
+
+from data_quality import is_iso_date, normalize_security_code
 
 SNAPSHOT = Path(__file__).resolve().parents[1] / "public/data/market.json"
 FINANCIALS = Path(__file__).resolve().parents[1] / "public/data/financials.json"
@@ -26,6 +28,7 @@ COMPANY_MASTER = (
 )
 YAHOO_CHART = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
 JST = timezone(timedelta(hours=9))
+MAX_FALLBACK_QUOTE_AGE_DAYS = 10
 
 
 def number(value: object) -> float | None:
@@ -71,7 +74,11 @@ def company_codes() -> list[str]:
     the primary source. Financial records are used only as a fallback.
     """
     master = load_json(COMPANY_MASTER)
-    master_codes = sorted(str(company["code"]) for company in master.get("companies", []))
+    master_codes = sorted(
+        str(company["code"])
+        for company in master.get("companies", [])
+        if normalize_security_code(company.get("code")) == str(company.get("code") or "")
+    )
     if master_codes:
         return master_codes
     financials = load_json(FINANCIALS)
@@ -174,6 +181,32 @@ def fetch_quotes(codes: list[str], workers: int) -> tuple[dict[str, dict], list[
     return quotes, failures
 
 
+def merge_quotes(
+    codes: list[str],
+    previous_quotes: dict,
+    fresh_quotes: dict,
+    today: date,
+) -> tuple[dict[str, dict], int, int]:
+    merged: dict[str, dict] = {}
+    fallback_count = 0
+    stale_dropped = 0
+    for code in codes:
+        if code in fresh_quotes:
+            merged[code] = {**fresh_quotes[code], "stale": False}
+            continue
+        previous = previous_quotes.get(code)
+        quote_date = str((previous or {}).get("date") or "")
+        if not isinstance(previous, dict) or not is_iso_date(quote_date):
+            stale_dropped += 1
+            continue
+        if (today - date.fromisoformat(quote_date)).days > MAX_FALLBACK_QUOTE_AGE_DAYS:
+            stale_dropped += 1
+            continue
+        merged[code] = {**previous, "stale": True}
+        fallback_count += 1
+    return merged, fallback_count, stale_dropped
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--max-workers", type=int, default=8)
@@ -186,10 +219,12 @@ def main() -> int:
     if not quotes:
         raise RuntimeError("No market quote was fetched.")
 
-    merged_quotes = {
-        **previous_snapshot.get("quotes", {}),
-        **quotes,
-    }
+    merged_quotes, fallback_quotes, stale_quotes_dropped = merge_quotes(
+        codes,
+        previous_snapshot.get("quotes", {}),
+        quotes,
+        datetime.now(JST).date(),
+    )
     fundamentals = valuation_fundamentals()
     latest_dates = sorted(
         {quote["date"] for quote in merged_quotes.values() if quote.get("date")},
@@ -204,12 +239,12 @@ def main() -> int:
         reverse=True,
     )
     snapshot = {
-        "schemaVersion": 2,
+        "schemaVersion": 3,
         "generatedAt": datetime.now(timezone.utc)
         .isoformat()
         .replace("+00:00", "Z"),
         "source": "Yahoo Finance",
-        "status": "ready",
+        "status": "partial" if failures else "ready",
         "message": (
             "Yahoo Financeの公開株価データとEDINET・TDnetのEPS/BPSから"
             "PER・PBRを自動計算しています。株価はリアルタイム保証ではありません。"
@@ -225,6 +260,9 @@ def main() -> int:
             "fundamentals": len(fundamentals),
             "quoteFailures": len(failures),
             "freshQuotesFetched": len(quotes),
+            "fallbackQuotes": fallback_quotes,
+            "staleQuotesDropped": stale_quotes_dropped,
+            "maxFallbackQuoteAgeDays": MAX_FALLBACK_QUOTE_AGE_DAYS,
         },
     }
     SNAPSHOT.write_text(

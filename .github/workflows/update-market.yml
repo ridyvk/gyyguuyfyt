@@ -1,6 +1,18 @@
 name: Update market prices
 
 on:
+  workflow_run:
+    workflows:
+      - Update JPX company master
+    types: [completed]
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/update-market.yml
+      - scripts/data_quality.py
+      - scripts/update_market_prices.py
+      - scripts/validate_datasets.py
+      - src/data/listedCompanies.json
   schedule:
     - cron: '45 7 * * 1-5'
     - cron: '45 9 * * 1-5'
@@ -13,8 +25,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
   group: market-price-update
@@ -22,15 +32,14 @@ concurrency:
 
 jobs:
   update-market:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: main
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -45,6 +54,9 @@ jobs:
             --max-companies "$MAX_COMPANIES" \
             --max-workers 8
 
+      - name: Validate market dataset
+        run: python scripts/validate_datasets.py --scope market
+
       - name: Commit updated market snapshot
         run: |
           git config user.name "kpi-scope-bot"
@@ -57,23 +69,3 @@ jobs:
             git pull --rebase origin main
             git push origin HEAD:main
           fi
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install dependencies
-        run: npm install --no-audit --no-fund
-
-      - name: Build application
-        run: npm run build
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4

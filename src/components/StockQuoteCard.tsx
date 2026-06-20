@@ -71,7 +71,7 @@ export default function StockQuoteCard({
           <i />
           {label}
         </span>
-        <span>{quote.source}</span>
+          <span>{quote.source}</span>
       </div>
 
       <div className="stock-quote-card__value-row">
@@ -121,7 +121,7 @@ export default function StockQuoteCard({
       </svg>
 
       <div className="stock-quote-card__meta">
-        <span>{quote.date}</span>
+        <span>{quote.date}{quote.stale ? '（更新遅延）' : ''}</span>
         <span>出来高 {formatVolume(quote.volume)}</span>
       </div>
     </div>
