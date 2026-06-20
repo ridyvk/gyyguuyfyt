@@ -114,6 +114,12 @@ export interface LiveFinancialRecord {
   metrics: Partial<Record<KpiKey, LiveMetricValue>>
   history: FinancialYearPoint[]
   valuation?: ValuationBasis
+  quality?: {
+    dataModelVersion?: number
+    roeModelVersion?: number
+    roeStatus?: string
+    roeRequiredDataModelVersion?: number
+  }
 }
 
 export interface FinancialDataPolicy {
@@ -154,6 +160,7 @@ export interface FinancialStats {
   nonAnnualRecordsDropped?: number
   invalidRecordsDropped?: number
   validationFailures?: Record<string, number>
+  roeMetricsQuarantined?: number
   dataUpdatedAt?: string | null
   latestPeriodEnd?: string | null
   lastCheckedAt?: string | null
