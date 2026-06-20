@@ -74,6 +74,53 @@ class DateAndRecordValidationTests(unittest.TestCase):
         )
 
 
+class RoeCalculationTests(unittest.TestCase):
+    def test_current_and_previous_roe_both_use_average_equity(self) -> None:
+        profits = {
+            "2024-12-31": 2_238_000_000.0,
+            "2025-12-31": 3_464_000_000.0,
+        }
+        equities = {
+            "2023-12-31": 7_200_000_000.0,
+            "2024-12-31": 12_100_000_000.0,
+            "2025-12-31": 17_433_000_000.0,
+        }
+        current_period = "2025-12-31"
+        previous_period = update_edinet_financials.period_before(
+            profits,
+            current_period,
+        )
+
+        current_roe = update_edinet_financials.roe_for_period(
+            profits,
+            equities,
+            current_period,
+        )
+        previous_roe = update_edinet_financials.roe_for_period(
+            profits,
+            equities,
+            previous_period,
+        )
+
+        self.assertEqual(round(current_roe or 0, 1), 23.5)
+        self.assertEqual(round(previous_roe or 0, 1), 23.2)
+        self.assertEqual(round((current_roe or 0) - (previous_roe or 0), 1), 0.3)
+
+    def test_previous_roe_is_not_based_on_closing_equity_only(self) -> None:
+        profits = {"2024-03-31": 200.0}
+        equities = {
+            "2023-03-31": 1_000.0,
+            "2024-03-31": 1_200.0,
+        }
+        roe = update_edinet_financials.roe_for_period(
+            profits,
+            equities,
+            "2024-03-31",
+        )
+        self.assertAlmostEqual(roe or 0, 200 / 1_100 * 100)
+        self.assertNotAlmostEqual(roe or 0, 200 / 1_200 * 100)
+
+
 class XbrlContextTests(unittest.TestCase):
     def test_segment_context_cannot_beat_company_total(self) -> None:
         contexts = {
