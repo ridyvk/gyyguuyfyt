@@ -106,6 +106,43 @@ class RoeCalculationTests(unittest.TestCase):
         self.assertEqual(round(previous_roe or 0, 1), 23.2)
         self.assertEqual(round((current_roe or 0) - (previous_roe or 0), 1), 0.3)
 
+    def test_disclosed_roe_takes_precedence_over_recalculation(self) -> None:
+        disclosed = {
+            "2024-12-31": 23.2,
+            "2025-12-31": 23.5,
+        }
+        profits = {
+            "2024-12-31": 2_238_000_000.0,
+            "2025-12-31": 3_464_000_000.0,
+        }
+        equities = {
+            "2023-12-31": 7_200_000_000.0,
+            "2024-12-31": 12_100_000_000.0,
+            "2025-12-31": 17_433_000_000.0,
+        }
+
+        current = update_edinet_financials.disclosed_or_calculated_roe(
+            disclosed, profits, equities, "2025-12-31"
+        )
+        previous = update_edinet_financials.disclosed_or_calculated_roe(
+            disclosed, profits, equities, "2024-12-31"
+        )
+
+        self.assertEqual(current, 23.5)
+        self.assertEqual(previous, 23.2)
+        self.assertEqual(round((current or 0) - (previous or 0), 1), 0.3)
+
+    def test_disclosed_roe_falls_back_to_recalculation(self) -> None:
+        profits = {"2025-03-31": 120.0}
+        equities = {
+            "2024-03-31": 900.0,
+            "2025-03-31": 1_100.0,
+        }
+        roe = update_edinet_financials.disclosed_or_calculated_roe(
+            {}, profits, equities, "2025-03-31"
+        )
+        self.assertEqual(roe, 12.0)
+
     def test_previous_roe_is_not_based_on_closing_equity_only(self) -> None:
         profits = {"2024-03-31": 200.0}
         equities = {
