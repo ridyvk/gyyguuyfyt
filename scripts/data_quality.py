@@ -239,6 +239,121 @@ def attach_metric_provenance(
     }
 
 
+
+HARD_METRIC_RANGES: dict[str, tuple[float | None, float | None]] = {
+    "revenueGrowth": (-100.0, None),
+    "equityRatio": (None, 100.0),
+    "debtRatio": (0.0, None),
+    "inventoryGrowth": (-100.0, None),
+    "receivablesGrowth": (-100.0, None),
+}
+
+
+def metric_range_error(metric_key: str, metric: object) -> str | None:
+    """Return a hard-range violation for one metric, including comparisons."""
+    if not isinstance(metric, dict):
+        return None
+    bounds = HARD_METRIC_RANGES.get(metric_key)
+    if bounds is None:
+        return None
+    minimum, maximum = bounds
+    candidates: list[tuple[str, object]] = [
+        ("value", metric.get("value")),
+        ("previousValue", metric.get("previousValue")),
+    ]
+    trend = metric.get("trend")
+    if isinstance(trend, list):
+        candidates.extend((f"trend[{index}]", value) for index, value in enumerate(trend))
+    for field, value in candidates:
+        if value is None:
+            continue
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            continue
+        numeric = float(value)
+        if not math.isfinite(numeric):
+            continue
+        if minimum is not None and numeric < minimum:
+            return f"{field}-below-minimum-{minimum:g}"
+        if maximum is not None and numeric > maximum:
+            return f"{field}-above-maximum-{maximum:g}"
+    return None
+
+
+def remove_history_metric(record: dict, metric_key: str) -> None:
+    for point in record.get("history") or []:
+        if isinstance(point, dict):
+            point.pop(metric_key, None)
+
+
+def quarantine_invalid_metrics(record: object) -> int:
+    """Remove impossible KPIs while preserving the rest of the company record."""
+    if not isinstance(record, dict):
+        return 0
+    metrics = record.get("metrics")
+    if not isinstance(metrics, dict):
+        return 0
+    quarantined: dict[str, dict] = {}
+    for metric_key, metric in list(metrics.items()):
+        reason = metric_range_error(metric_key, metric)
+        if reason is None:
+            continue
+        quarantined[metric_key] = {
+            "reason": reason,
+            "metric": metric,
+        }
+        metrics.pop(metric_key, None)
+        remove_history_metric(record, metric_key)
+    if not quarantined:
+        return 0
+
+    quarantine = record.setdefault("quarantine", {})
+    metric_validation = quarantine.setdefault(
+        "metricValidation",
+        {"policy": "hard-accounting-ranges-v1", "metrics": {}},
+    )
+    metric_validation.setdefault("metrics", {}).update(quarantined)
+    quality = record.setdefault("quality", {})
+    quality["metricValidationModelVersion"] = 1
+    quality["metricValidationStatus"] = "quarantined"
+    return len(quarantined)
+
+
+def quarantine_misaligned_metric_trends(record: object) -> int:
+    """Drop chart trends when their latest year is not the record's fiscal year."""
+    if not isinstance(record, dict):
+        return 0
+    history = record.get("history")
+    metrics = record.get("metrics")
+    period_end = str(record.get("periodEnd") or "")
+    if not isinstance(history, list) or not history or not isinstance(metrics, dict):
+        return 0
+    latest = history[-1] if isinstance(history[-1], dict) else {}
+    latest_year = str(latest.get("year") or "")
+    expected_year = period_end[:7].replace("-", "/")
+    if latest_year == expected_year:
+        return 0
+
+    removed: list[str] = []
+    for metric_key, metric in metrics.items():
+        if isinstance(metric, dict) and "trend" in metric:
+            metric.pop("trend", None)
+            removed.append(metric_key)
+    if not removed:
+        return 0
+
+    quarantine = record.setdefault("quarantine", {})
+    quarantine["historyTrend"] = {
+        "reason": "latest-history-period-does-not-match-record-period",
+        "expectedYear": expected_year,
+        "latestHistoryYear": latest_year,
+        "metrics": sorted(removed),
+    }
+    quality = record.setdefault("quality", {})
+    quality["historyTrendValidationModelVersion"] = 1
+    quality["historyTrendStatus"] = "quarantined"
+    return len(removed)
+
+
 def validate_financial_record(
     code: str,
     record: object,
@@ -269,8 +384,15 @@ def validate_financial_record(
         disputed_metrics = source_quarantine.get("metrics") or {}
         if not isinstance(disputed_metrics, dict) or not disputed_metrics:
             return "missing-metrics"
-    for metric in metrics.values():
+    for metric_key, metric in metrics.items():
         value = metric.get("value") if isinstance(metric, dict) else None
-        if not isinstance(value, (int, float)) or not math.isfinite(value):
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(value)
+        ):
             return "invalid-metric"
+        range_error = metric_range_error(metric_key, metric)
+        if range_error:
+            return f"invalid-metric-range:{metric_key}:{range_error}"
     return None
