@@ -285,9 +285,26 @@ const mergeRecord = (
   quote?: MarketQuote,
   fundamentals?: MarketFundamentals,
 ): Company => {
+  const history = record.history ?? []
   const recordMetrics: Partial<Record<KpiKey, LiveMetricValue>> = {
     ...record.metrics,
     ...valuationMetrics(quote, fundamentals ?? record.valuation),
+  }
+  const historyMatchesCurrentPeriod =
+    history.at(-1)?.year === record.periodEnd.slice(0, 7).replace('-', '/')
+  const priorHistoricalRoe =
+    historyMatchesCurrentPeriod && history.length >= 2
+      ? history.at(-2)?.roe
+      : undefined
+  if (
+    recordMetrics.roe &&
+    hasFiniteNumber(priorHistoricalRoe)
+  ) {
+    recordMetrics.roe = {
+      ...recordMetrics.roe,
+      previousValue: priorHistoricalRoe,
+      trend: history.map((point) => point.roe),
+    }
   }
   kpiKeys.forEach((key) => {
     const metric = recordMetrics[key]
@@ -319,7 +336,6 @@ const mergeRecord = (
   kpiKeys.forEach((key) => {
     rawMetrics[key] = recordMetrics[key]?.value ?? neutralMetrics[key]
   })
-  const history = record.history ?? []
   const previousOperatingMargin =
     recordMetrics.operatingMargin?.previousValue ??
     (history.length >= 2
