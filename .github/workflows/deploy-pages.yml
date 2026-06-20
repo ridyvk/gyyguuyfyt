@@ -37,8 +37,9 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Test and validate data pipelines
+      - name: Sanitize, test, and validate data pipelines
         run: |
+          python scripts/finalize_annual_dataset.py
           python -m unittest discover -s tests -p 'test_*.py'
           python scripts/validate_datasets.py --scope all
 
@@ -64,3 +65,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
