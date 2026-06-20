@@ -291,10 +291,10 @@ const mergeRecord = (
     ...valuationMetrics(quote, fundamentals ?? record.valuation),
   }
   const historyMatchesCurrentPeriod =
-    history.at(-1)?.year === record.periodEnd.slice(0, 7).replace('-', '/')
+    history[history.length - 1]?.year === record.periodEnd.slice(0, 7).replace('-', '/')
   const priorHistoricalRoe =
     historyMatchesCurrentPeriod && history.length >= 2
-      ? history.at(-2)?.roe
+      ? history[history.length - 2]?.roe
       : undefined
   if (
     recordMetrics.roe &&
