@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-20T05:33:47.097027Z",
+  "generatedAt": "2026-06-20T10:41:11.669955Z",
   "dataUpdatedAt": "2026-06-19T17:30:00+09:00",
   "latestPeriodEnd": "2026-05-20",
   "mode": "edinet-annual-baseline-tdnet-full-year-overlay-batched",
@@ -20,7 +20,7 @@
   "edinetDocumentsScanned": 106077,
   "edinetPendingBeforeBatch": 3699,
   "edinetBatchSize": 700,
-  "edinetDocumentsUpdated": 633,
+  "edinetDocumentsUpdated": 622,
   "edinetEstimatedRemaining": 2999,
   "edinetBatchFailures": 67,
   "nonAnnualRecordsDropped": 0,
