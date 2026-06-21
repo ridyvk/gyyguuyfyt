@@ -1,0 +1,91 @@
+from __future__ import annotations
+
+import io
+import sys
+import unittest
+import zipfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+
+import update_edinet_financials
+import update_edinet_financials_batched
+
+
+def xbrl_instance(concept: str) -> bytes:
+    return f"""<?xml version="1.0" encoding="UTF-8"?>
+<xbrli:xbrl
+  xmlns:xbrli="http://www.xbrl.org/2003/instance"
+  xmlns:jppfs_cor="http://example.test/jppfs">
+  <jppfs_cor:{concept} contextRef="CurrentYearDuration" unitRef="JPY">100</jppfs_cor:{concept}>
+</xbrli:xbrl>
+""".encode("utf-8")
+
+
+class EdinetInstanceSelectionTests(unittest.TestCase):
+    def test_primary_financial_instance_beats_shorter_decoy(self) -> None:
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w") as archive:
+            archive.writestr(
+                "XBRL/PublicDoc/a.xbrl",
+                xbrl_instance("UnrelatedCompanyExtensionFact"),
+            )
+            archive.writestr(
+                "XBRL/PublicDoc/jpcrp030000-asr-001.xbrl",
+                xbrl_instance("RevenueIFRS"),
+            )
+
+        selected = update_edinet_financials.xbrl_from_zip(buffer.getvalue())
+
+        self.assertIn(b"RevenueIFRS", selected)
+        self.assertNotIn(b"UnrelatedCompanyExtensionFact", selected)
+
+    def test_financial_fact_count_ignores_unrelated_extension_facts(self) -> None:
+        self.assertEqual(
+            update_edinet_financials.financial_fact_count(
+                xbrl_instance("UnrelatedCompanyExtensionFact")
+            ),
+            0,
+        )
+        self.assertEqual(
+            update_edinet_financials.financial_fact_count(
+                xbrl_instance("ProfitLossAttributableToOwnersOfParentIFRS")
+            ),
+            1,
+        )
+
+
+class MissingGoldenPriorityTests(unittest.TestCase):
+    def test_missing_golden_company_precedes_normal_candidate(self) -> None:
+        records: dict[str, dict] = {}
+        normal = {"_normalizedCode": "1000"}
+        golden = {"_normalizedCode": "6301"}
+
+        ordered = sorted(
+            [normal, golden],
+            key=lambda filing: update_edinet_financials_batched.candidate_priority_key(
+                filing,
+                records,
+                {"6301"},
+            ),
+        )
+
+        self.assertEqual(
+            [candidate["_normalizedCode"] for candidate in ordered],
+            ["6301", "1000"],
+        )
+
+    def test_existing_golden_record_is_not_forced_to_front(self) -> None:
+        records = {"6301": {"source": "EDINET", "quality": {"dataModelVersion": 9}}}
+        priority = update_edinet_financials_batched.candidate_priority_key(
+            {"_normalizedCode": "6301"},
+            records,
+            {"6301"},
+        )
+
+        self.assertEqual(priority, (0, ""))
+
+
+if __name__ == "__main__":
+    unittest.main()
