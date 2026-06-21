@@ -491,7 +491,7 @@ const loadShardedFinancialSnapshot = async (
 
   const shardPayloads = await Promise.all(
     manifest.shards.map(async (entry) => {
-      if (!/^industry-\\d{2}\\.json$/.test(entry.file)) {
+      if (!/^industry-\d{2}\.json$/.test(entry.file)) {
         throw new Error(`Unexpected financial shard file: ${entry.file}`)
       }
       const shard = await fetchFinancialJson<FinancialIndustryShard>(
