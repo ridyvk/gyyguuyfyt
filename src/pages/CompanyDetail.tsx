@@ -230,7 +230,7 @@ export default function CompanyDetail() {
       </section>
 
       <section className="section-block">
-        <div className="section-heading"><div><span className="section-kicker">KEY METRICS</span><h2>KPIタイル</h2></div><p>数値・前年差・状態・短期トレンド</p></div>
+        <div className="section-heading"><div><span className="section-kicker">KEY METRICS</span><h2>KPIタイル</h2></div><p>数値・前年差・状態・信頼度・計算式・元データ</p></div>
         <div className="kpi-grid">
           {kpiKeys.map((key) => (
             <KpiTile key={key} label={kpiLabels[key]} metric={company.metrics[key]} />
