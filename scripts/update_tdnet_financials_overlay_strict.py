@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 import argparse
 import json
 import sys
@@ -28,6 +29,114 @@ def should_keep_existing(code: str, record: dict, current_codes: set[str]) -> bo
     if record.get("source") == "EDINET":
         return True
     return record.get("source") == "TDnet" and record.get("documentType") == "FullYearEarnings"
+
+
+def merge_correction_record(base: dict, correction: dict) -> dict:
+    """Overlay a partial correction XBRL onto its complete same-period filing."""
+    if base.get("periodEnd") != correction.get("periodEnd"):
+        raise ValueError("correction and base filing periods do not match")
+
+    merged = deepcopy(base)
+    for key in (
+        "companyName",
+        "documentId",
+        "documentType",
+        "filedAt",
+        "periodEnd",
+        "periodType",
+        "source",
+        "sourceDetail",
+        "sourceUrl",
+        "title",
+    ):
+        if correction.get(key) is not None:
+            merged[key] = correction[key]
+
+    merged["metrics"] = {
+        **deepcopy(base.get("metrics") or {}),
+        **deepcopy(correction.get("metrics") or {}),
+    }
+    if base.get("valuation") or correction.get("valuation"):
+        merged["valuation"] = {
+            **deepcopy(base.get("valuation") or {}),
+            **deepcopy(correction.get("valuation") or {}),
+        }
+
+    points: dict[str, dict] = {}
+    for point in base.get("history") or []:
+        if isinstance(point, dict) and point.get("year"):
+            points[str(point["year"])] = deepcopy(point)
+    for point in correction.get("history") or []:
+        if isinstance(point, dict) and point.get("year"):
+            year = str(point["year"])
+            points[year] = {**points.get(year, {}), **deepcopy(point)}
+    merged["history"] = [points[year] for year in sorted(points)[-3:]]
+
+    for metric_key in (
+        "operatingMargin",
+        "netMargin",
+        "roe",
+        "operatingCfMargin",
+    ):
+        metric = merged["metrics"].get(metric_key)
+        if not isinstance(metric, dict):
+            continue
+        trend = [
+            point[metric_key]
+            for point in merged["history"]
+            if isinstance(point.get(metric_key), (int, float))
+        ]
+        if len(trend) >= 2:
+            metric["trend"] = trend
+        else:
+            metric.pop("trend", None)
+
+    quality = {
+        **deepcopy(base.get("quality") or {}),
+        **deepcopy(correction.get("quality") or {}),
+        "correctionMergeModelVersion": 1,
+        "correctionStatus": "merged-with-base-filing",
+        "correctionBaseDocumentId": base.get("documentId"),
+        "correctionBaseSourceUrl": base.get("sourceUrl"),
+        "correctionDocumentId": correction.get("documentId"),
+    }
+    merged["quality"] = quality
+    return merged
+
+
+def build_complete_record(filing: dict) -> tuple[dict, bool]:
+    correction = strict.build_record(filing, get(filing["xbrlUrl"]))
+    if not strict.is_correction_title(filing.get("title", "")):
+        return correction, False
+
+    same_period: list[dict] = []
+    for previous_filing in filing.get("_previousFilings") or []:
+        try:
+            previous_record = strict.build_record(
+                previous_filing,
+                get(previous_filing["xbrlUrl"]),
+            )
+        except Exception:
+            continue
+        if previous_record.get("periodEnd") == correction.get("periodEnd"):
+            same_period.append(previous_record)
+
+    if not same_period:
+        quality = correction.setdefault("quality", {})
+        quality["correctionStatus"] = "base-filing-not-found"
+        return correction, False
+
+    chain = sorted(
+        [*same_period, correction],
+        key=lambda record: (
+            str(record.get("filedAt") or ""),
+            str(record.get("documentId") or ""),
+        ),
+    )
+    merged = chain[0]
+    for next_record in chain[1:]:
+        merged = merge_correction_record(merged, next_record)
+    return merged, True
 
 
 def should_replace(existing: dict | None, record: dict) -> bool:
@@ -165,6 +274,7 @@ def main() -> int:
     reconciled_companies = 0
     matched_metrics = 0
     quarantined_metrics = 0
+    correction_records_merged = 0
     failures: list[str] = []
     eligible_filings = {
         code: filing
@@ -185,7 +295,9 @@ def main() -> int:
     )
     for index, filing in enumerate(candidates, 1):
         try:
-            record = strict.build_record(filing, get(filing["xbrlUrl"]))
+            record, correction_merged = build_complete_record(filing)
+            if correction_merged:
+                correction_records_merged += 1
             if validate_financial_record(record["code"], record, current_codes) is not None:
                 raise ValueError("TDnet record did not pass annual-record validation")
             existing = records.get(record["code"])
@@ -258,6 +370,7 @@ def main() -> int:
                 "tdnetCompanies": tdnet_count,
                 "tdnetDocumentsUpdated": updated,
                 "tdnetRoeDisclosuresMerged": roe_enriched,
+                "tdnetCorrectionRecordsMerged": correction_records_merged,
                 "sourceReconciliationChecksThisRun": reconciled_companies,
                 "sourceMatchedMetricsThisRun": matched_metrics,
                 "sourceQuarantinedMetricsThisRun": quarantined_metrics,
@@ -280,7 +393,8 @@ def main() -> int:
         f"EDINET {edinet_count}, TDnet {tdnet_count}; "
         f"TDnet updated {updated}; reconciled {reconciled_companies}; "
         f"matched metrics {matched_metrics}; quarantined metrics {quarantined_metrics}; "
-        f"ROE enriched {roe_enriched}; failures {len(failures)}."
+        f"ROE enriched {roe_enriched}; corrections merged "
+        f"{correction_records_merged}; failures {len(failures)}."
     )
     for failure in failures[:30]:
         print(f"warning: {failure}", file=sys.stderr)
