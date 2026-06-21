@@ -111,7 +111,7 @@ export const calculateScores = (
   ]
   const activeCategories = categories.filter(([, , active]) => active)
   const overall = weightedAverage(
-    activeCategories.map(([score, weight]) => [score, weight]),
+    activeCategories.map(([score, weight]) => [score, weight] as const),
   )
 
   return {
