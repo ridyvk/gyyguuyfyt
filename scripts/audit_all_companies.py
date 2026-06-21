@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 from collections import Counter, defaultdict
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -19,6 +20,8 @@ SCHEMA_VERSION = 1
 MIN_EDINET_DATA_MODEL = 9
 STALE_PERIOD_DAYS = 800
 PROVENANCE_FIELDS = ("tag", "contextRef", "unitRef", "consolidation")
+RATE_TOLERANCE_POINTS = 0.25
+PIPELINE_RATE_TOLERANCE_POINTS = 0.5
 
 
 def utc_now() -> str:
@@ -70,6 +73,40 @@ def provenance_counts(record: dict) -> tuple[int, int]:
     return complete, incomplete
 
 
+def trusted_metric_count(record: dict) -> int:
+    trusted = 0
+    for metric in (record.get("metrics") or {}).values():
+        if not isinstance(metric, dict):
+            continue
+        value = metric.get("value")
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(value)
+        ):
+            continue
+        provenance = metric.get("provenance")
+        facts = (
+            provenance.get("sourceFacts")
+            if isinstance(provenance, dict)
+            else None
+        )
+        if not isinstance(facts, list) or not facts:
+            continue
+        if all(
+            isinstance(fact, dict)
+            and all(fact.get(field) not in (None, "") for field in PROVENANCE_FIELDS)
+            and fact.get("consolidation") == "consolidated"
+            for fact in facts
+        ):
+            trusted += 1
+    return trusted
+
+
+def percentage(numerator: int | float, denominator: int | float) -> float:
+    return round(numerator / denominator * 100, 2) if denominator else 0.0
+
+
 def add_issue(
     issues: list[dict[str, str]],
     code: str,
@@ -100,6 +137,7 @@ def audit_company(
             "periodAgeDays": None,
             "metricCount": 0,
             "provenanceMetricCount": 0,
+            "trustedMetricCount": 0,
             "issues": [{"code": "missing-financial-record", "severity": "missing"}],
         }
 
@@ -171,6 +209,7 @@ def audit_company(
         "periodAgeDays": period_age_days,
         "metricCount": len(metrics),
         "provenanceMetricCount": complete_provenance,
+        "trustedMetricCount": trusted_metric_count(record),
         "dataModelVersion": quality.get("dataModelVersion"),
         "provenanceModelVersion": quality.get("provenanceModelVersion"),
         "issues": issues,
@@ -189,15 +228,37 @@ def regression_violations(
         return []
 
     checks = (
-        ("missing", "max"),
-        ("review", "max"),
-        ("recordsAvailable", "min"),
+        ("missing", "max", 0.0),
+        ("review", "max", 0.0),
+        ("recordsAvailable", "min", 0.0),
+        ("coverageRatio", "min", RATE_TOLERANCE_POINTS),
+        ("trustedMetricRatio", "min", RATE_TOLERANCE_POINTS),
+        ("missingProvenanceRate", "max", RATE_TOLERANCE_POINTS),
+        ("oldEdinetModelRate", "max", RATE_TOLERANCE_POINTS),
+        ("metricRangeQuarantined", "max", 0.0),
+        ("sourceQuarantinedMetrics", "max", 0.0),
+        (
+            "edinetBatchFailureRate",
+            "max",
+            PIPELINE_RATE_TOLERANCE_POINTS,
+        ),
+        (
+            "tdnetStrictFailureRate",
+            "max",
+            PIPELINE_RATE_TOLERANCE_POINTS,
+        ),
     )
     violations = []
-    for field, comparison in checks:
-        value = int(summary.get(field) or 0)
-        baseline = int(previous.get(field) or 0)
-        failed = value > baseline if comparison == "max" else value < baseline
+    for field, comparison, tolerance in checks:
+        if field not in previous:
+            continue
+        value = float(summary.get(field) or 0)
+        baseline = float(previous.get(field) or 0)
+        failed = (
+            value > baseline + tolerance
+            if comparison == "max"
+            else value < baseline - tolerance
+        )
         if failed:
             violations.append(
                 {
@@ -205,8 +266,23 @@ def regression_violations(
                     "value": value,
                     "baseline": baseline,
                     "comparison": comparison,
+                    "tolerance": tolerance,
                 }
             )
+
+    if int(summary.get("sourceQuarantinedMetrics") or 0) > 0 and not any(
+        violation["field"] == "sourceQuarantinedMetrics"
+        for violation in violations
+    ):
+        violations.append(
+            {
+                "field": "sourceQuarantinedMetrics",
+                "value": int(summary["sourceQuarantinedMetrics"]),
+                "baseline": 0,
+                "comparison": "equal",
+                "tolerance": 0,
+            }
+        )
     return violations
 
 
@@ -260,16 +336,51 @@ def build_report(
 
     total = len(audited)
     records_available = total - status_counts["missing"]
+    total_metric_count = sum(company["metricCount"] for company in audited)
+    trusted_metrics = sum(company["trustedMetricCount"] for company in audited)
+    stats = snapshot.get("stats") or {}
+    edinet_batch_failures = int(stats.get("edinetBatchFailures") or 0)
+    edinet_batch_size = int(stats.get("edinetBatchSize") or 0)
+    tdnet_strict_failures = int(stats.get("tdnetStrictFailures") or 0)
+    tdnet_full_year_filings = int(stats.get("tdnetFullYearFilings") or 0)
     summary = {
         "companies": total,
         "recordsAvailable": records_available,
-        "coverageRatio": (
-            round(records_available / total * 100, 2) if total else 0
-        ),
+        "coverageRatio": percentage(records_available, total),
         "ok": status_counts["ok"],
         "warning": status_counts["warning"],
         "review": status_counts["review"],
         "missing": status_counts["missing"],
+        "totalMetricCount": total_metric_count,
+        "trustedMetricCount": trusted_metrics,
+        "trustedMetricRatio": percentage(trusted_metrics, total_metric_count),
+        "missingProvenanceRate": percentage(
+            issue_counts["missing-provenance"],
+            records_available,
+        ),
+        "oldEdinetModelRate": percentage(
+            issue_counts["old-edinet-model"],
+            source_counts["EDINET"],
+        ),
+        "metricRangeQuarantined": int(
+            stats.get("metricRangeQuarantined") or 0
+        ),
+        "sourceQuarantinedMetrics": int(
+            stats.get("sourceQuarantinedMetrics") or 0
+        ),
+        "edinetBatchFailures": edinet_batch_failures,
+        "edinetBatchFailureRate": percentage(
+            edinet_batch_failures,
+            edinet_batch_size,
+        ),
+        "tdnetStrictFailures": tdnet_strict_failures,
+        "tdnetStrictFailureRate": percentage(
+            tdnet_strict_failures,
+            tdnet_full_year_filings,
+        ),
+        "pipelineFailureCount": (
+            edinet_batch_failures + tdnet_strict_failures
+        ),
         "issueCounts": dict(sorted(issue_counts.items())),
         "sourceCounts": dict(sorted(source_counts.items())),
     }
@@ -327,10 +438,15 @@ def build_report(
             "stalePeriodDays": STALE_PERIOD_DAYS,
             "minimumEdinetDataModelVersion": MIN_EDINET_DATA_MODEL,
             "regressionChecks": [
-                "missing must not increase",
-                "review must not increase",
-                "recordsAvailable must not decrease",
+                "missing and review must not increase",
+                "coverage and trusted metric ratio must not decrease",
+                "missing provenance and old model rates must not increase",
+                "metric and source quarantine counts must not increase",
+                "pipeline failure rates must not increase",
+                "any source mismatch quarantine requires review",
             ],
+            "rateTolerancePoints": RATE_TOLERANCE_POINTS,
+            "pipelineRateTolerancePoints": PIPELINE_RATE_TOLERANCE_POINTS,
         },
         "summary": summary,
         "industries": industries,
@@ -341,6 +457,44 @@ def build_report(
         "violations": violations,
         "companies": audited,
     }
+
+
+def write_actions_summary(report: dict) -> None:
+    summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if not summary_path:
+        return
+
+    summary = report["summary"]
+    violations = report["violations"]
+    status = "FAIL" if violations else "PASS"
+    lines = [
+        f"## All-company quality gate: {status}",
+        "",
+        "| Metric | Value |",
+        "| --- | ---: |",
+        f"| Coverage | {summary['coverageRatio']:.2f}% |",
+        f"| Trusted KPI ratio | {summary['trustedMetricRatio']:.2f}% |",
+        f"| Missing provenance rate | {summary['missingProvenanceRate']:.2f}% |",
+        f"| Old EDINET model rate | {summary['oldEdinetModelRate']:.2f}% |",
+        f"| Review companies | {summary['review']} |",
+        f"| Missing companies | {summary['missing']} |",
+        f"| EDINET batch failure rate | {summary['edinetBatchFailureRate']:.2f}% |",
+        f"| TDnet strict failure rate | {summary['tdnetStrictFailureRate']:.2f}% |",
+        "",
+    ]
+    if violations:
+        lines.extend(
+            [
+                "### Violations",
+                "",
+                "~~~json",
+                json.dumps(violations, ensure_ascii=False, indent=2),
+                "~~~",
+                "",
+            ]
+        )
+    with Path(summary_path).open("a", encoding="utf-8") as output:
+        output.write("\n".join(lines))
 
 
 def main() -> int:
@@ -361,6 +515,7 @@ def main() -> int:
         encoding="utf-8",
     )
 
+    write_actions_summary(report)
     summary = report["summary"]
     print(
         "All-company audit: "
@@ -369,7 +524,9 @@ def main() -> int:
         f"{summary['ok']} ok, "
         f"{summary['warning']} warning, "
         f"{summary['review']} review, "
-        f"{summary['missing']} missing."
+        f"{summary['missing']} missing, "
+        f"{summary['trustedMetricRatio']:.2f}% trusted KPIs, "
+        f"{summary['pipelineFailureCount']} pipeline failures."
     )
     if report["violations"]:
         print(json.dumps(report["violations"], ensure_ascii=False))
