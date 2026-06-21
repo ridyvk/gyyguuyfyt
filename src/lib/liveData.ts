@@ -1,6 +1,8 @@
 import type {
   Company,
   CompanyMetrics,
+  FinancialIndustryShard,
+  FinancialShardManifest,
   FinancialSnapshot,
   KpiComparisonLabel,
   KpiKey,
@@ -464,13 +466,83 @@ const createUnavailableCompany = (
 export const hasFinancialData = (company: Company) =>
   company.dataSource === 'EDINET' || company.dataSource === 'TDnet'
 
-export const loadFinancialSnapshot = async (): Promise<FinancialSnapshot> => {
-  const url = `${import.meta.env.BASE_URL}data/financials.json?v=${Date.now()}`
+const fetchFinancialJson = async <T>(url: string): Promise<T> => {
   const response = await fetch(url, { cache: 'no-store' })
   if (!response.ok) {
-    throw new Error(`Financial snapshot could not be loaded: ${response.status}`)
+    throw new Error(`Financial data could not be loaded: ${response.status}`)
   }
-  return response.json() as Promise<FinancialSnapshot>
+  return response.json() as Promise<T>
+}
+
+const loadShardedFinancialSnapshot = async (
+  version: number,
+): Promise<FinancialSnapshot> => {
+  const baseUrl = `${import.meta.env.BASE_URL}data/financials`
+  const manifest = await fetchFinancialJson<FinancialShardManifest>(
+    `${baseUrl}/manifest.json?v=${version}`,
+  )
+  if (
+    manifest.schemaVersion !== 1 ||
+    !Array.isArray(manifest.shards) ||
+    !Number.isInteger(manifest.recordCount)
+  ) {
+    throw new Error('Financial shard manifest is invalid')
+  }
+
+  const shardPayloads = await Promise.all(
+    manifest.shards.map(async (entry) => {
+      if (!/^industry-\d{2}\.json$/.test(entry.file)) {
+        throw new Error(`Unexpected financial shard file: ${entry.file}`)
+      }
+      const shard = await fetchFinancialJson<FinancialIndustryShard>(
+        `${baseUrl}/${entry.file}?v=${encodeURIComponent(
+          manifest.generatedAt ?? String(version),
+        )}`,
+      )
+      if (
+        shard.schemaVersion !== 1 ||
+        shard.industry !== entry.industry ||
+        Object.keys(shard.records).length !== entry.recordCount
+      ) {
+        throw new Error(`Financial shard metadata mismatch: ${entry.file}`)
+      }
+      return shard
+    }),
+  )
+
+  const records: FinancialSnapshot['records'] = {}
+  shardPayloads.forEach((shard) => {
+    Object.entries(shard.records).forEach(([code, record]) => {
+      if (records[code]) {
+        throw new Error(`Duplicate company in financial shards: ${code}`)
+      }
+      records[code] = record
+    })
+  })
+  if (Object.keys(records).length !== manifest.recordCount) {
+    throw new Error('Financial shard record count mismatch')
+  }
+
+  return {
+    ...manifest.snapshot,
+    records,
+  }
+}
+
+const loadLegacyFinancialSnapshot = async (
+  version: number,
+): Promise<FinancialSnapshot> =>
+  fetchFinancialJson<FinancialSnapshot>(
+    `${import.meta.env.BASE_URL}data/financials.json?v=${version}`,
+  )
+
+export const loadFinancialSnapshot = async (): Promise<FinancialSnapshot> => {
+  const version = Date.now()
+  try {
+    return await loadShardedFinancialSnapshot(version)
+  } catch {
+    return loadLegacyFinancialSnapshot(version)
+  }
 }
 
 export const loadUpdateStatus = async (): Promise<UpdateStatus> => {

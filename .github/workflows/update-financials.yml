@@ -89,6 +89,11 @@ jobs:
       - name: Finalize annual dataset
         run: python scripts/finalize_annual_dataset.py
 
+      - name: Generate and verify financial industry shards
+        run: |
+          python scripts/split_financials.py
+          python scripts/split_financials.py --check
+
       - name: Validate financial dataset
         run: python scripts/validate_datasets.py --scope financial
 

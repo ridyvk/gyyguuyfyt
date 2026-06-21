@@ -263,6 +263,27 @@ export interface FinancialSnapshot {
   stats: FinancialStats
 }
 
+export interface FinancialShardEntry {
+  industry: string
+  file: string
+  recordCount: number
+}
+
+export interface FinancialShardManifest {
+  schemaVersion: 1
+  generatedAt: string | null
+  recordCount: number
+  snapshot: Omit<FinancialSnapshot, 'records'>
+  shards: FinancialShardEntry[]
+}
+
+export interface FinancialIndustryShard {
+  schemaVersion: 1
+  generatedAt: string | null
+  industry: string
+  records: Record<string, LiveFinancialRecord>
+}
+
 export interface UpdateStatus extends Partial<FinancialStats> {
   generatedAt?: string | null
   dataUpdatedAt?: string | null

@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "test:data": "python -m unittest discover -s tests -p test_*.py",
+    "split:financials": "python scripts/split_financials.py",
     "preview": "vite preview",
     "update:financials": "python scripts/update_edinet_financials.py",
     "update:tdnet": "python scripts/update_tdnet_financials.py",
