@@ -156,6 +156,9 @@ const metricStatus = (key: KpiKey, value: number): KpiStatus => {
   return 'warning'
 }
 
+const isScoreEligibleAssessment = (assessment: MetricConfidenceAssessment) =>
+  assessment.confidence === 'A' || assessment.confidence === 'B'
+
 const createUnavailableMetric = (
   key: KpiKey,
   assessment: MetricConfidenceAssessment = {},
@@ -233,9 +236,6 @@ const isUsableLiveMetric = (
   if (key === 'equityRatio' && (value < -100 || value > 100)) return false
   return true
 }
-
-const isScoreEligibleAssessment = (assessment: MetricConfidenceAssessment) =>
-  assessment.confidence === 'A' || assessment.confidence === 'B'
 
 const calculateLiveScores = (
   rawMetrics: RawMetrics,
@@ -403,18 +403,23 @@ const mergeRecord = (
   ) as CompanyMetrics
   const rawMetrics = { ...neutralMetrics }
   kpiKeys.forEach((key) => {
-    rawMetrics[key] = recordMetrics[key]?.value ?? neutralMetrics[key]
+    rawMetrics[key] = scoringAvailable.has(key)
+      ? recordMetrics[key]?.value ?? neutralMetrics[key]
+      : neutralMetrics[key]
   })
   const previousOperatingMargin =
-    recordMetrics.operatingMargin?.previousValue ??
-    (history.length >= 2
-      ? history[history.length - 2]?.operatingMargin
-      : undefined) ??
-    rawMetrics.operatingMargin
+    scoringAvailable.has('operatingMargin')
+      ? recordMetrics.operatingMargin?.previousValue ??
+        (history.length >= 2
+          ? history[history.length - 2]?.operatingMargin
+          : undefined) ??
+        rawMetrics.operatingMargin
+      : rawMetrics.operatingMargin
+  const scoringHistory = scoringAvailable.has('operatingMargin') ? history : []
   const warnings = buildWarnings(
     rawMetrics,
     previousOperatingMargin,
-    history,
+    scoringHistory,
     scoringAvailable,
   )
 
