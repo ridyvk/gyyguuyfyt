@@ -234,6 +234,9 @@ const isUsableLiveMetric = (
   return true
 }
 
+const isScoreEligibleAssessment = (assessment: MetricConfidenceAssessment) =>
+  assessment.confidence === 'A' || assessment.confidence === 'B'
+
 const calculateLiveScores = (
   rawMetrics: RawMetrics,
   available: ReadonlySet<KpiKey>,
@@ -361,15 +364,25 @@ const mergeRecord = (
       delete recordMetrics[key]
     }
   })
-  const available = new Set<KpiKey>(
+  const metricAssessments = Object.fromEntries(
+    kpiKeys.map((key) => [key, assessMetricConfidence(key, recordMetrics[key], record)]),
+  ) as Record<KpiKey, MetricConfidenceAssessment>
+  const displayAvailable = new Set<KpiKey>(
     kpiKeys.filter(
       (key) => applicable.has(key) && recordMetrics[key] !== undefined,
+    ),
+  )
+  const scoringAvailable = new Set<KpiKey>(
+    kpiKeys.filter(
+      (key) =>
+        displayAvailable.has(key) &&
+        isScoreEligibleAssessment(metricAssessments[key]),
     ),
   )
   const metrics = Object.fromEntries(
     kpiKeys.map((key) => {
       const live = recordMetrics[key]
-      const assessment = assessMetricConfidence(key, live, record)
+      const assessment = metricAssessments[key]
       return [
         key,
         !applicable.has(key)
@@ -402,7 +415,7 @@ const mergeRecord = (
     rawMetrics,
     previousOperatingMargin,
     history,
-    available,
+    scoringAvailable,
   )
 
   return {
@@ -410,21 +423,21 @@ const mergeRecord = (
     metrics,
     history,
     industryKpis: [],
-    scores: calculateLiveScores(rawMetrics, available),
-    strengths: buildStrengths(rawMetrics, available),
+    scores: calculateLiveScores(rawMetrics, scoringAvailable),
+    strengths: buildStrengths(rawMetrics, scoringAvailable),
     warnings,
     analysisComment: buildAnalysisComment(
       rawMetrics,
       warnings,
       previousOperatingMargin,
-      available,
+      scoringAvailable,
     ),
     hasWarning: warnings.length > 0,
     dataSource: record.source === 'TDnet' ? 'TDnet' : 'EDINET',
     dataUpdatedAt: record.filedAt,
     financialPeriod: record.periodEnd,
     financialSourceUrl: record.sourceUrl,
-    liveMetricCount: available.size,
+    liveMetricCount: displayAvailable.size,
     stockPrice: quote,
   }
 }
