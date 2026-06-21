@@ -244,7 +244,7 @@ const valuationMetrics = (
   quote?: MarketQuote,
   fundamentals?: MarketFundamentals,
 ): Partial<Record<KpiKey, LiveMetricValue>> => {
-  if (!quote || !fundamentals) return {}
+  if (!quote || quote.stale || !fundamentals) return {}
   const metrics: Partial<Record<KpiKey, LiveMetricValue>> = {}
   const canCompareDay = isReliableDailyQuoteComparison(quote)
   const eps =
