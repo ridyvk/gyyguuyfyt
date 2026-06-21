@@ -21,6 +21,7 @@ export interface Scores extends Record<ScoreKey, number> {
 }
 
 export type KpiStatus = 'good' | 'normal' | 'warning' | 'unknown'
+export type KpiConfidence = 'A' | 'B' | 'C' | 'review'
 export type KpiComparisonLabel = '前年差' | '前日差'
 
 export type KpiKey =
@@ -47,6 +48,10 @@ export interface KpiMetric {
   trend: number[]
   available?: boolean
   applicable?: boolean
+  confidence?: KpiConfidence
+  confidenceReason?: string
+  formula?: string
+  provenance?: MetricProvenance
 }
 
 export type CompanyMetrics = Record<KpiKey, KpiMetric>
