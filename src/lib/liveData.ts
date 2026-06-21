@@ -21,6 +21,11 @@ import {
 } from './analysis'
 import { getIndustryKpiPolicy } from './industryKpiPolicy'
 import { calculateScores, type RawMetrics } from './scoring'
+import {
+  assessMetricConfidence,
+  metricFormulaLabels,
+  type MetricConfidenceAssessment,
+} from './metricConfidence'
 
 const kpiKeys: KpiKey[] = [
   'revenueGrowth',
@@ -149,13 +154,18 @@ const metricStatus = (key: KpiKey, value: number): KpiStatus => {
   return 'warning'
 }
 
-const createUnavailableMetric = (key: KpiKey): KpiMetric => ({
+const createUnavailableMetric = (
+  key: KpiKey,
+  assessment: MetricConfidenceAssessment = {},
+): KpiMetric => ({
   value: 0,
   unit: units[key],
   status: 'unknown',
   comment: '開示データから取得できません',
   trend: [],
   available: false,
+  formula: metricFormulaLabels[key],
+  ...assessment,
 })
 
 const createNotApplicableMetric = (
@@ -169,6 +179,7 @@ const createNotApplicableMetric = (
   trend: [],
   available: false,
   applicable: false,
+  formula: metricFormulaLabels[key],
 })
 
 const createLiveMetric = (
@@ -177,6 +188,8 @@ const createLiveMetric = (
   previousValue?: number,
   trend?: number[],
   comparisonLabel: KpiComparisonLabel = '前年差',
+  source?: LiveMetricValue,
+  assessment: MetricConfidenceAssessment = {},
 ): KpiMetric => {
   const status = metricStatus(key, value)
   const commentIndex = status === 'good' ? 0 : status === 'normal' ? 1 : 2
@@ -197,6 +210,9 @@ const createLiveMetric = (
     comment: comments[key][commentIndex],
     trend: normalizedTrend.map((point) => round(point)),
     available: true,
+    formula: metricFormulaLabels[key],
+    ...(source?.provenance ? { provenance: source.provenance } : {}),
+    ...assessment,
   }
 }
 
@@ -351,6 +367,7 @@ const mergeRecord = (
   const metrics = Object.fromEntries(
     kpiKeys.map((key) => {
       const live = recordMetrics[key]
+      const assessment = assessMetricConfidence(key, live, record)
       return [
         key,
         !applicable.has(key)
@@ -362,8 +379,10 @@ const mergeRecord = (
                 live.previousValue,
                 live.trend,
                 live.comparisonLabel,
+                live,
+                assessment,
               )
-            : createUnavailableMetric(key),
+            : createUnavailableMetric(key, assessment),
       ]
     }),
   ) as CompanyMetrics
