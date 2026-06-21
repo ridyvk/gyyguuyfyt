@@ -1,0 +1,1203 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-06-21T01:53:23.568926Z",
+  "financialSnapshotGeneratedAt": "2026-06-21T01:53:21.788883Z",
+  "baseline": {
+    "maxMissingRecords": 4,
+    "maxRoeQuarantined": 23,
+    "maxWithoutProvenance": 33,
+    "maxOldEdinetModels": 30,
+    "minHealthyRecords": 7
+  },
+  "summary": {
+    "companies": 48,
+    "healthy": 19,
+    "warning": 29,
+    "critical": 0,
+    "missingRecords": 4,
+    "roeQuarantined": 14,
+    "withoutProvenance": 25,
+    "oldEdinetModels": 21,
+    "issueCounts": {
+      "missing-provenance": 25,
+      "missing-record": 4,
+      "old-edinet-model": 21,
+      "roe-quarantined": 14
+    }
+  },
+  "violations": [],
+  "companies": [
+    {
+      "code": "1301",
+      "companyName": "極洋",
+      "industry": "水産・農林業",
+      "riskFlags": [
+        "baseline-industry-coverage"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-03-31",
+      "periodAgeDays": 447,
+      "metricCount": 10,
+      "provenanceMetricCount": 0,
+      "roe": 10.7,
+      "dataModelVersion": 6,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "1605",
+      "companyName": "INPEX",
+      "industry": "鉱業",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "capital-intensive"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-12-31",
+      "periodAgeDays": 172,
+      "metricCount": 4,
+      "provenanceMetricCount": 0,
+      "roe": null,
+      "dataModelVersion": null,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "roe-quarantined",
+          "severity": "warning"
+        },
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "1802",
+      "companyName": "大林組",
+      "industry": "建設業",
+      "riskFlags": [
+        "baseline-industry-coverage"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-03-31",
+      "periodAgeDays": 447,
+      "metricCount": 9,
+      "provenanceMetricCount": 0,
+      "roe": 12.6,
+      "dataModelVersion": 6,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "2206",
+      "companyName": "江崎グリコ",
+      "industry": "食料品",
+      "riskFlags": [
+        "baseline-industry-coverage"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-12-31",
+      "periodAgeDays": 172,
+      "metricCount": 10,
+      "provenanceMetricCount": 0,
+      "roe": 1.8,
+      "dataModelVersion": 8,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "3402",
+      "companyName": "東レ",
+      "industry": "繊維製品",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "capital-intensive"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-03-31",
+      "periodAgeDays": 447,
+      "metricCount": 4,
+      "provenanceMetricCount": 0,
+      "roe": null,
+      "dataModelVersion": null,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "roe-quarantined",
+          "severity": "warning"
+        },
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "3861",
+      "companyName": "王子ホールディングス",
+      "industry": "パルプ・紙",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "capital-intensive"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-03-31",
+      "periodAgeDays": 447,
+      "metricCount": 10,
+      "provenanceMetricCount": 0,
+      "roe": 4.3,
+      "dataModelVersion": 6,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "4005",
+      "companyName": "住友化学",
+      "industry": "化学",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "loss-making"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-03-31",
+      "periodAgeDays": 447,
+      "metricCount": 4,
+      "provenanceMetricCount": 0,
+      "roe": null,
+      "dataModelVersion": null,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "roe-quarantined",
+          "severity": "warning"
+        },
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "4502",
+      "companyName": "武田薬品工業",
+      "industry": "医薬品",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "large-cap-cross-check"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 6,
+      "provenanceMetricCount": 6,
+      "roe": -2.12,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "5020",
+      "companyName": "ENEOSホールディングス",
+      "industry": "石油・石炭製品",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "capital-intensive"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-03-31",
+      "periodAgeDays": 447,
+      "metricCount": 1,
+      "provenanceMetricCount": 0,
+      "roe": null,
+      "dataModelVersion": null,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "roe-quarantined",
+          "severity": "warning"
+        },
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "5108",
+      "companyName": "ブリヂストン",
+      "industry": "ゴム製品",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "large-cap-cross-check"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-12-31",
+      "periodAgeDays": 172,
+      "metricCount": 4,
+      "provenanceMetricCount": 0,
+      "roe": null,
+      "dataModelVersion": null,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "roe-quarantined",
+          "severity": "warning"
+        },
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "5201",
+      "companyName": "AGC",
+      "industry": "ガラス・土石製品",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "capital-intensive"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-12-31",
+      "periodAgeDays": 172,
+      "metricCount": 1,
+      "provenanceMetricCount": 0,
+      "roe": null,
+      "dataModelVersion": null,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "roe-quarantined",
+          "severity": "warning"
+        },
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "5401",
+      "companyName": "日本製鉄",
+      "industry": "鉄鋼",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "capital-intensive",
+        "large-cap-cross-check"
+      ],
+      "source": "TDnet",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 7,
+      "provenanceMetricCount": 0,
+      "roe": 0.31,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "5713",
+      "companyName": "住友金属鉱山",
+      "industry": "非鉄金属",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "capital-intensive"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-03-31",
+      "periodAgeDays": 447,
+      "metricCount": 2,
+      "provenanceMetricCount": 2,
+      "roe": 0.91,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "5938",
+      "companyName": "LIXIL",
+      "industry": "金属製品",
+      "riskFlags": [
+        "baseline-industry-coverage"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 5,
+      "provenanceMetricCount": 5,
+      "roe": 1.27,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "6301",
+      "companyName": "小松製作所",
+      "industry": "機械",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "large-cap-cross-check"
+      ],
+      "source": null,
+      "periodEnd": null,
+      "metricCount": 0,
+      "provenanceMetricCount": 0,
+      "issues": [
+        {
+          "code": "missing-record",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "6501",
+      "companyName": "日立製作所",
+      "industry": "電気機器",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "large-cap-cross-check"
+      ],
+      "source": null,
+      "periodEnd": null,
+      "metricCount": 0,
+      "provenanceMetricCount": 0,
+      "issues": [
+        {
+          "code": "missing-record",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "7203",
+      "companyName": "トヨタ自動車",
+      "industry": "輸送用機器",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "large-cap-cross-check"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 2,
+      "provenanceMetricCount": 2,
+      "roe": 10.15,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "7733",
+      "companyName": "オリンパス",
+      "industry": "精密機器",
+      "riskFlags": [
+        "baseline-industry-coverage"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 2,
+      "provenanceMetricCount": 2,
+      "roe": 8.72,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "7974",
+      "companyName": "任天堂",
+      "industry": "その他製品",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "large-cap-cross-check"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-03-31",
+      "periodAgeDays": 447,
+      "metricCount": 7,
+      "provenanceMetricCount": 0,
+      "roe": null,
+      "dataModelVersion": null,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "roe-quarantined",
+          "severity": "warning"
+        },
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "9501",
+      "companyName": "東京電力ホールディングス",
+      "industry": "電気・ガス業",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "regulated-utility"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-03-31",
+      "periodAgeDays": 447,
+      "metricCount": 9,
+      "provenanceMetricCount": 0,
+      "roe": null,
+      "dataModelVersion": null,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "roe-quarantined",
+          "severity": "warning"
+        },
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "9020",
+      "companyName": "東日本旅客鉄道",
+      "industry": "陸運業",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "transport-cyclical",
+        "capital-intensive"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 10,
+      "provenanceMetricCount": 10,
+      "roe": 8.4,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "9101",
+      "companyName": "日本郵船",
+      "industry": "海運業",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "transport-cyclical"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 9,
+      "provenanceMetricCount": 9,
+      "roe": 7.1,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "9201",
+      "companyName": "日本航空",
+      "industry": "空運業",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "transport-cyclical"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-03-31",
+      "periodAgeDays": 447,
+      "metricCount": 4,
+      "provenanceMetricCount": 0,
+      "roe": null,
+      "dataModelVersion": null,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "roe-quarantined",
+          "severity": "warning"
+        },
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "9301",
+      "companyName": "三菱倉庫",
+      "industry": "倉庫・運輸関連業",
+      "riskFlags": [
+        "baseline-industry-coverage"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-03-31",
+      "periodAgeDays": 447,
+      "metricCount": 7,
+      "provenanceMetricCount": 0,
+      "roe": null,
+      "dataModelVersion": null,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "roe-quarantined",
+          "severity": "warning"
+        },
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "9432",
+      "companyName": "日本電信電話",
+      "industry": "情報・通信業",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "large-cap-cross-check"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 2,
+      "provenanceMetricCount": 2,
+      "roe": 10.4,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "8058",
+      "companyName": "三菱商事",
+      "industry": "卸売業",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "large-cap-cross-check"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 2,
+      "provenanceMetricCount": 2,
+      "roe": 8.51,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "8267",
+      "companyName": "イオン",
+      "industry": "小売業",
+      "riskFlags": [
+        "baseline-industry-coverage"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2026-02-28",
+      "periodAgeDays": 113,
+      "metricCount": 9,
+      "provenanceMetricCount": 0,
+      "roe": null,
+      "dataModelVersion": 5,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "roe-quarantined",
+          "severity": "warning"
+        },
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "8306",
+      "companyName": "三菱UFJフィナンシャル・グループ",
+      "industry": "銀行業",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "bank-policy",
+        "large-cap-cross-check"
+      ],
+      "source": "TDnet",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 4,
+      "provenanceMetricCount": 0,
+      "roe": 14.44,
+      "dataModelVersion": null,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "8604",
+      "companyName": "野村ホールディングス",
+      "industry": "証券、商品先物取引業",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "securities-policy"
+      ],
+      "source": null,
+      "periodEnd": null,
+      "metricCount": 0,
+      "provenanceMetricCount": 0,
+      "issues": [
+        {
+          "code": "missing-record",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "8750",
+      "companyName": "第一生命ホールディングス",
+      "industry": "保険業",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "insurance-policy"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 4,
+      "provenanceMetricCount": 4,
+      "roe": 11.1,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "8591",
+      "companyName": "オリックス",
+      "industry": "その他金融業",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "other-financial-policy"
+      ],
+      "source": null,
+      "periodEnd": null,
+      "metricCount": 0,
+      "provenanceMetricCount": 0,
+      "issues": [
+        {
+          "code": "missing-record",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "8801",
+      "companyName": "三井不動産",
+      "industry": "不動産業",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "real-estate-inventory",
+        "capital-intensive"
+      ],
+      "source": "TDnet",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 8,
+      "provenanceMetricCount": 0,
+      "roe": 11.3,
+      "dataModelVersion": null,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "6098",
+      "companyName": "リクルートホールディングス",
+      "industry": "サービス業",
+      "riskFlags": [
+        "baseline-industry-coverage",
+        "large-cap-cross-check"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 5,
+      "provenanceMetricCount": 5,
+      "roe": 31.05,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "146A",
+      "companyName": "コロンビア・ワークス",
+      "industry": "不動産業",
+      "riskFlags": [
+        "real-estate-inventory"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-12-31",
+      "periodAgeDays": 172,
+      "metricCount": 9,
+      "provenanceMetricCount": 0,
+      "roe": 23.46,
+      "dataModelVersion": 8,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "5987",
+      "companyName": "オーネックス",
+      "industry": "金属製品",
+      "riskFlags": [
+        "stale-roe-scale",
+        "low-roe-not-zero"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-06-30",
+      "periodAgeDays": 356,
+      "metricCount": 10,
+      "provenanceMetricCount": 10,
+      "roe": 0.1,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "5988",
+      "companyName": "パイオラックス",
+      "industry": "金属製品",
+      "riskFlags": [
+        "stale-roe-scale",
+        "low-roe-not-zero"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 10,
+      "provenanceMetricCount": 10,
+      "roe": -0.03,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "7083",
+      "companyName": "AHCグループ",
+      "industry": "サービス業",
+      "riskFlags": [
+        "stale-roe-scale",
+        "low-roe-not-zero"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-11-30",
+      "periodAgeDays": 203,
+      "metricCount": 10,
+      "provenanceMetricCount": 10,
+      "roe": 0.1,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "8217",
+      "companyName": "オークワ",
+      "industry": "小売業",
+      "riskFlags": [
+        "stale-roe-scale"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2026-02-20",
+      "periodAgeDays": 121,
+      "metricCount": 9,
+      "provenanceMetricCount": 0,
+      "roe": null,
+      "dataModelVersion": 5,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "roe-quarantined",
+          "severity": "warning"
+        },
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "8411",
+      "companyName": "みずほフィナンシャルグループ",
+      "industry": "銀行業",
+      "riskFlags": [
+        "bank-policy",
+        "large-cap-cross-check"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 4,
+      "provenanceMetricCount": 4,
+      "roe": 11.47,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "8766",
+      "companyName": "東京海上ホールディングス",
+      "industry": "保険業",
+      "riskFlags": [
+        "insurance-policy",
+        "large-cap-cross-check"
+      ],
+      "source": "TDnet",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 4,
+      "provenanceMetricCount": 4,
+      "roe": 30.56,
+      "dataModelVersion": null,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "8697",
+      "companyName": "日本取引所グループ",
+      "industry": "その他金融業",
+      "riskFlags": [
+        "other-financial-policy"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 2,
+      "provenanceMetricCount": 2,
+      "roe": 23.08,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "8601",
+      "companyName": "大和証券グループ本社",
+      "industry": "証券、商品先物取引業",
+      "riskFlags": [
+        "securities-policy"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 6,
+      "provenanceMetricCount": 6,
+      "roe": 10.3,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "3289",
+      "companyName": "東急不動産ホールディングス",
+      "industry": "不動産業",
+      "riskFlags": [
+        "real-estate-inventory",
+        "capital-intensive"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-03-31",
+      "periodAgeDays": 447,
+      "metricCount": 10,
+      "provenanceMetricCount": 0,
+      "roe": 9.9,
+      "dataModelVersion": 6,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "9984",
+      "companyName": "ソフトバンクグループ",
+      "industry": "情報・通信業",
+      "riskFlags": [
+        "large-cap-cross-check",
+        "loss-making"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-03-31",
+      "periodAgeDays": 447,
+      "metricCount": 1,
+      "provenanceMetricCount": 0,
+      "roe": null,
+      "dataModelVersion": null,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "roe-quarantined",
+          "severity": "warning"
+        },
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "6758",
+      "companyName": "ソニーグループ",
+      "industry": "電気機器",
+      "riskFlags": [
+        "large-cap-cross-check"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 2,
+      "provenanceMetricCount": 2,
+      "roe": -4.01,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "code": "7201",
+      "companyName": "日産自動車",
+      "industry": "輸送用機器",
+      "riskFlags": [
+        "transport-cyclical",
+        "loss-making"
+      ],
+      "source": "TDnet",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 10,
+      "provenanceMetricCount": 0,
+      "roe": -11.72,
+      "dataModelVersion": null,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "4661",
+      "companyName": "オリエンタルランド",
+      "industry": "サービス業",
+      "riskFlags": [
+        "large-cap-cross-check"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-03-31",
+      "periodAgeDays": 447,
+      "metricCount": 10,
+      "provenanceMetricCount": 0,
+      "roe": 12.9,
+      "dataModelVersion": 6,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    },
+    {
+      "code": "7011",
+      "companyName": "三菱重工業",
+      "industry": "機械",
+      "riskFlags": [
+        "capital-intensive",
+        "large-cap-cross-check"
+      ],
+      "source": "EDINET",
+      "periodEnd": "2025-03-31",
+      "periodAgeDays": 447,
+      "metricCount": 3,
+      "provenanceMetricCount": 0,
+      "roe": null,
+      "dataModelVersion": null,
+      "provenanceModelVersion": null,
+      "issues": [
+        {
+          "code": "roe-quarantined",
+          "severity": "warning"
+        },
+        {
+          "code": "old-edinet-model",
+          "severity": "warning"
+        },
+        {
+          "code": "missing-provenance",
+          "severity": "warning"
+        }
+      ],
+      "status": "warning"
+    }
+  ]
+}
