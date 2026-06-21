@@ -102,10 +102,12 @@ class AllCompanyAuditTests(unittest.TestCase):
                 "oldEdinetModelRate": 0.0,
                 "metricRangeQuarantined": 0,
                 "sourceQuarantinedMetrics": 0,
+                "edinetBatchSize": 0,
                 "edinetBatchFailures": 0,
                 "edinetBatchFailureRate": 0.0,
                 "edinetNoMetricDocuments": 0,
                 "edinetNoMetricRate": 0.0,
+                "tdnetDocumentsAttempted": 0,
                 "tdnetStrictFailures": 0,
                 "tdnetStrictFailureRate": 0.0,
                 "tdnetNoMetricDocuments": 0,
@@ -210,6 +212,10 @@ class AllCompanyAuditTests(unittest.TestCase):
                 "tdnetStrictFailureRate": 3.0,
                 "edinetNoMetricRate": 7.0,
                 "tdnetNoMetricRate": 5.0,
+                "edinetBatchSize": 100,
+                "tdnetDocumentsAttempted": 100,
+                "edinetBatchSize": 100,
+                "tdnetDocumentsAttempted": 100,
             },
         }
 
@@ -254,6 +260,24 @@ class AllCompanyAuditTests(unittest.TestCase):
                 "edinetNoMetricRate": 7.0,
                 "tdnetNoMetricRate": 5.0,
                 "sourceQuarantinedMetrics": 0,
+            },
+        }
+
+        self.assertEqual(
+            audit_all_companies.regression_violations(summary, previous),
+            [],
+        )
+
+    def test_new_no_metric_rates_establish_a_baseline(self) -> None:
+        summary = {
+            "edinetNoMetricRate": 72.0,
+            "tdnetNoMetricRate": 13.2,
+        }
+        previous = {
+            "schemaVersion": audit_all_companies.SCHEMA_VERSION,
+            "summary": {
+                "edinetNoMetricRate": 0.0,
+                "tdnetNoMetricRate": 0.0,
             },
         }
 
