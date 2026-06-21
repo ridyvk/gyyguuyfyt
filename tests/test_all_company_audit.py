@@ -95,6 +95,18 @@ class AllCompanyAuditTests(unittest.TestCase):
                 "warning": 1,
                 "review": 1,
                 "missing": 1,
+                "totalMetricCount": 3,
+                "trustedMetricCount": 2,
+                "trustedMetricRatio": 66.67,
+                "missingProvenanceRate": 33.33,
+                "oldEdinetModelRate": 0.0,
+                "metricRangeQuarantined": 0,
+                "sourceQuarantinedMetrics": 0,
+                "edinetBatchFailures": 0,
+                "edinetBatchFailureRate": 0.0,
+                "tdnetStrictFailures": 0,
+                "tdnetStrictFailureRate": 0.0,
+                "pipelineFailureCount": 0,
                 "issueCounts": {
                     "metric-range-quarantined": 1,
                     "missing-financial-record": 1,
@@ -133,6 +145,7 @@ class AllCompanyAuditTests(unittest.TestCase):
 
         self.assertEqual(result["status"], "warning")
         self.assertEqual(result["provenanceMetricCount"], 0)
+        self.assertEqual(result["trustedMetricCount"], 0)
         self.assertEqual(
             {issue["code"] for issue in result["issues"]},
             {"missing-provenance", "incomplete-provenance-facts"},
@@ -158,6 +171,94 @@ class AllCompanyAuditTests(unittest.TestCase):
         self.assertEqual(
             {violation["field"] for violation in violations},
             {"missing", "review", "recordsAvailable"},
+        )
+
+    def test_quality_rate_regressions_fail_the_gate(self) -> None:
+        summary = {
+            "missing": 10,
+            "review": 2,
+            "recordsAvailable": 90,
+            "coverageRatio": 90.0,
+            "trustedMetricRatio": 69.0,
+            "missingProvenanceRate": 31.0,
+            "oldEdinetModelRate": 21.0,
+            "metricRangeQuarantined": 6,
+            "sourceQuarantinedMetrics": 1,
+            "edinetBatchFailureRate": 12.0,
+            "tdnetStrictFailureRate": 4.0,
+        }
+        previous = {
+            "schemaVersion": audit_all_companies.SCHEMA_VERSION,
+            "summary": {
+                "missing": 10,
+                "review": 2,
+                "recordsAvailable": 90,
+                "coverageRatio": 90.0,
+                "trustedMetricRatio": 70.0,
+                "missingProvenanceRate": 30.0,
+                "oldEdinetModelRate": 20.0,
+                "metricRangeQuarantined": 5,
+                "sourceQuarantinedMetrics": 0,
+                "edinetBatchFailureRate": 10.0,
+                "tdnetStrictFailureRate": 3.0,
+            },
+        }
+
+        violations = audit_all_companies.regression_violations(summary, previous)
+
+        self.assertEqual(
+            {violation["field"] for violation in violations},
+            {
+                "trustedMetricRatio",
+                "missingProvenanceRate",
+                "oldEdinetModelRate",
+                "metricRangeQuarantined",
+                "sourceQuarantinedMetrics",
+                "edinetBatchFailureRate",
+                "tdnetStrictFailureRate",
+            },
+        )
+
+    def test_small_rate_changes_stay_inside_tolerance(self) -> None:
+        summary = {
+            "coverageRatio": 89.8,
+            "trustedMetricRatio": 69.8,
+            "missingProvenanceRate": 30.2,
+            "oldEdinetModelRate": 20.2,
+            "edinetBatchFailureRate": 10.4,
+            "tdnetStrictFailureRate": 3.4,
+            "sourceQuarantinedMetrics": 0,
+        }
+        previous = {
+            "schemaVersion": audit_all_companies.SCHEMA_VERSION,
+            "summary": {
+                "coverageRatio": 90.0,
+                "trustedMetricRatio": 70.0,
+                "missingProvenanceRate": 30.0,
+                "oldEdinetModelRate": 20.0,
+                "edinetBatchFailureRate": 10.0,
+                "tdnetStrictFailureRate": 3.0,
+                "sourceQuarantinedMetrics": 0,
+            },
+        }
+
+        self.assertEqual(
+            audit_all_companies.regression_violations(summary, previous),
+            [],
+        )
+
+    def test_source_mismatch_requires_review_without_a_prior_baseline(self) -> None:
+        violations = audit_all_companies.regression_violations(
+            {"sourceQuarantinedMetrics": 1},
+            {
+                "schemaVersion": audit_all_companies.SCHEMA_VERSION,
+                "summary": {"recordsAvailable": 10},
+            },
+        )
+
+        self.assertEqual(
+            [violation["field"] for violation in violations],
+            ["sourceQuarantinedMetrics"],
         )
 
     def test_schema_change_resets_regression_baseline(self) -> None:
