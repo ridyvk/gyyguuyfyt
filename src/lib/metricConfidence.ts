@@ -77,10 +77,10 @@ export const assessMetricConfidence = (
       reason: '元タグのcontext・単位・連結区分が不完全',
     }
   }
-  if (facts.some((fact) => fact.consolidation === 'non-consolidated')) {
+  if (facts.some((fact) => fact.consolidation !== 'consolidated')) {
     return {
       confidence: 'review',
-      reason: '単体値が含まれるため連結値との確認が必要',
+      reason: '連結区分が単体または不明のため確認が必要',
     }
   }
 
