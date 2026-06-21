@@ -34,9 +34,12 @@ jobs:
           python-version: '3.12'
 
       - name: Run all-company audit
+        id: quality_gate
+        continue-on-error: true
         run: python scripts/audit_all_companies.py --check
 
       - name: Upload audit artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: all-company-audit
@@ -44,6 +47,7 @@ jobs:
           retention-days: 30
 
       - name: Commit nightly audit report
+        if: steps.quality_gate.outcome == 'success'
         run: |
           git config user.name "kpi-scope-bot"
           git config user.email "actions@users.noreply.github.com"
@@ -55,3 +59,10 @@ jobs:
             git pull --rebase origin main
             git push origin HEAD:main
           fi
+
+      - name: Fail when the quality gate detects regressions
+        if: steps.quality_gate.outcome == 'failure'
+        run: |
+          echo "The all-company quality gate detected regressions."
+          echo "Review the job summary and all-company-audit artifact."
+          exit 1
