@@ -26,6 +26,7 @@ from data_quality import (
 ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT = ROOT / "public/data/financials.json"
 COMPANY_MASTER = ROOT / "src/data/listedCompanies.json"
+GOLDEN_AUDIT = ROOT / "public/data/golden-company-audit.json"
 SNAPSHOT_SCHEMA_VERSION = 3
 INVENTORY_MODEL_VERSION = 2
 DATA_MODEL_VERSION = 9
@@ -52,6 +53,19 @@ def load_json(path: Path) -> dict:
 def load_company_codes() -> set[str]:
     payload = load_json(COMPANY_MASTER)
     return {str(company["code"]) for company in payload.get("companies", [])}
+
+
+def load_missing_golden_codes() -> set[str]:
+    payload = load_json(GOLDEN_AUDIT)
+    return {
+        str(company.get("code") or "")
+        for company in payload.get("companies", [])
+        if any(
+            issue.get("code") == "missing-record"
+            for issue in company.get("issues", [])
+            if isinstance(issue, dict)
+        )
+    }
 
 
 def normalize_snapshot(snapshot: dict, current_codes: set[str]) -> dict:
@@ -132,10 +146,16 @@ def record_roe_refresh_priority(record: object) -> int:
         return 2
     return 0
 
-def candidate_priority_key(filing: dict, records: dict[str, dict]) -> tuple[int, str]:
+def candidate_priority_key(
+    filing: dict,
+    records: dict[str, dict],
+    missing_golden_codes: set[str] | None = None,
+) -> tuple[int, str]:
     code = str(filing.get("_normalizedCode") or "")
     if not code:
         code = edinet.normalize_security_code(filing.get("secCode")) or ""
+    if code in (missing_golden_codes or set()) and not records.get(code):
+        return (-4, code)
     priority = record_roe_refresh_priority(records.get(code))
     return (-priority, code if priority else "")
 
@@ -202,6 +222,7 @@ def main() -> int:
 
     edinet.FACT_NAMES = STRICT_FACT_NAMES
     current_codes = load_company_codes()
+    missing_golden_codes = load_missing_golden_codes()
     snapshot = normalize_snapshot(load_json(SNAPSHOT), current_codes)
     records = snapshot.setdefault("records", {})
     stats = snapshot.get("stats", {}) or {}
@@ -233,10 +254,21 @@ def main() -> int:
             continue
         candidates.append({**filing, "_normalizedCode": str(code)})
     candidates.sort(key=filing_sort_key, reverse=True)
-    candidates.sort(key=lambda filing: candidate_priority_key(filing, records))
+    candidates.sort(
+        key=lambda filing: candidate_priority_key(
+            filing,
+            records,
+            missing_golden_codes,
+        )
+    )
     pending_total = len(candidates)
     has_priority_candidates = bool(
-        candidates and candidate_priority_key(candidates[0], records)[0] < 0
+        candidates
+        and candidate_priority_key(
+            candidates[0],
+            records,
+            missing_golden_codes,
+        )[0] < 0
     )
     batch_limit = refresh_batch_size(
         args.max_documents,
