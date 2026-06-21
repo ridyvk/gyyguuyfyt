@@ -46,6 +46,7 @@ export interface KpiMetric {
   comment: string
   trend: number[]
   available?: boolean
+  applicable?: boolean
 }
 
 export type CompanyMetrics = Record<KpiKey, KpiMetric>

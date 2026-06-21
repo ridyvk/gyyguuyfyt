@@ -25,6 +25,7 @@ const statusColors = {
 export default function KpiTile({ label, metric }: KpiTileProps) {
   const tileRef = useRef<HTMLElement>(null)
   const [visible, setVisible] = useState(false)
+  const isNotApplicable = metric.applicable === false
   const hasPreviousValue = hasPreviousMetricValue(metric)
   const comparisonLabel = comparisonLabelForMetric(metric)
   const delta = hasPreviousValue ? metric.value - metric.previousValue! : 0
@@ -58,11 +59,16 @@ export default function KpiTile({ label, metric }: KpiTileProps) {
       <div className="kpi-tile__top">
         <span className="kpi-tile__label">{label}</span>
         <span className={`status-pill status-pill--${metric.status}`}>
-          {statusLabel[metric.status]}
+          {isNotApplicable ? '対象外' : statusLabel[metric.status]}
         </span>
       </div>
       <div className="kpi-tile__value">{formatMetric(metric)}</div>
-      {metric.available === false || !hasPreviousValue ? (
+      {isNotApplicable ? (
+        <div className="kpi-tile__delta">
+          <Minus size={14} />
+          業種別の共通評価対象外
+        </div>
+      ) : metric.available === false || !hasPreviousValue ? (
         <div className="kpi-tile__delta">
           <Minus size={14} />
           {formatDelta(metric)}
