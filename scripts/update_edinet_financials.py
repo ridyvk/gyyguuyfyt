@@ -213,6 +213,30 @@ def list_filings(api_key: str, days: int) -> tuple[dict[str, dict], int]:
     return latest, scanned
 
 
+def financial_fact_count(data: bytes) -> int:
+    """Count standard financial facts to identify the primary report instance."""
+    known_names = {
+        name
+        for names in (
+            *FACT_NAMES.values(),
+            DISCLOSED_ROE_FACT_NAMES,
+            *VALUATION_FACT_NAMES.values(),
+            DEBT_COMPONENTS,
+            INVENTORY_COMPONENTS,
+        )
+        for name in names
+    }
+    try:
+        root = ET.fromstring(data)
+    except ET.ParseError:
+        return -1
+    return sum(
+        1
+        for element in root.iter()
+        if element.attrib.get("contextRef") and local_name(element.tag) in known_names
+    )
+
+
 def xbrl_from_zip(data: bytes) -> bytes:
     with zipfile.ZipFile(io.BytesIO(data)) as archive:
         names = [
@@ -226,7 +250,17 @@ def xbrl_from_zip(data: bytes) -> bytes:
             names = [name for name in archive.namelist() if name.lower().endswith(".xbrl")]
         if not names:
             raise ValueError("XBRL instance not found")
-        return archive.read(sorted(names, key=lambda name: (name.count("/"), len(name)))[0])
+
+        candidates = [(name, archive.read(name)) for name in names]
+        _, selected = max(
+            candidates,
+            key=lambda candidate: (
+                financial_fact_count(candidate[1]),
+                1 if Path(candidate[0]).name.lower().startswith("jpcrp") else 0,
+                len(candidate[1]),
+            ),
+        )
+        return selected
 
 
 def parse_xbrl(data: bytes) -> tuple[dict, dict]:
