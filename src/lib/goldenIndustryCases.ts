@@ -1,4 +1,5 @@
-import type { JpxIndustry, KpiKey } from './industryKpiPolicy'
+import type { KpiKey } from '../types'
+import type { JpxIndustry } from './industryKpiPolicy'
 
 export type GoldenRiskFlag =
   | 'baseline-industry-coverage'
