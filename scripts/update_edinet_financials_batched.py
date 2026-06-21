@@ -19,6 +19,7 @@ from pathlib import Path
 import update_edinet_financials as edinet
 from data_quality import (
     filing_order_key,
+    is_unusable_record_validation,
     record_order_key,
     validate_financial_record,
 )
@@ -282,6 +283,7 @@ def main() -> int:
     processed_this_batch = 0
     baseline_marked = 0
     no_metrics = 0
+    unchanged_documents = 0
     failures: list[str] = []
     for index, filing in enumerate(batch, 1):
         doc_id = str(filing.get("docID") or "")
@@ -294,18 +296,18 @@ def main() -> int:
             validation_error = validate_financial_record(
                 record["code"], record, current_codes
             )
-            if validation_error:
+            if is_unusable_record_validation(validation_error):
+                no_metrics += 1
+            elif validation_error:
                 raise ValueError(f"record validation failed: {validation_error}")
-            if record.get("metrics") and (
-                record_order_key(record) >= record_order_key(existing)
-            ):
+            elif record_order_key(record) >= record_order_key(existing):
                 records[record["code"]] = record
                 updated += 1
-            elif record.get("metrics") and existing and existing.get("source") == "TDnet":
+            elif existing and existing.get("source") == "TDnet":
                 mark_tdnet_record_with_edinet_baseline(existing, record)
                 baseline_marked += 1
             else:
-                no_metrics += 1
+                unchanged_documents += 1
         except Exception as error:
             failures.append(f"{filing.get('secCode')}:{filing.get('docID')}: {error}")
         if index % 50 == 0:
@@ -356,6 +358,7 @@ def main() -> int:
                 "edinetDocumentsAlreadyProcessed": already_done,
                 "edinetTdnetBaselineMarked": baseline_marked,
                 "edinetNoMetricDocuments": no_metrics,
+                "edinetDocumentsUnchanged": unchanged_documents,
                 "edinetProcessedDocumentIds": sorted(processed_doc_ids),
                 "edinetBatchFailures": len(failures),
                 "edinetBatchGeneratedAt": generated_at,

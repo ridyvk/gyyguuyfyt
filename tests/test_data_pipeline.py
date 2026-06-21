@@ -39,6 +39,11 @@ class DateAndRecordValidationTests(unittest.TestCase):
         self.assertFalse(data_quality.is_iso_date(None))
         self.assertTrue(data_quality.is_iso_date("2026-03-31"))
 
+    def test_missing_metrics_is_classified_as_unusable_not_failed(self) -> None:
+        self.assertTrue(data_quality.is_unusable_record_validation("missing-metrics"))
+        self.assertFalse(data_quality.is_unusable_record_validation("invalid-period-end"))
+        self.assertFalse(data_quality.is_unusable_record_validation(None))
+
     def test_period_is_more_important_than_submission_time(self) -> None:
         annual = {
             "periodEnd": "2026-03-31",

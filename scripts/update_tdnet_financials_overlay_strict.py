@@ -13,7 +13,11 @@ from pathlib import Path
 
 import update_tdnet_financials_strict as strict
 from update_tdnet_financials import COMPANY_MASTER, SNAPSHOT, get
-from data_quality import record_order_key, validate_financial_record
+from data_quality import (
+    is_unusable_record_validation,
+    record_order_key,
+    validate_financial_record,
+)
 from reconcile_financial_sources import (
     reconcile_same_period,
     reconciliation_totals,
@@ -275,6 +279,7 @@ def main() -> int:
     matched_metrics = 0
     quarantined_metrics = 0
     correction_records_merged = 0
+    no_metric_documents = 0
     failures: list[str] = []
     eligible_filings = {
         code: filing
@@ -298,26 +303,35 @@ def main() -> int:
             record, correction_merged = build_complete_record(filing)
             if correction_merged:
                 correction_records_merged += 1
-            if validate_financial_record(record["code"], record, current_codes) is not None:
-                raise ValueError("TDnet record did not pass annual-record validation")
-            existing = records.get(record["code"])
-            reconciliation = (
-                reconcile_same_period(existing, record)
-                if existing and record.get("metrics")
-                else None
+            validation_error = validate_financial_record(
+                record["code"], record, current_codes
             )
-            if reconciliation is not None:
-                reconciled_companies += 1
-                matched_metrics += reconciliation.matched
-                quarantined_metrics += reconciliation.quarantined
-                if (
-                    (existing.get("quality") or {}).get("roeDocumentId")
-                    == record.get("documentId")
-                ):
-                    roe_enriched += 1
-            elif record.get("metrics") and should_replace(existing, record):
-                records[record["code"]] = record
-                updated += 1
+            if is_unusable_record_validation(validation_error):
+                no_metric_documents += 1
+            else:
+                if validation_error:
+                    raise ValueError(
+                        "TDnet record did not pass annual-record validation: "
+                        f"{validation_error}"
+                    )
+                existing = records.get(record["code"])
+                reconciliation = (
+                    reconcile_same_period(existing, record)
+                    if existing and record.get("metrics")
+                    else None
+                )
+                if reconciliation is not None:
+                    reconciled_companies += 1
+                    matched_metrics += reconciliation.matched
+                    quarantined_metrics += reconciliation.quarantined
+                    if (
+                        (existing.get("quality") or {}).get("roeDocumentId")
+                        == record.get("documentId")
+                    ):
+                        roe_enriched += 1
+                elif record.get("metrics") and should_replace(existing, record):
+                    records[record["code"]] = record
+                    updated += 1
         except Exception as error:
             failures.append(f"{filing.get('code')}:{filing.get('documentId')}: {error}")
         finally:
@@ -379,7 +393,9 @@ def main() -> int:
                 "tdnetRoePriorityCodesMissing": sorted(
                     set(args.priority_code) - set(eligible_filings)
                 ),
+                "tdnetDocumentsAttempted": len(candidates),
                 "tdnetStrictFailures": len(failures),
+                "tdnetNoMetricDocuments": no_metric_documents,
                 "nonAnnualExistingRecordsDropped": dropped_existing,
             },
         }
@@ -394,7 +410,8 @@ def main() -> int:
         f"TDnet updated {updated}; reconciled {reconciled_companies}; "
         f"matched metrics {matched_metrics}; quarantined metrics {quarantined_metrics}; "
         f"ROE enriched {roe_enriched}; corrections merged "
-        f"{correction_records_merged}; failures {len(failures)}."
+        f"{correction_records_merged}; no-metric documents "
+        f"{no_metric_documents}; failures {len(failures)}."
     )
     for failure in failures[:30]:
         print(f"warning: {failure}", file=sys.stderr)

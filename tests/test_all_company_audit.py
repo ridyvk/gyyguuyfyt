@@ -104,9 +104,14 @@ class AllCompanyAuditTests(unittest.TestCase):
                 "sourceQuarantinedMetrics": 0,
                 "edinetBatchFailures": 0,
                 "edinetBatchFailureRate": 0.0,
+                "edinetNoMetricDocuments": 0,
+                "edinetNoMetricRate": 0.0,
                 "tdnetStrictFailures": 0,
                 "tdnetStrictFailureRate": 0.0,
+                "tdnetNoMetricDocuments": 0,
+                "tdnetNoMetricRate": 0.0,
                 "pipelineFailureCount": 0,
+                "unusableDocumentCount": 0,
                 "issueCounts": {
                     "metric-range-quarantined": 1,
                     "missing-financial-record": 1,
@@ -186,6 +191,8 @@ class AllCompanyAuditTests(unittest.TestCase):
             "sourceQuarantinedMetrics": 1,
             "edinetBatchFailureRate": 12.0,
             "tdnetStrictFailureRate": 4.0,
+            "edinetNoMetricRate": 9.0,
+            "tdnetNoMetricRate": 6.0,
         }
         previous = {
             "schemaVersion": audit_all_companies.SCHEMA_VERSION,
@@ -201,6 +208,8 @@ class AllCompanyAuditTests(unittest.TestCase):
                 "sourceQuarantinedMetrics": 0,
                 "edinetBatchFailureRate": 10.0,
                 "tdnetStrictFailureRate": 3.0,
+                "edinetNoMetricRate": 7.0,
+                "tdnetNoMetricRate": 5.0,
             },
         }
 
@@ -216,6 +225,8 @@ class AllCompanyAuditTests(unittest.TestCase):
                 "sourceQuarantinedMetrics",
                 "edinetBatchFailureRate",
                 "tdnetStrictFailureRate",
+                "edinetNoMetricRate",
+                "tdnetNoMetricRate",
             },
         )
 
@@ -227,6 +238,8 @@ class AllCompanyAuditTests(unittest.TestCase):
             "oldEdinetModelRate": 20.2,
             "edinetBatchFailureRate": 10.4,
             "tdnetStrictFailureRate": 3.4,
+            "edinetNoMetricRate": 7.4,
+            "tdnetNoMetricRate": 5.4,
             "sourceQuarantinedMetrics": 0,
         }
         previous = {
@@ -238,6 +251,8 @@ class AllCompanyAuditTests(unittest.TestCase):
                 "oldEdinetModelRate": 20.0,
                 "edinetBatchFailureRate": 10.0,
                 "tdnetStrictFailureRate": 3.0,
+                "edinetNoMetricRate": 7.0,
+                "tdnetNoMetricRate": 5.0,
                 "sourceQuarantinedMetrics": 0,
             },
         }
