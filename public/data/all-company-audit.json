@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-06-21T07:27:10.811900Z",
+  "generatedAt": "2026-06-21T07:40:11.219732Z",
   "financialSnapshotGeneratedAt": "2026-06-21T07:03:49.103538Z",
   "policy": {
     "stalePeriodDays": 800,
@@ -10,7 +10,7 @@
       "coverage and trusted metric ratio must not decrease",
       "missing provenance and old model rates must not increase",
       "metric and source quarantine counts must not increase",
-      "pipeline failure rates must not increase",
+      "pipeline failure and unusable document rates must not increase",
       "any source mismatch quarantine requires review"
     ],
     "rateTolerancePoints": 0.25,
@@ -33,9 +33,14 @@
     "sourceQuarantinedMetrics": 0,
     "edinetBatchFailures": 197,
     "edinetBatchFailureRate": 56.29,
+    "edinetNoMetricDocuments": 0,
+    "edinetNoMetricRate": 0.0,
     "tdnetStrictFailures": 27,
     "tdnetStrictFailureRate": 3.24,
+    "tdnetNoMetricDocuments": 0,
+    "tdnetNoMetricRate": 0.0,
     "pipelineFailureCount": 224,
+    "unusableDocumentCount": 0,
     "issueCounts": {
       "history-trend-quarantined": 6,
       "metric-range-quarantined": 5,
