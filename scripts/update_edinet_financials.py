@@ -553,6 +553,18 @@ def build_record(filing: dict, data: bytes) -> dict:
         DISCLOSED_ROE_FACT_NAMES,
         True,
     )
+    disclosed_equity_ratio = values_for(
+        contexts,
+        facts,
+        DISCLOSED_EQUITY_RATIO_FACT_NAMES,
+        False,
+    )
+    selected_facts["disclosedEquityRatio"] = selected_fact_lists(
+        contexts,
+        facts,
+        DISCLOSED_EQUITY_RATIO_FACT_NAMES,
+        False,
+    )
 
     current = {key: at(values, period_end) for key, values in series.items()}
     prior = {key: previous(values, period_end) for key, values in series.items()}
@@ -587,11 +599,24 @@ def build_record(filing: dict, data: bytes) -> dict:
             prior_profit_period_end,
         ),
     )
+    current_disclosed_equity_ratio = at(disclosed_equity_ratio, period_end)
+    previous_disclosed_equity_ratio = previous(
+        disclosed_equity_ratio,
+        period_end,
+    )
     add_metric(
         metrics,
         "equityRatio",
-        percent(current["equity"], current["assets"]),
-        percent(prior["equity"], prior["assets"]),
+        (
+            current_disclosed_equity_ratio * 100
+            if current_disclosed_equity_ratio is not None
+            else percent(current["equity"], current["assets"])
+        ),
+        (
+            previous_disclosed_equity_ratio * 100
+            if previous_disclosed_equity_ratio is not None
+            else percent(prior["equity"], prior["assets"])
+        ),
     )
     add_metric(
         metrics,
@@ -644,8 +669,8 @@ def build_record(filing: dict, data: bytes) -> dict:
             True,
         ),
         "equityRatio": (
-            "equity / assets * 100",
-            ("equity", "assets"),
+            "disclosedEquityRatio * 100; fallback equity / assets * 100",
+            ("disclosedEquityRatio", "equity", "assets"),
             True,
         ),
         "operatingCfMargin": (
