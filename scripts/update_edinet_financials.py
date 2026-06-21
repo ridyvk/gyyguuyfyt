@@ -327,6 +327,39 @@ def parse_xbrl(data: bytes) -> tuple[dict, dict]:
     return contexts, facts
 
 
+def empty_record_diagnostics(data: bytes, period_end: str) -> str:
+    contexts, facts = parse_xbrl(data)
+    total_actual_contexts = sum(
+        1
+        for context_id, context in contexts.items()
+        if is_total_actual_context(context_id, context)
+    )
+    matching_period_contexts = sum(
+        1
+        for context_id, context in contexts.items()
+        if is_total_actual_context(context_id, context)
+        and period_end in {context.get("end"), context.get("instant")}
+    )
+    keywords = (
+        "sales",
+        "revenue",
+        "income",
+        "profit",
+        "equity",
+        "asset",
+        "returnonequity",
+    )
+    relevant_concepts = sorted(
+        name for name in facts if any(keyword in name.lower() for keyword in keywords)
+    )[:25]
+    return (
+        f"contexts={len(contexts)}, totalActual={total_actual_contexts}, "
+        f"matchingPeriod={matching_period_contexts}, numericFacts="
+        f"{sum(len(entries) for entries in facts.values())}, "
+        f"relevantConcepts={','.join(relevant_concepts) or 'none'}"
+    )
+
+
 def is_consolidated(context_id: str, context: dict) -> bool:
     return is_total_actual_context(context_id, context)
 
@@ -664,6 +697,11 @@ def build_record(filing: dict, data: bytes) -> dict:
         valuation["eps"] = round(eps, 4)
     if bps is not None and math.isfinite(bps):
         valuation["bps"] = round(bps, 4)
+
+    if not metrics:
+        raise ValueError(
+            "no metrics extracted: " + empty_record_diagnostics(data, period_end)
+        )
 
     record = {
         "code": code,
