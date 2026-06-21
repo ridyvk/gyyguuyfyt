@@ -258,9 +258,16 @@ def regression_violations(
             PIPELINE_RATE_TOLERANCE_POINTS,
         ),
     )
+    baseline_denominators = {
+        "edinetNoMetricRate": "edinetBatchSize",
+        "tdnetNoMetricRate": "tdnetDocumentsAttempted",
+    }
     violations = []
     for field, comparison, tolerance in checks:
         if field not in previous:
+            continue
+        denominator_field = baseline_denominators.get(field)
+        if denominator_field and int(previous.get(denominator_field) or 0) <= 0:
             continue
         value = float(summary.get(field) or 0)
         baseline = float(previous.get(field) or 0)
@@ -384,6 +391,7 @@ def build_report(
         "sourceQuarantinedMetrics": int(
             stats.get("sourceQuarantinedMetrics") or 0
         ),
+        "edinetBatchSize": edinet_batch_size,
         "edinetBatchFailures": edinet_batch_failures,
         "edinetBatchFailureRate": percentage(
             edinet_batch_failures,
@@ -394,6 +402,7 @@ def build_report(
             edinet_no_metric_documents,
             edinet_batch_size,
         ),
+        "tdnetDocumentsAttempted": tdnet_documents_attempted,
         "tdnetStrictFailures": tdnet_strict_failures,
         "tdnetStrictFailureRate": percentage(
             tdnet_strict_failures,
