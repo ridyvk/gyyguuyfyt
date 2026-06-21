@@ -166,7 +166,8 @@ def refresh_batch_size(
     has_priority_candidates: bool,
 ) -> int:
     requested = max(0, max_documents)
-    if data_model_upgraded and has_priority_candidates:
+    if has_priority_candidates:
+        # Keep recovery and diagnostics runs short while missing golden cases exist.
         return min(requested, INITIAL_MODEL_CANARY_SIZE)
     return requested
 
