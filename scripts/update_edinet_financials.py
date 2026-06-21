@@ -52,6 +52,9 @@ FACT_NAMES = {
         "RevenueSummaryOfBusinessResults",
         "OperatingRevenueSummaryOfBusinessResults",
         "RevenuesUSGAAP",
+        "RevenueUSGAAPSummaryOfBusinessResults",
+        "NetSalesUSGAAPSummaryOfBusinessResults",
+        "OperatingRevenueUSGAAPSummaryOfBusinessResults",
         "OrdinaryIncome",
     ),
     "operatingIncome": (
@@ -73,6 +76,8 @@ FACT_NAMES = {
         "ProfitLossAttributableToOwnersOfParentSummaryOfBusinessResults",
         "NetIncomeLossSummaryOfBusinessResults",
         "NetIncomeLossAttributableToOwnersOfParentUSGAAP",
+        "ProfitLossAttributableToOwnersOfParentUSGAAPSummaryOfBusinessResults",
+        "NetIncomeLossAttributableToOwnersOfParentUSGAAPSummaryOfBusinessResults",
     ),
     "operatingCf": (
         "NetCashProvidedByUsedInOperatingActivities",
@@ -91,6 +96,8 @@ FACT_NAMES = {
         "EquityAttributableToOwnersOfParentSummaryOfBusinessResults",
         "NetAssetsSummaryOfBusinessResults",
         "EquityUSGAAP",
+        "EquityAttributableToOwnersOfParentUSGAAPSummaryOfBusinessResults",
+        "EquityIncludingPortionAttributableToNonControllingInterestUSGAAPSummaryOfBusinessResults",
     ),
     "assets": (
         "Assets",
@@ -98,6 +105,8 @@ FACT_NAMES = {
         "TotalAssets",
         "TotalAssetsSummaryOfBusinessResults",
         "AssetsUSGAAP",
+        "AssetsUSGAAPSummaryOfBusinessResults",
+        "TotalAssetsUSGAAPSummaryOfBusinessResults",
     ),
     "cash": (
         "CashAndCashEquivalents",
@@ -124,6 +133,11 @@ FACT_NAMES = {
 }
 DISCLOSED_ROE_FACT_NAMES = (
     "RateOfReturnOnEquitySummaryOfBusinessResults",
+    "RateOfReturnOnEquityUSGAAPSummaryOfBusinessResults",
+)
+DISCLOSED_EQUITY_RATIO_FACT_NAMES = (
+    "EquityToAssetRatioSummaryOfBusinessResults",
+    "EquityToAssetRatioUSGAAPSummaryOfBusinessResults",
 )
 VALUATION_FACT_NAMES = {
     "eps": (
@@ -133,12 +147,15 @@ VALUATION_FACT_NAMES = {
         "BasicEarningsPerShareSummaryOfBusinessResults",
         "BasicEarningsLossPerShareIFRS",
         "BasicEarningsPerShareIFRS",
+        "BasicEarningsLossPerShareUSGAAPSummaryOfBusinessResults",
+        "BasicEarningsPerShareUSGAAPSummaryOfBusinessResults",
     ),
     "bps": (
         "NetAssetsPerShare",
         "NetAssetsPerShareSummaryOfBusinessResults",
         "EquityAttributableToOwnersOfParentPerShareIFRS",
         "BookValuePerShare",
+        "EquityAttributableToOwnersOfParentPerShareUSGAAPSummaryOfBusinessResults",
     ),
 }
 DEBT_COMPONENTS = (
