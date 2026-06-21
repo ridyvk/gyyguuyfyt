@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-06-21T04:50:05.796343Z",
-  "financialSnapshotGeneratedAt": "2026-06-21T04:50:03.535648Z",
+  "generatedAt": "2026-06-21T05:09:11.232677Z",
+  "financialSnapshotGeneratedAt": "2026-06-21T05:09:08.821921Z",
   "baseline": {
     "maxMissingRecords": 4,
     "maxRoeQuarantined": 23,
@@ -11,16 +11,15 @@
   },
   "summary": {
     "companies": 48,
-    "healthy": 25,
-    "warning": 23,
+    "healthy": 28,
+    "warning": 20,
     "critical": 0,
-    "missingRecords": 3,
+    "missingRecords": 0,
     "roeQuarantined": 10,
     "withoutProvenance": 20,
     "oldEdinetModels": 16,
     "issueCounts": {
       "missing-provenance": 20,
-      "missing-record": 3,
       "old-edinet-model": 16,
       "roe-quarantined": 10
     }
@@ -404,17 +403,16 @@
         "baseline-industry-coverage",
         "large-cap-cross-check"
       ],
-      "source": null,
-      "periodEnd": null,
-      "metricCount": 0,
-      "provenanceMetricCount": 0,
-      "issues": [
-        {
-          "code": "missing-record",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "source": "EDINET",
+      "periodEnd": "2026-03-31",
+      "periodAgeDays": 82,
+      "metricCount": 2,
+      "provenanceMetricCount": 2,
+      "roe": 11.3,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "6501",
@@ -727,17 +725,16 @@
         "baseline-industry-coverage",
         "securities-policy"
       ],
-      "source": null,
-      "periodEnd": null,
-      "metricCount": 0,
-      "provenanceMetricCount": 0,
-      "issues": [
-        {
-          "code": "missing-record",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "source": "EDINET",
+      "periodEnd": "2025-03-31",
+      "periodAgeDays": 447,
+      "metricCount": 2,
+      "provenanceMetricCount": 2,
+      "roe": 9.99,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "8750",
@@ -766,17 +763,16 @@
         "baseline-industry-coverage",
         "other-financial-policy"
       ],
-      "source": null,
-      "periodEnd": null,
-      "metricCount": 0,
-      "provenanceMetricCount": 0,
-      "issues": [
-        {
-          "code": "missing-record",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "source": "EDINET",
+      "periodEnd": "2025-03-31",
+      "periodAgeDays": 447,
+      "metricCount": 2,
+      "provenanceMetricCount": 2,
+      "roe": 8.8,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "8801",
