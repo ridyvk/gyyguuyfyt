@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-06-21T08:06:00.800991Z",
+  "generatedAt": "2026-06-21T09:05:40.612890Z",
   "source": "Yahoo Finance",
   "status": "ready",
   "message": "Yahoo Financeの公開株価データとEDINET・TDnetのEPS/BPSからPER・PBRを自動計算しています。株価はリアルタイム保証ではありません。",
@@ -47233,7 +47233,7 @@
       "financialDocumentType": "AnnualSecuritiesReport"
     },
     "2735": {
-      "eps": 66,
+      "eps": 66.0,
       "bps": 983.37,
       "disclosedDate": "2025-08-31",
       "disclosedAt": "2025-11-25 12:55",
@@ -55153,7 +55153,7 @@
       "financialDocumentType": "AnnualSecuritiesReport"
     },
     "5572": {
-      "eps": 36,
+      "eps": 36.0,
       "bps": 560.33,
       "disclosedDate": "2025-07-31",
       "disclosedAt": "2025-10-24 14:04",
@@ -65789,7 +65789,7 @@
       "financialDocumentType": "FullYearEarnings"
     },
     "9270": {
-      "eps": 52,
+      "eps": 52.0,
       "bps": 559.82,
       "disclosedDate": "2025-08-31",
       "disclosedAt": "2025-11-25 16:35",
@@ -68672,6 +68672,45 @@
       "disclosedAt": "2025-11-27 15:30",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
+    },
+    "3498": {
+      "eps": 520.37,
+      "bps": 1830.18,
+      "disclosedDate": "2025-08-31",
+      "disclosedAt": "2025-11-26 15:30",
+      "financialSource": "EDINET",
+      "financialDocumentType": "AnnualSecuritiesReport"
+    },
+    "244A": {
+      "eps": 183.91,
+      "bps": 1012.84,
+      "disclosedDate": "2025-08-31",
+      "disclosedAt": "2025-11-26 15:00",
+      "financialSource": "EDINET",
+      "financialDocumentType": "AnnualSecuritiesReport"
+    },
+    "6030": {
+      "eps": -230.24,
+      "disclosedDate": "2025-06-30",
+      "disclosedAt": "2025-10-31 15:50",
+      "financialSource": "EDINET",
+      "financialDocumentType": "AnnualSecuritiesReport"
+    },
+    "6548": {
+      "eps": -38.86,
+      "bps": 29.77,
+      "disclosedDate": "2025-06-30",
+      "disclosedAt": "2025-10-31 15:44",
+      "financialSource": "EDINET",
+      "financialDocumentType": "AnnualSecuritiesReport"
+    },
+    "7320": {
+      "eps": -56.95,
+      "bps": 361.96,
+      "disclosedDate": "2025-06-30",
+      "disclosedAt": "2025-09-30 16:53",
+      "financialSource": "EDINET",
+      "financialDocumentType": "AnnualSecuritiesReport"
     }
   },
   "stats": {
@@ -68684,7 +68723,7 @@
       "2026-06-15",
       "2026-06-12"
     ],
-    "fundamentals": 3084,
+    "fundamentals": 3089,
     "quoteFailures": 0,
     "freshQuotesFetched": 3728,
     "fallbackQuotes": 0,
