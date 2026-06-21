@@ -19,6 +19,7 @@ import {
   buildStrengths,
   buildWarnings,
 } from './analysis'
+import { getIndustryKpiPolicy } from './industryKpiPolicy'
 import { calculateScores, type RawMetrics } from './scoring'
 
 const kpiKeys: KpiKey[] = [
@@ -157,6 +158,19 @@ const createUnavailableMetric = (key: KpiKey): KpiMetric => ({
   available: false,
 })
 
+const createNotApplicableMetric = (
+  key: KpiKey,
+  reason: string,
+): KpiMetric => ({
+  value: 0,
+  unit: units[key],
+  status: 'unknown',
+  comment: reason,
+  trend: [],
+  available: false,
+  applicable: false,
+})
+
 const createLiveMetric = (
   key: KpiKey,
   value: number,
@@ -206,7 +220,7 @@ const calculateLiveScores = (
   rawMetrics: RawMetrics,
   available: ReadonlySet<KpiKey>,
 ): Scores => {
-  const scores = calculateScores(rawMetrics)
+  const scores = calculateScores(rawMetrics, available)
   const weighted: Array<[keyof Omit<Scores, 'overall'>, number, boolean]> = [
     ['growth', 0.22, available.has('revenueGrowth')],
     [
@@ -295,6 +309,8 @@ const mergeRecord = (
   fundamentals?: MarketFundamentals,
 ): Company => {
   const history = record.history ?? []
+  const policy = getIndustryKpiPolicy(company.industry)
+  const applicable = new Set<KpiKey>(policy.applicable)
   const recordMetrics: Partial<Record<KpiKey, LiveMetricValue>> = {
     ...record.metrics,
     ...valuationMetrics(quote, fundamentals ?? record.valuation),
@@ -320,27 +336,34 @@ const mergeRecord = (
   }
   kpiKeys.forEach((key) => {
     const metric = recordMetrics[key]
-    if (metric && !isUsableLiveMetric(key, metric.value)) {
+    if (
+      !applicable.has(key) ||
+      (metric && !isUsableLiveMetric(key, metric.value))
+    ) {
       delete recordMetrics[key]
     }
   })
-  const available = new Set(
-    kpiKeys.filter((key) => recordMetrics[key] !== undefined),
+  const available = new Set<KpiKey>(
+    kpiKeys.filter(
+      (key) => applicable.has(key) && recordMetrics[key] !== undefined,
+    ),
   )
   const metrics = Object.fromEntries(
     kpiKeys.map((key) => {
       const live = recordMetrics[key]
       return [
         key,
-        live
-          ? createLiveMetric(
-              key,
-              live.value,
-              live.previousValue,
-              live.trend,
-              live.comparisonLabel,
-            )
-          : createUnavailableMetric(key),
+        !applicable.has(key)
+          ? createNotApplicableMetric(key, policy.reason)
+          : live
+            ? createLiveMetric(
+                key,
+                live.value,
+                live.previousValue,
+                live.trend,
+                live.comparisonLabel,
+              )
+            : createUnavailableMetric(key),
       ]
     }),
   ) as CompanyMetrics
@@ -388,26 +411,36 @@ const mergeRecord = (
 const createUnavailableCompany = (
   company: Company,
   quote?: MarketQuote,
-): Company => ({
-  ...company,
-  metrics: Object.fromEntries(
-    kpiKeys.map((key) => [key, createUnavailableMetric(key)]),
-  ) as CompanyMetrics,
-  history: [],
-  industryKpis: [],
-  scores: { ...unavailableScores },
-  strengths: [],
-  warnings: [],
-  analysisComment:
-    'EDINET・TDnetからこの企業の比較可能な財務データを取得できていないため、分析コメントは生成していません。',
-  hasWarning: false,
-  dataSource: 'unavailable',
-  dataUpdatedAt: undefined,
-  financialPeriod: undefined,
-  financialSourceUrl: undefined,
-  liveMetricCount: 0,
-  stockPrice: quote,
-})
+): Company => {
+  const policy = getIndustryKpiPolicy(company.industry)
+  const applicable = new Set<KpiKey>(policy.applicable)
+
+  return {
+    ...company,
+    metrics: Object.fromEntries(
+      kpiKeys.map((key) => [
+        key,
+        applicable.has(key)
+          ? createUnavailableMetric(key)
+          : createNotApplicableMetric(key, policy.reason),
+      ]),
+    ) as CompanyMetrics,
+    history: [],
+    industryKpis: [],
+    scores: { ...unavailableScores },
+    strengths: [],
+    warnings: [],
+    analysisComment:
+      'EDINET・TDnetからこの企業の比較可能な財務データを取得できていないため、分析コメントは生成していません。',
+    hasWarning: false,
+    dataSource: 'unavailable',
+    dataUpdatedAt: undefined,
+    financialPeriod: undefined,
+    financialSourceUrl: undefined,
+    liveMetricCount: 0,
+    stockPrice: quote,
+  }
+}
 
 export const hasFinancialData = (company: Company) =>
   company.dataSource === 'EDINET' || company.dataSource === 'TDnet'
