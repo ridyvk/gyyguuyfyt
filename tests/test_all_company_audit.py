@@ -249,7 +249,10 @@ class AllCompanyAuditTests(unittest.TestCase):
 
     def test_source_mismatch_requires_review_without_a_prior_baseline(self) -> None:
         violations = audit_all_companies.regression_violations(
-            {"sourceQuarantinedMetrics": 1},
+            {
+                "recordsAvailable": 10,
+                "sourceQuarantinedMetrics": 1,
+            },
             {
                 "schemaVersion": audit_all_companies.SCHEMA_VERSION,
                 "summary": {"recordsAvailable": 10},
