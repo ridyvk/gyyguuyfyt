@@ -147,5 +147,48 @@ class EmptyRecordDiagnosticTests(unittest.TestCase):
         )
 
 
+class UsGaapSummaryExtractionTests(unittest.TestCase):
+    def test_disclosed_usgaap_equity_ratio_creates_a_metric(self) -> None:
+        data = b"""<?xml version="1.0" encoding="UTF-8"?>
+<xbrli:xbrl
+  xmlns:xbrli="http://www.xbrl.org/2003/instance"
+  xmlns:jpcrp_cor="http://example.test/jpcrp">
+  <xbrli:context id="CurrentYearInstant">
+    <xbrli:entity>
+      <xbrli:identifier scheme="http://example.test">Example</xbrli:identifier>
+    </xbrli:entity>
+    <xbrli:period><xbrli:instant>2026-03-31</xbrli:instant></xbrli:period>
+  </xbrli:context>
+  <jpcrp_cor:EquityToAssetRatioUSGAAPSummaryOfBusinessResults
+    contextRef="CurrentYearInstant" unitRef="pure">0.5</jpcrp_cor:EquityToAssetRatioUSGAAPSummaryOfBusinessResults>
+</xbrli:xbrl>
+"""
+        filing = {
+            "secCode": "63010",
+            "periodEnd": "2026-03-31",
+            "docID": "DOC-USGAAP",
+            "filerName": "Example",
+        }
+
+        record = update_edinet_financials.build_record(filing, data)
+
+        self.assertEqual(record["metrics"]["equityRatio"]["value"], 50.0)
+        facts = record["metrics"]["equityRatio"]["provenance"]["sourceFacts"]
+        self.assertEqual(
+            facts[0]["tag"],
+            "EquityToAssetRatioUSGAAPSummaryOfBusinessResults",
+        )
+
+    def test_usgaap_summary_roe_and_per_facts_are_registered(self) -> None:
+        self.assertIn(
+            "RateOfReturnOnEquityUSGAAPSummaryOfBusinessResults",
+            update_edinet_financials.DISCLOSED_ROE_FACT_NAMES,
+        )
+        self.assertIn(
+            "BasicEarningsLossPerShareUSGAAPSummaryOfBusinessResults",
+            update_edinet_financials.VALUATION_FACT_NAMES["eps"],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
