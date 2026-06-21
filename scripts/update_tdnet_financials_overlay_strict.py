@@ -393,6 +393,7 @@ def main() -> int:
                 "tdnetRoePriorityCodesMissing": sorted(
                     set(args.priority_code) - set(eligible_filings)
                 ),
+                "tdnetDocumentsAttempted": len(candidates),
                 "tdnetStrictFailures": len(failures),
                 "tdnetNoMetricDocuments": no_metric_documents,
                 "nonAnnualExistingRecordsDropped": dropped_existing,
