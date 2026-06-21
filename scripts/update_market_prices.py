@@ -207,6 +207,31 @@ def merge_quotes(
     return merged, fallback_count, stale_dropped
 
 
+def mark_market_date_staleness(
+    quotes: dict[str, dict],
+) -> tuple[str | None, int]:
+    """Mark successfully fetched but old exchange dates as stale."""
+    latest = max(
+        (
+            str(quote.get("date") or "")
+            for quote in quotes.values()
+            if is_iso_date(quote.get("date"))
+        ),
+        default=None,
+    )
+    if latest is None:
+        return None, 0
+
+    stale = 0
+    for quote in quotes.values():
+        quote_date = str(quote.get("date") or "")
+        market_date_stale = is_iso_date(quote_date) and quote_date < latest
+        quote["stale"] = bool(quote.get("stale")) or market_date_stale
+        if market_date_stale:
+            stale += 1
+    return latest, stale
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--max-workers", type=int, default=8)
@@ -224,6 +249,9 @@ def main() -> int:
         previous_snapshot.get("quotes", {}),
         quotes,
         datetime.now(JST).date(),
+    )
+    latest_trading_date, market_date_stale_quotes = mark_market_date_staleness(
+        merged_quotes
     )
     fundamentals = valuation_fundamentals()
     latest_dates = sorted(
@@ -249,7 +277,7 @@ def main() -> int:
             "Yahoo Financeの公開株価データとEDINET・TDnetのEPS/BPSから"
             "PER・PBRを自動計算しています。株価はリアルタイム保証ではありません。"
         ),
-        "latestTradingDate": latest_dates[0] if latest_dates else None,
+        "latestTradingDate": latest_trading_date,
         "latestQuoteTimestamp": latest_timestamps[0] if latest_timestamps else None,
         "quotes": merged_quotes,
         "fundamentals": fundamentals,
@@ -262,6 +290,7 @@ def main() -> int:
             "freshQuotesFetched": len(quotes),
             "fallbackQuotes": fallback_quotes,
             "staleQuotesDropped": stale_quotes_dropped,
+            "marketDateStaleQuotes": market_date_stale_quotes,
             "maxFallbackQuoteAgeDays": MAX_FALLBACK_QUOTE_AGE_DAYS,
         },
     }
