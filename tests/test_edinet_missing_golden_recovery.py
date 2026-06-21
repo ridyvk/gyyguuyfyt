@@ -18,6 +18,15 @@ def xbrl_instance(concept: str) -> bytes:
 <xbrli:xbrl
   xmlns:xbrli="http://www.xbrl.org/2003/instance"
   xmlns:jppfs_cor="http://example.test/jppfs">
+  <xbrli:context id="CurrentYearDuration">
+    <xbrli:entity>
+      <xbrli:identifier scheme="http://example.test">Example</xbrli:identifier>
+    </xbrli:entity>
+    <xbrli:period>
+      <xbrli:startDate>2025-04-01</xbrli:startDate>
+      <xbrli:endDate>2026-03-31</xbrli:endDate>
+    </xbrli:period>
+  </xbrli:context>
   <jppfs_cor:{concept} contextRef="CurrentYearDuration" unitRef="JPY">100</jppfs_cor:{concept}>
 </xbrli:xbrl>
 """.encode("utf-8")
