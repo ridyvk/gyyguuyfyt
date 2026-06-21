@@ -56,6 +56,7 @@ FACT_NAMES = {
     ),
     "operatingIncome": (
         "OperatingIncome",
+        "OperatingIncomeIFRS",
         "OperatingProfitLoss",
         "OperatingProfitLossIFRS",
         "OperatingIncomeLossSummaryOfBusinessResults",
@@ -68,6 +69,7 @@ FACT_NAMES = {
         "ProfitLossIFRS",
         "NetIncomeLoss",
         "NetIncome",
+        "ProfitLossSummaryOfBusinessResults",
         "ProfitLossAttributableToOwnersOfParentSummaryOfBusinessResults",
         "NetIncomeLossSummaryOfBusinessResults",
         "NetIncomeLossAttributableToOwnersOfParentUSGAAP",
@@ -76,6 +78,8 @@ FACT_NAMES = {
         "NetCashProvidedByUsedInOperatingActivities",
         "CashFlowsFromUsedInOperatingActivities",
         "CashFlowsFromUsedInOperatingActivitiesIFRS",
+        "CashFlowsFromOperatingActivitiesIFRS",
+        "NetCashProvidedByUsedInOperatingActivitiesIFRS",
     ),
     "equity": (
         "EquityAttributableToOwnersOfParent",
@@ -110,6 +114,7 @@ FACT_NAMES = {
         "AccountsReceivableTrade",
         "TradeAndOtherReceivablesCurrent",
         "TradeAndOtherReceivablesCurrentIFRS",
+        "TradeAndOtherReceivablesCAIFRS",
     ),
     "debt": (
         "InterestBearingDebt",
