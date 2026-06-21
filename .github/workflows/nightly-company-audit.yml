@@ -1,0 +1,57 @@
+name: Nightly all-company audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/nightly-company-audit.yml
+      - scripts/audit_all_companies.py
+      - tests/test_all_company_audit.py
+  schedule:
+    - cron: '55 18 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nightly-all-company-audit
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run all-company audit
+        run: python scripts/audit_all_companies.py --check
+
+      - name: Upload audit artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-company-audit
+          path: public/data/all-company-audit.json
+          retention-days: 30
+
+      - name: Commit nightly audit report
+        run: |
+          git config user.name "kpi-scope-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/data/all-company-audit.json
+          if git diff --cached --quiet; then
+            echo "No audit report changes."
+          else
+            git commit -m "Update nightly all-company audit"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
