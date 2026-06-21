@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-06-21T04:13:31.760481Z",
-  "financialSnapshotGeneratedAt": "2026-06-21T04:13:29.685165Z",
+  "generatedAt": "2026-06-21T04:38:18.723204Z",
+  "financialSnapshotGeneratedAt": "2026-06-21T04:38:16.408264Z",
   "baseline": {
     "maxMissingRecords": 4,
     "maxRoeQuarantined": 23,
@@ -11,18 +11,18 @@
   },
   "summary": {
     "companies": 48,
-    "healthy": 22,
-    "warning": 26,
+    "healthy": 24,
+    "warning": 24,
     "critical": 0,
     "missingRecords": 3,
-    "roeQuarantined": 12,
-    "withoutProvenance": 23,
-    "oldEdinetModels": 19,
+    "roeQuarantined": 11,
+    "withoutProvenance": 21,
+    "oldEdinetModels": 17,
     "issueCounts": {
-      "missing-provenance": 23,
+      "missing-provenance": 21,
       "missing-record": 3,
-      "old-edinet-model": 19,
-      "roe-quarantined": 12
+      "old-edinet-model": 17,
+      "roe-quarantined": 11
     }
   },
   "violations": [],
@@ -65,26 +65,13 @@
       "source": "EDINET",
       "periodEnd": "2025-12-31",
       "periodAgeDays": 172,
-      "metricCount": 4,
-      "provenanceMetricCount": 0,
-      "roe": null,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "roe-quarantined",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
-          "severity": "warning"
-        },
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "metricCount": 7,
+      "provenanceMetricCount": 7,
+      "roe": 8.23,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "1802",
@@ -846,21 +833,12 @@
       "periodEnd": "2025-12-31",
       "periodAgeDays": 172,
       "metricCount": 9,
-      "provenanceMetricCount": 0,
+      "provenanceMetricCount": 9,
       "roe": 23.46,
-      "dataModelVersion": 8,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "old-edinet-model",
-          "severity": "warning"
-        },
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "5987",
