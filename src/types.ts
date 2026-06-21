@@ -230,6 +230,9 @@ export interface FinancialStats {
   invalidRecordsDropped?: number
   validationFailures?: Record<string, number>
   roeMetricsQuarantined?: number
+  metricRangeQuarantined?: number
+  metricRangeQuarantinedCompanies?: number
+  historyTrendQuarantinedCompanies?: number
   sourceReconciliationCompanies?: number
   sourceMatchedMetrics?: number
   sourceQuarantinedMetrics?: number
@@ -303,6 +306,7 @@ export interface MarketSnapshot {
     freshQuotesFetched?: number
     fallbackQuotes?: number
     staleQuotesDropped?: number
+    marketDateStaleQuotes?: number
   }
 }
 
