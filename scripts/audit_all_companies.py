@@ -247,6 +247,16 @@ def regression_violations(
             "max",
             PIPELINE_RATE_TOLERANCE_POINTS,
         ),
+        (
+            "edinetNoMetricRate",
+            "max",
+            PIPELINE_RATE_TOLERANCE_POINTS,
+        ),
+        (
+            "tdnetNoMetricRate",
+            "max",
+            PIPELINE_RATE_TOLERANCE_POINTS,
+        ),
     )
     violations = []
     for field, comparison, tolerance in checks:
@@ -340,9 +350,15 @@ def build_report(
     trusted_metrics = sum(company["trustedMetricCount"] for company in audited)
     stats = snapshot.get("stats") or {}
     edinet_batch_failures = int(stats.get("edinetBatchFailures") or 0)
+    edinet_no_metric_documents = int(stats.get("edinetNoMetricDocuments") or 0)
     edinet_batch_size = int(stats.get("edinetBatchSize") or 0)
     tdnet_strict_failures = int(stats.get("tdnetStrictFailures") or 0)
-    tdnet_full_year_filings = int(stats.get("tdnetFullYearFilings") or 0)
+    tdnet_no_metric_documents = int(stats.get("tdnetNoMetricDocuments") or 0)
+    tdnet_documents_attempted = int(
+        stats.get("tdnetDocumentsAttempted")
+        or stats.get("tdnetFullYearFilings")
+        or 0
+    )
     summary = {
         "companies": total,
         "recordsAvailable": records_available,
@@ -373,13 +389,26 @@ def build_report(
             edinet_batch_failures,
             edinet_batch_size,
         ),
+        "edinetNoMetricDocuments": edinet_no_metric_documents,
+        "edinetNoMetricRate": percentage(
+            edinet_no_metric_documents,
+            edinet_batch_size,
+        ),
         "tdnetStrictFailures": tdnet_strict_failures,
         "tdnetStrictFailureRate": percentage(
             tdnet_strict_failures,
-            tdnet_full_year_filings,
+            tdnet_documents_attempted,
+        ),
+        "tdnetNoMetricDocuments": tdnet_no_metric_documents,
+        "tdnetNoMetricRate": percentage(
+            tdnet_no_metric_documents,
+            tdnet_documents_attempted,
         ),
         "pipelineFailureCount": (
             edinet_batch_failures + tdnet_strict_failures
+        ),
+        "unusableDocumentCount": (
+            edinet_no_metric_documents + tdnet_no_metric_documents
         ),
         "issueCounts": dict(sorted(issue_counts.items())),
         "sourceCounts": dict(sorted(source_counts.items())),
@@ -442,7 +471,7 @@ def build_report(
                 "coverage and trusted metric ratio must not decrease",
                 "missing provenance and old model rates must not increase",
                 "metric and source quarantine counts must not increase",
-                "pipeline failure rates must not increase",
+                "pipeline failure and unusable document rates must not increase",
                 "any source mismatch quarantine requires review",
             ],
             "rateTolerancePoints": RATE_TOLERANCE_POINTS,
@@ -479,7 +508,9 @@ def write_actions_summary(report: dict) -> None:
         f"| Review companies | {summary['review']} |",
         f"| Missing companies | {summary['missing']} |",
         f"| EDINET batch failure rate | {summary['edinetBatchFailureRate']:.2f}% |",
+        f"| EDINET no-metric rate | {summary['edinetNoMetricRate']:.2f}% |",
         f"| TDnet strict failure rate | {summary['tdnetStrictFailureRate']:.2f}% |",
+        f"| TDnet no-metric rate | {summary['tdnetNoMetricRate']:.2f}% |",
         "",
     ]
     if violations:
@@ -526,7 +557,8 @@ def main() -> int:
         f"{summary['review']} review, "
         f"{summary['missing']} missing, "
         f"{summary['trustedMetricRatio']:.2f}% trusted KPIs, "
-        f"{summary['pipelineFailureCount']} pipeline failures."
+        f"{summary['pipelineFailureCount']} pipeline failures, "
+        f"{summary['unusableDocumentCount']} no-metric documents."
     )
     if report["violations"]:
         print(json.dumps(report["violations"], ensure_ascii=False))
