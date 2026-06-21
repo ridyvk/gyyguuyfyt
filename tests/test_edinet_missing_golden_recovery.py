@@ -87,5 +87,35 @@ class MissingGoldenPriorityTests(unittest.TestCase):
         self.assertEqual(priority, (0, ""))
 
 
+class EdinetSummaryFactTests(unittest.TestCase):
+    def test_summary_tags_are_available_for_annual_fallback(self) -> None:
+        self.assertIn(
+            "NetSalesSummaryOfBusinessResults",
+            update_edinet_financials.FACT_NAMES["revenue"],
+        )
+        self.assertIn(
+            "ProfitLossAttributableToOwnersOfParentSummaryOfBusinessResults",
+            update_edinet_financials.FACT_NAMES["profit"],
+        )
+        self.assertIn(
+            "TotalAssetsSummaryOfBusinessResults",
+            update_edinet_financials.FACT_NAMES["assets"],
+        )
+
+    def test_us_gaap_tags_are_available_for_financial_issuers(self) -> None:
+        self.assertIn(
+            "RevenuesUSGAAP",
+            update_edinet_financials.FACT_NAMES["revenue"],
+        )
+        self.assertIn(
+            "NetIncomeLossAttributableToOwnersOfParentUSGAAP",
+            update_edinet_financials.FACT_NAMES["profit"],
+        )
+        self.assertIn(
+            "AssetsUSGAAP",
+            update_edinet_financials.FACT_NAMES["assets"],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
