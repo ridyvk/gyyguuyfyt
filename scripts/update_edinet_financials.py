@@ -260,6 +260,7 @@ def financial_fact_count(data: bytes) -> int:
         for names in (
             *FACT_NAMES.values(),
             DISCLOSED_ROE_FACT_NAMES,
+            DISCLOSED_EQUITY_RATIO_FACT_NAMES,
             *VALUATION_FACT_NAMES.values(),
             DEBT_COMPONENTS,
             INVENTORY_COMPONENTS,
