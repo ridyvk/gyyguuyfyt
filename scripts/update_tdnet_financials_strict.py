@@ -157,6 +157,10 @@ def normalize_title(title: str) -> str:
     return title.translate(str.maketrans({"１": "1", "２": "2", "３": "3"})).upper()
 
 
+def is_correction_title(title: str) -> bool:
+    return "訂正" in normalize_title(title)
+
+
 def is_full_year_earnings_title(title: str) -> bool:
     normalized = normalize_title(title)
     if "決算短信" not in normalized:
@@ -289,16 +293,46 @@ def list_full_year_filings(days: int) -> tuple[dict[str, dict], dict[str, int]]:
                 "documentId": Path(row["xbrlHref"]).stem,
             }
             current = latest.get(code)
-            if current is None or (
-                filed_at,
-                filing["documentId"],
-            ) > (
-                current["filedAt"],
-                current["documentId"],
-            ):
+            filing_key = (filed_at, filing["documentId"])
+            if current is None:
+                filing["_previousFilings"] = []
                 latest[code] = filing
+            else:
+                current_key = (current["filedAt"], current["documentId"])
+                if filing_key > current_key:
+                    previous = [
+                        *(current.get("_previousFilings") or []),
+                        {
+                            key: value
+                            for key, value in current.items()
+                            if key != "_previousFilings"
+                        },
+                    ]
+                    filing["_previousFilings"] = sorted(
+                        previous,
+                        key=lambda item: (
+                            item.get("filedAt", ""),
+                            item.get("documentId", ""),
+                        ),
+                        reverse=True,
+                    )[:3]
+                    latest[code] = filing
+                else:
+                    previous = current.setdefault("_previousFilings", [])
+                    previous.append(filing)
+                    previous.sort(
+                        key=lambda item: (
+                            item.get("filedAt", ""),
+                            item.get("documentId", ""),
+                        ),
+                        reverse=True,
+                    )
+                    del previous[3:]
         time.sleep(0.04)
     stats["tdnetFullYearFilings"] = len(latest)
+    stats["tdnetCorrectionFilings"] = sum(
+        1 for filing in latest.values() if is_correction_title(filing.get("title", ""))
+    )
     return latest, stats
 
 
