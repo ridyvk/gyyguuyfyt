@@ -688,14 +688,14 @@ class BatchedMigrationTests(unittest.TestCase):
             (-3, "146A"),
         )
 
-    def test_model_upgrade_uses_small_priority_canary_batch(self) -> None:
+    def test_priority_recovery_uses_small_canary_batch(self) -> None:
         self.assertEqual(
             update_edinet_financials_batched.refresh_batch_size(700, True, True),
             50,
         )
         self.assertEqual(
             update_edinet_financials_batched.refresh_batch_size(700, False, True),
-            700,
+            50,
         )
         self.assertEqual(
             update_edinet_financials_batched.refresh_batch_size(700, True, False),
