@@ -1515,10 +1515,144 @@ select {
   color: var(--red);
 }
 
-.kpi-tile p {
+.kpi-tile__comment {
   margin: 4px 0 0;
   color: var(--muted);
   font-size: 9px;
+}
+
+.kpi-tile__badges {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+}
+
+.confidence-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 8px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.confidence-pill--A {
+  color: #158044;
+  background: rgba(52, 199, 89, 0.1);
+}
+
+.confidence-pill--B {
+  color: #0066cc;
+  background: rgba(0, 122, 255, 0.09);
+}
+
+.confidence-pill--C {
+  color: #a96400;
+  background: rgba(255, 159, 10, 0.11);
+}
+
+.confidence-pill--review {
+  color: #d72f27;
+  background: rgba(255, 59, 48, 0.09);
+}
+
+.kpi-tile__formula {
+  margin-top: 11px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.kpi-tile__formula span {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.kpi-tile__formula code {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--muted-light);
+  font-family: inherit;
+  font-size: 9px;
+  line-height: 1.55;
+}
+
+.kpi-evidence {
+  margin-top: 9px;
+  border-top: 1px solid var(--border);
+}
+
+.kpi-evidence summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding-top: 9px;
+  color: var(--teal-dark);
+  cursor: pointer;
+  font-size: 9px;
+  font-weight: 700;
+  list-style: none;
+}
+
+.kpi-evidence summary::-webkit-details-marker {
+  display: none;
+}
+
+.kpi-evidence summary > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.kpi-evidence__chevron {
+  flex: 0 0 auto;
+  transition: transform 150ms ease;
+}
+
+.kpi-evidence[open] .kpi-evidence__chevron {
+  transform: rotate(180deg);
+}
+
+.kpi-evidence__body {
+  padding-top: 9px;
+}
+
+.kpi-evidence__body > p {
+  margin: 0 0 9px;
+  color: var(--muted-light);
+  font-size: 9px;
+  line-height: 1.6;
+}
+
+.kpi-evidence dl {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 5px 8px;
+  margin: 0 0 8px;
+  font-size: 8px;
+  line-height: 1.55;
+}
+
+.kpi-evidence dt {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.kpi-evidence dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--muted-light);
+}
+
+.kpi-evidence__empty {
+  color: var(--muted) !important;
 }
 
 .detail-insight-grid {
