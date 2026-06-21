@@ -37,6 +37,9 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Generate financial industry shards
+        run: python scripts/split_financials.py
+
       - name: Test and validate data pipelines
         run: |
           python -m unittest discover -s tests -p 'test_*.py'
