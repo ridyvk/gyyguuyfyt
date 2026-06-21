@@ -15,6 +15,7 @@ on:
       - scripts/update_edinet_financials_batched.py
       - scripts/data_quality.py
       - scripts/validate_datasets.py
+      - scripts/audit_golden_companies.py
       - scripts/update_tdnet_financials.py
       - scripts/update_tdnet_financials_strict.py
       - scripts/update_tdnet_financials_overlay_strict.py
@@ -91,11 +92,14 @@ jobs:
       - name: Validate financial dataset
         run: python scripts/validate_datasets.py --scope financial
 
+      - name: Audit golden companies
+        run: python scripts/audit_golden_companies.py --check
+
       - name: Commit updated financial snapshot
         run: |
           git config user.name "kpi-scope-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add public/data/financials.json public/data/update-status.json
+          git add public/data/financials.json public/data/update-status.json public/data/golden-company-audit.json
           if git diff --cached --quiet; then
             echo "No financial snapshot changes."
           else
