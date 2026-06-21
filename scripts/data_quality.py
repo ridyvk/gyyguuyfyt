@@ -13,11 +13,11 @@ SECURITY_CODE = re.compile(r"^[0-9A-Z]{4}$")
 
 ALLOWED_TOTAL_DIMENSION_MEMBERS = (
     "ConsolidatedMember",
+    "NonConsolidatedMember",
     "ResultMember",
     "ActualMember",
 )
 REJECTED_CONTEXT_TOKENS = (
-    "NonConsolidated",
     "ForecastMember",
     "UpperMember",
     "LowerMember",
@@ -65,13 +65,23 @@ def dimension_value(element: object, member: str) -> str:
     return f"{dimension}={member}" if dimension else member
 
 
+def dimension_has_member(dimensions: list[str], member: str) -> bool:
+    return any(
+        dimension == member or dimension.endswith(f"={member}")
+        for dimension in dimensions
+    )
+
+
 def is_total_actual_context(context_id: str, context: dict) -> bool:
     dimensions = [str(value) for value in context.get("dimensions", [])]
     text = context_id + " " + " ".join(dimensions)
     if any(token in text for token in REJECTED_CONTEXT_TOKENS):
         return False
     return all(
-        any(member in dimension for member in ALLOWED_TOTAL_DIMENSION_MEMBERS)
+        any(
+            dimension == member or dimension.endswith(f"={member}")
+            for member in ALLOWED_TOTAL_DIMENSION_MEMBERS
+        )
         for dimension in dimensions
     )
 
@@ -91,16 +101,16 @@ def context_rank(
     context: dict,
     period_end: str,
     duration: bool,
-) -> tuple[int, int, int, int, int, int]:
+) -> tuple[int, int, int, int, int, int, int]:
     dimensions = [str(value) for value in context.get("dimensions", [])]
-    text = context_id + " " + " ".join(dimensions)
     actual_end = context.get("end") if duration else context.get("instant")
     days = context_days(context) or 0
     return (
         1 if actual_end == period_end else 0,
         1 if not dimensions else 0,
-        1 if "ConsolidatedMember" in text else 0,
-        1 if "ResultMember" in text or "ActualMember" in text else 0,
+        1 if dimension_has_member(dimensions, "ConsolidatedMember") else 0,
+        0 if dimension_has_member(dimensions, "NonConsolidatedMember") else 1,
+        1 if dimension_has_member(dimensions, "ResultMember") or dimension_has_member(dimensions, "ActualMember") else 0,
         1 if "CurrentYear" in context_id else 0,
         -abs(days - 365) if duration else 0,
     )
@@ -109,9 +119,9 @@ def context_rank(
 def consolidation_scope(context_id: str, context: dict) -> str:
     dimensions = [str(value) for value in context.get("dimensions", [])]
     text = context_id + " " + " ".join(dimensions)
-    if "NonConsolidated" in text:
+    if dimension_has_member(dimensions, "NonConsolidatedMember") or "NonConsolidated" in context_id:
         return "non-consolidated"
-    if "Consolidated" in text or is_total_actual_context(context_id, context):
+    if dimension_has_member(dimensions, "ConsolidatedMember") or "Consolidated" in text or is_total_actual_context(context_id, context):
         return "consolidated"
     return "unknown"
 
@@ -277,6 +287,7 @@ def metric_range_error(metric_key: str, metric: object) -> str | None:
         if maximum is not None and numeric > maximum:
             return f"{field}-above-maximum-{maximum:g}"
     return None
+
 
 
 def remove_history_metric(record: dict, metric_key: str) -> None:
