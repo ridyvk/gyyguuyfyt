@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kpi-scope-v3-photo1'
+const CACHE_NAME = 'kpi-scope-v4-data-network-only'
 const APP_SHELL = [
   './',
   './index.html',
@@ -30,6 +30,15 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return
+
+  const requestUrl = new URL(event.request.url)
+  if (
+    requestUrl.origin === self.location.origin &&
+    requestUrl.pathname.includes('/data/')
+  ) {
+    event.respondWith(fetch(event.request, { cache: 'no-store' }))
+    return
+  }
 
   if (event.request.mode === 'navigate') {
     event.respondWith(
