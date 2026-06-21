@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-06-21T05:09:11.232677Z",
-  "financialSnapshotGeneratedAt": "2026-06-21T05:09:08.821921Z",
+  "generatedAt": "2026-06-21T05:44:09.129210Z",
+  "financialSnapshotGeneratedAt": "2026-06-21T05:44:06.551746Z",
   "baseline": {
     "maxMissingRecords": 4,
     "maxRoeQuarantined": 23,
@@ -11,17 +11,17 @@
   },
   "summary": {
     "companies": 48,
-    "healthy": 28,
-    "warning": 20,
+    "healthy": 31,
+    "warning": 17,
     "critical": 0,
     "missingRecords": 0,
-    "roeQuarantined": 10,
-    "withoutProvenance": 20,
-    "oldEdinetModels": 16,
+    "roeQuarantined": 8,
+    "withoutProvenance": 17,
+    "oldEdinetModels": 13,
     "issueCounts": {
-      "missing-provenance": 20,
-      "old-edinet-model": 16,
-      "roe-quarantined": 10
+      "missing-provenance": 17,
+      "old-edinet-model": 13,
+      "roe-quarantined": 8
     }
   },
   "violations": [],
@@ -110,21 +110,12 @@
       "periodEnd": "2025-12-31",
       "periodAgeDays": 172,
       "metricCount": 10,
-      "provenanceMetricCount": 0,
+      "provenanceMetricCount": 10,
       "roe": 1.8,
-      "dataModelVersion": 8,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "old-edinet-model",
-          "severity": "warning"
-        },
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "3402",
@@ -280,26 +271,13 @@
       "source": "EDINET",
       "periodEnd": "2025-12-31",
       "periodAgeDays": 172,
-      "metricCount": 4,
-      "provenanceMetricCount": 0,
-      "roe": null,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "roe-quarantined",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
-          "severity": "warning"
-        },
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "metricCount": 7,
+      "provenanceMetricCount": 7,
+      "roe": 8.85,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "5201",
@@ -312,26 +290,13 @@
       "source": "EDINET",
       "periodEnd": "2025-12-31",
       "periodAgeDays": 172,
-      "metricCount": 1,
-      "provenanceMetricCount": 0,
-      "roe": null,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "roe-quarantined",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
-          "severity": "warning"
-        },
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "metricCount": 2,
+      "provenanceMetricCount": 2,
+      "roe": 4.74,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "5401",
