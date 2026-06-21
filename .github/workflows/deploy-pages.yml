@@ -42,6 +42,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_*.py'
           python scripts/validate_datasets.py --scope all
           python scripts/audit_golden_companies.py --check
+          python scripts/audit_all_companies.py --check
 
       - name: Setup Node
         uses: actions/setup-node@v4
