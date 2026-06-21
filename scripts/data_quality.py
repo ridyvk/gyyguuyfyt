@@ -354,9 +354,10 @@ def quarantine_misaligned_metric_trends(record: object) -> int:
     return len(removed)
 
 
-def is_unusable_record_validation(error: str | None) -> bool:
+def is_unusable_record_validation(error: object) -> bool:
     """Return whether a structurally valid filing yielded no supported KPI facts."""
-    return error == "missing-metrics"
+    message = str(error or "")
+    return message == "missing-metrics" or message.startswith("no metrics extracted:")
 
 
 def validate_financial_record(

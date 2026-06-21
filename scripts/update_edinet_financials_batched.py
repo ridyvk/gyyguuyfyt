@@ -309,7 +309,14 @@ def main() -> int:
             else:
                 unchanged_documents += 1
         except Exception as error:
-            failures.append(f"{filing.get('secCode')}:{filing.get('docID')}: {error}")
+            if is_unusable_record_validation(error):
+                processed_doc_ids.add(doc_id)
+                processed_this_batch += 1
+                no_metrics += 1
+            else:
+                failures.append(
+                    f"{filing.get('secCode')}:{filing.get('docID')}: {error}"
+                )
         if index % 50 == 0:
             print(f"Processed EDINET batch {index}/{len(batch)}")
         time.sleep(args.sleep)
