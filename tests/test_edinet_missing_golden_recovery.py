@@ -117,5 +117,26 @@ class EdinetSummaryFactTests(unittest.TestCase):
         )
 
 
+class EmptyRecordDiagnosticTests(unittest.TestCase):
+    def test_diagnostics_expose_visible_financial_concepts(self) -> None:
+        diagnostic = update_edinet_financials.empty_record_diagnostics(
+            xbrl_instance("RevenueIFRS"),
+            "2026-03-31",
+        )
+
+        self.assertIn("numericFacts=1", diagnostic)
+        self.assertIn("RevenueIFRS", diagnostic)
+
+    def test_priority_recovery_batch_is_bounded(self) -> None:
+        self.assertEqual(
+            update_edinet_financials_batched.refresh_batch_size(
+                350,
+                data_model_upgraded=False,
+                has_priority_candidates=True,
+            ),
+            50,
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
