@@ -156,6 +156,9 @@ const metricStatus = (key: KpiKey, value: number): KpiStatus => {
   return 'warning'
 }
 
+const isScoreEligibleAssessment = (assessment: MetricConfidenceAssessment) =>
+  assessment.confidence === 'A' || assessment.confidence === 'B'
+
 const createUnavailableMetric = (
   key: KpiKey,
   assessment: MetricConfidenceAssessment = {},
@@ -361,15 +364,25 @@ const mergeRecord = (
       delete recordMetrics[key]
     }
   })
-  const available = new Set<KpiKey>(
+  const metricAssessments = Object.fromEntries(
+    kpiKeys.map((key) => [key, assessMetricConfidence(key, recordMetrics[key], record)]),
+  ) as Record<KpiKey, MetricConfidenceAssessment>
+  const displayAvailable = new Set<KpiKey>(
     kpiKeys.filter(
       (key) => applicable.has(key) && recordMetrics[key] !== undefined,
+    ),
+  )
+  const scoringAvailable = new Set<KpiKey>(
+    kpiKeys.filter(
+      (key) =>
+        displayAvailable.has(key) &&
+        isScoreEligibleAssessment(metricAssessments[key]),
     ),
   )
   const metrics = Object.fromEntries(
     kpiKeys.map((key) => {
       const live = recordMetrics[key]
-      const assessment = assessMetricConfidence(key, live, record)
+      const assessment = metricAssessments[key]
       return [
         key,
         !applicable.has(key)
@@ -390,19 +403,24 @@ const mergeRecord = (
   ) as CompanyMetrics
   const rawMetrics = { ...neutralMetrics }
   kpiKeys.forEach((key) => {
-    rawMetrics[key] = recordMetrics[key]?.value ?? neutralMetrics[key]
+    rawMetrics[key] = scoringAvailable.has(key)
+      ? recordMetrics[key]?.value ?? neutralMetrics[key]
+      : neutralMetrics[key]
   })
   const previousOperatingMargin =
-    recordMetrics.operatingMargin?.previousValue ??
-    (history.length >= 2
-      ? history[history.length - 2]?.operatingMargin
-      : undefined) ??
-    rawMetrics.operatingMargin
+    scoringAvailable.has('operatingMargin')
+      ? recordMetrics.operatingMargin?.previousValue ??
+        (history.length >= 2
+          ? history[history.length - 2]?.operatingMargin
+          : undefined) ??
+        rawMetrics.operatingMargin
+      : rawMetrics.operatingMargin
+  const scoringHistory = scoringAvailable.has('operatingMargin') ? history : []
   const warnings = buildWarnings(
     rawMetrics,
     previousOperatingMargin,
-    history,
-    available,
+    scoringHistory,
+    scoringAvailable,
   )
 
   return {
@@ -410,21 +428,21 @@ const mergeRecord = (
     metrics,
     history,
     industryKpis: [],
-    scores: calculateLiveScores(rawMetrics, available),
-    strengths: buildStrengths(rawMetrics, available),
+    scores: calculateLiveScores(rawMetrics, scoringAvailable),
+    strengths: buildStrengths(rawMetrics, scoringAvailable),
     warnings,
     analysisComment: buildAnalysisComment(
       rawMetrics,
       warnings,
       previousOperatingMargin,
-      available,
+      scoringAvailable,
     ),
     hasWarning: warnings.length > 0,
     dataSource: record.source === 'TDnet' ? 'TDnet' : 'EDINET',
     dataUpdatedAt: record.filedAt,
     financialPeriod: record.periodEnd,
     financialSourceUrl: record.sourceUrl,
-    liveMetricCount: available.size,
+    liveMetricCount: displayAvailable.size,
     stockPrice: quote,
   }
 }
