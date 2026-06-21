@@ -41,6 +41,11 @@ class DateAndRecordValidationTests(unittest.TestCase):
 
     def test_missing_metrics_is_classified_as_unusable_not_failed(self) -> None:
         self.assertTrue(data_quality.is_unusable_record_validation("missing-metrics"))
+        self.assertTrue(
+            data_quality.is_unusable_record_validation(
+                "no metrics extracted: contexts=112, numericFacts=600"
+            )
+        )
         self.assertFalse(data_quality.is_unusable_record_validation("invalid-period-end"))
         self.assertFalse(data_quality.is_unusable_record_validation(None))
 
