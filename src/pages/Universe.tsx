@@ -159,7 +159,7 @@ export default function Universe() {
             <span>{page} / {totalPages}</span>
             <button
               type="button"
-              onClick={() => setPage((value) => Math.min(totalPages, page + 1))}
+              onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
               disabled={page === totalPages}
             >
               次へ
