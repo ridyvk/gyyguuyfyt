@@ -26,7 +26,7 @@ import StockQuoteCard from '../components/StockQuoteCard'
 import WarningList from '../components/WarningList'
 import { useApp } from '../context/AppContext'
 import { loadNote, saveNote } from '../lib/storage'
-import { hasFinancialData } from '../lib/liveData'
+import { hasFinancialData, hasScorableData } from '../lib/liveData'
 import type { AnalysisLevel, CompanyNote, KpiKey, ScoreKey } from '../types'
 
 const kpiLabels: Record<KpiKey, string> = {
@@ -126,6 +126,7 @@ export default function CompanyDetail() {
   const watched = isWatched(company.id)
   const compared = isCompared(company.id)
   const financialAvailable = hasFinancialData(company)
+  const scorable = hasScorableData(company)
   const analysisLevel = company.analysisLevel ?? (
     financialAvailable ? 'limited' : 'unavailable'
   )
@@ -179,11 +180,11 @@ export default function CompanyDetail() {
           <span>総合スコア</span>
           <ScoreBadge
             score={company.scores.overall}
-            available={financialAvailable}
+            available={scorable}
           />
           <small>
             {financialAvailable
-              ? `実データ ${company.liveMetricCount ?? 0}/12 KPI`
+              ? `表示 ${company.liveMetricCount ?? 0}/12 KPI / 信頼度A・B ${company.trustedMetricCount ?? 0}`
               : '企業情報のみ収録 / 財務数値は表示しません'}
           </small>
         </div>
@@ -218,11 +219,13 @@ export default function CompanyDetail() {
       <section className="detail-overview-grid">
         <article className="panel">
           <div className="panel__heading"><div><span className="section-kicker">SCORE SHAPE</span><h2>5分類スコア</h2></div></div>
-          {financialAvailable ? (
+          {scorable ? (
             <RadarScoreChart scores={company.scores} height={300} />
           ) : (
             <div className="chart-empty">
-              財務データ未取得のためスコア形状を表示できません
+              {financialAvailable
+                ? '信頼度A/BのKPI不足のためスコア形状は未判定です'
+                : '財務データ未取得のためスコア形状を表示できません'}
             </div>
           )}
         </article>
@@ -234,7 +237,7 @@ export default function CompanyDetail() {
                 key={key}
                 label={scoreLabels[key]}
                 score={company.scores[key]}
-                available={financialAvailable}
+                available={scorable}
               />
             ))}
           </div>
