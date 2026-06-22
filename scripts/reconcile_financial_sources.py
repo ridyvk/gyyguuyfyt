@@ -81,27 +81,49 @@ def source_facts(metric: dict) -> list[dict]:
     return [fact for fact in facts if isinstance(fact, dict)]
 
 
+METRIC_BASIS_ROLES: dict[str, tuple[str, ...]] = {
+    "revenueGrowth": ("revenue.current",),
+    "operatingMargin": ("operatingIncome.current", "revenue.current"),
+    "netMargin": ("profit.current", "revenue.current"),
+    "operatingCfMargin": ("operatingCf.current", "revenue.current"),
+    "debtRatio": ("debt.current", "equity.current"),
+    "netCash": ("cash.current", "debt.current"),
+    "inventoryGrowth": ("inventory.current",),
+    "receivablesGrowth": ("receivables.current",),
+}
+
+
+def fact_signature(metric: dict, roles: tuple[str, ...]) -> str:
+    parts = []
+    for fact in source_facts(metric):
+        role = str(fact.get("role") or "")
+        if role not in roles:
+            continue
+        concept = str(fact.get("concept") or fact.get("tag") or "unknown")
+        parts.append(f"{role}={concept.rsplit(':', 1)[-1]}")
+    return ",".join(sorted(parts)) or "unknown"
+
+
 def metric_basis(metric_key: str, metric: dict) -> str:
     facts = source_facts(metric)
     roles = {str(fact.get("role") or "") for fact in facts}
     if metric_key == "roe":
-        return "disclosed" if "disclosedRoe.current" in roles else "calculated"
+        return (
+            "disclosed"
+            if "disclosedRoe.current" in roles
+            else "calculated:"
+            + fact_signature(metric, ("profit.current", "equity.current"))
+        )
     if metric_key == "equityRatio":
         return (
             "disclosed"
             if "disclosedEquityRatio.current" in roles
-            else "calculated"
+            else "calculated:"
+            + fact_signature(metric, ("equity.current", "assets.current"))
         )
-    if metric_key == "netCash":
-        cash = next(
-            (
-                str(fact.get("concept") or fact.get("tag") or "")
-                for fact in facts
-                if fact.get("role") == "cash.current"
-            ),
-            "unknown",
-        )
-        return f"cash:{cash.rsplit(':', 1)[-1]}"
+    basis_roles = METRIC_BASIS_ROLES.get(metric_key)
+    if basis_roles:
+        return "facts:" + fact_signature(metric, basis_roles)
     return "same-definition"
 
 
@@ -125,7 +147,7 @@ def definitions_are_comparable(
     edinet_metric: dict,
     tdnet_metric: dict,
 ) -> bool:
-    if metric_key not in {"roe", "equityRatio", "netCash"}:
+    if metric_key not in {"roe", "equityRatio", *METRIC_BASIS_ROLES}:
         return True
     return metric_basis(metric_key, edinet_metric) == metric_basis(
         metric_key, tdnet_metric
