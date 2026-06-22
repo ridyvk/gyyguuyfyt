@@ -96,6 +96,7 @@ export const buildAnalysisComment = (
   warnings: string[],
   previousOperatingMargin: number,
   available: ReadonlySet<KpiKey> | null = null,
+  minimumAvailable = 6,
 ) => {
   const has = (...keys: KpiKey[]) =>
     available === null || keys.every((key) => available.has(key))
@@ -115,7 +116,7 @@ export const buildAnalysisComment = (
   if (warnings.some((warning) => warning.includes('営業利益率'))) {
     return '売上は伸びていますが営業利益率が低下しています。コスト増や価格転嫁の進捗に注意が必要です。'
   }
-  if (available && available.size < 6) {
+  if (available && available.size < minimumAvailable) {
     return '取得できた開示項目が限られています。未取得KPIは判断不能として、原資料もあわせて確認してください。'
   }
   return '主要KPIは大きな偏りなく推移しています。次回決算では成長率と利益率の持続性を確認したい状態です。'
