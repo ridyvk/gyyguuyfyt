@@ -8,7 +8,7 @@ import json
 
 import update_tdnet_financials_strict as strict
 from data_quality import quarantine_invalid_metrics
-from update_tdnet_financials import get
+from update_tdnet_financials import SNAPSHOT, get
 
 RELEVANT_TOKENS = ("equity", "asset", "capital", "netassets", "ratio")
 
@@ -73,6 +73,20 @@ def main() -> int:
     parser.add_argument("--scan-days", type=int, default=460)
     parser.add_argument("--code", action="append", required=True)
     args = parser.parse_args()
+
+    snapshot = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
+    records = snapshot.get("records") or {}
+    for code in args.code:
+        stored = records.get(code)
+        print(
+            json.dumps(
+                {
+                    "code": code,
+                    "storedRecord": stored,
+                },
+                ensure_ascii=False,
+            )
+        )
 
     filings, _ = strict.list_full_year_filings(args.scan_days)
     for code in args.code:
