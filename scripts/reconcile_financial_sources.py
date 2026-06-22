@@ -439,3 +439,40 @@ def reconciliation_totals(records: dict[str, dict]) -> dict[str, int]:
         "sourceMatchedMetrics": matched,
         "sourceQuarantinedMetrics": quarantined,
     }
+
+
+def reconciliation_dispute_details(
+    records: dict[str, dict],
+    limit: int = 50,
+) -> list[dict]:
+    """Return bounded, non-document payloads for audit logs and status JSON."""
+    details: list[dict] = []
+    for code, record in records.items():
+        disputes = (
+            ((record.get("quarantine") or {}).get("sourceReconciliation") or {}).get(
+                "metrics"
+            )
+            or {}
+        )
+        for metric_key, dispute in disputes.items():
+            if not isinstance(dispute, dict):
+                continue
+            edinet_metric = dispute.get("edinet") or {}
+            tdnet_metric = dispute.get("tdnet") or {}
+            details.append(
+                {
+                    "code": str(code),
+                    "companyName": record.get("companyName"),
+                    "periodEnd": record.get("periodEnd"),
+                    "metric": metric_key,
+                    "reason": dispute.get("reason"),
+                    "edinetValue": edinet_metric.get("value"),
+                    "tdnetValue": tdnet_metric.get("value"),
+                    "edinetBasis": metric_basis(metric_key, edinet_metric),
+                    "tdnetBasis": metric_basis(metric_key, tdnet_metric),
+                    "comparison": dispute.get("comparison"),
+                }
+            )
+            if len(details) >= limit:
+                return details
+    return details
