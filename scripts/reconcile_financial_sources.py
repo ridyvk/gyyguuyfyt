@@ -157,6 +157,24 @@ def definitions_are_comparable(
     )
 
 
+def clear_metric_validation_quarantine(record: dict, metric_key: str) -> None:
+    """Remove stale range-quarantine metadata after a valid metric is selected."""
+    quarantine = record.get("quarantine")
+    if not isinstance(quarantine, dict):
+        return
+    validation = quarantine.get("metricValidation")
+    if not isinstance(validation, dict):
+        return
+    metrics = validation.get("metrics")
+    if not isinstance(metrics, dict):
+        return
+    metrics.pop(metric_key, None)
+    if not metrics:
+        quarantine.pop("metricValidation", None)
+    if not quarantine:
+        record.pop("quarantine", None)
+
+
 def select_metric(
     record: dict,
     tdnet_record: dict,
@@ -167,6 +185,7 @@ def select_metric(
 ) -> None:
     selected = edinet_metric if selected_source == "EDINET" else tdnet_metric
     record.setdefault("metrics", {})[metric_key] = deepcopy(selected)
+    clear_metric_validation_quarantine(record, metric_key)
     if selected_source == "TDnet":
         copy_tdnet_history_metric(record, tdnet_record, metric_key)
 
@@ -275,6 +294,7 @@ def reconcile_same_period(
         if not isinstance(edinet_metric, dict):
             if isinstance(tdnet_metric, dict):
                 edinet_metrics[metric_key] = deepcopy(tdnet_metric)
+                clear_metric_validation_quarantine(edinet_record, metric_key)
                 metric_results[metric_key] = {
                     "status": "tdnet-only",
                     "selectedSource": "TDnet",
