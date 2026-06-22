@@ -206,6 +206,28 @@ def values_for(
     )
 
 
+def values_for_instant_or_duration(
+    contexts: dict,
+    facts: dict,
+    names: tuple[str, ...],
+) -> dict[str, float]:
+    """Read summary ratios from either valid context, preferring instant facts."""
+    result = values_for(contexts, facts, names, True)
+    result.update(values_for(contexts, facts, names, False))
+    return result
+
+
+def selected_facts_for_instant_or_duration(
+    contexts: dict,
+    facts: dict,
+    names: tuple[str, ...],
+) -> dict[str, list[dict]]:
+    """Keep provenance aligned with instant-or-duration ratio selection."""
+    result = selected_fact_lists(contexts, facts, names, True)
+    result.update(selected_fact_lists(contexts, facts, names, False))
+    return result
+
+
 def disclosed_or_calculated_tdnet_roe(
     disclosed_values: dict[str, float],
     profit_values: dict[str, float],
@@ -359,6 +381,20 @@ def build_record(filing: dict, archive_data: bytes) -> dict:
         key: selected_fact_lists(contexts, facts, names, key in DURATION_KEYS)
         for key, names in STRICT_TDNET_FACT_NAMES.items()
     }
+    # TDnet summary ratios appear in both instant and full-year duration contexts.
+    # Keep instant as the preferred form, but do not discard valid duration facts.
+    series["disclosedEquityRatio"] = values_for_instant_or_duration(
+        contexts,
+        facts,
+        STRICT_TDNET_FACT_NAMES["disclosedEquityRatio"],
+    )
+    selected_facts["disclosedEquityRatio"] = (
+        selected_facts_for_instant_or_duration(
+            contexts,
+            facts,
+            STRICT_TDNET_FACT_NAMES["disclosedEquityRatio"],
+        )
+    )
     if not series["debt"]:
         series["debt"] = summed_values_for(contexts, facts, TDNET_DEBT_COMPONENTS)
         selected_facts["debt"] = summed_selected_fact_lists(
