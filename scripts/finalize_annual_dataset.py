@@ -15,6 +15,7 @@ from data_quality import (
     validate_financial_record,
 )
 from reconcile_financial_sources import (
+    reconciliation_dispute_details,
     reconciliation_totals,
     repair_stored_definition_quarantines,
 )
@@ -155,6 +156,7 @@ def main() -> int:
         stats.get("tdnetStrictFailures") or 0
     )
     source_reconciliation = reconciliation_totals(annual_records)
+    source_reconciliation_details = reconciliation_dispute_details(annual_records)
     source_quarantined = source_reconciliation["sourceQuarantinedMetrics"]
     is_building = estimated_remaining > 0 or edinet_count < min(
         FALLBACK_TARGET_COMPANIES,
@@ -196,6 +198,7 @@ def main() -> int:
             "historyTrendQuarantinedCompanies": history_trend_quarantined_companies,
             "sourceDefinitionQuarantinesRepaired": source_quarantines_repaired,
             **source_reconciliation,
+            "sourceReconciliationDisputes": source_reconciliation_details,
             "edinetEstimatedRemaining": estimated_remaining,
             "targetCompanies": target_companies,
             "missingCompanies": missing_companies,
@@ -304,6 +307,11 @@ def main() -> int:
         f"{history_trend_quarantined_companies} stale histories and "
         f"{source_quarantined} EDINET/TDnet mismatches."
     )
+    if source_reconciliation_details:
+        print(
+            "Source reconciliation disputes: "
+            + json.dumps(source_reconciliation_details, ensure_ascii=False)
+        )
     return 0
 
 
