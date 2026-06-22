@@ -460,6 +460,7 @@ const mergeRecord = (
     financialPeriod: record.periodEnd,
     financialSourceUrl: record.sourceUrl,
     liveMetricCount: displayAvailable.size,
+    trustedMetricCount: scoringAvailable.size,
     stockPrice: quote,
   }
 }
@@ -495,12 +496,16 @@ const createUnavailableCompany = (
     financialPeriod: undefined,
     financialSourceUrl: undefined,
     liveMetricCount: 0,
+    trustedMetricCount: 0,
     stockPrice: quote,
   }
 }
 
 export const hasFinancialData = (company: Company) =>
   company.dataSource === 'EDINET' || company.dataSource === 'TDnet'
+
+export const hasScorableData = (company: Company) =>
+  company.analysisLevel === 'full' || company.analysisLevel === 'limited'
 
 const fetchFinancialJson = async <T>(url: string): Promise<T> => {
   const response = await fetch(url, { cache: 'no-store' })
