@@ -88,7 +88,7 @@ export const buildStrengths = (
     strengths.push('バリュエーションに割安感')
   }
 
-  return strengths.length ? strengths.slice(0, 4) : ['業績は概ね安定圏で推移']
+  return strengths.slice(0, 4)
 }
 
 export const buildAnalysisComment = (
