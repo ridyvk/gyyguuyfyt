@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "overrides": {
+    "2338": {
+      "periodEnd": "2026-02-28",
+      "previousPeriodEnd": "2025-02-28",
+      "metricKey": "equityRatio",
+      "value": -22.3,
+      "previousValue": 34.9,
+      "documentId": "140120260410501953",
+      "source": "JPX TDnet official earnings summary PDF",
+      "sourceUrl": "https://www2.jpx.co.jp/disc/23380/140120260410501953.pdf",
+      "verifiedAt": "2026-06-22",
+      "evidence": "Page 1 consolidated financial position table"
+    },
+    "4592": {
+      "periodEnd": "2026-01-31",
+      "previousPeriodEnd": "2025-01-31",
+      "metricKey": "equityRatio",
+      "value": 85.4,
+      "previousValue": 45.1,
+      "documentId": "140120260317583272",
+      "source": "JPX TDnet official earnings summary PDF",
+      "sourceUrl": "https://www2.jpx.co.jp/disc/45920/140120260317583272.pdf",
+      "verifiedAt": "2026-06-22",
+      "evidence": "Page 1 consolidated financial position table"
+    }
+  }
+}
