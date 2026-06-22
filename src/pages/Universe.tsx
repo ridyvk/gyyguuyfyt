@@ -20,6 +20,9 @@ const initialFilter: CompanyFilter = {
   sort: 'score-desc',
 }
 
+const isFinancialSnapshotUsable = (status: string | undefined) =>
+  status === 'ready' || status === 'partial' || status === 'building'
+
 export default function Universe() {
   const [searchParams] = useSearchParams()
   const {
@@ -53,6 +56,20 @@ export default function Universe() {
     filter.sort,
     page,
   ].join('|')
+  const financialStatus = financialSnapshot?.status
+  const financialUsable = isFinancialSnapshotUsable(financialStatus)
+  const financialCompanies = financialSnapshot?.stats?.companies ?? 0
+  const targetCompanies = financialSnapshot?.stats?.targetCompanies ?? companies.length
+  const missingCompanies = financialSnapshot?.stats?.missingCompanies ?? Math.max(0, targetCompanies - financialCompanies)
+  const coverageRatio = financialSnapshot?.stats?.coverageRatio ?? (targetCompanies ? financialCompanies / targetCompanies * 100 : 0)
+  const financialStatusLabel =
+    financialStatus === 'ready'
+      ? '検証済み'
+      : financialStatus === 'partial'
+        ? '一部更新中'
+        : financialStatus === 'building'
+          ? '構築中'
+          : '未取得'
 
   useEffect(() => {
     setPage(1)
@@ -100,8 +117,8 @@ export default function Universe() {
               <Sparkles size={15} />
               JPX {listedCompanySource.date.slice(0, 4)}年
               {Number(listedCompanySource.date.slice(4, 6))}月末 /{' '}
-              {financialSnapshot?.status === 'ready'
-                ? `EDINET・TDnet ${financialSnapshot.stats.companies.toLocaleString('ja-JP')}社`
+              {financialUsable
+                ? `EDINET・TDnet ${financialCompanies.toLocaleString('ja-JP')}社 / 未取得 ${missingCompanies.toLocaleString('ja-JP')}社 / ${coverageRatio.toFixed(2)}% / ${financialStatusLabel}`
                 : 'KPIは未取得'}
             </div>
           </div>
@@ -142,7 +159,7 @@ export default function Universe() {
             <span>{page} / {totalPages}</span>
             <button
               type="button"
-              onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
+              onClick={() => setPage((value) => Math.min(totalPages, page + 1))}
               disabled={page === totalPages}
             >
               次へ
