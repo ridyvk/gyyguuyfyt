@@ -133,6 +133,13 @@ def record_has_roe_history_mismatch(record: object) -> bool:
 def record_roe_refresh_priority(record: object) -> int:
     if not isinstance(record, dict):
         return 0
+    metric_validation = (
+        (record.get("quarantine") or {}).get("metricValidation") or {}
+    )
+    quarantined_metrics = metric_validation.get("metrics") or {}
+    if isinstance(quarantined_metrics, dict) and quarantined_metrics:
+        # Re-extract impossible accounting values before ordinary model refreshes.
+        return 4
     quality = record.get("quality") or {}
     roe = (record.get("metrics") or {}).get("roe") or {}
     value = roe.get("value") if isinstance(roe, dict) else None

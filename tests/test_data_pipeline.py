@@ -806,6 +806,41 @@ class TdnetRoeDisclosureTests(unittest.TestCase):
 
         self.assertEqual([candidate["code"] for candidate in candidates], ["146A"])
 
+    def test_metric_quarantine_is_recovered_outside_recent_window(self) -> None:
+        old = (datetime.now(timezone.utc) - timedelta(days=60)).isoformat()
+        recent = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+        filings = {
+            "1400": {"code": "1400", "filedAt": recent, "documentId": "DOC1400"},
+            "4425": {"code": "4425", "filedAt": old, "documentId": "DOC4425"},
+        }
+        records = {
+            "4425": {
+                "source": "TDnet",
+                "quarantine": {
+                    "metricValidation": {
+                        "metrics": {
+                            "equityRatio": {
+                                "reason": "value-above-maximum-100",
+                            }
+                        }
+                    }
+                },
+            }
+        }
+
+        candidates = update_tdnet_financials_overlay_strict.select_candidates(
+            filings,
+            records,
+            lookback_days=31,
+            backfill_limit=0,
+            max_documents=10,
+        )
+
+        self.assertEqual(
+            [candidate["code"] for candidate in candidates],
+            ["4425", "1400"],
+        )
+
     def test_same_period_tdnet_roe_enriches_newer_edinet_record(self) -> None:
         existing = record("146A", "2025-12-31")
         existing["metrics"]["roe"] = {
@@ -1011,6 +1046,23 @@ class BatchedMigrationTests(unittest.TestCase):
         self.assertEqual(
             update_edinet_financials_batched.record_roe_refresh_priority(stale),
             3,
+        )
+
+    def test_metric_quarantine_has_highest_edinet_refresh_priority(self) -> None:
+        stale = record("2338", "2026-02-28")
+        stale["quarantine"] = {
+            "metricValidation": {
+                "metrics": {
+                    "equityRatio": {
+                        "reason": "previousValue-above-maximum-100",
+                    }
+                }
+            }
+        }
+
+        self.assertEqual(
+            update_edinet_financials_batched.record_roe_refresh_priority(stale),
+            4,
         )
 
     def test_candidate_priority_uses_preserved_alphanumeric_code(self) -> None:
