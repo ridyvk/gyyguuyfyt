@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import math
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
@@ -24,6 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT = ROOT / "public/data/financials.json"
 STATUS = ROOT / "public/data/update-status.json"
 COMPANY_MASTER = ROOT / "src/data/listedCompanies.json"
+VERIFIED_OVERRIDES = ROOT / "public/data/verified-financial-overrides.json"
 FALLBACK_TARGET_COMPANIES = 3000
 MIN_TRUSTED_EDINET_ROE_MODEL_VERSION = 6
 
@@ -90,6 +92,113 @@ def quarantine_untrusted_roe(record: dict) -> bool:
     return True
 
 
+def load_verified_overrides() -> dict:
+    if not VERIFIED_OVERRIDES.exists():
+        return {"schemaVersion": 1, "overrides": {}}
+    payload = json.loads(VERIFIED_OVERRIDES.read_text(encoding="utf-8"))
+    if payload.get("schemaVersion") != 1:
+        raise ValueError("Unsupported verified financial override schema")
+    if not isinstance(payload.get("overrides"), dict):
+        raise ValueError("Verified financial overrides must be an object")
+    return payload
+
+
+def clear_metric_quarantine(record: dict, metric_key: str) -> None:
+    quarantine = record.get("quarantine")
+    if not isinstance(quarantine, dict):
+        return
+    validation = quarantine.get("metricValidation")
+    metrics = validation.get("metrics") if isinstance(validation, dict) else None
+    if isinstance(metrics, dict):
+        metrics.pop(metric_key, None)
+        if not metrics:
+            quarantine.pop("metricValidation", None)
+            quality = record.get("quality")
+            if isinstance(quality, dict):
+                quality.pop("metricValidationStatus", None)
+    if not quarantine:
+        record.pop("quarantine", None)
+
+
+def apply_verified_metric_overrides(records: dict, payload: dict) -> int:
+    applied = 0
+    for raw_code, override in payload.get("overrides", {}).items():
+        code = str(raw_code)
+        if not isinstance(override, dict):
+            raise ValueError(f"Invalid verified override for {code}")
+        record = records.get(code)
+        if not isinstance(record, dict):
+            continue
+        if record.get("periodEnd") != override.get("periodEnd"):
+            continue
+        metric_key = str(override.get("metricKey") or "")
+        if metric_key != "equityRatio":
+            raise ValueError(f"Unsupported verified metric override: {metric_key}")
+        value = override.get("value")
+        previous_value = override.get("previousValue")
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(value)
+            or value > 100
+            or isinstance(previous_value, bool)
+            or not isinstance(previous_value, (int, float))
+            or not math.isfinite(previous_value)
+            or previous_value > 100
+        ):
+            raise ValueError(f"Invalid verified equity ratio override for {code}")
+
+        source_url = str(override.get("sourceUrl") or "")
+        document_id = str(override.get("documentId") or "")
+        if not source_url.startswith("https://www2.jpx.co.jp/disc/") or not document_id:
+            raise ValueError(f"Untrusted verified override source for {code}")
+
+        metric = {
+            "value": round(float(value), 2),
+            "previousValue": round(float(previous_value), 2),
+            "provenance": {
+                "formula": "official disclosed equity ratio",
+                "sourceFacts": [
+                    {
+                        "role": "disclosedEquityRatio.current",
+                        "concept": "EquityRatio",
+                        "tag": "JPX-PDF:EquityRatio",
+                        "contextRef": "official-earnings-summary-page-1",
+                        "periodEnd": override["periodEnd"],
+                        "periodType": "instant",
+                        "unitRef": "%",
+                        "consolidation": "consolidated",
+                        "rawValue": value,
+                    },
+                    {
+                        "role": "disclosedEquityRatio.previous",
+                        "concept": "EquityRatio",
+                        "tag": "JPX-PDF:EquityRatio",
+                        "contextRef": "official-earnings-summary-page-1",
+                        "periodEnd": override["previousPeriodEnd"],
+                        "periodType": "instant",
+                        "unitRef": "%",
+                        "consolidation": "consolidated",
+                        "rawValue": previous_value,
+                    },
+                ],
+            },
+        }
+        record.setdefault("metrics", {})[metric_key] = metric
+        clear_metric_quarantine(record, metric_key)
+        quality = record.setdefault("quality", {})
+        quality["verifiedOverrideModelVersion"] = 1
+        quality.setdefault("verifiedOverrides", {})[metric_key] = {
+            "documentId": document_id,
+            "source": override.get("source"),
+            "sourceUrl": source_url,
+            "verifiedAt": override.get("verifiedAt"),
+            "evidence": override.get("evidence"),
+        }
+        applied += 1
+    return applied
+
+
 def main() -> int:
     generated_at = utc_now()
     snapshot = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
@@ -97,6 +206,10 @@ def main() -> int:
     current_codes = load_company_codes()
     if not current_codes:
         raise RuntimeError("Company master is empty or invalid.")
+    verified_metric_overrides_applied = apply_verified_metric_overrides(
+        original_records,
+        load_verified_overrides(),
+    )
     source_quarantines_repaired = sum(
         repair_stored_definition_quarantines(record)
         for record in original_records.values()
@@ -197,6 +310,7 @@ def main() -> int:
             "metricRangeQuarantinedCompanies": metric_range_quarantined_companies,
             "historyTrendQuarantinedCompanies": history_trend_quarantined_companies,
             "sourceDefinitionQuarantinesRepaired": source_quarantines_repaired,
+            "verifiedMetricOverridesApplied": verified_metric_overrides_applied,
             **source_reconciliation,
             "sourceReconciliationDisputes": source_reconciliation_details,
             "edinetEstimatedRemaining": estimated_remaining,
@@ -275,6 +389,7 @@ def main() -> int:
         "metricRangeQuarantined": metric_range_quarantined,
         "metricRangeQuarantinedCompanies": metric_range_quarantined_companies,
         "historyTrendQuarantinedCompanies": history_trend_quarantined_companies,
+        "verifiedMetricOverridesApplied": verified_metric_overrides_applied,
         **source_reconciliation,
         "tdnetRowsScanned": stats.get("tdnetRowsScanned", 0),
         "tdnetEarningsRows": stats.get("tdnetEarningsRows", 0),
