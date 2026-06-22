@@ -37,8 +37,10 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Generate financial industry shards
-        run: python scripts/split_financials.py
+      - name: Finalize and shard financial data
+        run: |
+          python scripts/finalize_annual_dataset.py
+          python scripts/split_financials.py
 
       - name: Test and validate data pipelines
         run: |
