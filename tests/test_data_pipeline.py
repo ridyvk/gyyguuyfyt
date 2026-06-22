@@ -235,7 +235,13 @@ class SourceReconciliationTests(unittest.TestCase):
         edinet = record("1000")
         edinet["metrics"] = {
             "operatingMargin": {"value": 10.0, "previousValue": 9.0},
-            "roe": {"value": 12.2, "previousValue": 11.0},
+            "roe": {
+                "value": 12.2,
+                "previousValue": 11.0,
+                "provenance": {
+                    "sourceFacts": [{"role": "profit.current"}]
+                },
+            },
         }
         edinet["history"] = [
             {"year": "2025/03", "roe": 11.0},
@@ -244,7 +250,13 @@ class SourceReconciliationTests(unittest.TestCase):
         tdnet = self.tdnet_record()
         tdnet["metrics"] = {
             "operatingMargin": {"value": 10.2, "previousValue": 9.1},
-            "roe": {"value": 12.4, "previousValue": 11.2},
+            "roe": {
+                "value": 12.4,
+                "previousValue": 11.2,
+                "provenance": {
+                    "sourceFacts": [{"role": "disclosedRoe.current"}]
+                },
+            },
         }
         tdnet["history"] = [
             {"year": "2025/03", "roe": 11.2},
@@ -264,6 +276,153 @@ class SourceReconciliationTests(unittest.TestCase):
         self.assertEqual(edinet["metrics"]["roe"]["value"], 12.4)
         self.assertEqual([point["roe"] for point in edinet["history"]], [11.2, 12.4])
         self.assertEqual(edinet["reconciliation"]["status"], "matched")
+        self.assertNotIn("quarantine", edinet)
+
+    def test_disclosed_edinet_roe_is_not_compared_with_calculated_tdnet_roe(self) -> None:
+        edinet = record("1000")
+        edinet["metrics"] = {
+            "roe": {
+                "value": 7.8,
+                "previousValue": 19.3,
+                "provenance": {
+                    "sourceFacts": [{"role": "disclosedRoe.current"}]
+                },
+            }
+        }
+        tdnet = self.tdnet_record()
+        tdnet["metrics"] = {
+            "roe": {
+                "value": 7.98,
+                "previousValue": 18.13,
+                "provenance": {"sourceFacts": [{"role": "profit.current"}]},
+            }
+        }
+
+        summary = reconcile_financial_sources.reconcile_same_period(edinet, tdnet)
+
+        self.assertEqual(summary.quarantined, 0)
+        self.assertEqual(edinet["metrics"]["roe"]["value"], 7.8)
+        result = edinet["reconciliation"]["metrics"]["roe"]
+        self.assertEqual(result["status"], "definition-difference")
+        self.assertEqual(result["selectedSource"], "EDINET")
+
+    def test_disclosed_equity_ratio_beats_calculated_ratio(self) -> None:
+        edinet = record("1000")
+        edinet["metrics"] = {
+            "equityRatio": {
+                "value": 48.7,
+                "provenance": {
+                    "sourceFacts": [
+                        {"role": "disclosedEquityRatio.current"}
+                    ]
+                },
+            }
+        }
+        tdnet = self.tdnet_record()
+        tdnet["metrics"] = {
+            "equityRatio": {
+                "value": 45.17,
+                "provenance": {"sourceFacts": [{"role": "equity.current"}]},
+            }
+        }
+
+        summary = reconcile_financial_sources.reconcile_same_period(edinet, tdnet)
+
+        self.assertEqual(summary.quarantined, 0)
+        self.assertEqual(edinet["metrics"]["equityRatio"]["value"], 48.7)
+
+    def test_different_cash_concepts_are_not_compared_as_net_cash(self) -> None:
+        edinet = record("1000")
+        edinet["metrics"] = {
+            "netCash": {
+                "value": -624.92,
+                "provenance": {
+                    "sourceFacts": [
+                        {
+                            "role": "cash.current",
+                            "concept": "CashAndCashEquivalents",
+                        }
+                    ]
+                },
+            }
+        }
+        tdnet = self.tdnet_record()
+        tdnet["metrics"] = {
+            "netCash": {
+                "value": -597.31,
+                "provenance": {
+                    "sourceFacts": [
+                        {"role": "cash.current", "concept": "CashAndDeposits"}
+                    ]
+                },
+            }
+        }
+
+        summary = reconcile_financial_sources.reconcile_same_period(edinet, tdnet)
+
+        self.assertEqual(summary.quarantined, 0)
+        self.assertEqual(edinet["metrics"]["netCash"]["value"], -624.92)
+
+    def test_previous_mismatch_does_not_remove_matching_current_value(self) -> None:
+        edinet = record("1000")
+        edinet["metrics"] = {
+            "roe": {"value": -203.54, "previousValue": -105.7, "trend": [1, 2]}
+        }
+        edinet["history"] = [{"year": "2026/03", "roe": -203.54}]
+        tdnet = self.tdnet_record()
+        tdnet["metrics"] = {"roe": {"value": -203.54, "previousValue": -88.63}}
+
+        summary = reconcile_financial_sources.reconcile_same_period(edinet, tdnet)
+
+        self.assertEqual(summary.quarantined, 0)
+        self.assertEqual(edinet["metrics"]["roe"]["value"], -203.54)
+        self.assertNotIn("previousValue", edinet["metrics"]["roe"])
+        self.assertNotIn("trend", edinet["metrics"]["roe"])
+        self.assertNotIn("roe", edinet["history"][0])
+        self.assertEqual(
+            edinet["reconciliation"]["metrics"]["roe"]["status"],
+            "matched-current-only",
+        )
+
+    def test_stored_v1_definition_quarantine_is_repaired(self) -> None:
+        edinet = record("1000")
+        edinet["metrics"] = {}
+        edinet["quarantine"] = {
+            "sourceReconciliation": {
+                "metrics": {
+                    "roe": {
+                        "edinet": {
+                            "value": 7.8,
+                            "provenance": {
+                                "sourceFacts": [
+                                    {"role": "disclosedRoe.current"}
+                                ]
+                            },
+                        },
+                        "tdnet": {
+                            "value": 7.98,
+                            "provenance": {
+                                "sourceFacts": [{"role": "profit.current"}]
+                            },
+                        },
+                    }
+                }
+            }
+        }
+        edinet["reconciliation"] = {
+            "modelVersion": 1,
+            "metrics": {"roe": {"status": "quarantined"}},
+            "quarantinedMetrics": ["roe"],
+        }
+
+        repaired = reconcile_financial_sources.repair_stored_definition_quarantines(
+            edinet
+        )
+
+        self.assertEqual(repaired, 1)
+        self.assertEqual(edinet["metrics"]["roe"]["value"], 7.8)
+        self.assertEqual(edinet["reconciliation"]["modelVersion"], 2)
+        self.assertEqual(edinet["reconciliation"]["quarantinedMetrics"], [])
         self.assertNotIn("quarantine", edinet)
 
     def test_mismatch_quarantines_only_the_disputed_metric(self) -> None:
