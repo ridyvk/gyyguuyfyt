@@ -372,6 +372,10 @@ class SourceReconciliationTests(unittest.TestCase):
                     "sourceFacts": [
                         {
                             "role": "receivables.current",
+                            "concept": "AccountsReceivableTrade",
+                        },
+                        {
+                            "role": "receivables.previous",
                             "concept": "NotesAndAccountsReceivableTradeAndContractAssets",
                         }
                     ]
@@ -386,6 +390,10 @@ class SourceReconciliationTests(unittest.TestCase):
                     "sourceFacts": [
                         {
                             "role": "receivables.current",
+                            "concept": "AccountsReceivableTrade",
+                        },
+                        {
+                            "role": "receivables.previous",
                             "concept": "AccountsReceivableTrade",
                         }
                     ]

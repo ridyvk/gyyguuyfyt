@@ -82,14 +82,14 @@ def source_facts(metric: dict) -> list[dict]:
 
 
 METRIC_BASIS_ROLES: dict[str, tuple[str, ...]] = {
-    "revenueGrowth": ("revenue.current",),
+    "revenueGrowth": ("revenue.current", "revenue.previous"),
     "operatingMargin": ("operatingIncome.current", "revenue.current"),
     "netMargin": ("profit.current", "revenue.current"),
     "operatingCfMargin": ("operatingCf.current", "revenue.current"),
     "debtRatio": ("debt.current", "equity.current"),
     "netCash": ("cash.current", "debt.current"),
-    "inventoryGrowth": ("inventory.current",),
-    "receivablesGrowth": ("receivables.current",),
+    "inventoryGrowth": ("inventory.current", "inventory.previous"),
+    "receivablesGrowth": ("receivables.current", "receivables.previous"),
 }
 
 
@@ -112,7 +112,10 @@ def metric_basis(metric_key: str, metric: dict) -> str:
             "disclosed"
             if "disclosedRoe.current" in roles
             else "calculated:"
-            + fact_signature(metric, ("profit.current", "equity.current"))
+            + fact_signature(
+                metric,
+                ("profit.current", "equity.current", "equity.previous"),
+            )
         )
     if metric_key == "equityRatio":
         return (
