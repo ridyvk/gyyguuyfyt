@@ -188,6 +188,16 @@ def merge_same_period_disclosed_roe(existing: dict | None, record: dict) -> bool
     return True
 
 
+def has_metric_validation_quarantine(record: object) -> bool:
+    if not isinstance(record, dict):
+        return False
+    metric_validation = (
+        (record.get("quarantine") or {}).get("metricValidation") or {}
+    )
+    metrics = metric_validation.get("metrics") or {}
+    return isinstance(metrics, dict) and bool(metrics)
+
+
 def select_candidates(
     filings: dict[str, dict],
     records: dict[str, dict],
@@ -200,12 +210,30 @@ def select_candidates(
     cutoff = (
         datetime.now(timezone.utc) - timedelta(days=max(0, lookback_days))
     ).date().isoformat()
+    priority = set(priority_codes or [])
+    recovery_codes = priority | {
+        code
+        for code, record in records.items()
+        if has_metric_validation_quarantine(record)
+    }
+    recovery = [
+        filing
+        for code, filing in filings.items()
+        if code in recovery_codes
+    ]
+    recovery.sort(key=lambda filing: str(filing.get("code") or ""))
+    selected_recovery_codes = {
+        str(filing.get("code") or "") for filing in recovery
+    }
     recent = [
         filing
         for filing in filings.values()
         if str(filing.get("filedAt") or "")[:10] >= cutoff
+        and str(filing.get("code") or "") not in selected_recovery_codes
     ]
-    recent_codes = {str(filing.get("code") or "") for filing in recent}
+    recent_codes = selected_recovery_codes | {
+        str(filing.get("code") or "") for filing in recent
+    }
 
     backfill_pool = []
     ordered_codes = sorted(
@@ -227,7 +255,6 @@ def select_candidates(
         ):
             backfill_pool.append(filing)
 
-    priority = set(priority_codes or [])
     backfill_pool.sort(
         key=lambda filing: str(filing.get("code") or "") not in priority
     )
@@ -243,7 +270,7 @@ def select_candidates(
         unseen = backfill_pool
     backfill = unseen[: max(0, backfill_limit)]
 
-    combined = recent + backfill
+    combined = recovery + recent + backfill
     return combined[: max(0, max_documents)]
 
 
