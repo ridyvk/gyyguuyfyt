@@ -96,6 +96,7 @@ export interface Company {
   financialPeriod?: string
   financialSourceUrl?: string
   liveMetricCount?: number
+  trustedMetricCount?: number
   stockPrice?: MarketQuote
 }
 
