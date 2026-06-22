@@ -472,6 +472,20 @@ def reconciliation_dispute_details(
 ) -> list[dict]:
     """Return bounded, non-document payloads for audit logs and status JSON."""
     details: list[dict] = []
+
+    def audit_facts(metric: dict) -> list[dict]:
+        return [
+            {
+                "role": fact.get("role"),
+                "concept": fact.get("concept") or fact.get("tag"),
+                "rawValue": fact.get("rawValue"),
+                "periodEnd": fact.get("periodEnd"),
+                "contextRef": fact.get("contextRef"),
+                "consolidation": fact.get("consolidation"),
+            }
+            for fact in source_facts(metric)
+        ]
+
     for code, record in records.items():
         disputes = (
             ((record.get("quarantine") or {}).get("sourceReconciliation") or {}).get(
@@ -495,6 +509,8 @@ def reconciliation_dispute_details(
                     "tdnetValue": tdnet_metric.get("value"),
                     "edinetBasis": metric_basis(metric_key, edinet_metric),
                     "tdnetBasis": metric_basis(metric_key, tdnet_metric),
+                    "edinetFacts": audit_facts(edinet_metric),
+                    "tdnetFacts": audit_facts(tdnet_metric),
                     "comparison": dispute.get("comparison"),
                 }
             )
