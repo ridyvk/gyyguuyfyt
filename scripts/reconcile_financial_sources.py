@@ -179,6 +179,50 @@ def strip_previous_comparison(record: dict, metric_key: str) -> None:
     remove_history_metric(record, metric_key)
 
 
+GROWTH_METRICS = {"revenueGrowth", "inventoryGrowth", "receivablesGrowth"}
+
+
+def fact_raw_value(metric: dict, role: str) -> float | None:
+    values = [
+        numeric(fact.get("rawValue"))
+        for fact in source_facts(metric)
+        if fact.get("role") == role
+    ]
+    finite = [value for value in values if value is not None]
+    return sum(finite) if finite else None
+
+
+def is_later_edinet_growth_revision(
+    metric_key: str,
+    edinet_metric: dict,
+    tdnet_metric: dict,
+    edinet_filed_at: object,
+    tdnet_filed_at: object,
+) -> bool:
+    """Recognize a later annual filing that revises only the current raw fact."""
+    if metric_key not in GROWTH_METRICS:
+        return False
+    if str(edinet_filed_at or "") <= str(tdnet_filed_at or ""):
+        return False
+    role_prefix = {
+        "revenueGrowth": "revenue",
+        "inventoryGrowth": "inventory",
+        "receivablesGrowth": "receivables",
+    }[metric_key]
+    edinet_current = fact_raw_value(edinet_metric, f"{role_prefix}.current")
+    tdnet_current = fact_raw_value(tdnet_metric, f"{role_prefix}.current")
+    edinet_previous = fact_raw_value(edinet_metric, f"{role_prefix}.previous")
+    tdnet_previous = fact_raw_value(tdnet_metric, f"{role_prefix}.previous")
+    if None in {edinet_current, tdnet_current, edinet_previous, tdnet_previous}:
+        return False
+    previous_tolerance = max(1.0, max(abs(edinet_previous), abs(tdnet_previous)) * 1e-6)
+    current_tolerance = max(1.0, max(abs(edinet_current), abs(tdnet_current)) * 1e-6)
+    return (
+        abs(edinet_previous - tdnet_previous) <= previous_tolerance
+        and abs(edinet_current - tdnet_current) > current_tolerance
+    )
+
+
 def source_descriptor(record: dict) -> dict:
     return {
         "documentId": record.get("documentId"),
@@ -267,6 +311,29 @@ def reconcile_same_period(
 
         result = compare_metric(metric_key, edinet_metric, tdnet_metric)
         if result["status"] == "mismatch":
+            if is_later_edinet_growth_revision(
+                metric_key,
+                edinet_metric,
+                tdnet_metric,
+                edinet_record.get("filedAt"),
+                tdnet_record.get("filedAt"),
+            ):
+                select_metric(
+                    edinet_record,
+                    tdnet_record,
+                    metric_key,
+                    edinet_metric,
+                    tdnet_metric,
+                    "EDINET",
+                )
+                metric_results[metric_key] = {
+                    **result,
+                    "status": "edinet-later-filing",
+                    "selectedSource": "EDINET",
+                    "reason": "later-edinet-annual-filing-revised-current-fact",
+                }
+                matched += 1
+                continue
             value_result = result["fields"].get("value")
             previous_result = result["fields"].get("previousValue")
             if (
@@ -411,6 +478,24 @@ def repair_stored_definition_quarantines(record: dict) -> int:
             }
         else:
             result = compare_metric(metric_key, edinet_metric, tdnet_metric)
+            sources = reconciliation.get("sources") or {}
+            if is_later_edinet_growth_revision(
+                metric_key,
+                edinet_metric,
+                tdnet_metric,
+                (sources.get("EDINET") or {}).get("filedAt"),
+                (sources.get("TDnet") or {}).get("filedAt"),
+            ):
+                record.setdefault("metrics", {})[metric_key] = deepcopy(edinet_metric)
+                metric_results[metric_key] = {
+                    **result,
+                    "status": "edinet-later-filing",
+                    "selectedSource": "EDINET",
+                    "reason": "later-edinet-annual-filing-revised-current-fact",
+                }
+                disputes.pop(metric_key)
+                restored += 1
+                continue
             value_result = result["fields"].get("value")
             previous_result = result["fields"].get("previousValue")
             if not (
@@ -455,7 +540,12 @@ def reconciliation_totals(records: dict[str, dict]) -> dict[str, int]:
         companies += 1
         for result in (reconciliation.get("metrics") or {}).values():
             status = result.get("status") if isinstance(result, dict) else None
-            if status in {"matched", "definition-difference", "matched-current-only"}:
+            if status in {
+                "matched",
+                "definition-difference",
+                "matched-current-only",
+                "edinet-later-filing",
+            }:
                 matched += 1
             elif status == "quarantined":
                 quarantined += 1
