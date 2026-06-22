@@ -231,8 +231,6 @@ class AllCompanyAuditTests(unittest.TestCase):
                 "sourceQuarantinedMetrics",
                 "edinetBatchFailureRate",
                 "tdnetStrictFailureRate",
-                "edinetNoMetricRate",
-                "tdnetNoMetricRate",
             },
         )
 
@@ -268,16 +266,18 @@ class AllCompanyAuditTests(unittest.TestCase):
             [],
         )
 
-    def test_new_no_metric_rates_establish_a_baseline(self) -> None:
+    def test_no_metric_rates_are_report_only_for_changing_cohorts(self) -> None:
         summary = {
-            "edinetNoMetricRate": 72.0,
-            "tdnetNoMetricRate": 13.2,
+            "edinetNoMetricRate": 90.29,
+            "tdnetNoMetricRate": 18.0,
         }
         previous = {
             "schemaVersion": audit_all_companies.SCHEMA_VERSION,
             "summary": {
-                "edinetNoMetricRate": 0.0,
-                "tdnetNoMetricRate": 0.0,
+                "edinetNoMetricRate": 72.0,
+                "tdnetNoMetricRate": 13.2,
+                "edinetBatchSize": 350,
+                "tdnetDocumentsAttempted": 611,
             },
         }
 

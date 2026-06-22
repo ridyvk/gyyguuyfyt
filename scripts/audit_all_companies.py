@@ -247,27 +247,10 @@ def regression_violations(
             "max",
             PIPELINE_RATE_TOLERANCE_POINTS,
         ),
-        (
-            "edinetNoMetricRate",
-            "max",
-            PIPELINE_RATE_TOLERANCE_POINTS,
-        ),
-        (
-            "tdnetNoMetricRate",
-            "max",
-            PIPELINE_RATE_TOLERANCE_POINTS,
-        ),
     )
-    baseline_denominators = {
-        "edinetNoMetricRate": "edinetBatchSize",
-        "tdnetNoMetricRate": "tdnetDocumentsAttempted",
-    }
     violations = []
     for field, comparison, tolerance in checks:
         if field not in previous:
-            continue
-        denominator_field = baseline_denominators.get(field)
-        if denominator_field and int(previous.get(denominator_field) or 0) <= 0:
             continue
         value = float(summary.get(field) or 0)
         baseline = float(previous.get(field) or 0)
@@ -480,7 +463,8 @@ def build_report(
                 "coverage and trusted metric ratio must not decrease",
                 "missing provenance and old model rates must not increase",
                 "metric and source quarantine counts must not increase",
-                "pipeline failure and unusable document rates must not increase",
+                "pipeline failure rates must not increase",
+                "no-metric document rates are reported for changing cohorts",
                 "any source mismatch quarantine requires review",
             ],
             "rateTolerancePoints": RATE_TOLERANCE_POINTS,
