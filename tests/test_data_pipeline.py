@@ -472,6 +472,61 @@ class SourceReconciliationTests(unittest.TestCase):
         self.assertEqual(edinet["reconciliation"]["quarantinedMetrics"], [])
         self.assertNotIn("quarantine", edinet)
 
+    def test_later_edinet_growth_revision_restores_audited_metric(self) -> None:
+        def growth_metric(value: float, current: float, previous: float) -> dict:
+            return {
+                "value": value,
+                "provenance": {
+                    "sourceFacts": [
+                        {
+                            "role": "receivables.current",
+                            "concept": "AccountsReceivableTrade",
+                            "rawValue": current,
+                        },
+                        {
+                            "role": "receivables.previous",
+                            "concept": "AccountsReceivableTrade",
+                            "rawValue": previous,
+                        },
+                    ]
+                },
+            }
+
+        edinet_metric = growth_metric(25.36, 145_061_000, 115_715_000)
+        tdnet_metric = growth_metric(48.69, 172_058_000, 115_715_000)
+        edinet = record("3796")
+        edinet["metrics"] = {}
+        edinet["quarantine"] = {
+            "sourceReconciliation": {
+                "metrics": {
+                    "receivablesGrowth": {
+                        "reason": "edinet-tdnet-value-mismatch",
+                        "edinet": edinet_metric,
+                        "tdnet": tdnet_metric,
+                    }
+                }
+            }
+        }
+        edinet["reconciliation"] = {
+            "sources": {
+                "EDINET": {"filedAt": "2026-06-19T10:00:00+09:00"},
+                "TDnet": {"filedAt": "2026-05-14T15:00:00+09:00"},
+            },
+            "metrics": {"receivablesGrowth": {"status": "quarantined"}},
+        }
+
+        repaired = reconcile_financial_sources.repair_stored_definition_quarantines(
+            edinet
+        )
+
+        self.assertEqual(repaired, 1)
+        self.assertEqual(edinet["metrics"]["receivablesGrowth"]["value"], 25.36)
+        self.assertEqual(
+            edinet["reconciliation"]["metrics"]["receivablesGrowth"]["status"],
+            "edinet-later-filing",
+        )
+        self.assertNotIn("quarantine", edinet)
+
     def test_mismatch_quarantines_only_the_disputed_metric(self) -> None:
         edinet = record("1000")
         edinet["metrics"] = {
