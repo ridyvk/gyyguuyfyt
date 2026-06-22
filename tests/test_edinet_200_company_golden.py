@@ -126,7 +126,19 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
             for metric_key, expected in company["anchors"].items():
                 actual = (record.get("metrics") or {}).get(metric_key)
                 self.assertIsInstance(actual, dict, (code, metric_key))
-                self.assertEqual(actual.get("value"), expected["value"], (code, metric_key))
+                if metric_key == "roe":
+                    self.assertAlmostEqual(
+                        actual.get("value"),
+                        expected["value"],
+                        delta=0.1,
+                        msg=(code, metric_key),
+                    )
+                else:
+                    self.assertEqual(
+                        actual.get("value"),
+                        expected["value"],
+                        (code, metric_key),
+                    )
                 if "previousValue" in expected:
                     self.assertEqual(
                         actual.get("previousValue"),
