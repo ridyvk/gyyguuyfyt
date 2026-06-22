@@ -1,0 +1,38 @@
+name: Diagnose TDnet equity ratio facts
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/diagnose_tdnet_equity_ratios.py
+      - .github/workflows/diagnose-equity-ratios.yml
+  workflow_dispatch:
+    inputs:
+      codes:
+        description: Comma-separated security codes
+        required: false
+        default: '2338,4592'
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Inspect official TDnet XBRL facts
+        env:
+          CODES: ${{ inputs.codes || '2338,4592' }}
+        run: |
+          args=()
+          IFS=',' read -ra codes <<< "$CODES"
+          for code in "${codes[@]}"; do
+            args+=(--code "$code")
+          done
+          python scripts/diagnose_tdnet_equity_ratios.py "${args[@]}"
