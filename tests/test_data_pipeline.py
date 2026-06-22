@@ -363,6 +363,45 @@ class SourceReconciliationTests(unittest.TestCase):
         self.assertEqual(summary.quarantined, 0)
         self.assertEqual(edinet["metrics"]["netCash"]["value"], -624.92)
 
+    def test_different_receivables_concepts_are_not_compared_as_same_growth(self) -> None:
+        edinet = record("3796")
+        edinet["metrics"] = {
+            "receivablesGrowth": {
+                "value": 25.36,
+                "provenance": {
+                    "sourceFacts": [
+                        {
+                            "role": "receivables.current",
+                            "concept": "NotesAndAccountsReceivableTradeAndContractAssets",
+                        }
+                    ]
+                },
+            }
+        }
+        tdnet = self.tdnet_record()
+        tdnet["metrics"] = {
+            "receivablesGrowth": {
+                "value": 48.69,
+                "provenance": {
+                    "sourceFacts": [
+                        {
+                            "role": "receivables.current",
+                            "concept": "AccountsReceivableTrade",
+                        }
+                    ]
+                },
+            }
+        }
+
+        summary = reconcile_financial_sources.reconcile_same_period(edinet, tdnet)
+
+        self.assertEqual(summary.quarantined, 0)
+        self.assertEqual(edinet["metrics"]["receivablesGrowth"]["value"], 25.36)
+        self.assertEqual(
+            edinet["reconciliation"]["metrics"]["receivablesGrowth"]["status"],
+            "definition-difference",
+        )
+
     def test_previous_mismatch_does_not_remove_matching_current_value(self) -> None:
         edinet = record("1000")
         edinet["metrics"] = {
