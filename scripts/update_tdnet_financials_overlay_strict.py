@@ -222,6 +222,7 @@ def select_candidates(
         if code in recovery_codes
     ]
     recovery.sort(key=lambda filing: str(filing.get("code") or ""))
+    recovery = recovery[: max(0, backfill_limit)]
     selected_recovery_codes = {
         str(filing.get("code") or "") for filing in recovery
     }
@@ -268,7 +269,8 @@ def select_candidates(
     if not unseen and backfill_pool:
         attempted.clear()
         unseen = backfill_pool
-    backfill = unseen[: max(0, backfill_limit)]
+    remaining_backfill_limit = max(0, backfill_limit - len(recovery))
+    backfill = unseen[:remaining_backfill_limit]
 
     combined = recovery + recent + backfill
     return combined[: max(0, max_documents)]
