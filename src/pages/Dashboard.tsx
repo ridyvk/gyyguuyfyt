@@ -26,7 +26,7 @@ import ScoreBadge from '../components/ScoreBadge'
 import StockQuoteCard from '../components/StockQuoteCard'
 import { useApp } from '../context/AppContext'
 import { listedCompanySource } from '../lib/companySource'
-import { hasFinancialData } from '../lib/liveData'
+import { hasFinancialData, hasScorableData } from '../lib/liveData'
 import '../dashboard-charts.css'
 
 const themePalette = [
@@ -45,8 +45,11 @@ export default function Dashboard() {
     marketSnapshot,
     updateStatus,
   } = useApp()
-  const analyzableCompanies = companies.filter(
+  const financialCompanies = companies.filter(
     hasFinancialData,
+  )
+  const analyzableCompanies = companies.filter(
+    hasScorableData,
   )
   const warningCount = analyzableCompanies.filter(
     (company) => company.hasWarning,
@@ -59,8 +62,8 @@ export default function Dashboard() {
         ) / analyzableCompanies.length
       : 0
   const financialStatus = financialSnapshot?.status ?? updateStatus?.status ?? 'error'
-  const statusReady = analyzableCompanies.length > 0 && ['ready', 'partial', 'building'].includes(financialStatus)
-  const coverageCompanies = analyzableCompanies.length
+  const statusReady = financialCompanies.length > 0 && ['ready', 'partial', 'building'].includes(financialStatus)
+  const coverageCompanies = financialCompanies.length
   const targetCompanies = updateStatus?.targetCompanies ?? financialSnapshot?.stats?.targetCompanies ?? companies.length
   const missingCompanies = updateStatus?.missingCompanies ?? financialSnapshot?.stats?.missingCompanies ?? Math.max(0, targetCompanies - coverageCompanies)
   const coverageRatio = updateStatus?.coverageRatio ?? financialSnapshot?.stats?.coverageRatio ?? (targetCompanies ? coverageCompanies / targetCompanies * 100 : 0)
