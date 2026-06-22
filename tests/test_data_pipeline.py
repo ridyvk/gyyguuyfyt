@@ -531,6 +531,49 @@ class TdnetRoeDisclosureTests(unittest.TestCase):
         )
         self.assertEqual(value, 23.5)
 
+    def test_tdnet_disclosed_equity_ratio_is_supported_and_normalized(self) -> None:
+        names = update_tdnet_financials_strict.STRICT_TDNET_FACT_NAMES[
+            "disclosedEquityRatio"
+        ]
+        self.assertIn("EquityToAssetRatio", names)
+        self.assertIn("EquityToAssetRatioSummaryOfBusinessResults", names)
+        self.assertNotIn(
+            "disclosedEquityRatio",
+            update_tdnet_financials_strict.DURATION_KEYS,
+        )
+        self.assertEqual(update_tdnet_financials_strict.disclosed_percent(0.667), 66.7)
+        self.assertEqual(update_tdnet_financials_strict.disclosed_percent(66.7), 66.7)
+
+    def test_tdnet_equity_fallback_prefers_net_assets_to_shareholders_equity(self) -> None:
+        names = update_tdnet_financials_strict.STRICT_TDNET_FACT_NAMES["equity"]
+        self.assertLess(names.index("NetAssets"), names.index("ShareholdersEquity"))
+
+    def test_one_impossible_metric_can_be_quarantined_without_losing_record(self) -> None:
+        tdnet = {
+            "code": "7777",
+            "companyName": "Example",
+            "documentId": "TDNET1",
+            "documentType": "FullYearEarnings",
+            "filedAt": "2026-06-11T16:00:00+09:00",
+            "periodEnd": "2026-04-30",
+            "source": "TDnet",
+            "sourceUrl": "https://example.test/tdnet",
+            "metrics": {
+                "operatingMargin": {"value": 12.26},
+                "equityRatio": {"value": 122.51},
+            },
+            "history": [],
+        }
+
+        quarantined = data_quality.quarantine_invalid_metrics(tdnet)
+
+        self.assertEqual(quarantined, 1)
+        self.assertIn("operatingMargin", tdnet["metrics"])
+        self.assertNotIn("equityRatio", tdnet["metrics"])
+        self.assertIsNone(
+            data_quality.validate_financial_record("7777", tdnet, {"7777"})
+        )
+
     def test_backfill_candidates_are_bounded_and_code_ordered(self) -> None:
         today = datetime.now(timezone.utc)
         old = (today - timedelta(days=60)).isoformat()
