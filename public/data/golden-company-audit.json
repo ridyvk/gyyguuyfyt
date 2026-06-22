@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-06-22T07:25:45.263002Z",
-  "financialSnapshotGeneratedAt": "2026-06-22T07:25:37.836255Z",
+  "generatedAt": "2026-06-22T08:26:54.775623Z",
+  "financialSnapshotGeneratedAt": "2026-06-22T08:26:48.673821Z",
   "baseline": {
     "maxMissingRecords": 4,
     "maxRoeQuarantined": 23,
@@ -11,15 +11,15 @@
   },
   "summary": {
     "companies": 48,
-    "healthy": 35,
-    "warning": 13,
+    "healthy": 36,
+    "warning": 12,
     "critical": 0,
     "missingRecords": 0,
     "roeQuarantined": 5,
-    "withoutProvenance": 13,
+    "withoutProvenance": 12,
     "oldEdinetModels": 9,
     "issueCounts": {
-      "missing-provenance": 13,
+      "missing-provenance": 12,
       "old-edinet-model": 9,
       "roe-quarantined": 5
     }
@@ -975,21 +975,16 @@
         "transport-cyclical",
         "loss-making"
       ],
-      "source": "TDnet",
+      "source": "EDINET",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 83,
       "metricCount": 10,
-      "provenanceMetricCount": 0,
-      "roe": -11.72,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "provenanceMetricCount": 10,
+      "roe": -10.9,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "4661",
