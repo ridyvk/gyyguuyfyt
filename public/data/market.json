@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-06-22T15:10:10.510759Z",
+  "generatedAt": "2026-06-22T22:55:34.746965Z",
   "source": "Yahoo Finance",
   "status": "ready",
   "message": "Yahoo Financeの公開株価データとEDINET・TDnetのEPS/BPSからPER・PBRを自動計算しています。株価はリアルタイム保証ではありません。",
@@ -2192,8 +2192,8 @@
       "stale": false
     },
     "1992": {
-      "date": "2026-06-19",
-      "timestamp": "2026-06-19T09:00:00+09:00",
+      "date": "2026-06-22",
+      "timestamp": "2026-06-22T09:00:00+09:00",
       "close": 2880.0,
       "volume": 0.0,
       "source": "Yahoo Finance",
@@ -2201,7 +2201,7 @@
       "isRealtime": false,
       "previousClose": 2880.0,
       "changePercent": 0.0,
-      "stale": true
+      "stale": false
     },
     "1994": {
       "date": "2026-06-22",
@@ -4268,16 +4268,16 @@
       "stale": false
     },
     "2480": {
-      "date": "2026-06-19",
-      "timestamp": "2026-06-19T14:20:16+09:00",
+      "date": "2026-06-22",
+      "timestamp": "2026-06-22T09:00:00+09:00",
       "close": 1687.0,
-      "volume": 1600.0,
+      "volume": 0.0,
       "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
+      "priceType": "daily-close",
       "isRealtime": false,
-      "previousClose": 1699.0,
-      "changePercent": -0.7063,
-      "stale": true
+      "previousClose": 1687.0,
+      "changePercent": 0.0,
+      "stale": false
     },
     "2481": {
       "date": "2026-06-22",
@@ -6392,8 +6392,8 @@
       "stale": false
     },
     "2961": {
-      "date": "2026-06-19",
-      "timestamp": "2026-06-19T09:00:00+09:00",
+      "date": "2026-06-22",
+      "timestamp": "2026-06-22T09:00:00+09:00",
       "close": 4920.0,
       "volume": 0.0,
       "source": "Yahoo Finance",
@@ -6401,7 +6401,7 @@
       "isRealtime": false,
       "previousClose": 4920.0,
       "changePercent": 0.0,
-      "stale": true
+      "stale": false
     },
     "2962": {
       "date": "2026-06-22",
@@ -22892,16 +22892,16 @@
       "stale": false
     },
     "5945": {
-      "date": "2026-06-19",
-      "timestamp": "2026-06-19T14:40:07+09:00",
+      "date": "2026-06-22",
+      "timestamp": "2026-06-22T09:00:00+09:00",
       "close": 2499.0,
-      "volume": 100.0,
+      "volume": 0.0,
       "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
+      "priceType": "daily-close",
       "isRealtime": false,
-      "previousClose": 2500.0,
-      "changePercent": -0.04,
-      "stale": true
+      "previousClose": 2499.0,
+      "changePercent": 0.0,
+      "stale": false
     },
     "5946": {
       "date": "2026-06-22",
@@ -23060,8 +23060,8 @@
       "stale": false
     },
     "5966": {
-      "date": "2026-06-19",
-      "timestamp": "2026-06-19T09:00:00+09:00",
+      "date": "2026-06-22",
+      "timestamp": "2026-06-22T09:00:00+09:00",
       "close": 2492.0,
       "volume": 0.0,
       "source": "Yahoo Finance",
@@ -23069,7 +23069,7 @@
       "isRealtime": false,
       "previousClose": 2492.0,
       "changePercent": 0.0,
-      "stale": true
+      "stale": false
     },
     "5967": {
       "date": "2026-06-22",
@@ -23276,16 +23276,16 @@
       "stale": false
     },
     "5990": {
-      "date": "2026-06-19",
-      "timestamp": "2026-06-19T09:27:19+09:00",
+      "date": "2026-06-22",
+      "timestamp": "2026-06-22T09:00:00+09:00",
       "close": 1978.0,
-      "volume": 300.0,
+      "volume": 0.0,
       "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
+      "priceType": "daily-close",
       "isRealtime": false,
-      "previousClose": 1982.0,
-      "changePercent": -0.2018,
-      "stale": true
+      "previousClose": 1978.0,
+      "changePercent": 0.0,
+      "stale": false
     },
     "5991": {
       "date": "2026-06-22",
@@ -29456,8 +29456,8 @@
       "stale": false
     },
     "6943": {
-      "date": "2026-06-19",
-      "timestamp": "2026-06-19T09:00:00+09:00",
+      "date": "2026-06-22",
+      "timestamp": "2026-06-22T09:00:00+09:00",
       "close": 4930.0,
       "volume": 0.0,
       "source": "Yahoo Finance",
@@ -29465,7 +29465,7 @@
       "isRealtime": false,
       "previousClose": 4930.0,
       "changePercent": 0.0,
-      "stale": true
+      "stale": false
     },
     "6946": {
       "date": "2026-06-22",
@@ -32156,16 +32156,16 @@
       "stale": false
     },
     "7362": {
-      "date": "2026-06-19",
-      "timestamp": "2026-06-19T15:20:39+09:00",
+      "date": "2026-06-22",
+      "timestamp": "2026-06-22T09:00:00+09:00",
       "close": 848.0,
-      "volume": 700.0,
+      "volume": 0.0,
       "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
+      "priceType": "daily-close",
       "isRealtime": false,
-      "previousClose": 844.0,
-      "changePercent": 0.4739,
-      "stale": true
+      "previousClose": 848.0,
+      "changePercent": 0.0,
+      "stale": false
     },
     "7363": {
       "date": "2026-06-22",
@@ -33080,16 +33080,16 @@
       "stale": false
     },
     "7515": {
-      "date": "2026-06-19",
-      "timestamp": "2026-06-19T10:09:34+09:00",
+      "date": "2026-06-22",
+      "timestamp": "2026-06-22T09:00:00+09:00",
       "close": 4480.0,
-      "volume": 100.0,
+      "volume": 0.0,
       "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
+      "priceType": "daily-close",
       "isRealtime": false,
-      "previousClose": 4515.0,
-      "changePercent": -0.7752,
-      "stale": true
+      "previousClose": 4480.0,
+      "changePercent": 0.0,
+      "stale": false
     },
     "7516": {
       "date": "2026-06-22",
@@ -35144,8 +35144,8 @@
       "stale": false
     },
     "7863": {
-      "date": "2026-06-19",
-      "timestamp": "2026-06-19T09:00:00+09:00",
+      "date": "2026-06-22",
+      "timestamp": "2026-06-22T09:00:00+09:00",
       "close": 969.0,
       "volume": 0.0,
       "source": "Yahoo Finance",
@@ -35153,7 +35153,7 @@
       "isRealtime": false,
       "previousClose": 969.0,
       "changePercent": 0.0,
-      "stale": true
+      "stale": false
     },
     "7864": {
       "date": "2026-06-22",
@@ -37124,16 +37124,16 @@
       "stale": false
     },
     "8139": {
-      "date": "2026-06-19",
-      "timestamp": "2026-06-19T15:30:00+09:00",
+      "date": "2026-06-22",
+      "timestamp": "2026-06-22T09:00:00+09:00",
       "close": 2059.0,
-      "volume": 2300.0,
+      "volume": 0.0,
       "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
+      "priceType": "daily-close",
       "isRealtime": false,
-      "previousClose": 2314.0,
-      "changePercent": -11.0199,
-      "stale": true
+      "previousClose": 2059.0,
+      "changePercent": 0.0,
+      "stale": false
     },
     "8141": {
       "date": "2026-06-22",
@@ -39824,16 +39824,16 @@
       "stale": false
     },
     "9012": {
-      "date": "2026-06-19",
-      "timestamp": "2026-06-19T13:43:14+09:00",
+      "date": "2026-06-22",
+      "timestamp": "2026-06-22T09:00:00+09:00",
       "close": 2113.0,
-      "volume": 300.0,
+      "volume": 0.0,
       "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
+      "priceType": "daily-close",
       "isRealtime": false,
       "previousClose": 2113.0,
       "changePercent": 0.0,
-      "stale": true
+      "stale": false
     },
     "9017": {
       "date": "2026-06-22",
@@ -40328,16 +40328,16 @@
       "stale": false
     },
     "9087": {
-      "date": "2026-06-19",
-      "timestamp": "2026-06-19T09:00:00+09:00",
+      "date": "2026-06-22",
+      "timestamp": "2026-06-22T09:00:00+09:00",
       "close": 1950.0,
-      "volume": 100.0,
+      "volume": 0.0,
       "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
+      "priceType": "daily-close",
       "isRealtime": false,
-      "previousClose": 1925.0,
-      "changePercent": 1.2987,
-      "stale": true
+      "previousClose": 1950.0,
+      "changePercent": 0.0,
+      "stale": false
     },
     "9090": {
       "date": "2026-06-22",
@@ -68334,17 +68334,17 @@
     "companies": 3728,
     "tradingDates": [
       "2026-06-22",
-      "2026-06-19",
       "2026-06-18",
       "2026-06-17",
-      "2026-06-15"
+      "2026-06-15",
+      "2026-06-12"
     ],
     "fundamentals": 3023,
     "quoteFailures": 0,
     "freshQuotesFetched": 3728,
     "fallbackQuotes": 0,
     "staleQuotesDropped": 0,
-    "marketDateStaleQuotes": 27,
+    "marketDateStaleQuotes": 14,
     "maxFallbackQuoteAgeDays": 10
   }
 }
