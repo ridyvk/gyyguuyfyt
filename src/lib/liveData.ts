@@ -447,6 +447,7 @@ const mergeRecord = (
         warnings,
         previousOperatingMargin,
         scoringAvailable,
+        Math.min(4, applicable.size),
       ),
       analysisLevel,
       scoringAvailable,
