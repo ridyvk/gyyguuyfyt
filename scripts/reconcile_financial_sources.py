@@ -438,3 +438,192 @@ def reconcile_same_period(
             "checkedAt": checked,
             "periodEnd": edinet_record.get("periodEnd"),
             "metrics": disputed,
+        }
+    else:
+        quarantine.pop("sourceReconciliation", None)
+        if not quarantine:
+            edinet_record.pop("quarantine", None)
+
+    quality = edinet_record.setdefault("quality", {})
+    quality["reconciliationModelVersion"] = RECONCILIATION_MODEL_VERSION
+    quality["reconciliationStatus"] = status
+    quality["reconciliationDocumentId"] = tdnet_record.get("documentId")
+    quality["reconciliationSourceUrl"] = tdnet_record.get("sourceUrl")
+    if "roe" in edinet_metrics and metric_results.get("roe", {}).get(
+        "selectedSource"
+    ) == "TDnet":
+        quality["roeSource"] = "TDnet通期決算短信XBRL"
+        quality["roeSourceUrl"] = tdnet_record.get("sourceUrl")
+        quality["roeDocumentId"] = tdnet_record.get("documentId")
+
+    return ReconciliationSummary(
+        compared=matched + quarantined,
+        matched=matched,
+        quarantined=quarantined,
+        edinet_only=edinet_only,
+        tdnet_only=tdnet_only,
+    )
+
+
+def repair_stored_definition_quarantines(record: dict) -> int:
+    """Restore v1 disputes that compared different definitions or only old periods."""
+    quarantine = record.get("quarantine") or {}
+    source_quarantine = quarantine.get("sourceReconciliation") or {}
+    disputes = source_quarantine.get("metrics") or {}
+    if not isinstance(disputes, dict) or not disputes:
+        return 0
+
+    reconciliation = record.setdefault("reconciliation", {})
+    metric_results = reconciliation.setdefault("metrics", {})
+    restored = 0
+    for metric_key, dispute in list(disputes.items()):
+        if not isinstance(dispute, dict):
+            continue
+        edinet_metric = dispute.get("edinet")
+        tdnet_metric = dispute.get("tdnet")
+        if not isinstance(edinet_metric, dict) or not isinstance(tdnet_metric, dict):
+            continue
+
+        selected_source = preferred_source(metric_key, edinet_metric, tdnet_metric)
+        selected_metric = edinet_metric if selected_source == "EDINET" else tdnet_metric
+        if not definitions_are_comparable(metric_key, edinet_metric, tdnet_metric):
+            record.setdefault("metrics", {})[metric_key] = deepcopy(selected_metric)
+            metric_results[metric_key] = {
+                "status": "definition-difference",
+                "selectedSource": selected_source,
+                "basis": {
+                    "EDINET": metric_basis(metric_key, edinet_metric),
+                    "TDnet": metric_basis(metric_key, tdnet_metric),
+                },
+            }
+        else:
+            result = compare_metric(metric_key, edinet_metric, tdnet_metric)
+            sources = reconciliation.get("sources") or {}
+            if is_later_edinet_growth_revision(
+                metric_key,
+                edinet_metric,
+                tdnet_metric,
+                (sources.get("EDINET") or {}).get("filedAt"),
+                (sources.get("TDnet") or {}).get("filedAt"),
+            ):
+                record.setdefault("metrics", {})[metric_key] = deepcopy(edinet_metric)
+                metric_results[metric_key] = {
+                    **result,
+                    "status": "edinet-later-filing",
+                    "selectedSource": "EDINET",
+                    "reason": "later-edinet-annual-filing-revised-current-fact",
+                }
+                disputes.pop(metric_key)
+                restored += 1
+                continue
+            value_result = result["fields"].get("value")
+            previous_result = result["fields"].get("previousValue")
+            if not (
+                value_result
+                and value_result["matched"]
+                and previous_result
+                and not previous_result["matched"]
+            ):
+                continue
+            record.setdefault("metrics", {})[metric_key] = deepcopy(selected_metric)
+            strip_previous_comparison(record, metric_key)
+            metric_results[metric_key] = {
+                **result,
+                "status": "matched-current-only",
+                "selectedSource": selected_source,
+                "excludedFields": ["previousValue", "trend"],
+            }
+
+        disputes.pop(metric_key)
+        restored += 1
+
+    remaining = sorted(disputes)
+    reconciliation["modelVersion"] = RECONCILIATION_MODEL_VERSION
+    reconciliation["status"] = "quarantined" if remaining else "matched"
+    reconciliation["quarantinedMetrics"] = remaining
+    quality = record.setdefault("quality", {})
+    quality["reconciliationModelVersion"] = RECONCILIATION_MODEL_VERSION
+    quality["reconciliationStatus"] = reconciliation["status"]
+    if not remaining:
+        quarantine.pop("sourceReconciliation", None)
+        if not quarantine:
+            record.pop("quarantine", None)
+    return restored
+
+
+def reconciliation_totals(records: dict[str, dict]) -> dict[str, int]:
+    companies = matched = quarantined = 0
+    for record in records.values():
+        reconciliation = record.get("reconciliation")
+        if not isinstance(reconciliation, dict):
+            continue
+        companies += 1
+        for result in (reconciliation.get("metrics") or {}).values():
+            status = result.get("status") if isinstance(result, dict) else None
+            if status in {
+                "matched",
+                "definition-difference",
+                "matched-current-only",
+                "edinet-later-filing",
+            }:
+                matched += 1
+            elif status == "quarantined":
+                quarantined += 1
+    return {
+        "sourceReconciliationCompanies": companies,
+        "sourceMatchedMetrics": matched,
+        "sourceQuarantinedMetrics": quarantined,
+    }
+
+
+def reconciliation_dispute_details(
+    records: dict[str, dict],
+    limit: int = 50,
+) -> list[dict]:
+    """Return bounded, non-document payloads for audit logs and status JSON."""
+    details: list[dict] = []
+
+    def audit_facts(metric: dict) -> list[dict]:
+        return [
+            {
+                "role": fact.get("role"),
+                "concept": fact.get("concept") or fact.get("tag"),
+                "rawValue": fact.get("rawValue"),
+                "periodEnd": fact.get("periodEnd"),
+                "contextRef": fact.get("contextRef"),
+                "consolidation": fact.get("consolidation"),
+            }
+            for fact in source_facts(metric)
+        ]
+
+    for code, record in records.items():
+        disputes = (
+            ((record.get("quarantine") or {}).get("sourceReconciliation") or {}).get(
+                "metrics"
+            )
+            or {}
+        )
+        for metric_key, dispute in disputes.items():
+            if not isinstance(dispute, dict):
+                continue
+            edinet_metric = dispute.get("edinet") or {}
+            tdnet_metric = dispute.get("tdnet") or {}
+            details.append(
+                {
+                    "code": str(code),
+                    "companyName": record.get("companyName"),
+                    "periodEnd": record.get("periodEnd"),
+                    "metric": metric_key,
+                    "reason": dispute.get("reason"),
+                    "edinetValue": edinet_metric.get("value"),
+                    "tdnetValue": tdnet_metric.get("value"),
+                    "edinetBasis": metric_basis(metric_key, edinet_metric),
+                    "tdnetBasis": metric_basis(metric_key, tdnet_metric),
+                    "edinetFacts": audit_facts(edinet_metric),
+                    "tdnetFacts": audit_facts(tdnet_metric),
+                    "comparison": dispute.get("comparison"),
+                }
+            )
+            if len(details) >= limit:
+                return details
+    return details
