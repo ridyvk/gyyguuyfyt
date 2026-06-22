@@ -21,6 +21,11 @@ import {
   buildStrengths,
   buildWarnings,
 } from './analysis'
+import {
+  buildIndustryInsights,
+  buildTieredAnalysisComment,
+  getAnalysisLevel,
+} from './detailInsights'
 import { getIndustryKpiPolicy } from './industryKpiPolicy'
 import { calculateScores, type RawMetrics } from './scoring'
 import {
@@ -416,6 +421,11 @@ const mergeRecord = (
         rawMetrics.operatingMargin
       : rawMetrics.operatingMargin
   const scoringHistory = scoringAvailable.has('operatingMargin') ? history : []
+  const analysisLevel = getAnalysisLevel(
+    scoringAvailable.size,
+    displayAvailable.size,
+    applicable.size,
+  )
   const warnings = buildWarnings(
     rawMetrics,
     previousOperatingMargin,
@@ -427,16 +437,22 @@ const mergeRecord = (
     ...company,
     metrics,
     history,
-    industryKpis: [],
+    industryKpis: buildIndustryInsights(metrics, applicable),
     scores: calculateLiveScores(rawMetrics, scoringAvailable),
     strengths: buildStrengths(rawMetrics, scoringAvailable),
     warnings,
-    analysisComment: buildAnalysisComment(
-      rawMetrics,
-      warnings,
-      previousOperatingMargin,
+    analysisComment: buildTieredAnalysisComment(
+      buildAnalysisComment(
+        rawMetrics,
+        warnings,
+        previousOperatingMargin,
+        scoringAvailable,
+      ),
+      analysisLevel,
       scoringAvailable,
+      displayAvailable,
     ),
+    analysisLevel,
     hasWarning: warnings.length > 0,
     dataSource: record.source === 'TDnet' ? 'TDnet' : 'EDINET',
     dataUpdatedAt: record.filedAt,
@@ -470,7 +486,8 @@ const createUnavailableCompany = (
     strengths: [],
     warnings: [],
     analysisComment:
-      'EDINET・TDnetからこの企業の比較可能な財務データを取得できていないため、分析コメントは生成していません。',
+      '比較可能な財務KPIを取得できていません。EDINET・TDnetの次回更新と会社の原資料を確認してください。',
+    analysisLevel: 'unavailable',
     hasWarning: false,
     dataSource: 'unavailable',
     dataUpdatedAt: undefined,
