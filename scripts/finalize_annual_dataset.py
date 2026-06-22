@@ -14,7 +14,10 @@ from data_quality import (
     quarantine_misaligned_metric_trends,
     validate_financial_record,
 )
-from reconcile_financial_sources import reconciliation_totals
+from reconcile_financial_sources import (
+    reconciliation_totals,
+    repair_stored_definition_quarantines,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT = ROOT / "public/data/financials.json"
@@ -93,6 +96,11 @@ def main() -> int:
     current_codes = load_company_codes()
     if not current_codes:
         raise RuntimeError("Company master is empty or invalid.")
+    source_quarantines_repaired = sum(
+        repair_stored_definition_quarantines(record)
+        for record in original_records.values()
+        if isinstance(record, dict)
+    )
     for record in original_records.values():
         quarantine_invalid_metrics(record)
         quarantine_misaligned_metric_trends(record)
@@ -186,6 +194,7 @@ def main() -> int:
             "metricRangeQuarantined": metric_range_quarantined,
             "metricRangeQuarantinedCompanies": metric_range_quarantined_companies,
             "historyTrendQuarantinedCompanies": history_trend_quarantined_companies,
+            "sourceDefinitionQuarantinesRepaired": source_quarantines_repaired,
             **source_reconciliation,
             "edinetEstimatedRemaining": estimated_remaining,
             "targetCompanies": target_companies,
