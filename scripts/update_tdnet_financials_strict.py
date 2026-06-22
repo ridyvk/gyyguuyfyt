@@ -73,6 +73,11 @@ STRICT_TDNET_FACT_NAMES = {
     "disclosedRoe": (
         "RateOfReturnOnEquitySummaryOfBusinessResults",
     ),
+    "disclosedEquityRatio": (
+        "EquityToAssetRatio",
+        "EquityToAssetRatioSummaryOfBusinessResults",
+        "RatioOfOwnersEquityToGrossAssetsIFRS",
+    ),
     "profit": (
         "ProfitLossAttributableToOwnersOfParent",
         "ProfitLossAttributableToOwnersOfParentIFRS",
@@ -94,9 +99,9 @@ STRICT_TDNET_FACT_NAMES = {
         "EquityAttributableToOwnersOfParentIFRS",
         "Equity",
         "EquityIFRS",
-        "ShareholdersEquity",
         "NetAssets",
         "NetAssetsSummaryOfBusinessResults",
+        "ShareholdersEquity",
     ),
     "assets": (
         "Assets",
@@ -243,6 +248,13 @@ def infer_period_end(contexts: dict) -> str:
     if not candidates:
         raise ValueError("full-year TDnet reporting period was not found")
     return max(candidates)
+
+
+def disclosed_percent(value: float | None) -> float | None:
+    """Normalize TDnet ratios, which occur as either fractions or percent values."""
+    if value is None:
+        return None
+    return value * 100 if abs(value) <= 1.5 else value
 
 
 def list_full_year_filings(days: int) -> tuple[dict[str, dict], dict[str, int]]:
@@ -395,8 +407,12 @@ def build_record(filing: dict, archive_data: bytes) -> dict:
     add_metric(
         metrics,
         "equityRatio",
-        percent(current["equity"], current["assets"]),
-        percent(prior["equity"], prior["assets"]),
+        disclosed_percent(current["disclosedEquityRatio"])
+        if current["disclosedEquityRatio"] is not None
+        else percent(current["equity"], current["assets"]),
+        disclosed_percent(prior["disclosedEquityRatio"])
+        if prior["disclosedEquityRatio"] is not None
+        else percent(prior["equity"], prior["assets"]),
     )
     add_metric(
         metrics,
@@ -445,8 +461,8 @@ def build_record(filing: dict, archive_data: bytes) -> dict:
             True,
         ),
         "equityRatio": (
-            "equity / assets * 100",
-            ("equity", "assets"),
+            "disclosedEquityRatio; fallback equity / assets * 100",
+            ("disclosedEquityRatio", "equity", "assets"),
             True,
         ),
         "operatingCfMargin": (
