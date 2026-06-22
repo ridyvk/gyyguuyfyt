@@ -510,6 +510,34 @@ class SourceReconciliationTests(unittest.TestCase):
             },
         )
 
+    def test_reconciliation_dispute_details_are_bounded_and_actionable(self) -> None:
+        records = {
+            "1000": {
+                "companyName": "Example",
+                "periodEnd": "2026-03-31",
+                "quarantine": {
+                    "sourceReconciliation": {
+                        "metrics": {
+                            "operatingMargin": {
+                                "reason": "edinet-tdnet-value-mismatch",
+                                "comparison": {"value": {"matched": False}},
+                                "edinet": {"value": 10.0},
+                                "tdnet": {"value": 20.0},
+                            }
+                        }
+                    }
+                },
+            }
+        }
+
+        details = reconcile_financial_sources.reconciliation_dispute_details(records)
+
+        self.assertEqual(len(details), 1)
+        self.assertEqual(details[0]["code"], "1000")
+        self.assertEqual(details[0]["metric"], "operatingMargin")
+        self.assertEqual(details[0]["edinetValue"], 10.0)
+        self.assertEqual(details[0]["tdnetValue"], 20.0)
+
 
 class TdnetRoeDisclosureTests(unittest.TestCase):
     def test_disclosed_roe_fact_is_parsed_as_a_duration_value(self) -> None:
