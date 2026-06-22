@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any
 
-RECONCILIATION_MODEL_VERSION = 1
+RECONCILIATION_MODEL_VERSION = 2
 
 TOLERANCE_POLICY: dict[str, tuple[float, float]] = {
     "revenueGrowth": (1.0, 0.05),
@@ -73,6 +73,85 @@ def compare_metric(metric_key: str, edinet_metric: dict, tdnet_metric: dict) -> 
         "status": "mismatch" if mismatch else "matched",
         "fields": fields,
     }
+
+
+def source_facts(metric: dict) -> list[dict]:
+    provenance = metric.get("provenance") or {}
+    facts = provenance.get("sourceFacts") or []
+    return [fact for fact in facts if isinstance(fact, dict)]
+
+
+def metric_basis(metric_key: str, metric: dict) -> str:
+    facts = source_facts(metric)
+    roles = {str(fact.get("role") or "") for fact in facts}
+    if metric_key == "roe":
+        return "disclosed" if "disclosedRoe.current" in roles else "calculated"
+    if metric_key == "equityRatio":
+        return (
+            "disclosed"
+            if "disclosedEquityRatio.current" in roles
+            else "calculated"
+        )
+    if metric_key == "netCash":
+        cash = next(
+            (
+                str(fact.get("concept") or fact.get("tag") or "")
+                for fact in facts
+                if fact.get("role") == "cash.current"
+            ),
+            "unknown",
+        )
+        return f"cash:{cash.rsplit(':', 1)[-1]}"
+    return "same-definition"
+
+
+def preferred_source(
+    metric_key: str,
+    edinet_metric: dict,
+    tdnet_metric: dict,
+) -> str:
+    edinet_basis = metric_basis(metric_key, edinet_metric)
+    tdnet_basis = metric_basis(metric_key, tdnet_metric)
+    if metric_key in {"roe", "equityRatio"}:
+        if tdnet_basis == "disclosed" and edinet_basis != "disclosed":
+            return "TDnet"
+        if edinet_basis == "disclosed":
+            return "EDINET"
+    return "EDINET"
+
+
+def definitions_are_comparable(
+    metric_key: str,
+    edinet_metric: dict,
+    tdnet_metric: dict,
+) -> bool:
+    if metric_key not in {"roe", "equityRatio", "netCash"}:
+        return True
+    return metric_basis(metric_key, edinet_metric) == metric_basis(
+        metric_key, tdnet_metric
+    )
+
+
+def select_metric(
+    record: dict,
+    tdnet_record: dict,
+    metric_key: str,
+    edinet_metric: dict,
+    tdnet_metric: dict,
+    selected_source: str,
+) -> None:
+    selected = edinet_metric if selected_source == "EDINET" else tdnet_metric
+    record.setdefault("metrics", {})[metric_key] = deepcopy(selected)
+    if selected_source == "TDnet":
+        copy_tdnet_history_metric(record, tdnet_record, metric_key)
+
+
+def strip_previous_comparison(record: dict, metric_key: str) -> None:
+    metric = (record.get("metrics") or {}).get(metric_key)
+    if isinstance(metric, dict):
+        metric.pop("previousValue", None)
+        metric.pop("trend", None)
+    remove_history_metric(record, metric_key)
 
 
 def source_descriptor(record: dict) -> dict:
@@ -141,8 +220,53 @@ def reconcile_same_period(
             edinet_only += 1
             continue
 
+        selected_source = preferred_source(metric_key, edinet_metric, tdnet_metric)
+        edinet_basis = metric_basis(metric_key, edinet_metric)
+        tdnet_basis = metric_basis(metric_key, tdnet_metric)
+        if not definitions_are_comparable(metric_key, edinet_metric, tdnet_metric):
+            select_metric(
+                edinet_record,
+                tdnet_record,
+                metric_key,
+                edinet_metric,
+                tdnet_metric,
+                selected_source,
+            )
+            metric_results[metric_key] = {
+                "status": "definition-difference",
+                "selectedSource": selected_source,
+                "basis": {"EDINET": edinet_basis, "TDnet": tdnet_basis},
+            }
+            matched += 1
+            continue
+
         result = compare_metric(metric_key, edinet_metric, tdnet_metric)
         if result["status"] == "mismatch":
+            value_result = result["fields"].get("value")
+            previous_result = result["fields"].get("previousValue")
+            if (
+                value_result
+                and value_result["matched"]
+                and previous_result
+                and not previous_result["matched"]
+            ):
+                select_metric(
+                    edinet_record,
+                    tdnet_record,
+                    metric_key,
+                    edinet_metric,
+                    tdnet_metric,
+                    selected_source,
+                )
+                strip_previous_comparison(edinet_record, metric_key)
+                metric_results[metric_key] = {
+                    **result,
+                    "status": "matched-current-only",
+                    "selectedSource": selected_source,
+                    "excludedFields": ["previousValue", "trend"],
+                }
+                matched += 1
+                continue
             absolute, relative = TOLERANCE_POLICY.get(
                 metric_key,
                 DEFAULT_TOLERANCE,
@@ -167,10 +291,14 @@ def reconcile_same_period(
             quarantined += 1
             continue
 
-        selected_source = "TDnet" if metric_key == "roe" else "EDINET"
-        if selected_source == "TDnet":
-            edinet_metrics[metric_key] = deepcopy(tdnet_metric)
-            copy_tdnet_history_metric(edinet_record, tdnet_record, metric_key)
+        select_metric(
+            edinet_record,
+            tdnet_record,
+            metric_key,
+            edinet_metric,
+            tdnet_metric,
+            selected_source,
+        )
         metric_results[metric_key] = {
             **result,
             "selectedSource": selected_source,
@@ -225,6 +353,74 @@ def reconcile_same_period(
     )
 
 
+def repair_stored_definition_quarantines(record: dict) -> int:
+    """Restore v1 disputes that compared different definitions or only old periods."""
+    quarantine = record.get("quarantine") or {}
+    source_quarantine = quarantine.get("sourceReconciliation") or {}
+    disputes = source_quarantine.get("metrics") or {}
+    if not isinstance(disputes, dict) or not disputes:
+        return 0
+
+    reconciliation = record.setdefault("reconciliation", {})
+    metric_results = reconciliation.setdefault("metrics", {})
+    restored = 0
+    for metric_key, dispute in list(disputes.items()):
+        if not isinstance(dispute, dict):
+            continue
+        edinet_metric = dispute.get("edinet")
+        tdnet_metric = dispute.get("tdnet")
+        if not isinstance(edinet_metric, dict) or not isinstance(tdnet_metric, dict):
+            continue
+
+        selected_source = preferred_source(metric_key, edinet_metric, tdnet_metric)
+        selected_metric = edinet_metric if selected_source == "EDINET" else tdnet_metric
+        if not definitions_are_comparable(metric_key, edinet_metric, tdnet_metric):
+            record.setdefault("metrics", {})[metric_key] = deepcopy(selected_metric)
+            metric_results[metric_key] = {
+                "status": "definition-difference",
+                "selectedSource": selected_source,
+                "basis": {
+                    "EDINET": metric_basis(metric_key, edinet_metric),
+                    "TDnet": metric_basis(metric_key, tdnet_metric),
+                },
+            }
+        else:
+            result = compare_metric(metric_key, edinet_metric, tdnet_metric)
+            value_result = result["fields"].get("value")
+            previous_result = result["fields"].get("previousValue")
+            if not (
+                value_result
+                and value_result["matched"]
+                and previous_result
+                and not previous_result["matched"]
+            ):
+                continue
+            record.setdefault("metrics", {})[metric_key] = deepcopy(selected_metric)
+            strip_previous_comparison(record, metric_key)
+            metric_results[metric_key] = {
+                **result,
+                "status": "matched-current-only",
+                "selectedSource": selected_source,
+                "excludedFields": ["previousValue", "trend"],
+            }
+
+        disputes.pop(metric_key)
+        restored += 1
+
+    remaining = sorted(disputes)
+    reconciliation["modelVersion"] = RECONCILIATION_MODEL_VERSION
+    reconciliation["status"] = "quarantined" if remaining else "matched"
+    reconciliation["quarantinedMetrics"] = remaining
+    quality = record.setdefault("quality", {})
+    quality["reconciliationModelVersion"] = RECONCILIATION_MODEL_VERSION
+    quality["reconciliationStatus"] = reconciliation["status"]
+    if not remaining:
+        quarantine.pop("sourceReconciliation", None)
+        if not quarantine:
+            record.pop("quarantine", None)
+    return restored
+
+
 def reconciliation_totals(records: dict[str, dict]) -> dict[str, int]:
     companies = matched = quarantined = 0
     for record in records.values():
@@ -234,7 +430,7 @@ def reconciliation_totals(records: dict[str, dict]) -> dict[str, int]:
         companies += 1
         for result in (reconciliation.get("metrics") or {}).values():
             status = result.get("status") if isinstance(result, dict) else None
-            if status == "matched":
+            if status in {"matched", "definition-difference", "matched-current-only"}:
                 matched += 1
             elif status == "quarantined":
                 quarantined += 1
