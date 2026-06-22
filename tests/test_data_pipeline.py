@@ -832,7 +832,7 @@ class TdnetRoeDisclosureTests(unittest.TestCase):
             filings,
             records,
             lookback_days=31,
-            backfill_limit=0,
+            backfill_limit=1,
             max_documents=10,
         )
 
