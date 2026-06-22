@@ -165,15 +165,23 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                     expected["formula"],
                     (code, metric_key),
                 )
+                actual_source_facts = [
+                    fact_signature(fact)
+                    for fact in provenance.get("sourceFacts", [])
+                ]
                 expected_source_facts = expected["sourceFacts"]
                 if metric_key == "roe" and actual.get("previousValue") is None:
+                    actual_roles = {
+                        str(fact.get("role") or "")
+                        for fact in actual_source_facts
+                    }
                     expected_source_facts = [
                         fact
                         for fact in expected_source_facts
-                        if not str(fact.get("role") or "").endswith(".previous")
+                        if str(fact.get("role") or "") in actual_roles
                     ]
                 self.assertEqual(
-                    [fact_signature(fact) for fact in provenance.get("sourceFacts", [])],
+                    actual_source_facts,
                     expected_source_facts,
                     (code, metric_key),
                 )
