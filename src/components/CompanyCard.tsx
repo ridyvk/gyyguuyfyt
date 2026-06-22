@@ -7,7 +7,7 @@ import {
 } from 'react'
 import { Link } from 'react-router-dom'
 import { formatMetric } from '../lib/formatters'
-import { hasFinancialData } from '../lib/liveData'
+import { hasFinancialData, hasScorableData } from '../lib/liveData'
 import type { Company, ScoreKey } from '../types'
 import MiniTrendChart from './MiniTrendChart'
 import RadarScoreChart from './RadarScoreChart'
@@ -45,6 +45,7 @@ export default function CompanyCard({
 }: CompanyCardProps) {
   const expanded = variant === 'expanded'
   const financialAvailable = hasFinancialData(company)
+  const scorable = hasScorableData(company)
   const sourceLabel =
     company.dataSource === 'TDnet' ? 'TDnet決算短信' : 'EDINET実データ'
   const cardRef = useRef<HTMLElement>(null)
@@ -113,7 +114,7 @@ export default function CompanyCard({
         <ScoreBadge
           score={company.scores.overall}
           compact={!expanded}
-          available={financialAvailable}
+          available={scorable}
         />
       </div>
 
@@ -132,7 +133,7 @@ export default function CompanyCard({
             label={scoreLabels[key]}
             score={company.scores[key]}
             compact
-            available={financialAvailable}
+            available={scorable}
           />
         ))}
       </div>
@@ -172,7 +173,11 @@ export default function CompanyCard({
         <>
           <div className="company-card__visuals">
             <div className="company-card__radar">
-              <RadarScoreChart scores={company.scores} height={220} />
+              {scorable ? (
+                <RadarScoreChart scores={company.scores} height={220} />
+              ) : (
+                <div className="chart-empty">信頼度A/B不足のためスコア未判定</div>
+              )}
             </div>
             <div className="company-card__trend">
               <span className="section-kicker">営業利益率トレンド</span>
@@ -189,14 +194,27 @@ export default function CompanyCard({
             <div>
               <span className="section-kicker">強み</span>
               <ul className="strength-list">
-                {company.strengths.slice(0, 3).map((strength) => (
-                  <li key={strength}>{strength}</li>
-                ))}
+                {company.strengths.length ? (
+                  company.strengths.slice(0, 3).map((strength) => (
+                    <li key={strength}>{strength}</li>
+                  ))
+                ) : (
+                  <li>
+                    {scorable
+                      ? '明確な強みは未検出'
+                      : '信頼度A/B不足のため判定保留'}
+                  </li>
+                )}
               </ul>
             </div>
             <div>
               <span className="section-kicker">注意点</span>
-              <WarningList warnings={company.warnings.slice(0, 2)} compact />
+              <WarningList
+                warnings={company.warnings.slice(0, 2)}
+                compact
+                indeterminate={company.analysisLevel === 'reference'}
+                limited={company.analysisLevel === 'limited'}
+              />
             </div>
           </div>
         </>
@@ -212,10 +230,14 @@ export default function CompanyCard({
         <div className="company-card__warning">
           {!financialAvailable ? (
             <span className="flag flag--unknown">判定不能</span>
+          ) : !scorable ? (
+            <span className="flag flag--unknown">参考値のみ</span>
           ) : company.hasWarning ? (
             <span className="flag flag--warning">
               注意 {company.warnings.length}件
             </span>
+          ) : company.analysisLevel === 'limited' ? (
+            <span className="flag flag--unknown">一部判定</span>
           ) : (
             <span className="flag flag--clear">注意なし</span>
           )}
