@@ -1,5 +1,5 @@
 import type { Company, CompanyFilter } from '../types'
-import { hasFinancialData } from './liveData'
+import { hasScorableData } from './liveData'
 
 const compareMetric = (
   a: Company,
@@ -9,8 +9,14 @@ const compareMetric = (
 ) => {
   const aMetric = a.metrics[key]
   const bMetric = b.metrics[key]
-  if (aMetric.available === false) return bMetric.available === false ? 0 : 1
-  if (bMetric.available === false) return -1
+  const aTrusted =
+    aMetric.available !== false &&
+    (aMetric.confidence === 'A' || aMetric.confidence === 'B')
+  const bTrusted =
+    bMetric.available !== false &&
+    (bMetric.confidence === 'A' || bMetric.confidence === 'B')
+  if (!aTrusted) return !bTrusted ? 0 : 1
+  if (!bTrusted) return -1
   return direction === 'asc'
     ? aMetric.value - bMetric.value
     : bMetric.value - aMetric.value
@@ -57,10 +63,10 @@ export const filterCompanies = (
         case 'operatingMargin-desc':
           return compareMetric(a, b, 'operatingMargin', 'desc')
         default:
-          if (!hasFinancialData(a)) {
-            return hasFinancialData(b) ? 1 : 0
+          if (!hasScorableData(a)) {
+            return hasScorableData(b) ? 1 : 0
           }
-          if (!hasFinancialData(b)) return -1
+          if (!hasScorableData(b)) return -1
           return b.scores.overall - a.scores.overall
       }
     })

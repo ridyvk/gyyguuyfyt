@@ -26,8 +26,8 @@ import StockQuoteCard from '../components/StockQuoteCard'
 import WarningList from '../components/WarningList'
 import { useApp } from '../context/AppContext'
 import { loadNote, saveNote } from '../lib/storage'
-import { hasFinancialData } from '../lib/liveData'
-import type { CompanyNote, KpiKey, ScoreKey } from '../types'
+import { hasFinancialData, hasScorableData } from '../lib/liveData'
+import type { AnalysisLevel, CompanyNote, KpiKey, ScoreKey } from '../types'
 
 const kpiLabels: Record<KpiKey, string> = {
   revenueGrowth: '売上成長率',
@@ -43,6 +43,16 @@ const kpiLabels: Record<KpiKey, string> = {
   per: 'PER',
   pbr: 'PBR',
 }
+
+const analysisLevelLabels: Record<AnalysisLevel, string> = {
+  full: '通常分析',
+  limited: '限定分析',
+  reference: '参考分析',
+  unavailable: 'データ未取得',
+}
+
+const insightConfidenceLabel = (confidence?: string) =>
+  confidence === 'review' ? '要確認' : confidence ? `信頼度 ${confidence}` : null
 
 const kpiKeys = Object.keys(kpiLabels) as KpiKey[]
 const scoreKeys: ScoreKey[] = [
@@ -116,6 +126,10 @@ export default function CompanyDetail() {
   const watched = isWatched(company.id)
   const compared = isCompared(company.id)
   const financialAvailable = hasFinancialData(company)
+  const scorable = hasScorableData(company)
+  const analysisLevel = company.analysisLevel ?? (
+    financialAvailable ? 'limited' : 'unavailable'
+  )
   const sourceLabel =
     company.dataSource === 'TDnet' ? 'TDnet決算短信' : 'EDINET実データ'
   const handleSave = async () => {
@@ -166,11 +180,11 @@ export default function CompanyDetail() {
           <span>総合スコア</span>
           <ScoreBadge
             score={company.scores.overall}
-            available={financialAvailable}
+            available={scorable}
           />
           <small>
             {financialAvailable
-              ? `実データ ${company.liveMetricCount ?? 0}/12 KPI`
+              ? `表示 ${company.liveMetricCount ?? 0}/12 KPI / 信頼度A・B ${company.trustedMetricCount ?? 0}`
               : '企業情報のみ収録 / 財務数値は表示しません'}
           </small>
         </div>
@@ -205,11 +219,13 @@ export default function CompanyDetail() {
       <section className="detail-overview-grid">
         <article className="panel">
           <div className="panel__heading"><div><span className="section-kicker">SCORE SHAPE</span><h2>5分類スコア</h2></div></div>
-          {financialAvailable ? (
+          {scorable ? (
             <RadarScoreChart scores={company.scores} height={300} />
           ) : (
             <div className="chart-empty">
-              財務データ未取得のためスコア形状を表示できません
+              {financialAvailable
+                ? '信頼度A/BのKPI不足のためスコア形状は未判定です'
+                : '財務データ未取得のためスコア形状を表示できません'}
             </div>
           )}
         </article>
@@ -221,7 +237,7 @@ export default function CompanyDetail() {
                 key={key}
                 label={scoreLabels[key]}
                 score={company.scores[key]}
-                available={financialAvailable}
+                available={scorable}
               />
             ))}
           </div>
@@ -267,15 +283,32 @@ export default function CompanyDetail() {
           <div className="panel__heading"><div><span className="section-kicker">INDUSTRY KPIs</span><h2>{company.industry}の着眼点</h2></div></div>
           <div className="industry-kpi-list">
             {company.industryKpis.length ? (
-              company.industryKpis.map((kpi) => (
-                <div key={kpi.name}>
-                  <span><i className={`signal-dot signal-dot--${kpi.signal}`} />{kpi.name}</span>
-                  <strong>{kpi.value}</strong>
-                </div>
-              ))
+              company.industryKpis.map((kpi) => {
+                const confidenceLabel = insightConfidenceLabel(kpi.confidence)
+                return (
+                  <div
+                    key={kpi.name}
+                    className={kpi.reference ? 'is-reference' : undefined}
+                    title={kpi.note}
+                  >
+                    <span>
+                      <i className={`signal-dot signal-dot--${kpi.signal}`} />
+                      {kpi.name}
+                      {confidenceLabel && (
+                        <small className={`industry-kpi-confidence industry-kpi-confidence--${kpi.confidence}`}>
+                          {confidenceLabel}
+                        </small>
+                      )}
+                    </span>
+                    <strong>{kpi.value}</strong>
+                  </div>
+                )
+              })
             ) : (
               <div className="empty-signal empty-signal--unknown">
-                業種別KPIは現在データソース未連携です
+                {financialAvailable
+                  ? '表示できる業種別KPIがありません'
+                  : '財務データ未取得のため着眼点を生成できません'}
               </div>
             )}
           </div>
@@ -289,7 +322,13 @@ export default function CompanyDetail() {
             {company.strengths.length ? (
               company.strengths.map((strength) => <li key={strength}><Check size={16} />{strength}</li>)
             ) : (
-              <li>財務データ未取得のため判定できません</li>
+              <li className="strength-list__unknown">
+                {analysisLevel === 'unavailable'
+                  ? '財務データ未取得のため判定できません'
+                  : analysisLevel === 'reference'
+                    ? '参考KPIはありますが、信頼度A/B不足のため強みは判定保留です'
+                    : '取得済みの信頼度A/B指標では、明確な強みを検出していません'}
+              </li>
             )}
           </ul>
         </article>
@@ -297,12 +336,23 @@ export default function CompanyDetail() {
           <div className="panel__heading"><div><span className="section-kicker">WATCH SIGNALS</span><h2>注意点</h2></div></div>
           <WarningList
             warnings={company.warnings}
-            unavailable={!financialAvailable}
+            unavailable={analysisLevel === 'unavailable'}
+            indeterminate={analysisLevel === 'reference'}
+            limited={analysisLevel === 'limited'}
           />
         </article>
         <article className="panel analysis-comment">
           <span className="analysis-comment__icon"><Lightbulb /></span>
-          <div><span className="section-kicker">AUTO ANALYSIS</span><h2>自動分析コメント</h2><p>{company.analysisComment}</p></div>
+          <div>
+            <span className="section-kicker">AUTO ANALYSIS</span>
+            <div className="analysis-comment__heading">
+              <h2>自動分析コメント</h2>
+              <small className={`analysis-level analysis-level--${analysisLevel}`}>
+                {analysisLevelLabels[analysisLevel]}
+              </small>
+            </div>
+            <p>{company.analysisComment}</p>
+          </div>
         </article>
       </section>
 

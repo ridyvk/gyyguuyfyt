@@ -23,7 +23,7 @@ import StockQuoteCard from '../components/StockQuoteCard'
 import WarningList from '../components/WarningList'
 import { useApp } from '../context/AppContext'
 import { formatMetric } from '../lib/formatters'
-import { hasFinancialData } from '../lib/liveData'
+import { hasFinancialData, hasScorableData } from '../lib/liveData'
 import type { Company, KpiKey, ScoreKey } from '../types'
 
 const colors = ['#007AFF', '#5856D6', '#FF9F0A', '#AF52DE', '#FF375F']
@@ -52,10 +52,14 @@ const isBest = (
   key: KpiKey,
   higher: boolean,
 ) => {
-  if (company.metrics[key].available === false) return false
+  const companyMetric = company.metrics[key]
+  const isTrusted = (metric: Company['metrics'][KpiKey]) =>
+    metric.available !== false &&
+    (metric.confidence === 'A' || metric.confidence === 'B')
+  if (!isTrusted(companyMetric)) return false
   const values = companies
     .map((item) => item.metrics[key])
-    .filter((metric) => metric.available !== false)
+    .filter(isTrusted)
     .map((metric) => metric.value)
   if (!values.length) return false
   const best = higher ? Math.max(...values) : Math.min(...values)
@@ -84,7 +88,7 @@ export default function Compare() {
       !compareList.includes(company.id),
   )
   const chartCompanies = comparedCompanies.filter(
-    hasFinancialData,
+    hasScorableData,
   )
   const barData = scoreMetrics.map((metric) => ({
     metric: metric.label,
@@ -202,7 +206,7 @@ export default function Compare() {
                     <ScoreBadge
                       score={company.scores.overall}
                       compact
-                      available={hasFinancialData(company)}
+                      available={hasScorableData(company)}
                     />
                   </div>
                   <StockQuoteCard
@@ -213,12 +217,12 @@ export default function Compare() {
                     {scoreMetrics.slice(1).map((metric) => {
                       const score = company.scores[metric.key]
                       const comparable = comparedCompanies.filter(
-                        hasFinancialData,
+                        hasScorableData,
                       )
                       const best =
-                        hasFinancialData(company) &&
+                        hasScorableData(company) &&
                         score === Math.max(...comparable.map((item) => item.scores[metric.key]))
-                      return <div key={metric.key}><span>{metric.label}</span><strong>{hasFinancialData(company) ? Math.round(score) : '—'}</strong>{best && <b>Best</b>}</div>
+                      return <div key={metric.key}><span>{metric.label}</span><strong>{hasScorableData(company) ? Math.round(score) : '—'}</strong>{best && <b>Best</b>}</div>
                     })}
                   </div>
                   <div className="comparison-card__kpis">
@@ -232,14 +236,18 @@ export default function Compare() {
                   </div>
                   <div className="comparison-card__warnings">
                     <span>
-                      {hasFinancialData(company)
-                        ? `注意フラグ ${company.warnings.length}件`
-                        : '注意フラグ 判定不能'}
+                      {!hasFinancialData(company)
+                        ? '注意フラグ 判定不能'
+                        : company.analysisLevel === 'reference'
+                          ? '注意フラグ 判定保留'
+                          : `注意フラグ ${company.warnings.length}件`}
                     </span>
                     <WarningList
                       warnings={company.warnings.slice(0, 2)}
                       compact
                       unavailable={!hasFinancialData(company)}
+                      indeterminate={company.analysisLevel === 'reference'}
+                      limited={company.analysisLevel === 'limited'}
                     />
                   </div>
                 </article>

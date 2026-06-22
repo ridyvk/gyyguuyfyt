@@ -2543,3 +2543,102 @@ h3,
     height: 330px;
   }
 }
+
+
+/* Confidence-aware detail insights */
+.industry-kpi-list > div.is-reference {
+  border-color: rgba(255, 159, 10, 0.18);
+  background: rgba(255, 159, 10, 0.045);
+}
+
+.industry-kpi-confidence {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 2px 5px;
+  border-radius: 5px;
+  font-size: 7px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.industry-kpi-confidence--A {
+  color: #158044;
+  background: rgba(52, 199, 89, 0.1);
+}
+
+.industry-kpi-confidence--B {
+  color: #0066cc;
+  background: rgba(0, 122, 255, 0.09);
+}
+
+.industry-kpi-confidence--C {
+  color: #a96400;
+  background: rgba(255, 159, 10, 0.11);
+}
+
+.industry-kpi-confidence--review {
+  color: #d72f27;
+  background: rgba(255, 59, 48, 0.09);
+}
+
+.analysis-comment__heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.analysis-comment__heading h2 {
+  margin: 0;
+}
+
+.analysis-level {
+  display: inline-flex;
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 8px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.analysis-level--full {
+  color: #158044;
+  background: rgba(52, 199, 89, 0.1);
+}
+
+.analysis-level--limited {
+  color: #0066cc;
+  background: rgba(0, 122, 255, 0.09);
+}
+
+.analysis-level--reference {
+  color: #a96400;
+  background: rgba(255, 159, 10, 0.11);
+}
+
+.analysis-level--unavailable {
+  color: var(--muted-light);
+  background: rgba(142, 142, 147, 0.1);
+}
+
+.strength-list--large li.strength-list__unknown {
+  border-color: var(--border);
+  color: var(--muted-light);
+  background: var(--surface-2);
+}
+
+@media (max-width: 560px) {
+  .industry-kpi-list > div {
+    align-items: flex-start;
+  }
+
+  .industry-kpi-list > div > span {
+    flex-wrap: wrap;
+  }
+
+  .analysis-comment__heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

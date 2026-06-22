@@ -21,6 +21,11 @@ import {
   buildStrengths,
   buildWarnings,
 } from './analysis'
+import {
+  buildIndustryInsights,
+  buildTieredAnalysisComment,
+  getAnalysisLevel,
+} from './detailInsights'
 import { getIndustryKpiPolicy } from './industryKpiPolicy'
 import { calculateScores, type RawMetrics } from './scoring'
 import {
@@ -416,6 +421,11 @@ const mergeRecord = (
         rawMetrics.operatingMargin
       : rawMetrics.operatingMargin
   const scoringHistory = scoringAvailable.has('operatingMargin') ? history : []
+  const analysisLevel = getAnalysisLevel(
+    scoringAvailable.size,
+    displayAvailable.size,
+    applicable.size,
+  )
   const warnings = buildWarnings(
     rawMetrics,
     previousOperatingMargin,
@@ -427,22 +437,30 @@ const mergeRecord = (
     ...company,
     metrics,
     history,
-    industryKpis: [],
+    industryKpis: buildIndustryInsights(metrics, applicable),
     scores: calculateLiveScores(rawMetrics, scoringAvailable),
     strengths: buildStrengths(rawMetrics, scoringAvailable),
     warnings,
-    analysisComment: buildAnalysisComment(
-      rawMetrics,
-      warnings,
-      previousOperatingMargin,
+    analysisComment: buildTieredAnalysisComment(
+      buildAnalysisComment(
+        rawMetrics,
+        warnings,
+        previousOperatingMargin,
+        scoringAvailable,
+        Math.min(4, applicable.size),
+      ),
+      analysisLevel,
       scoringAvailable,
+      displayAvailable,
     ),
+    analysisLevel,
     hasWarning: warnings.length > 0,
     dataSource: record.source === 'TDnet' ? 'TDnet' : 'EDINET',
     dataUpdatedAt: record.filedAt,
     financialPeriod: record.periodEnd,
     financialSourceUrl: record.sourceUrl,
     liveMetricCount: displayAvailable.size,
+    trustedMetricCount: scoringAvailable.size,
     stockPrice: quote,
   }
 }
@@ -470,19 +488,24 @@ const createUnavailableCompany = (
     strengths: [],
     warnings: [],
     analysisComment:
-      'EDINET・TDnetからこの企業の比較可能な財務データを取得できていないため、分析コメントは生成していません。',
+      '比較可能な財務KPIを取得できていません。EDINET・TDnetの次回更新と会社の原資料を確認してください。',
+    analysisLevel: 'unavailable',
     hasWarning: false,
     dataSource: 'unavailable',
     dataUpdatedAt: undefined,
     financialPeriod: undefined,
     financialSourceUrl: undefined,
     liveMetricCount: 0,
+    trustedMetricCount: 0,
     stockPrice: quote,
   }
 }
 
 export const hasFinancialData = (company: Company) =>
   company.dataSource === 'EDINET' || company.dataSource === 'TDnet'
+
+export const hasScorableData = (company: Company) =>
+  company.analysisLevel === 'full' || company.analysisLevel === 'limited'
 
 const fetchFinancialJson = async <T>(url: string): Promise<T> => {
   const response = await fetch(url, { cache: 'no-store' })

@@ -22,6 +22,7 @@ export interface Scores extends Record<ScoreKey, number> {
 
 export type KpiStatus = 'good' | 'normal' | 'warning' | 'unknown'
 export type KpiConfidence = 'A' | 'B' | 'C' | 'review'
+export type AnalysisLevel = 'full' | 'limited' | 'reference' | 'unavailable'
 export type KpiComparisonLabel = '前年差' | '前日差'
 
 export type KpiKey =
@@ -69,6 +70,9 @@ export interface IndustryKpi {
   name: string
   value: string
   signal: 'positive' | 'neutral' | 'negative'
+  confidence?: KpiConfidence
+  reference?: boolean
+  note?: string
 }
 
 export interface Company {
@@ -85,12 +89,14 @@ export interface Company {
   strengths: string[]
   warnings: string[]
   analysisComment: string
+  analysisLevel?: AnalysisLevel
   hasWarning: boolean
   dataSource?: 'EDINET' | 'TDnet' | 'unavailable'
   dataUpdatedAt?: string
   financialPeriod?: string
   financialSourceUrl?: string
   liveMetricCount?: number
+  trustedMetricCount?: number
   stockPrice?: MarketQuote
 }
 
