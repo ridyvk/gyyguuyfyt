@@ -15,6 +15,7 @@ import update_tdnet_financials_strict as strict
 from update_tdnet_financials import COMPANY_MASTER, SNAPSHOT, get
 from data_quality import (
     is_unusable_record_validation,
+    quarantine_invalid_metrics,
     record_order_key,
     validate_financial_record,
 )
@@ -280,6 +281,7 @@ def main() -> int:
     quarantined_metrics = 0
     correction_records_merged = 0
     no_metric_documents = 0
+    metric_quarantines = 0
     failures: list[str] = []
     eligible_filings = {
         code: filing
@@ -303,6 +305,7 @@ def main() -> int:
             record, correction_merged = build_complete_record(filing)
             if correction_merged:
                 correction_records_merged += 1
+            metric_quarantines += quarantine_invalid_metrics(record)
             validation_error = validate_financial_record(
                 record["code"], record, current_codes
             )
@@ -395,6 +398,8 @@ def main() -> int:
                 ),
                 "tdnetDocumentsAttempted": len(candidates),
                 "tdnetStrictFailures": len(failures),
+                "tdnetStrictFailureDetails": failures[:30],
+                "tdnetMetricsQuarantined": metric_quarantines,
                 "tdnetNoMetricDocuments": no_metric_documents,
                 "nonAnnualExistingRecordsDropped": dropped_existing,
             },
