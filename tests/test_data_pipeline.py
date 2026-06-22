@@ -1149,9 +1149,13 @@ class DeliveryTests(unittest.TestCase):
         self.assertNotIn("actions/deploy-pages", market)
         self.assertIn("push:", deploy)
         self.assertIn("workflow_dispatch:", deploy)
-        self.assertNotIn("workflow_run:", deploy)
-        self.assertNotIn("Update annual financials", deploy)
-        self.assertNotIn("Update market prices", deploy)
+        self.assertIn("workflow_run:", deploy)
+        self.assertIn("Update annual financials", deploy)
+        self.assertIn("Update market prices", deploy)
+        self.assertIn(
+            "github.event.workflow_run.conclusion == 'success'",
+            deploy,
+        )
         self.assertIn("Update JPX company master", financial)
         self.assertIn("Update JPX company master", market)
         self.assertIn("ref: main", company_master)
