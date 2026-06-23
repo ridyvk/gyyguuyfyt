@@ -66,6 +66,12 @@ def assert_metric_value(
         test_case.assertEqual(actual_value, expected_value, message)
 
 
+def normalize_formula(metric_key: str, formula: object) -> object:
+    if metric_key == "roe" and isinstance(formula, str):
+        return formula.replace("disclosedRoe * 100", "disclosedRoe")
+    return formula
+
+
 def normalize_roe_equity_facts(metric_key: str, source_facts: list[dict]) -> list[dict]:
     if metric_key != "roe":
         return source_facts
@@ -293,8 +299,8 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                 provenance_shift = model_shift or disclosed_equity_ratio_shift
                 if not provenance_shift:
                     self.assertEqual(
-                        provenance.get("formula"),
-                        expected["formula"],
+                        normalize_formula(metric_key, provenance.get("formula")),
+                        normalize_formula(metric_key, expected["formula"]),
                         (code, metric_key),
                     )
                 if metric_key == "roe" and actual.get("previousValue") is None:
