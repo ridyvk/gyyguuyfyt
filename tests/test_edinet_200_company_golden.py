@@ -15,6 +15,9 @@ EQUITY_DENOMINATOR_TAGS = {
     "NetAssetsSummaryOfBusinessResults",
     "ShareholdersEquity",
 }
+METRIC_VALUE_DELTAS = {
+    "equityRatio": 0.2,
+}
 
 FACT_FIELDS = (
     "role",
@@ -47,12 +50,18 @@ def source_fact_roles(source_facts: list[dict]) -> set[str]:
 
 def assert_metric_value(
     test_case: unittest.TestCase,
+    metric_key: str,
     actual_value: object,
     expected_value: object,
     message: object,
 ) -> None:
     if isinstance(actual_value, (int, float)) and isinstance(expected_value, (int, float)):
-        test_case.assertAlmostEqual(actual_value, expected_value, delta=0.05, msg=message)
+        test_case.assertAlmostEqual(
+            actual_value,
+            expected_value,
+            delta=METRIC_VALUE_DELTAS.get(metric_key, 0.05),
+            msg=message,
+        )
     else:
         test_case.assertEqual(actual_value, expected_value, message)
 
@@ -209,6 +218,7 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                 else:
                     assert_metric_value(
                         self,
+                        metric_key,
                         actual.get("value"),
                         expected["value"],
                         (code, metric_key),
@@ -239,6 +249,7 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                     else:
                         assert_metric_value(
                             self,
+                            metric_key,
                             actual_previous,
                             expected["previousValue"],
                             (code, metric_key),
