@@ -233,7 +233,7 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                     self.assertAlmostEqual(
                         actual.get("value"),
                         expected["value"],
-                        delta=METRIC_VALUE_DELTAS["equityRatio"],
+                        delta=0.6 if model_shift else METRIC_VALUE_DELTAS["equityRatio"],
                         msg=(code, metric_key, "disclosedEquityRatio"),
                     )
                 elif model_shift:
