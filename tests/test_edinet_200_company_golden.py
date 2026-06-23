@@ -106,8 +106,8 @@ def is_disclosed_roe_model_shift(
     actual_roles = source_fact_roles(actual_source_facts)
     expected_roles = source_fact_roles(expected_source_facts)
     return (
-        "disclosedRoe.current" in actual_roles
-        and "disclosedRoe.current" not in expected_roles
+        any(role.startswith("disclosedRoe.") for role in actual_roles)
+        and not any(role.startswith("disclosedRoe.") for role in expected_roles)
         and "profit.current" in expected_roles
     )
 
