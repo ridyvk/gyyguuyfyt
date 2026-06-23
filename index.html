@@ -18,6 +18,44 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      ;(() => {
+        const recoveryKey = 'kpi-scope-sw-module-recovery'
+        const clearCaches = () => {
+          if (!('caches' in window)) return Promise.resolve()
+          return caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
+        }
+        const unregisterWorkers = () => {
+          if (!('serviceWorker' in navigator)) return Promise.resolve()
+          return navigator.serviceWorker
+            .getRegistrations()
+            .then((registrations) => Promise.all(registrations.map((registration) => registration.unregister())))
+        }
+        const recover = () => {
+          if (sessionStorage.getItem(recoveryKey) === '1') return
+          sessionStorage.setItem(recoveryKey, '1')
+          Promise.all([unregisterWorkers(), clearCaches()]).finally(() => window.location.reload())
+        }
+
+        window.addEventListener(
+          'error',
+          (event) => {
+            const target = event.target
+            if (target instanceof HTMLScriptElement && target.type === 'module') recover()
+          },
+          true,
+        )
+        window.addEventListener('unhandledrejection', (event) => {
+          const reason = String(event.reason?.message || event.reason || '')
+          if (
+            reason.includes('Failed to fetch dynamically imported module') ||
+            reason.includes('Importing a module script failed')
+          ) {
+            recover()
+          }
+        })
+      })()
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
