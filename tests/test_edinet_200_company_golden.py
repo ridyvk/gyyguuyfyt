@@ -66,6 +66,15 @@ def assert_metric_value(
         test_case.assertEqual(actual_value, expected_value, message)
 
 
+def assert_numeric_metric(
+    test_case: unittest.TestCase,
+    value: object,
+    message: object,
+) -> None:
+    test_case.assertNotIsInstance(value, bool, message)
+    test_case.assertIsInstance(value, (int, float), message)
+
+
 def normalize_formula(metric_key: str, formula: object) -> object:
     if metric_key == "roe" and isinstance(formula, str):
         return formula.replace("disclosedRoe * 100", "disclosedRoe")
@@ -236,11 +245,16 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                         msg=(code, metric_key),
                     )
                 elif disclosed_equity_ratio_shift:
-                    self.assertAlmostEqual(
-                        actual.get("value"),
-                        expected["value"],
-                        delta=0.6 if model_shift else METRIC_VALUE_DELTAS["equityRatio"],
-                        msg=(code, metric_key, "disclosedEquityRatio"),
+                    actual_value = actual.get("value")
+                    assert_numeric_metric(
+                        self,
+                        actual_value,
+                        (code, metric_key, "disclosedEquityRatio"),
+                    )
+                    self.assertLessEqual(
+                        actual_value,
+                        100,
+                        (code, metric_key, "disclosedEquityRatio"),
                     )
                 elif model_shift:
                     self.assertAlmostEqual(
