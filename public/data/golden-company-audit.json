@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-06-23T04:46:55.959989Z",
-  "financialSnapshotGeneratedAt": "2026-06-23T04:46:48.300707Z",
+  "generatedAt": "2026-06-23T05:06:04.996753Z",
+  "financialSnapshotGeneratedAt": "2026-06-23T05:05:57.490388Z",
   "baseline": {
     "maxMissingRecords": 4,
     "maxRoeQuarantined": 23,
@@ -278,7 +278,7 @@
       "metricCount": 7,
       "provenanceMetricCount": 0,
       "roe": 0.31,
-      "dataModelVersion": 9,
+      "dataModelVersion": 10,
       "provenanceModelVersion": null,
       "issues": [
         {
@@ -299,10 +299,10 @@
       "source": "EDINET",
       "periodEnd": "2025-03-31",
       "periodAgeDays": 449,
-      "metricCount": 2,
-      "provenanceMetricCount": 2,
+      "metricCount": 3,
+      "provenanceMetricCount": 3,
       "roe": 0.91,
-      "dataModelVersion": 9,
+      "dataModelVersion": 10,
       "provenanceModelVersion": 1,
       "issues": [],
       "status": "ok"
@@ -767,7 +767,7 @@
       "metricCount": 10,
       "provenanceMetricCount": 10,
       "roe": 0.1,
-      "dataModelVersion": 9,
+      "dataModelVersion": 10,
       "provenanceModelVersion": 1,
       "issues": [],
       "status": "ok"
@@ -786,7 +786,7 @@
       "metricCount": 10,
       "provenanceMetricCount": 10,
       "roe": -0.03,
-      "dataModelVersion": 9,
+      "dataModelVersion": 10,
       "provenanceModelVersion": 1,
       "issues": [],
       "status": "ok"
@@ -805,7 +805,7 @@
       "metricCount": 10,
       "provenanceMetricCount": 10,
       "roe": 0.1,
-      "dataModelVersion": 9,
+      "dataModelVersion": 10,
       "provenanceModelVersion": 1,
       "issues": [],
       "status": "ok"
