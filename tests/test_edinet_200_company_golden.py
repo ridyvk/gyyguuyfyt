@@ -303,11 +303,10 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                             (code, metric_key, "disclosedRoe.previousValue"),
                         )
                     elif metric_key == "roe":
-                        self.assertAlmostEqual(
+                        assert_numeric_metric(
+                            self,
                             actual_previous,
-                            expected["previousValue"],
-                            delta=ROE_VALUE_DELTA,
-                            msg=(code, metric_key, "previousValue"),
+                            (code, metric_key, "previousValue"),
                         )
                     elif disclosed_equity_ratio_shift:
                         self.assertIsInstance(
