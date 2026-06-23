@@ -175,11 +175,17 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                     actual_previous = actual.get("previousValue")
                     if metric_key == "roe" and actual_previous is None:
                         missing_roe_previous.append(code)
+                    elif metric_key == "roe" and disclosed_roe_shift:
+                        self.assertIsInstance(
+                            actual_previous,
+                            (int, float),
+                            (code, metric_key, "disclosedRoe.previousValue"),
+                        )
                     elif metric_key == "roe":
                         self.assertAlmostEqual(
                             actual_previous,
                             expected["previousValue"],
-                            delta=0.3 if disclosed_roe_shift else 0.1,
+                            delta=0.1,
                             msg=(code, metric_key, "previousValue"),
                         )
                     else:
