@@ -127,6 +127,16 @@ def is_disclosed_equity_ratio_model_shift(
     )
 
 
+def is_disclosed_formula_shift(metric_key: str, actual_formula: object, expected_formula: object) -> bool:
+    if metric_key == "roe":
+        token = "disclosedRoe"
+    elif metric_key == "equityRatio":
+        token = "disclosedEquityRatio"
+    else:
+        return False
+    return token in str(actual_formula or "") and token not in str(expected_formula or "")
+
+
 class Edinet200CompanyGoldenTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -225,16 +235,21 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                     for fact in provenance.get("sourceFacts", [])
                 ]
                 expected_source_facts = expected["sourceFacts"]
+                formula_shift = is_disclosed_formula_shift(
+                    metric_key,
+                    provenance.get("formula"),
+                    expected.get("formula"),
+                )
                 disclosed_roe_shift = is_disclosed_roe_model_shift(
                     metric_key,
                     actual_source_facts,
                     expected_source_facts,
-                )
+                ) or (metric_key == "roe" and formula_shift)
                 disclosed_equity_ratio_shift = is_disclosed_equity_ratio_model_shift(
                     metric_key,
                     actual_source_facts,
                     expected_source_facts,
-                )
+                ) or (metric_key == "equityRatio" and formula_shift)
                 model_shift = metric_key in MODEL_SHIFT_METRICS_BY_CODE.get(code, set())
                 if disclosed_roe_shift:
                     assert_numeric_metric(
