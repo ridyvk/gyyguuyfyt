@@ -9,6 +9,10 @@ import './chart-focus.css'
 import './motion.css'
 import './stock-display.css'
 
+type RecoveryWindow = Window & {
+  __KPI_SCOPE_RECOVER__?: (forceNoServiceWorker?: boolean) => void
+}
+
 class AppErrorBoundary extends Component<
   { children: ReactNode },
   { hasError: boolean }
@@ -33,7 +37,7 @@ class AppErrorBoundary extends Component<
             <button
               type="button"
               onClick={() => {
-                const recover = window.__KPI_SCOPE_RECOVER__
+                const recover = (window as RecoveryWindow).__KPI_SCOPE_RECOVER__
                 if (typeof recover === 'function') recover(true)
                 else window.location.reload()
               }}
