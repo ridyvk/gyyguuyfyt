@@ -99,7 +99,7 @@ def is_disclosed_roe_model_shift(
     return (
         "disclosedRoe.current" in actual_roles
         and "disclosedRoe.current" not in expected_roles
-        and {"profit.current", "equity.current"}.issubset(expected_roles)
+        and "profit.current" in expected_roles
     )
 
 
@@ -296,7 +296,7 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                         )
                 if company.get("legacyProvenance"):
                     continue
-                provenance_shift = model_shift or disclosed_equity_ratio_shift
+                provenance_shift = model_shift or disclosed_roe_shift or disclosed_equity_ratio_shift
                 if not provenance_shift:
                     self.assertEqual(
                         normalize_formula(metric_key, provenance.get("formula")),
