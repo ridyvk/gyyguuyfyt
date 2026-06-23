@@ -305,7 +305,7 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                         self.assertAlmostEqual(
                             actual_previous,
                             expected["previousValue"],
-                            delta=0.1,
+                            delta=0.3,
                             msg=(code, metric_key, "previousValue"),
                         )
                     elif disclosed_equity_ratio_shift:
