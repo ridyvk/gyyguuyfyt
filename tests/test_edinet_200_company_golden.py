@@ -237,11 +237,17 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                     expected_source_facts,
                 )
                 model_shift = metric_key in MODEL_SHIFT_METRICS_BY_CODE.get(code, set())
-                if metric_key == "roe":
+                if disclosed_roe_shift:
+                    assert_numeric_metric(
+                        self,
+                        actual.get("value"),
+                        (code, metric_key, "disclosedRoe"),
+                    )
+                elif metric_key == "roe":
                     self.assertAlmostEqual(
                         actual.get("value"),
                         expected["value"],
-                        delta=0.3 if disclosed_roe_shift or model_shift else 0.1,
+                        delta=0.3 if model_shift else 0.1,
                         msg=(code, metric_key),
                     )
                 elif disclosed_equity_ratio_shift:
