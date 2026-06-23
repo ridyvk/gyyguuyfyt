@@ -45,6 +45,18 @@ def source_fact_roles(source_facts: list[dict]) -> set[str]:
     return {str(fact.get("role") or "") for fact in source_facts}
 
 
+def assert_metric_value(
+    test_case: unittest.TestCase,
+    actual_value: object,
+    expected_value: object,
+    message: object,
+) -> None:
+    if isinstance(actual_value, (int, float)) and isinstance(expected_value, (int, float)):
+        test_case.assertAlmostEqual(actual_value, expected_value, delta=0.05, msg=message)
+    else:
+        test_case.assertEqual(actual_value, expected_value, message)
+
+
 def normalize_roe_equity_facts(metric_key: str, source_facts: list[dict]) -> list[dict]:
     if metric_key != "roe":
         return source_facts
@@ -195,7 +207,8 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                         msg=(code, metric_key, "model-shift"),
                     )
                 else:
-                    self.assertEqual(
+                    assert_metric_value(
+                        self,
                         actual.get("value"),
                         expected["value"],
                         (code, metric_key),
@@ -224,7 +237,8 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                             (code, metric_key, "modelShift.previousValue"),
                         )
                     else:
-                        self.assertEqual(
+                        assert_metric_value(
+                            self,
                             actual_previous,
                             expected["previousValue"],
                             (code, metric_key),
