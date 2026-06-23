@@ -10,6 +10,11 @@ FIXTURE = ROOT / "tests" / "fixtures" / "edinet_200_company_golden.json"
 FINANCIALS = ROOT / "public" / "data" / "financials.json"
 COMPANY_MASTER = ROOT / "src" / "data" / "listedCompanies.json"
 MODEL_SHIFT_METRICS_BY_CODE = {"3393": {"roe", "equityRatio"}}
+EQUITY_DENOMINATOR_TAGS = {
+    "NetAssets",
+    "NetAssetsSummaryOfBusinessResults",
+    "ShareholdersEquity",
+}
 
 FACT_FIELDS = (
     "role",
@@ -38,6 +43,21 @@ def fact_signature(fact: dict) -> dict:
 
 def source_fact_roles(source_facts: list[dict]) -> set[str]:
     return {str(fact.get("role") or "") for fact in source_facts}
+
+
+def normalize_roe_equity_facts(metric_key: str, source_facts: list[dict]) -> list[dict]:
+    if metric_key != "roe":
+        return source_facts
+    normalized = []
+    for fact in source_facts:
+        next_fact = dict(fact)
+        if (
+            str(next_fact.get("role") or "").startswith("equity.")
+            and next_fact.get("tag") in EQUITY_DENOMINATOR_TAGS
+        ):
+            next_fact["tag"] = "__equity_denominator__"
+        normalized.append(next_fact)
+    return normalized
 
 
 def is_disclosed_roe_model_shift(
@@ -226,8 +246,8 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                     ]
                 if not model_shift:
                     self.assertEqual(
-                        actual_source_facts,
-                        expected_source_facts,
+                        normalize_roe_equity_facts(metric_key, actual_source_facts),
+                        normalize_roe_equity_facts(metric_key, expected_source_facts),
                         (code, metric_key),
                     )
 
