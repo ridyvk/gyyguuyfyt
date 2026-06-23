@@ -13,6 +13,7 @@ on:
       - .github/triggers/financials-batch.txt
       - scripts/update_edinet_financials.py
       - scripts/update_edinet_financials_batched.py
+      - scripts/update_edinet_financials_batched_equity_v10.py
       - scripts/data_quality.py
       - scripts/validate_datasets.py
       - scripts/audit_golden_companies.py
@@ -74,7 +75,7 @@ jobs:
             echo "EDINET_API_KEY is required." >&2
             exit 1
           else
-            python scripts/update_edinet_financials_batched.py \
+            python scripts/update_edinet_financials_batched_equity_v10.py \
               --scan-days "$EDINET_SCAN_DAYS" \
               --max-documents "$EDINET_BATCH_SIZE"
           fi
