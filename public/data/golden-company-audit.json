@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-06-23T05:06:04.996753Z",
-  "financialSnapshotGeneratedAt": "2026-06-23T05:05:57.490388Z",
+  "generatedAt": "2026-06-23T10:12:10.827822Z",
+  "financialSnapshotGeneratedAt": "2026-06-23T10:12:04.174564Z",
   "baseline": {
     "maxMissingRecords": 4,
     "maxRoeQuarantined": 23,
@@ -823,7 +823,7 @@
       "metricCount": 10,
       "provenanceMetricCount": 10,
       "roe": 0.4,
-      "dataModelVersion": 9,
+      "dataModelVersion": 10,
       "provenanceModelVersion": 1,
       "issues": [],
       "status": "ok"
