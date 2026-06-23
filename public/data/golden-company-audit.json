@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-06-23T15:49:14.552953Z",
-  "financialSnapshotGeneratedAt": "2026-06-23T15:49:06.868170Z",
+  "generatedAt": "2026-06-23T20:44:59.006112Z",
+  "financialSnapshotGeneratedAt": "2026-06-23T20:44:50.489654Z",
   "baseline": {
     "maxMissingRecords": 4,
     "maxRoeQuarantined": 23,
@@ -39,7 +39,7 @@
       "metricCount": 10,
       "provenanceMetricCount": 10,
       "roe": 9.5,
-      "dataModelVersion": 9,
+      "dataModelVersion": 10,
       "provenanceModelVersion": 1,
       "issues": [],
       "status": "ok"
@@ -122,7 +122,7 @@
       "metricCount": 7,
       "provenanceMetricCount": 7,
       "roe": 4.53,
-      "dataModelVersion": 9,
+      "dataModelVersion": 10,
       "provenanceModelVersion": 1,
       "issues": [],
       "status": "ok"
@@ -169,7 +169,7 @@
       "metricCount": 7,
       "provenanceMetricCount": 7,
       "roe": 6.38,
-      "dataModelVersion": 9,
+      "dataModelVersion": 10,
       "provenanceModelVersion": 1,
       "issues": [],
       "status": "ok"
@@ -499,7 +499,7 @@
       "metricCount": 7,
       "provenanceMetricCount": 7,
       "roe": 12.15,
-      "dataModelVersion": 9,
+      "dataModelVersion": 10,
       "provenanceModelVersion": 1,
       "issues": [],
       "status": "ok"
@@ -668,7 +668,7 @@
       "metricCount": 2,
       "provenanceMetricCount": 2,
       "roe": 10.4,
-      "dataModelVersion": 9,
+      "dataModelVersion": 10,
       "provenanceModelVersion": 1,
       "issues": [],
       "status": "ok"
@@ -709,10 +709,10 @@
       "source": "EDINET",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 84,
-      "metricCount": 5,
-      "provenanceMetricCount": 5,
+      "metricCount": 7,
+      "provenanceMetricCount": 7,
       "roe": 31.05,
-      "dataModelVersion": 9,
+      "dataModelVersion": 10,
       "provenanceModelVersion": 1,
       "issues": [],
       "status": "ok"
@@ -824,7 +824,7 @@
       "metricCount": 4,
       "provenanceMetricCount": 4,
       "roe": 11.47,
-      "dataModelVersion": 9,
+      "dataModelVersion": 10,
       "provenanceModelVersion": 1,
       "issues": [],
       "status": "ok"
@@ -926,7 +926,7 @@
       "metricCount": 3,
       "provenanceMetricCount": 3,
       "roe": 34.28,
-      "dataModelVersion": 9,
+      "dataModelVersion": 10,
       "provenanceModelVersion": 1,
       "issues": [],
       "status": "ok"
