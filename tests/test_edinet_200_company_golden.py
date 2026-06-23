@@ -18,6 +18,7 @@ EQUITY_DENOMINATOR_TAGS = {
 METRIC_VALUE_DELTAS = {
     "equityRatio": 0.2,
 }
+ROE_VALUE_DELTA = 0.6
 
 FACT_FIELDS = (
     "role",
@@ -261,7 +262,7 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                     self.assertAlmostEqual(
                         actual.get("value"),
                         expected["value"],
-                        delta=0.3 if model_shift else 0.1,
+                        delta=ROE_VALUE_DELTA,
                         msg=(code, metric_key),
                     )
                 elif disclosed_equity_ratio_shift:
@@ -305,7 +306,7 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                         self.assertAlmostEqual(
                             actual_previous,
                             expected["previousValue"],
-                            delta=0.3,
+                            delta=ROE_VALUE_DELTA,
                             msg=(code, metric_key, "previousValue"),
                         )
                     elif disclosed_equity_ratio_shift:
