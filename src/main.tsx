@@ -9,6 +9,10 @@ import './chart-focus.css'
 import './motion.css'
 import './stock-display.css'
 
+type RecoveryWindow = Window & {
+  __KPI_SCOPE_RECOVER__?: (forceNoServiceWorker?: boolean) => void
+}
+
 class AppErrorBoundary extends Component<
   { children: ReactNode },
   { hasError: boolean }
@@ -30,8 +34,15 @@ class AppErrorBoundary extends Component<
           <div>
             <strong>KPI Scopeを読み込めませんでした</strong>
             <p>古いキャッシュを削除して再読み込みします。</p>
-            <button type="button" onClick={() => window.location.reload()}>
-              再読み込み
+            <button
+              type="button"
+              onClick={() => {
+                const recover = (window as RecoveryWindow).__KPI_SCOPE_RECOVER__
+                if (typeof recover === 'function') recover(true)
+                else window.location.reload()
+              }}
+            >
+              キャッシュを削除して再読み込み
             </button>
           </div>
         </main>
@@ -53,7 +64,9 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 )
 
-if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+const serviceWorkerDisabled = new URLSearchParams(window.location.search).has('no-sw')
+
+if (import.meta.env.PROD && 'serviceWorker' in navigator && !serviceWorkerDisabled) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw-photo1.js').catch((error) => {
       console.warn('KPI Scope service worker registration failed', error)
