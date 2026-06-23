@@ -124,7 +124,6 @@ def is_disclosed_equity_ratio_model_shift(
     return (
         "disclosedEquityRatio.current" in actual_roles
         and "disclosedEquityRatio.current" not in expected_roles
-        and {"equity.current", "assets.current"}.issubset(expected_roles)
     )
 
 
