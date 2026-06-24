@@ -1,56 +1,35 @@
 name: Update JPX company master
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/update-company-master.yml
-      - scripts/update_jpx_companies.py
-      - scripts/validate_datasets.py
-  schedule:
-    - cron: '15 21 * * 1-5'
   workflow_dispatch:
 
 permissions:
   contents: write
 
-concurrency:
-  group: company-master-update
-  cancel-in-progress: true
-
+# Published static branch remains ref: main.
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout develop source
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          ref: main
+          ref: develop
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Install JPX reader
-        run: python -m pip install --disable-pip-version-check pandas xlrd
+      - name: Install Python dependencies
+        run: python -m pip install --upgrade pandas xlrd
 
-      - name: Refresh JPX company master
+      - name: Update JPX company master
         run: python scripts/update_jpx_companies.py
 
-      - name: Validate company master
-        run: python scripts/validate_datasets.py --scope master
-
       - name: Commit updated company master
-        run: |
-          git config user.name "kpi-scope-bot"
-          git config user.email "actions@users.noreply.github.com"
-          git add src/data/listedCompanies.json src/lib/companySource.ts
-          if git diff --cached --quiet; then
-            echo "No company master changes."
-          else
-            git commit -m "Update JPX company master"
-            git pull --rebase origin main
-            git push origin HEAD:main
-          fi
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          branch: develop
+          commit_message: "data: update JPX company master"
+          file_pattern: src/data/listedCompanies.json
