@@ -1,13 +1,10 @@
 name: Build and deploy KPI Scope
 
+# Manual deployment from the develop source branch.
+# Data update workflows are separate:
+# - Update annual financials
+# - Update market prices
 on:
-  push:
-    branches: [main]
-  workflow_run:
-    workflows:
-      - Update annual financials
-      - Update market prices
-    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -30,15 +27,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: develop
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Generate financial industry shards
-        run: python scripts/split_financials.py
+      - name: Finalize and shard financial data
+        run: |
+          python scripts/finalize_annual_dataset.py
+          python scripts/split_financials.py
 
       - name: Test and validate data pipelines
         run: |
