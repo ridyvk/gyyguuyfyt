@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import os
 import unittest
 from collections import Counter
 from pathlib import Path
@@ -19,7 +18,6 @@ EQUITY_DENOMINATOR_TAGS = {
 METRIC_VALUE_DELTAS = {
     "equityRatio": 0.2,
 }
-ROE_VALUE_DELTA = 0.6
 
 FACT_FIELDS = (
     "role",
@@ -108,8 +106,8 @@ def is_disclosed_roe_model_shift(
     actual_roles = source_fact_roles(actual_source_facts)
     expected_roles = source_fact_roles(expected_source_facts)
     return (
-        any(role.startswith("disclosedRoe.") for role in actual_roles)
-        and not any(role.startswith("disclosedRoe.") for role in expected_roles)
+        "disclosedRoe.current" in actual_roles
+        and "disclosedRoe.current" not in expected_roles
         and "profit.current" in expected_roles
     )
 
@@ -203,9 +201,6 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                     )
 
     def test_live_snapshot_matches_golden_for_unchanged_documents(self) -> None:
-        if os.environ.get("KPI_SCOPE_SKIP_LIVE_GOLDEN") == "1":
-            self.skipTest("live financial golden comparison is handled outside Pages deploy")
-
         records = self.snapshot.get("records", {})
         same_document = 0
         refreshed_documents = []
@@ -266,7 +261,7 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                     self.assertAlmostEqual(
                         actual.get("value"),
                         expected["value"],
-                        delta=ROE_VALUE_DELTA,
+                        delta=0.3 if model_shift else 0.1,
                         msg=(code, metric_key),
                     )
                 elif disclosed_equity_ratio_shift:
@@ -307,10 +302,11 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                             (code, metric_key, "disclosedRoe.previousValue"),
                         )
                     elif metric_key == "roe":
-                        assert_numeric_metric(
-                            self,
+                        self.assertAlmostEqual(
                             actual_previous,
-                            (code, metric_key, "previousValue"),
+                            expected["previousValue"],
+                            delta=0.1,
+                            msg=(code, metric_key, "previousValue"),
                         )
                     elif disclosed_equity_ratio_shift:
                         self.assertIsInstance(
@@ -348,7 +344,7 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                         for fact in expected_source_facts
                         if str(fact.get("role") or "") in actual_roles
                     ]
-                if not provenance_shift and metric_key != "roe":
+                if not provenance_shift:
                     self.assertEqual(
                         normalize_roe_equity_facts(metric_key, actual_source_facts),
                         normalize_roe_equity_facts(metric_key, expected_source_facts),

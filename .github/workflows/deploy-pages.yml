@@ -43,8 +43,6 @@ jobs:
           python scripts/split_financials.py
 
       - name: Test and validate data pipelines
-        env:
-          KPI_SCOPE_SKIP_LIVE_GOLDEN: '1'
         run: |
           python -m unittest discover -s tests -p 'test_*.py'
           python scripts/validate_datasets.py --scope all
