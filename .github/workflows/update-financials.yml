@@ -2,6 +2,15 @@ name: Update annual financials
 
 on:
   workflow_dispatch:
+    inputs:
+      edinet_scan_days:
+        description: Days to scan EDINET filings
+        required: false
+        default: '460'
+      edinet_batch_size:
+        description: Maximum EDINET annual filings to process in one run
+        required: false
+        default: '350'
 
 permissions:
   contents: write
@@ -27,7 +36,18 @@ jobs:
         run: python scripts/update_jpx_companies.py
 
       - name: Update annual financials
-        run: python scripts/update_edinet_financials_batched.py
+        env:
+          EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
+          EDINET_SCAN_DAYS: ${{ inputs.edinet_scan_days || '460' }}
+          EDINET_BATCH_SIZE: ${{ inputs.edinet_batch_size || '350' }}
+        run: |
+          if [ -z "$EDINET_API_KEY" ]; then
+            echo "EDINET_API_KEY is required." >&2
+            exit 1
+          fi
+          python scripts/update_edinet_financials_batched.py \
+            --scan-days "$EDINET_SCAN_DAYS" \
+            --max-documents "$EDINET_BATCH_SIZE"
 
       - name: Generate financial industry shards
         run: python scripts/split_financials.py
