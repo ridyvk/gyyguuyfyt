@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kpi-scope-v6-network-first-recovery'
+const CACHE_NAME = 'kpi-scope-v5-network-first-shell'
 const STATIC_ASSETS = [
   './manifest.webmanifest',
   './icon-180-photo1.png',
