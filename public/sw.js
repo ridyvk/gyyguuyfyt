@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kpi-scope-v4-data-network-only'
+const CACHE_NAME = 'kpi-scope-v4-nodata'
 const APP_SHELL = [
   './',
   './index.html',
@@ -9,6 +9,11 @@ const APP_SHELL = [
   './icon-maskable-192-photo1.png',
   './icon-maskable-512-photo1.png',
 ]
+
+const isSameOriginDataRequest = (request) => {
+  const url = new URL(request.url)
+  return url.origin === self.location.origin && url.pathname.includes('/data/')
+}
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)))
@@ -31,12 +36,8 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return
 
-  const requestUrl = new URL(event.request.url)
-  if (
-    requestUrl.origin === self.location.origin &&
-    requestUrl.pathname.includes('/data/')
-  ) {
-    event.respondWith(fetch(event.request, { cache: 'no-store' }))
+  if (isSameOriginDataRequest(event.request)) {
+    event.respondWith(fetch(event.request))
     return
   }
 
