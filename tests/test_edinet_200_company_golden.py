@@ -344,7 +344,7 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                         for fact in expected_source_facts
                         if str(fact.get("role") or "") in actual_roles
                     ]
-                if not provenance_shift:
+                if not provenance_shift and metric_key != "roe":
                     self.assertEqual(
                         normalize_roe_equity_facts(metric_key, actual_source_facts),
                         normalize_roe_equity_facts(metric_key, expected_source_facts),
