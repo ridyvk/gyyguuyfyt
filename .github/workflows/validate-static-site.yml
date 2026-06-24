@@ -1,0 +1,70 @@
+name: Validate static Pages app
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate static files
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+
+          root = Path('.')
+          required = [
+              'index.html',
+              '.nojekyll',
+              'sw-photo1.js',
+              'sw.js',
+              'data/financials.json',
+              'data/market.json',
+              'data/update-status.json',
+          ]
+          errors = []
+
+          for rel in required:
+              path = root / rel
+              if not path.exists():
+                  errors.append(f'missing required file: {rel}')
+              elif path.is_file() and path.stat().st_size == 0:
+                  errors.append(f'empty required file: {rel}')
+
+          index = (root / 'index.html').read_text(encoding='utf-8')
+          refs = re.findall(r'''(?:src|href)=["']([^"']+)["']''', index)
+          for ref in refs:
+              if ref.startswith(('http://', 'https://', 'data:', '#')):
+                  continue
+              clean = ref.split('?', 1)[0].split('#', 1)[0].removeprefix('./')
+              if not clean:
+                  continue
+              path = root / clean
+              if not path.exists():
+                  errors.append(f'index.html references missing file: {ref}')
+              elif path.is_file() and path.stat().st_size == 0:
+                  errors.append(f'index.html references empty file: {ref}')
+
+          for rel in ['sw-photo1.js', 'sw.js']:
+              source = (root / rel).read_text(encoding='utf-8')
+              if '/data/' not in source or 'isSameOriginDataRequest' not in source:
+                  errors.append(f'{rel} does not bypass data files')
+              if "CACHE_NAME = 'kpi-scope-v4-nodata'" not in source:
+                  errors.append(f'{rel} cache version was not updated')
+
+          if errors:
+              print('\n'.join(errors))
+              sys.exit(1)
+
+          print(f'Validated {len(required)} required files and {len(refs)} index references.')
+          PY
