@@ -2,6 +2,11 @@ name: Update market prices
 
 on:
   workflow_dispatch:
+    inputs:
+      max_companies:
+        description: Maximum companies to fetch quotes for
+        required: false
+        default: '4500'
 
 permissions:
   contents: write
@@ -27,7 +32,12 @@ jobs:
         run: python scripts/update_jpx_companies.py
 
       - name: Update market prices
-        run: python scripts/update_market_prices.py
+        env:
+          MAX_COMPANIES: ${{ inputs.max_companies || '4500' }}
+        run: |
+          python scripts/update_market_prices.py \
+            --max-companies "$MAX_COMPANIES" \
+            --max-workers 8
 
       - name: Validate market dataset
         run: python scripts/validate_datasets.py
