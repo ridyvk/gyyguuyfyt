@@ -1,6 +1,14 @@
 import type { FinancialYearPoint, KpiKey } from '../types'
 import type { RawMetrics } from './scoring'
 
+const formatNumber = (value: number, digits = 1) =>
+  Number.isFinite(value) ? value.toFixed(digits) : 'N/A'
+
+const formatPercent = (value: number) => `${formatNumber(value)}%`
+
+const formatPointChange = (value: number) =>
+  `${value >= 0 ? '+' : ''}${formatNumber(value)}pt`
+
 export const buildWarnings = (
   metrics: RawMetrics,
   previousOperatingMargin: number,
@@ -100,24 +108,36 @@ export const buildAnalysisComment = (
 ) => {
   const has = (...keys: KpiKey[]) =>
     available === null || keys.every((key) => available.has(key))
+  const operatingMarginChange =
+    metrics.operatingMargin - previousOperatingMargin
   if (
     has('operatingMargin', 'operatingCfMargin') &&
     metrics.operatingMargin > previousOperatingMargin &&
     metrics.operatingCfMargin >= 10
   ) {
-    return '営業利益率と営業CFマージンが改善しており、収益性とキャッシュ創出力は良好です。'
+    return `営業利益率は${formatPercent(metrics.operatingMargin)}（前年差${formatPointChange(operatingMarginChange)}）、営業CFマージンは${formatPercent(metrics.operatingCfMargin)}です。収益性とキャッシュ創出力は良好です。`
   }
   if (warnings.some((warning) => warning.includes('棚卸資産'))) {
-    return '棚卸資産の増加率が売上成長率を上回っています。在庫回転と需要見通しを確認したい局面です。'
+    return `棚卸資産増加率は${formatPercent(metrics.inventoryGrowth)}で、売上成長率${formatPercent(metrics.revenueGrowth)}を大きく上回っています。在庫回転と需要見通しを確認したい局面です。`
   }
   if (warnings.some((warning) => warning.includes('営業CF'))) {
-    return '純利益は黒字ですが営業CFが弱く、運転資本を含めて利益の質を確認したい状態です。'
+    return `純利益率は${formatPercent(metrics.netMargin)}で黒字ですが、営業CFマージンは${formatPercent(metrics.operatingCfMargin)}にとどまります。運転資本を含めて利益の質を確認したい状態です。`
   }
-  if (warnings.some((warning) => warning.includes('営業利益率'))) {
-    return '売上は伸びていますが営業利益率が低下しています。コスト増や価格転嫁の進捗に注意が必要です。'
+  if (
+    warnings.some((warning) =>
+      warning.includes('売上は伸びていますが、営業利益率'),
+    )
+  ) {
+    return `売上成長率は${formatPercent(metrics.revenueGrowth)}ですが、営業利益率は${formatPercent(metrics.operatingMargin)}（前年差${formatPointChange(operatingMarginChange)}）です。コスト増や価格転嫁の進捗に注意が必要です。`
+  }
+  if (warnings.some((warning) => warning.includes('営業利益率が3年連続'))) {
+    return `営業利益率は${formatPercent(metrics.operatingMargin)}で、3年連続の低下傾向です。採算性の下げ止まりと価格転嫁の進捗を確認したい状態です。`
   }
   if (available && available.size < minimumAvailable) {
     return '取得できた開示項目が限られています。未取得KPIは判断不能として、原資料もあわせて確認してください。'
+  }
+  if (has('revenueGrowth', 'operatingMargin')) {
+    return `売上成長率は${formatPercent(metrics.revenueGrowth)}、営業利益率は${formatPercent(metrics.operatingMargin)}です。主要KPIは大きな偏りなく推移しており、次回決算では成長率と利益率の持続性を確認したい状態です。`
   }
   return '主要KPIは大きな偏りなく推移しています。次回決算では成長率と利益率の持続性を確認したい状態です。'
 }
