@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import unittest
 from collections import Counter
 from pathlib import Path
@@ -202,6 +203,9 @@ class Edinet200CompanyGoldenTests(unittest.TestCase):
                     )
 
     def test_live_snapshot_matches_golden_for_unchanged_documents(self) -> None:
+        if os.environ.get("KPI_SCOPE_SKIP_LIVE_GOLDEN") == "1":
+            self.skipTest("live financial golden comparison is handled outside Pages deploy")
+
         records = self.snapshot.get("records", {})
         same_document = 0
         refreshed_documents = []
