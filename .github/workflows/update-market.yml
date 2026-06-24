@@ -1,71 +1,40 @@
 name: Update market prices
 
 on:
-  workflow_run:
-    workflows:
-      - Update JPX company master
-    types: [completed]
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/update-market.yml
-      - scripts/data_quality.py
-      - scripts/update_market_prices.py
-      - scripts/validate_datasets.py
-      - src/data/listedCompanies.json
-  schedule:
-    - cron: '45 7 * * 1-5'
-    - cron: '45 9 * * 1-5'
   workflow_dispatch:
-    inputs:
-      max_companies:
-        description: Maximum companies to fetch quotes for
-        required: false
-        default: '4500'
 
 permissions:
   contents: write
 
-concurrency:
-  group: market-price-update
-  cancel-in-progress: true
-
 jobs:
-  update-market:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+  update:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout develop source
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          ref: main
+          ref: develop
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Update market snapshot
-        env:
-          MAX_COMPANIES: ${{ inputs.max_companies || '4500' }}
-        run: |
-          python scripts/update_market_prices.py \
-            --max-companies "$MAX_COMPANIES" \
-            --max-workers 8
+      - name: Install Python dependencies
+        run: python -m pip install --upgrade pandas xlrd
+
+      - name: Update JPX company master
+        run: python scripts/update_jpx_companies.py
+
+      - name: Update market prices
+        run: python scripts/update_market_prices.py
 
       - name: Validate market dataset
-        run: python scripts/validate_datasets.py --scope market
+        run: python scripts/validate_datasets.py
 
-      - name: Commit updated market snapshot
-        run: |
-          git config user.name "kpi-scope-bot"
-          git config user.email "actions@users.noreply.github.com"
-          git add public/data/market.json
-          if git diff --cached --quiet; then
-            echo "No market snapshot changes."
-          else
-            git commit -m "Update market price snapshot"
-            git pull --rebase origin main
-            git push origin HEAD:main
-          fi
+      - name: Commit updated market data
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          branch: develop
+          commit_message: "data: update market prices"
+          file_pattern: public/data/market.json public/data/update-status.json
