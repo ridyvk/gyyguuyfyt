@@ -21,6 +21,17 @@ EXCLUDED_INDUSTRIES = {
     "その他金融業",
 }
 
+EXCLUDED_MARKET_PATTERNS = (
+    "ETF",
+    "ＥＴＦ",
+    "ETN",
+    "ＥＴＮ",
+    "ETF・ETN",
+    "ＲＥＩＴ",
+    "REIT",
+    "不動産投信",
+)
+
 EXCLUDED_NAME_PATTERNS = (
     "ETF",
     "ＥＴＦ",
@@ -29,6 +40,9 @@ EXCLUDED_NAME_PATTERNS = (
     "REIT",
     "リート",
     "投資法人",
+    "上場投信",
+    "投信",
+    "指数連動",
     "インフラファンド",
     "種類株式",
     "優先株",
@@ -58,9 +72,12 @@ def load_financials() -> dict:
 def is_security_like(company: dict[str, str]) -> bool:
     code = company["code"]
     name = company["name"]
+    market = company["market"]
     industry = company["industry"]
 
     if len(code) > 4 and not re.fullmatch(r"\d{3}[A-Z]", code):
+        return True
+    if any(token in market for token in EXCLUDED_MARKET_PATTERNS):
         return True
     if industry in EXCLUDED_INDUSTRIES:
         return True
