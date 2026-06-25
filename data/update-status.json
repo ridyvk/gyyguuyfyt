@@ -24,6 +24,9 @@
   "edinetDocumentsUpdated": 80,
   "edinetEstimatedRemaining": 248,
   "edinetBatchFailures": 0,
+  "ordinaryFallbackAddedTotal": 240,
+  "ordinaryLatestRefreshedTotal": 80,
+  "ordinaryRefreshFailuresTotal": 0,
   "nonAnnualRecordsDropped": 0,
   "tdnetRowsScanned": 494,
   "tdnetEarningsRows": 399,
@@ -31,5 +34,5 @@
   "tdnetFullYearFilings": 183,
   "tdnetDocumentsUpdated": 125,
   "tdnetStrictFailures": 0,
-  "message": "JPX上場企業ユニバースを更新し、対象3,919社中3,469社を取得済み、未取得458社。普通企業の未取得は248社。"
+  "message": "JPX上場企業ユニバースを更新し、対象3,919社中3,469社を取得済み、未取得458社。普通企業の未取得は248社。既存普通企業の最新EDINET更新は累計80社。"
 }
