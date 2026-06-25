@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-25T11:11:11.098834+00:00",
+  "generatedAt": "2026-06-25T11:39:20.494555+00:00",
   "mode": "jpx-universe-edinet-ordinary-autofill",
   "status": "ready",
   "source": "JPX+EDINET+TDnet",
@@ -25,7 +25,7 @@
   "edinetEstimatedRemaining": 248,
   "edinetBatchFailures": 0,
   "ordinaryFallbackAddedTotal": 267,
-  "ordinaryLatestRefreshedTotal": 453,
+  "ordinaryLatestRefreshedTotal": 533,
   "ordinaryRefreshFailuresTotal": 0,
   "nonAnnualRecordsDropped": 0,
   "tdnetRowsScanned": 494,
