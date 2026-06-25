@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kpi-scope-v5-financials-shim'
+const CACHE_NAME = 'kpi-scope-v6-detail-scroll'
 const APP_SHELL = [
   './',
   './index.html',
