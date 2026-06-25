@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-06-25T06:07:47.655959+00:00",
+  "generatedAt": "2026-06-25T07:49:22.312825+00:00",
   "targetCompanies": 3919,
-  "implementedCompanies": 3474,
-  "missingCompanies": 453,
-  "ordinaryMissingCompanies": 244,
+  "implementedCompanies": 3483,
+  "missingCompanies": 444,
+  "ordinaryMissingCompanies": 235,
   "newListingOrRecentIpo": 203,
   "separateModelCompanies": 6,
   "reasons": {
@@ -1474,13 +1474,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "1981",
-        "name": "協和日成",
-        "market": "スタンダード（内国株式）",
-        "industry": "2050",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "1997",
         "name": "暁飯島工業",
         "market": "スタンダード（内国株式）",
@@ -1915,13 +1908,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "4367",
-        "name": "広栄化学",
-        "market": "スタンダード（内国株式）",
-        "industry": "3200",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "4391",
         "name": "ロジザード",
         "market": "グロース（内国株式）",
@@ -2015,20 +2001,6 @@
       {
         "code": "4716",
         "name": "日本オラクル",
-        "market": "スタンダード（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4719",
-        "name": "アルファシステムズ",
-        "market": "プライム（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4762",
-        "name": "エックスネット",
         "market": "スタンダード（内国株式）",
         "industry": "5250",
         "reason": "ordinary-company"
@@ -2489,13 +2461,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "6391",
-        "name": "加地テック",
-        "market": "スタンダード（内国株式）",
-        "industry": "3600",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "6527",
         "name": "ワカ製作所",
         "market": "PRO Market",
@@ -2526,13 +2491,6 @@
       {
         "code": "6907",
         "name": "ジオマテック",
-        "market": "スタンダード（内国株式）",
-        "industry": "3650",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "6969",
-        "name": "松尾電機",
         "market": "スタンダード（内国株式）",
         "industry": "3650",
         "reason": "ordinary-company"
@@ -2657,13 +2615,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "7443",
-        "name": "横浜魚類",
-        "market": "スタンダード（内国株式）",
-        "industry": "6050",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "7462",
         "name": "ＣＡＰＩＴＡ",
         "market": "スタンダード（内国株式）",
@@ -2701,13 +2652,6 @@
       {
         "code": "7524",
         "name": "マルシェ",
-        "market": "スタンダード（内国株式）",
-        "industry": "6100",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7564",
-        "name": "ワークマン",
         "market": "スタンダード（内国株式）",
         "industry": "6100",
         "reason": "ordinary-company"
@@ -2862,13 +2806,6 @@
       {
         "code": "7901",
         "name": "マツモト",
-        "market": "スタンダード（内国株式）",
-        "industry": "3800",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7937",
-        "name": "ツツミ",
         "market": "スタンダード（内国株式）",
         "industry": "3800",
         "reason": "ordinary-company"
@@ -3444,13 +3381,6 @@
       "market": "スタンダード（内国株式）",
       "industry": "3250",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "1981",
-      "name": "協和日成",
-      "market": "スタンダード（内国株式）",
-      "industry": "2050",
-      "reason": "ordinary-company"
     },
     {
       "code": "1997",
@@ -4636,13 +4566,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "4367",
-      "name": "広栄化学",
-      "market": "スタンダード（内国株式）",
-      "industry": "3200",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "436A",
       "name": "サイバーソリューションズ",
       "market": "グロース（内国株式）",
@@ -4867,25 +4790,11 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "4719",
-      "name": "アルファシステムズ",
-      "market": "プライム（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "475A",
       "name": "ギミック",
       "market": "スタンダード（内国株式）",
       "industry": "9050",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "4762",
-      "name": "エックスネット",
-      "market": "スタンダード（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
     },
     {
       "code": "476A",
@@ -5679,13 +5588,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "6391",
-      "name": "加地テック",
-      "market": "スタンダード（内国株式）",
-      "industry": "3600",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "6527",
       "name": "ワカ製作所",
       "market": "PRO Market",
@@ -5716,13 +5618,6 @@
     {
       "code": "6907",
       "name": "ジオマテック",
-      "market": "スタンダード（内国株式）",
-      "industry": "3650",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "6969",
-      "name": "松尾電機",
       "market": "スタンダード（内国株式）",
       "industry": "3650",
       "reason": "ordinary-company"
@@ -5847,13 +5742,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "7443",
-      "name": "横浜魚類",
-      "market": "スタンダード（内国株式）",
-      "industry": "6050",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "7462",
       "name": "ＣＡＰＩＴＡ",
       "market": "スタンダード（内国株式）",
@@ -5901,13 +5789,6 @@
       "market": "プライム（内国株式）",
       "industry": "6100",
       "reason": "separate-model"
-    },
-    {
-      "code": "7564",
-      "name": "ワークマン",
-      "market": "スタンダード（内国株式）",
-      "industry": "6100",
-      "reason": "ordinary-company"
     },
     {
       "code": "7578",
@@ -6059,13 +5940,6 @@
     {
       "code": "7901",
       "name": "マツモト",
-      "market": "スタンダード（内国株式）",
-      "industry": "3800",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7937",
-      "name": "ツツミ",
       "market": "スタンダード（内国株式）",
       "industry": "3800",
       "reason": "ordinary-company"
