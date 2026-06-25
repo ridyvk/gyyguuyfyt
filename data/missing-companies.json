@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-06-25T11:39:20.369317+00:00",
+  "generatedAt": "2026-06-25T20:27:46.282500+00:00",
   "targetCompanies": 3919,
-  "implementedCompanies": 3500,
-  "missingCompanies": 427,
+  "implementedCompanies": 3501,
+  "missingCompanies": 426,
   "ordinaryMissingCompanies": 221,
-  "newListingOrRecentIpo": 200,
+  "newListingOrRecentIpo": 199,
   "separateModelCompanies": 6,
   "reasons": {
     "new-listing-or-recent-ipo": [
@@ -132,13 +132,6 @@
         "name": "エクセリ",
         "market": "PRO Market",
         "industry": "6100",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "160A",
-        "name": "アズパートナーズ",
-        "market": "スタンダード（内国株式）",
-        "industry": "9050",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -3163,13 +3156,6 @@
       "name": "エクセリ",
       "market": "PRO Market",
       "industry": "6100",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "160A",
-      "name": "アズパートナーズ",
-      "market": "スタンダード（内国株式）",
-      "industry": "9050",
       "reason": "new-listing-or-recent-ipo"
     },
     {
