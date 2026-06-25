@@ -11,6 +11,8 @@ from __future__ import annotations
 import io
 import json
 import os
+import glob
+import re
 import time
 import zipfile
 from collections import defaultdict
@@ -23,9 +25,45 @@ import requests
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
+ASSETS_DIR = ROOT / "assets"
 EDINET_BASE = "https://api.edinet-fsa.go.jp/api/v2"
 
 ANNUAL_DOC_TYPE = "120"
+
+EXCLUDED_INDUSTRIES = {
+    "銀行業",
+    "保険業",
+    "証券、商品先物取引業",
+    "その他金融業",
+}
+
+EXCLUDED_MARKET_PATTERNS = (
+    "ETF",
+    "ＥＴＦ",
+    "ETN",
+    "ＥＴＮ",
+    "ETF・ETN",
+    "ＲＥＩＴ",
+    "REIT",
+    "不動産投信",
+)
+
+EXCLUDED_NAME_PATTERNS = (
+    "ETF",
+    "ＥＴＦ",
+    "ETN",
+    "ＥＴＮ",
+    "REIT",
+    "リート",
+    "投資法人",
+    "上場投信",
+    "投信",
+    "指数連動",
+    "インフラファンド",
+    "種類株式",
+    "優先株",
+    "社債型",
+)
 
 METRIC_TAGS = {
     "revenue": [
@@ -252,6 +290,48 @@ def load_json(path: Path, fallback: dict) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def load_universe() -> dict[str, dict[str, str]]:
+    files = sorted(glob.glob(str(ASSETS_DIR / "companyUniverse-*.js")))
+    if not files:
+        raise FileNotFoundError("assets/companyUniverse-*.js was not found")
+
+    text = Path(files[0]).read_text(encoding="utf-8")
+    pattern = re.compile(
+        r"\{code:`(?P<code>[^`]+)`,name:`(?P<name>[^`]+)`,market:`(?P<market>[^`]+)`,industry:`(?P<industry>[^`]+)`\}"
+    )
+    companies = [match.groupdict() for match in pattern.finditer(text)]
+    return {
+        company["code"]: company
+        for company in companies
+        if not is_security_like(company)
+    }
+
+
+def is_security_like(company: dict[str, str]) -> bool:
+    code = company["code"]
+    name = company["name"]
+    market = company["market"]
+    industry = company["industry"]
+
+    if len(code) > 4 and not re.fullmatch(r"\d{3}[A-Z]", code):
+        return True
+    if any(token in market for token in EXCLUDED_MARKET_PATTERNS):
+        return True
+    if industry in EXCLUDED_INDUSTRIES:
+        return True
+    return any(token in name for token in EXCLUDED_NAME_PATTERNS)
+
+
+def document_is_newer(document: dict, existing: dict | None) -> bool:
+    if not existing:
+        return True
+    if document.get("docID") == existing.get("documentId"):
+        return False
+    submitted = str(document.get("submitDateTime") or document.get("submitDate") or "")
+    existing_submitted = str(existing.get("filedAt") or "")
+    return not existing_submitted or submitted > existing_submitted
+
+
 def main() -> None:
     api_key = os.environ.get("EDINET_API_KEY")
     if not api_key:
@@ -262,21 +342,20 @@ def main() -> None:
     missing_path = DATA_DIR / "missing-companies.json"
     financials = load_json(financials_path, {"records": {}})
     missing = load_json(missing_path, {"reasons": {}})
+    universe = load_universe()
     ordinary = missing.get("reasons", {}).get("ordinary-company", [])
-    if not ordinary:
-        print("No ordinary missing companies to update")
-        return
 
     records = financials.setdefault("records", {})
     target_by_code = {item["code"]: item for item in ordinary if item["code"] not in records}
-    if not target_by_code:
-        print("All ordinary missing companies already have records")
-        return
 
-    days = int(os.environ.get("EDINET_LOOKBACK_DAYS", "540"))
+    lookback_days = int(os.environ.get("EDINET_LOOKBACK_DAYS", "540"))
+    refresh_days = int(os.environ.get("EDINET_REFRESH_DAYS", "90"))
+    days = max(lookback_days, refresh_days)
     limit = int(os.environ.get("EDINET_FILL_LIMIT", "80"))
     client = EdinetClient(api_key)
     added = 0
+    refreshed = 0
+    failures = 0
 
     for offset in range(days):
         day = date.today() - timedelta(days=offset)
@@ -288,28 +367,40 @@ def main() -> None:
 
         for doc in documents:
             code = str(doc.get("secCode") or "")[:4]
-            if code not in target_by_code:
+            if code not in universe:
                 continue
             if str(doc.get("docTypeCode")) != ANNUAL_DOC_TYPE:
+                continue
+            existing = records.get(code)
+            is_missing_target = code in target_by_code
+            is_recent_refresh = offset < refresh_days and document_is_newer(doc, existing)
+            if not is_missing_target and not is_recent_refresh:
                 continue
             try:
                 zip_bytes = client.download_xbrl(doc["docID"])
                 facts = parse_xbrl(zip_bytes)
-                record = build_record(target_by_code[code], doc, facts)
+                record = build_record(universe[code], doc, facts)
             except Exception as exc:
                 print(f"{code} {doc.get('docID')} failed: {exc}")
+                failures += 1
                 continue
             if not record:
                 continue
 
+            if is_recent_refresh and not is_missing_target:
+                record["quality"]["policy"] = "ordinary-edinet-latest-refresh"
+                refreshed += 1
+                print(f"refreshed {code} {record['companyName']}")
+            else:
+                added += 1
+                print(f"added {code} {record['companyName']}")
+
             records[code] = record
             target_by_code.pop(code, None)
-            added += 1
-            print(f"added {code} {record['companyName']}")
             time.sleep(0.4)
-            if added >= limit or not target_by_code:
+            if added + refreshed >= limit:
                 break
-        if added >= limit or not target_by_code:
+        if added + refreshed >= limit:
             break
         time.sleep(0.2)
 
@@ -318,11 +409,25 @@ def main() -> None:
     financials.setdefault("stats", {})["ordinaryFallbackAdded"] = (
         financials.get("stats", {}).get("ordinaryFallbackAdded", 0) + added
     )
+    financials.setdefault("stats", {})["ordinaryLatestRefreshed"] = (
+        financials.get("stats", {}).get("ordinaryLatestRefreshed", 0) + refreshed
+    )
+    financials.setdefault("stats", {})["ordinaryRefreshFailures"] = (
+        financials.get("stats", {}).get("ordinaryRefreshFailures", 0) + failures
+    )
     financials_path.write_text(
         json.dumps(financials, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
-    print(f"ordinary fallback added={added} remaining={len(target_by_code)}")
+    print(
+        "ordinary fallback added={added} refreshed={refreshed} "
+        "remaining_missing={remaining} failures={failures}".format(
+            added=added,
+            refreshed=refreshed,
+            remaining=len(target_by_code),
+            failures=failures,
+        )
+    )
 
 
 if __name__ == "__main__":
