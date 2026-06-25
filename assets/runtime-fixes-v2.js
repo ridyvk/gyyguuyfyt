@@ -28,12 +28,28 @@
   }
 
   const nativeFetch = window.fetch.bind(window)
+  const financialsFallbackUrl =
+    'https://raw.githubusercontent.com/ridyvk/gyyguuyfyt/main/data/financials.json'
 
   const sanitizeJsonText = (text) =>
     text
       .replace(/^\uFEFF/, '')
       .replace(/([:\[,]\s*)-?Infinity(?=\s*[,}\]])/g, '$1null')
       .replace(/([:\[,]\s*)NaN(?=\s*[,}\]])/g, '$1null')
+
+  const jsonResponse = (text, response) => {
+    const sanitized = sanitizeJsonText(text)
+    JSON.parse(sanitized)
+
+    const headers = new Headers(response.headers)
+    headers.set('content-type', 'application/json; charset=utf-8')
+
+    return new Response(sanitized, {
+      status: response.ok ? response.status : 200,
+      statusText: response.ok ? response.statusText : 'OK',
+      headers,
+    })
+  }
 
   window.fetch = async (input, init) => {
     const response = await nativeFetch(input, init)
@@ -45,18 +61,12 @@
       const url = new URL(requestUrl, window.location.href)
       if (!url.pathname.endsWith('/data/financials.json')) return response
 
-      const text = await response.clone().text()
-      const sanitized = sanitizeJsonText(text)
-      JSON.parse(sanitized)
-
-      const headers = new Headers(response.headers)
-      headers.set('content-type', 'application/json; charset=utf-8')
-
-      return new Response(sanitized, {
-        status: response.status,
-        statusText: response.statusText,
-        headers,
-      })
+      try {
+        return jsonResponse(await response.clone().text(), response)
+      } catch (primaryError) {
+        const fallback = await nativeFetch(`${financialsFallbackUrl}${url.search || ''}`)
+        return jsonResponse(await fallback.text(), fallback)
+      }
     } catch (error) {
       console.warn('KPI Scope financial data compatibility shim skipped', error)
       return response
