@@ -31,7 +31,21 @@ EXCLUDE_PATTERNS = (
     "REIT",
     "リート",
     "投資法人",
+    "上場投信",
+    "投信",
+    "指数連動",
     "インフラファンド",
+)
+
+EXCLUDE_MARKET_PATTERNS = (
+    "ETF",
+    "ＥＴＦ",
+    "ETN",
+    "ＥＴＮ",
+    "ETF・ETN",
+    "REIT",
+    "ＲＥＩＴ",
+    "不動産投信",
 )
 
 
@@ -80,6 +94,8 @@ def read_jpx_companies() -> tuple[list[dict[str, str]], str]:
         market = str(row.get(market_col, "")).strip()
         industry = str(row.get(industry_col, "")).strip()
         if not code or code.lower() == "nan" or not name or name.lower() == "nan":
+            continue
+        if any(token in market for token in EXCLUDE_MARKET_PATTERNS):
             continue
         if any(token in name for token in EXCLUDE_PATTERNS):
             continue
