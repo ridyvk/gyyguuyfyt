@@ -56,6 +56,9 @@ jobs:
       - name: Reclassify after EDINET fill
         run: python scripts/classify_missing_companies.py
 
+      - name: Refresh update status
+        run: python scripts/update_status_snapshot.py
+
       - name: Commit updated data
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
