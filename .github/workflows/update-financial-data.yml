@@ -4,6 +4,13 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "15 18 * * 1-5"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/update-financial-data.yml"
+      - "scripts/**"
+      - "requirements-update.txt"
 
 permissions:
   contents: write
