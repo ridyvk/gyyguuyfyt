@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kpi-scope-v4-nodata'
+const CACHE_NAME = 'kpi-scope-v5-financials-shim'
 const APP_SHELL = [
   './',
   './index.html',
