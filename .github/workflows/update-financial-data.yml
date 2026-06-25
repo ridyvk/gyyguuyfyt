@@ -36,6 +36,16 @@ jobs:
       - name: Classify missing companies
         run: python scripts/classify_missing_companies.py
 
+      - name: Check EDINET API key
+        env:
+          EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
+        run: |
+          if [ -z "$EDINET_API_KEY" ]; then
+            echo "EDINET_API_KEY is not set in GitHub Actions secrets."
+            exit 1
+          fi
+          echo "EDINET_API_KEY is set."
+
       - name: Fill ordinary missing companies from EDINET
         env:
           EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
