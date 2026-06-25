@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-06-25T03:45:42.988113+00:00",
+  "generatedAt": "2026-06-25T06:07:47.655959+00:00",
   "targetCompanies": 3919,
-  "implementedCompanies": 3469,
-  "missingCompanies": 458,
-  "ordinaryMissingCompanies": 248,
-  "newListingOrRecentIpo": 204,
+  "implementedCompanies": 3474,
+  "missingCompanies": 453,
+  "ordinaryMissingCompanies": 244,
+  "newListingOrRecentIpo": 203,
   "separateModelCompanies": 6,
   "reasons": {
     "new-listing-or-recent-ipo": [
@@ -776,13 +776,6 @@
         "name": "伊澤タオル",
         "market": "スタンダード（内国株式）",
         "industry": "3100",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "366A",
-        "name": "ウェルネス・コミュニケーションズ",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -2482,13 +2475,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "6346",
-        "name": "キクカワエンタープライズ",
-        "market": "スタンダード（内国株式）",
-        "industry": "3600",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "6356",
         "name": "日本ギア工業",
         "market": "スタンダード（内国株式）",
@@ -2533,13 +2519,6 @@
       {
         "code": "6656",
         "name": "インスペック",
-        "market": "スタンダード（内国株式）",
-        "industry": "3650",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "6836",
-        "name": "ぷらっとホーム",
         "market": "スタンダード（内国株式）",
         "industry": "3650",
         "reason": "ordinary-company"
@@ -3042,13 +3021,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "9327",
-        "name": "イー・ロジット",
-        "market": "スタンダード（内国株式）",
-        "industry": "5200",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "9330",
         "name": "揚羽",
         "market": "グロース（内国株式）",
@@ -3088,13 +3060,6 @@
         "name": "ココルポート",
         "market": "グロース（内国株式）",
         "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9363",
-        "name": "大運",
-        "market": "スタンダード（内国株式）",
-        "industry": "5200",
         "reason": "ordinary-company"
       },
       {
@@ -4346,13 +4311,6 @@
       "name": "伊澤タオル",
       "market": "スタンダード（内国株式）",
       "industry": "3100",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "366A",
-      "name": "ウェルネス・コミュニケーションズ",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
       "reason": "new-listing-or-recent-ipo"
     },
     {
@@ -5707,13 +5665,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "6346",
-      "name": "キクカワエンタープライズ",
-      "market": "スタンダード（内国株式）",
-      "industry": "3600",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "6356",
       "name": "日本ギア工業",
       "market": "スタンダード（内国株式）",
@@ -5758,13 +5709,6 @@
     {
       "code": "6656",
       "name": "インスペック",
-      "market": "スタンダード（内国株式）",
-      "industry": "3650",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "6836",
-      "name": "ぷらっとホーム",
       "market": "スタンダード（内国株式）",
       "industry": "3650",
       "reason": "ordinary-company"
@@ -6281,13 +6225,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "9327",
-      "name": "イー・ロジット",
-      "market": "スタンダード（内国株式）",
-      "industry": "5200",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "9330",
       "name": "揚羽",
       "market": "グロース（内国株式）",
@@ -6327,13 +6264,6 @@
       "name": "ココルポート",
       "market": "グロース（内国株式）",
       "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9363",
-      "name": "大運",
-      "market": "スタンダード（内国株式）",
-      "industry": "5200",
       "reason": "ordinary-company"
     },
     {
