@@ -22,6 +22,7 @@ def main() -> None:
     missing = load_json(DATA_DIR / "missing-companies.json", {})
     financials = load_json(DATA_DIR / "financials.json", {"records": {}})
     previous = load_json(DATA_DIR / "update-status.json", {})
+    stats = financials.get("stats", {})
 
     target = int(missing.get("targetCompanies") or 0)
     implemented = int(missing.get("implementedCompanies") or len(financials.get("records", {})))
@@ -43,6 +44,9 @@ def main() -> None:
         "newListingOrRecentIpo": int(missing.get("newListingOrRecentIpo") or 0),
         "separateModelCompanies": int(missing.get("separateModelCompanies") or 0),
         "coverageRatio": coverage,
+        "ordinaryFallbackAddedTotal": int(stats.get("ordinaryFallbackAdded") or 0),
+        "ordinaryLatestRefreshedTotal": int(stats.get("ordinaryLatestRefreshed") or 0),
+        "ordinaryRefreshFailuresTotal": int(stats.get("ordinaryRefreshFailures") or 0),
         "message": (
             f"JPX上場企業ユニバースを更新し、対象{target:,}社中"
             f"{implemented:,}社を取得済み、未取得{missing_count:,}社。"
