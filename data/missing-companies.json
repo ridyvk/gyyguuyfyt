@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-06-25T08:17:10.374110+00:00",
+  "generatedAt": "2026-06-25T08:32:30.860869+00:00",
   "targetCompanies": 3919,
-  "implementedCompanies": 3493,
-  "missingCompanies": 434,
-  "ordinaryMissingCompanies": 227,
-  "newListingOrRecentIpo": 201,
+  "implementedCompanies": 3500,
+  "missingCompanies": 427,
+  "ordinaryMissingCompanies": 221,
+  "newListingOrRecentIpo": 200,
   "separateModelCompanies": 6,
   "reasons": {
     "new-listing-or-recent-ipo": [
@@ -650,13 +650,6 @@
         "name": "ＴａｌｅｎｔＸ",
         "market": "グロース（内国株式）",
         "industry": "5250",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "331A",
-        "name": "メディックス",
-        "market": "スタンダード（内国株式）",
-        "industry": "9050",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -1628,13 +1621,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "3079",
-        "name": "ディーブイエックス",
-        "market": "スタンダード（内国株式）",
-        "industry": "6050",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "3191",
         "name": "ジョイフル本田",
         "market": "プライム（内国株式）",
@@ -1915,13 +1901,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "4488",
-        "name": "ＡＩ　ｉｎｓｉｄｅ",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "4556",
         "name": "カイノス",
         "market": "スタンダード（内国株式）",
@@ -1995,13 +1974,6 @@
         "code": "4923",
         "name": "コタ",
         "market": "プライム（内国株式）",
-        "industry": "3200",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4960",
-        "name": "ケミプロ化成",
-        "market": "スタンダード（内国株式）",
         "industry": "3200",
         "reason": "ordinary-company"
       },
@@ -2321,13 +2293,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "5939",
-        "name": "大谷工業",
-        "market": "スタンダード（内国株式）",
-        "industry": "3550",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "6036",
         "name": "ＫｅｅＰｅｒ技研",
         "market": "プライム（内国株式）",
@@ -2608,13 +2573,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "7621",
-        "name": "うかい",
-        "market": "スタンダード（内国株式）",
-        "industry": "6100",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "7636",
         "name": "ハンズマン",
         "market": "スタンダード（内国株式）",
@@ -2842,13 +2800,6 @@
         "code": "9227",
         "name": "マイクロ波化学",
         "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9229",
-        "name": "サンウェルズ",
-        "market": "プライム（内国株式）",
         "industry": "9050",
         "reason": "ordinary-company"
       },
@@ -3810,13 +3761,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "3079",
-      "name": "ディーブイエックス",
-      "market": "スタンダード（内国株式）",
-      "industry": "6050",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "307A",
       "name": "ハウジング・スタッフ",
       "market": "PRO Market",
@@ -3954,13 +3898,6 @@
       "name": "ＴａｌｅｎｔＸ",
       "market": "グロース（内国株式）",
       "industry": "5250",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "331A",
-      "name": "メディックス",
-      "market": "スタンダード（内国株式）",
-      "industry": "9050",
       "reason": "new-listing-or-recent-ipo"
     },
     {
@@ -4566,13 +4503,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "4488",
-      "name": "ＡＩ　ｉｎｓｉｄｅ",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "4556",
       "name": "カイノス",
       "market": "スタンダード（内国株式）",
@@ -4772,13 +4702,6 @@
       "code": "4923",
       "name": "コタ",
       "market": "プライム（内国株式）",
-      "industry": "3200",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "4960",
-      "name": "ケミプロ化成",
-      "market": "スタンダード（内国株式）",
       "industry": "3200",
       "reason": "ordinary-company"
     },
@@ -5378,13 +5301,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "5939",
-      "name": "大谷工業",
-      "market": "スタンダード（内国株式）",
-      "industry": "3550",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "6036",
       "name": "ＫｅｅＰｅｒ技研",
       "market": "プライム（内国株式）",
@@ -5672,13 +5588,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "7621",
-      "name": "うかい",
-      "market": "スタンダード（内国株式）",
-      "industry": "6100",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "7636",
       "name": "ハンズマン",
       "market": "スタンダード（内国株式）",
@@ -5913,13 +5822,6 @@
       "code": "9227",
       "name": "マイクロ波化学",
       "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9229",
-      "name": "サンウェルズ",
-      "market": "プライム（内国株式）",
       "industry": "9050",
       "reason": "ordinary-company"
     },
