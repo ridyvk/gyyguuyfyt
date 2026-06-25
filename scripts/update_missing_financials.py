@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import io
 import json
+import math
 import os
 import glob
 import re
@@ -107,9 +108,10 @@ def metric_value(value: str | None) -> float | None:
     if not value:
         return None
     try:
-        return float(value)
+        number = float(value)
     except ValueError:
         return None
+    return number if math.isfinite(number) else None
 
 
 def pct(numerator: float | None, denominator: float | None) -> float | None:
@@ -290,6 +292,16 @@ def load_json(path: Path, fallback: dict) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def clean_json(value):
+    if isinstance(value, float):
+        return value if math.isfinite(value) else None
+    if isinstance(value, dict):
+        return {key: clean_json(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [clean_json(item) for item in value]
+    return value
+
+
 def load_universe() -> dict[str, dict[str, str]]:
     files = sorted(glob.glob(str(ASSETS_DIR / "companyUniverse-*.js")))
     if not files:
@@ -416,7 +428,7 @@ def main() -> None:
         financials.get("stats", {}).get("ordinaryRefreshFailures", 0) + failures
     )
     financials_path.write_text(
-        json.dumps(financials, ensure_ascii=False, indent=2) + "\n",
+        json.dumps(clean_json(financials), ensure_ascii=False, indent=2, allow_nan=False) + "\n",
         encoding="utf-8",
     )
     print(
