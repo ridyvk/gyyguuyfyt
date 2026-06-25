@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-06-25T07:49:22.312825+00:00",
+  "generatedAt": "2026-06-25T08:17:10.374110+00:00",
   "targetCompanies": 3919,
-  "implementedCompanies": 3483,
-  "missingCompanies": 444,
-  "ordinaryMissingCompanies": 235,
-  "newListingOrRecentIpo": 203,
+  "implementedCompanies": 3493,
+  "missingCompanies": 434,
+  "ordinaryMissingCompanies": 227,
+  "newListingOrRecentIpo": 201,
   "separateModelCompanies": 6,
   "reasons": {
     "new-listing-or-recent-ipo": [
@@ -660,13 +660,6 @@
         "reason": "new-listing-or-recent-ipo"
       },
       {
-        "code": "332A",
-        "name": "ミーク",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
         "code": "333A",
         "name": "テクノスマイル",
         "market": "PRO Market",
@@ -979,13 +972,6 @@
         "name": "ジェイウェイブ",
         "market": "PRO Market",
         "industry": "9050",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "438A",
-        "name": "インフキュリオン",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -1502,13 +1488,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "2323",
-        "name": "ｆｏｎｆｕｎ",
-        "market": "スタンダード（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "2370",
         "name": "メディネット",
         "market": "グロース（内国株式）",
@@ -1555,20 +1534,6 @@
         "name": "タウンニュース社",
         "market": "スタンダード（内国株式）",
         "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "2540",
-        "name": "養命酒製造",
-        "market": "プライム（内国株式）",
-        "industry": "3050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "2586",
-        "name": "フルッタフルッタ",
-        "market": "グロース（内国株式）",
-        "industry": "3050",
         "reason": "ordinary-company"
       },
       {
@@ -1880,13 +1845,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "4179",
-        "name": "ジーネクスト",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "4199",
         "name": "ワンダープラネット",
         "market": "グロース（内国株式）",
@@ -1973,13 +1931,6 @@
       {
         "code": "4575",
         "name": "キャンバス",
-        "market": "グロース（内国株式）",
-        "industry": "3250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4594",
-        "name": "ブライトパス・バイオ",
         "market": "グロース（内国株式）",
         "industry": "3250",
         "reason": "ordinary-company"
@@ -2489,13 +2440,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "6907",
-        "name": "ジオマテック",
-        "market": "スタンダード（内国株式）",
-        "industry": "3650",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "7046",
         "name": "ＴＤＳＥ",
         "market": "グロース（内国株式）",
@@ -2583,13 +2527,6 @@
         "code": "7364",
         "name": "琉球アスティーダスポーツクラブ",
         "market": "PRO Market",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7368",
-        "name": "表示灯",
-        "market": "スタンダード（内国株式）",
         "industry": "9050",
         "reason": "ordinary-company"
       },
@@ -2878,13 +2815,6 @@
         "name": "大伸社",
         "market": "PRO Market",
         "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9206",
-        "name": "スターフライヤー",
-        "market": "スタンダード（内国株式）",
-        "industry": "5150",
         "reason": "ordinary-company"
       },
       {
@@ -3523,13 +3453,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "2323",
-      "name": "ｆｏｎｆｕｎ",
-      "market": "スタンダード（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "2370",
       "name": "メディネット",
       "market": "グロース（内国株式）",
@@ -3640,20 +3563,6 @@
       "market": "PRO Market",
       "industry": "6100",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "2540",
-      "name": "養命酒製造",
-      "market": "プライム（内国株式）",
-      "industry": "3050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "2586",
-      "name": "フルッタフルッタ",
-      "market": "グロース（内国株式）",
-      "industry": "3050",
-      "reason": "ordinary-company"
     },
     {
       "code": "25935",
@@ -4060,13 +3969,6 @@
       "market": "スタンダード（内国株式）",
       "industry": "6100",
       "reason": "ordinary-company"
-    },
-    {
-      "code": "332A",
-      "name": "ミーク",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "new-listing-or-recent-ipo"
     },
     {
       "code": "333A",
@@ -4482,13 +4384,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "4179",
-      "name": "ジーネクスト",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "4199",
       "name": "ワンダープラネット",
       "market": "グロース（内国株式）",
@@ -4577,13 +4472,6 @@
       "name": "ジェイウェイブ",
       "market": "PRO Market",
       "industry": "9050",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "438A",
-      "name": "インフキュリオン",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
       "reason": "new-listing-or-recent-ipo"
     },
     {
@@ -4725,13 +4613,6 @@
       "market": "PRO Market",
       "industry": "8050",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "4594",
-      "name": "ブライトパス・バイオ",
-      "market": "グロース（内国株式）",
-      "industry": "3250",
-      "reason": "ordinary-company"
     },
     {
       "code": "4599",
@@ -5616,13 +5497,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "6907",
-      "name": "ジオマテック",
-      "market": "スタンダード（内国株式）",
-      "industry": "3650",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "7046",
       "name": "ＴＤＳＥ",
       "market": "グロース（内国株式）",
@@ -5710,13 +5584,6 @@
       "code": "7364",
       "name": "琉球アスティーダスポーツクラブ",
       "market": "PRO Market",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7368",
-      "name": "表示灯",
-      "market": "スタンダード（内国株式）",
       "industry": "9050",
       "reason": "ordinary-company"
     },
@@ -6020,13 +5887,6 @@
       "market": "プライム（内国株式）",
       "industry": "5150",
       "reason": "separate-model"
-    },
-    {
-      "code": "9206",
-      "name": "スターフライヤー",
-      "market": "スタンダード（内国株式）",
-      "industry": "5150",
-      "reason": "ordinary-company"
     },
     {
       "code": "9212",
