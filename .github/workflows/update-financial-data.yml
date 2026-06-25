@@ -1,0 +1,46 @@
+name: Update financial data
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 18 * * 1-5"
+
+permissions:
+  contents: write
+
+jobs:
+  update-financial-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements-update.txt
+
+      - name: Refresh JPX company universe
+        run: python scripts/update_company_universe.py
+
+      - name: Classify missing companies
+        run: python scripts/classify_missing_companies.py
+
+      - name: Fill ordinary missing companies from EDINET
+        env:
+          EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
+          EDINET_LOOKBACK_DAYS: "540"
+          EDINET_FILL_LIMIT: "80"
+        run: python scripts/update_missing_financials.py
+
+      - name: Reclassify after EDINET fill
+        run: python scripts/classify_missing_companies.py
+
+      - name: Commit updated data
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Update financial data snapshots
+          file_pattern: "assets/companyUniverse-*.js data/*.json"
