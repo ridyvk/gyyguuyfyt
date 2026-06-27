@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-06-27T09:38:21.986073+00:00",
+  "generatedAt": "2026-06-27T11:23:57.672623+00:00",
   "targetCompanies": 3919,
-  "implementedCompanies": 3519,
-  "missingCompanies": 408,
+  "implementedCompanies": 3526,
+  "missingCompanies": 401,
   "ordinaryMissingCompanies": 210,
-  "newListingOrRecentIpo": 192,
+  "newListingOrRecentIpo": 185,
   "separateModelCompanies": 6,
   "reasons": {
     "new-listing-or-recent-ipo": [
@@ -69,13 +69,6 @@
         "name": "東日本地所",
         "market": "PRO Market",
         "industry": "8050",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "142A",
-        "name": "ジンジブ",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -464,20 +457,6 @@
         "reason": "new-listing-or-recent-ipo"
       },
       {
-        "code": "288A",
-        "name": "ラクサス・テクノロジーズ",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "291A",
-        "name": "リスキル",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
         "code": "292A",
         "name": "エスアイイー",
         "market": "PRO Market",
@@ -496,20 +475,6 @@
         "name": "ＧＶＡ　ＴＥＣＨ",
         "market": "グロース（内国株式）",
         "industry": "5250",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "299A",
-        "name": "クラシル",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "300A",
-        "name": "ＭＩＣ",
-        "market": "スタンダード（内国株式）",
-        "industry": "9050",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -867,13 +832,6 @@
         "name": "日本マリタイムバンク",
         "market": "PRO Market",
         "industry": "7200",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "416A",
-        "name": "富士ユナイトホールディングス",
-        "market": "スタンダード（内国株式）",
-        "industry": "6050",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -1252,13 +1210,6 @@
         "name": "ヒトトヒトホールディングス",
         "market": "スタンダード（内国株式）",
         "industry": "9050",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "550A",
-        "name": "ソフトテックス",
-        "market": "スタンダード（内国株式）",
-        "industry": "5250",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -2942,13 +2893,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "142A",
-      "name": "ジンジブ",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
       "code": "1432",
       "name": "動力",
       "market": "PRO Market",
@@ -3467,20 +3411,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "288A",
-      "name": "ラクサス・テクノロジーズ",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "291A",
-      "name": "リスキル",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
       "code": "2926",
       "name": "篠崎屋",
       "market": "スタンダード（内国株式）",
@@ -3556,20 +3486,6 @@
       "market": "スタンダード（内国株式）",
       "industry": "8050",
       "reason": "ordinary-company"
-    },
-    {
-      "code": "299A",
-      "name": "クラシル",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "300A",
-      "name": "ＭＩＣ",
-      "market": "スタンダード（内国株式）",
-      "industry": "9050",
-      "reason": "new-listing-or-recent-ipo"
     },
     {
       "code": "301A",
@@ -4115,13 +4031,6 @@
       "name": "日本マリタイムバンク",
       "market": "PRO Market",
       "industry": "7200",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "416A",
-      "name": "富士ユナイトホールディングス",
-      "market": "スタンダード（内国株式）",
-      "industry": "6050",
       "reason": "new-listing-or-recent-ipo"
     },
     {
@@ -4759,13 +4668,6 @@
       "name": "ヒトトヒトホールディングス",
       "market": "スタンダード（内国株式）",
       "industry": "9050",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "550A",
-      "name": "ソフトテックス",
-      "market": "スタンダード（内国株式）",
-      "industry": "5250",
       "reason": "new-listing-or-recent-ipo"
     },
     {
