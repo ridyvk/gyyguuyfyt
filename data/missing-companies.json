@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-06-27T11:23:57.672623+00:00",
+  "generatedAt": "2026-06-27T12:42:01.513657+00:00",
   "targetCompanies": 3919,
-  "implementedCompanies": 3526,
-  "missingCompanies": 401,
-  "ordinaryMissingCompanies": 210,
+  "implementedCompanies": 3663,
+  "missingCompanies": 264,
+  "ordinaryMissingCompanies": 73,
   "newListingOrRecentIpo": 185,
   "separateModelCompanies": 6,
   "reasons": {
@@ -1306,13 +1306,6 @@
     ],
     "ordinary-company": [
       {
-        "code": "1401",
-        "name": "エムビーエス",
-        "market": "グロース（内国株式）",
-        "industry": "2050",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "1432",
         "name": "動力",
         "market": "PRO Market",
@@ -1341,115 +1334,10 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "1997",
-        "name": "暁飯島工業",
-        "market": "スタンダード（内国株式）",
-        "industry": "2050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "2164",
-        "name": "地域新聞社",
-        "market": "スタンダード（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "2301",
-        "name": "学情",
-        "market": "プライム（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "2303",
-        "name": "ドーン",
-        "market": "スタンダード（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "2370",
-        "name": "メディネット",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "2391",
-        "name": "プラネット",
-        "market": "スタンダード（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "2410",
-        "name": "キャリアデザインセンター",
-        "market": "プライム（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "2428",
-        "name": "ウェルネット",
-        "market": "スタンダード（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "2452",
         "name": "コンピュータマインド",
         "market": "PRO Market",
         "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "2477",
-        "name": "手間いらず",
-        "market": "スタンダード（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "2481",
-        "name": "タウンニュース社",
-        "market": "スタンダード（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "2652",
-        "name": "まんだらけ",
-        "market": "スタンダード（内国株式）",
-        "industry": "6100",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "2667",
-        "name": "イメージ　ワン",
-        "market": "スタンダード（内国株式）",
-        "industry": "6050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "2820",
-        "name": "やまみ",
-        "market": "スタンダード（内国株式）",
-        "industry": "3050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "2926",
-        "name": "篠崎屋",
-        "market": "スタンダード（内国株式）",
-        "industry": "3050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "2961",
-        "name": "日本調理機",
-        "market": "スタンダード（内国株式）",
-        "industry": "3550",
         "reason": "ordinary-company"
       },
       {
@@ -1488,69 +1376,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "2999",
-        "name": "ホームポジション",
-        "market": "スタンダード（内国株式）",
-        "industry": "8050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "3045",
-        "name": "カワサキ",
-        "market": "スタンダード（内国株式）",
-        "industry": "6050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "3191",
-        "name": "ジョイフル本田",
-        "market": "プライム（内国株式）",
-        "industry": "6100",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "3192",
-        "name": "白鳩",
-        "market": "スタンダード（内国株式）",
-        "industry": "6100",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "3236",
-        "name": "プロパスト",
-        "market": "スタンダード（内国株式）",
-        "industry": "8050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "3294",
-        "name": "イーグランド",
-        "market": "スタンダード（内国株式）",
-        "industry": "8050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "3297",
-        "name": "東武住販",
-        "market": "スタンダード（内国株式）",
-        "industry": "8050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "3329",
-        "name": "東和フードサービス",
-        "market": "スタンダード（内国株式）",
-        "industry": "6100",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "3426",
-        "name": "アトムリビンテック",
-        "market": "スタンダード（内国株式）",
-        "industry": "3550",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "3448",
         "name": "清鋼材",
         "market": "PRO Market",
@@ -1565,13 +1390,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "3461",
-        "name": "パルマ",
-        "market": "スタンダード（内国株式）",
-        "industry": "8050",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "3483",
         "name": "翔栄",
         "market": "PRO Market",
@@ -1579,226 +1397,9 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "3494",
-        "name": "マリオン",
-        "market": "スタンダード（内国株式）",
-        "industry": "8050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "3560",
-        "name": "ほぼ日",
-        "market": "スタンダード（内国株式）",
-        "industry": "6100",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "3723",
-        "name": "日本ファルコム",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "3892",
-        "name": "岡山製紙",
-        "market": "スタンダード（内国株式）",
-        "industry": "3150",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "3907",
-        "name": "シリコンスタジオ",
-        "market": "スタンダード（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "3920",
-        "name": "アイビーシー",
-        "market": "スタンダード（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "3930",
-        "name": "はてな",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "3984",
-        "name": "ユーザーローカル",
-        "market": "プライム（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "3986",
-        "name": "ビーブレイクシステムズ",
-        "market": "スタンダード（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4014",
-        "name": "カラダノート",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4026",
-        "name": "神島化学工業",
-        "market": "スタンダード（内国株式）",
-        "industry": "3400",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4057",
-        "name": "インターファクトリー",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4059",
-        "name": "まぐまぐ",
-        "market": "スタンダード（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4073",
-        "name": "ジィ・シィ企画",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4075",
-        "name": "ブレインズテクノロジー",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4172",
-        "name": "Ｈｉクラテス",
-        "market": "スタンダード（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4199",
-        "name": "ワンダープラネット",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4240",
-        "name": "クラスターテクノロジー",
-        "market": "スタンダード（内国株式）",
-        "industry": "3200",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4263",
-        "name": "サスメド",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4391",
-        "name": "ロジザード",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4398",
-        "name": "ブロードバンドセキュリティ",
-        "market": "スタンダード（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4412",
-        "name": "サイエンスアーツ",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "4426",
         "name": "パスロジ",
         "market": "PRO Market",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4441",
-        "name": "トビラシステムズ",
-        "market": "スタンダード（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4447",
-        "name": "ピー・ビーシステムズ",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4479",
-        "name": "マクアケ",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4556",
-        "name": "カイノス",
-        "market": "スタンダード（内国株式）",
-        "industry": "3250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4575",
-        "name": "キャンバス",
-        "market": "グロース（内国株式）",
-        "industry": "3250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4599",
-        "name": "ステムリム",
-        "market": "グロース（内国株式）",
-        "industry": "3250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4716",
-        "name": "日本オラクル",
-        "market": "スタンダード（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4809",
-        "name": "パラカ",
-        "market": "プライム（内国株式）",
-        "industry": "8050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4847",
-        "name": "インテリジェント　ウェイブ",
-        "market": "プライム（内国株式）",
         "industry": "5250",
         "reason": "ordinary-company"
       },
@@ -1810,45 +1411,10 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "4884",
-        "name": "クリングルファーマ",
-        "market": "グロース（内国株式）",
-        "industry": "3250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4885",
-        "name": "室町ケミカル",
-        "market": "スタンダード（内国株式）",
-        "industry": "3250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "4923",
-        "name": "コタ",
-        "market": "プライム（内国株式）",
-        "industry": "3200",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "5022",
         "name": "レボインターナショナル",
         "market": "PRO Market",
         "industry": "3300",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "5032",
-        "name": "ＡＮＹＣＯＬＯＲ",
-        "market": "プライム（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "5034",
-        "name": "ｕｎｅｒｒｙ",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
         "reason": "ordinary-company"
       },
       {
@@ -1873,30 +1439,9 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "5125",
-        "name": "ファインズ",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "5130",
         "name": "ヒロホールディングス",
         "market": "PRO Market",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "5132",
-        "name": "ｐｌｕｓｚｅｒｏ",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "5134",
-        "name": "ＰＯＰＥＲ",
-        "market": "グロース（内国株式）",
         "industry": "5250",
         "reason": "ordinary-company"
       },
@@ -1922,20 +1467,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "5256",
-        "name": "Ｆｕｓｉｃ",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "5380",
-        "name": "新東",
-        "market": "スタンダード（内国株式）",
-        "industry": "3400",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "5525",
         "name": "フロンティアホールディングス",
         "market": "PRO Market",
@@ -1957,13 +1488,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "5532",
-        "name": "リアルゲイト",
-        "market": "グロース（内国株式）",
-        "industry": "8050",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "5534",
         "name": "エンゼルグループ",
         "market": "PRO Market",
@@ -1978,13 +1502,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "5570",
-        "name": "ジェノバ",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "5573",
         "name": "働楽ホールディングス",
         "market": "PRO Market",
@@ -1992,30 +1509,9 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "5574",
-        "name": "ＡＢＥＪＡ",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "5575",
-        "name": "Ｇｌｏｂｅｅ",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "5581",
         "name": "カイテクノロジー",
         "market": "PRO Market",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "5582",
-        "name": "グリッド",
-        "market": "グロース（内国株式）",
         "industry": "5250",
         "reason": "ordinary-company"
       },
@@ -2062,13 +1558,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "5721",
-        "name": "エスクリプトエナジー",
-        "market": "スタンダード（内国株式）",
-        "industry": "3500",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "5840",
         "name": "日本総険",
         "market": "PRO Market",
@@ -2076,31 +1565,10 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "5843",
-        "name": "ニッポンインシュア",
-        "market": "スタンダード（内国株式）",
-        "industry": "7200",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "5866",
         "name": "ＷｉｚＢｉｚ",
         "market": "PRO Market",
         "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "5869",
-        "name": "早稲田学習研究会",
-        "market": "スタンダード（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "5885",
-        "name": "ジーデップ・アドバンス",
-        "market": "スタンダード（内国株式）",
-        "industry": "6050",
         "reason": "ordinary-company"
       },
       {
@@ -2132,48 +1600,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "5921",
-        "name": "川岸工業",
-        "market": "スタンダード（内国株式）",
-        "industry": "3550",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "6036",
-        "name": "ＫｅｅＰｅｒ技研",
-        "market": "プライム（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "6037",
-        "name": "楽待",
-        "market": "スタンダード（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "6049",
-        "name": "イトクロ",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "6087",
-        "name": "アビスト",
-        "market": "スタンダード（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "6156",
-        "name": "エーワン精密",
-        "market": "スタンダード（内国株式）",
-        "industry": "3600",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "6168",
         "name": "ＯＮＥ　ＧＲＯＵＰ",
         "market": "PRO Market",
@@ -2185,34 +1611,6 @@
         "name": "デンタス",
         "market": "PRO Market",
         "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "6194",
-        "name": "アトラエ",
-        "market": "プライム（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "6196",
-        "name": "ストライクグループ",
-        "market": "プライム（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "6356",
-        "name": "日本ギア工業",
-        "market": "スタンダード（内国株式）",
-        "industry": "3600",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "6387",
-        "name": "サムコ",
-        "market": "プライム（内国株式）",
-        "industry": "3600",
         "reason": "ordinary-company"
       },
       {
@@ -2237,24 +1635,10 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "6656",
-        "name": "インスペック",
-        "market": "スタンダード（内国株式）",
-        "industry": "3650",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "7098",
         "name": "エージェント",
         "market": "PRO Market",
         "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7126",
-        "name": "グローバルスタイル",
-        "market": "スタンダード（内国株式）",
-        "industry": "6100",
         "reason": "ordinary-company"
       },
       {
@@ -2293,30 +1677,9 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "7265",
-        "name": "エイケン工業",
-        "market": "スタンダード（内国株式）",
-        "industry": "3700",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "7355",
         "name": "一寸房",
         "market": "PRO Market",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7356",
-        "name": "Ｒｅｔｔｙ",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7363",
-        "name": "ベビーカレンダー",
-        "market": "グロース（内国株式）",
         "industry": "9050",
         "reason": "ordinary-company"
       },
@@ -2328,121 +1691,9 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "7376",
-        "name": "ＢＣＣ",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7388",
-        "name": "ＦＰパートナー",
-        "market": "プライム（内国株式）",
-        "industry": "7150",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7409",
-        "name": "ＡｅｒｏＥｄｇｅ",
-        "market": "グロース（内国株式）",
-        "industry": "3700",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7462",
-        "name": "ＣＡＰＩＴＡ",
-        "market": "スタンダード（内国株式）",
-        "industry": "6100",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7500",
-        "name": "西川計測",
-        "market": "スタンダード（内国株式）",
-        "industry": "6050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7501",
-        "name": "ティムコ",
-        "market": "スタンダード（内国株式）",
-        "industry": "6050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7505",
-        "name": "扶桑電通",
-        "market": "スタンダード（内国株式）",
-        "industry": "6050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7513",
-        "name": "コジマ",
-        "market": "プライム（内国株式）",
-        "industry": "6100",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7524",
-        "name": "マルシェ",
-        "market": "スタンダード（内国株式）",
-        "industry": "6100",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7578",
-        "name": "ニチリョク",
-        "market": "スタンダード（内国株式）",
-        "industry": "6100",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7585",
-        "name": "かんなん丸",
-        "market": "スタンダード（内国株式）",
-        "industry": "6100",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7636",
-        "name": "ハンズマン",
-        "market": "スタンダード（内国株式）",
-        "industry": "6100",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7643",
-        "name": "ダイイチ",
-        "market": "スタンダード（内国株式）",
-        "industry": "6100",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7646",
-        "name": "ＰＬＡＮＴ",
-        "market": "スタンダード（内国株式）",
-        "industry": "6100",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7673",
-        "name": "ダイコー通産",
-        "market": "スタンダード（内国株式）",
-        "industry": "6050",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "7680",
         "name": "軽自動車館",
         "market": "PRO Market",
-        "industry": "6100",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7682",
-        "name": "浜木綿",
-        "market": "スタンダード（内国株式）",
         "industry": "6100",
         "reason": "ordinary-company"
       },
@@ -2461,13 +1712,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "7692",
-        "name": "アースインフィニティ",
-        "market": "スタンダード（内国株式）",
-        "industry": "4050",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "7693",
         "name": "北海道歯科産業",
         "market": "PRO Market",
@@ -2482,73 +1726,10 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "7711",
-        "name": "助川電気工業",
-        "market": "スタンダード（内国株式）",
-        "industry": "3750",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7792",
-        "name": "コラントッテ",
-        "market": "グロース（内国株式）",
-        "industry": "3800",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7800",
-        "name": "アミファ",
-        "market": "スタンダード（内国株式）",
-        "industry": "3800",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7805",
-        "name": "プリントネット",
-        "market": "スタンダード（内国株式）",
-        "industry": "3800",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7809",
-        "name": "壽屋",
-        "market": "スタンダード（内国株式）",
-        "industry": "3800",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7863",
-        "name": "平賀",
-        "market": "スタンダード（内国株式）",
-        "industry": "3800",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7901",
-        "name": "マツモト",
-        "market": "スタンダード（内国株式）",
-        "industry": "3800",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7980",
-        "name": "重松製作所",
-        "market": "スタンダード（内国株式）",
-        "industry": "3800",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "8301",
         "name": "日本銀行　出資証券",
         "market": "出資証券",
         "industry": "-",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "8887",
-        "name": "シーラホールディングス",
-        "market": "スタンダード（内国株式）",
-        "industry": "8050",
         "reason": "ordinary-company"
       },
       {
@@ -2580,30 +1761,9 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "9159",
-        "name": "Ｗ　ＴＯＫＹＯ",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9165",
-        "name": "クオルテック",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "9169",
         "name": "大伸社",
         "market": "PRO Market",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9212",
-        "name": "Ｇｒｅｅｎ　Ｅａｒｔｈ　Ｉｎｓｔｉｔｕｔｅ",
-        "market": "グロース（内国株式）",
         "industry": "9050",
         "reason": "ordinary-company"
       },
@@ -2618,20 +1778,6 @@
         "code": "9226",
         "name": "アイガー",
         "market": "PRO Market",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9227",
-        "name": "マイクロ波化学",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9236",
-        "name": "ジャパンＭ＆Ａソリューション",
-        "market": "グロース（内国株式）",
         "industry": "9050",
         "reason": "ordinary-company"
       },
@@ -2657,20 +1803,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "9262",
-        "name": "シルバーライフ",
-        "market": "スタンダード（内国株式）",
-        "industry": "6100",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9330",
-        "name": "揚羽",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "9334",
         "name": "アイビスホールディングス",
         "market": "PRO Market",
@@ -2682,97 +1814,6 @@
         "name": "テクノクリエイティブ",
         "market": "PRO Market",
         "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9342",
-        "name": "スマサポ",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9344",
-        "name": "アクシスコンサルティング",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9346",
-        "name": "ココルポート",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9423",
-        "name": "フォーバル・リアルストレート",
-        "market": "スタンダード（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9425",
-        "name": "ＲｅＹｕｕ　Ｊａｐａｎ",
-        "market": "スタンダード（内国株式）",
-        "industry": "5250",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9557",
-        "name": "エアークローゼット",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9558",
-        "name": "ジャパニアス",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9560",
-        "name": "プログリット",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9679",
-        "name": "ホウライ",
-        "market": "スタンダード（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9720",
-        "name": "ホテル、ニューグランド",
-        "market": "スタンダード（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9795",
-        "name": "ステップ",
-        "market": "プライム（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9872",
-        "name": "北恵",
-        "market": "スタンダード（内国株式）",
-        "industry": "6050",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "9941",
-        "name": "太洋物産",
-        "market": "スタンダード（内国株式）",
-        "industry": "6050",
         "reason": "ordinary-company"
       }
     ],
@@ -2884,13 +1925,6 @@
       "market": "PRO Market",
       "industry": "8050",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "1401",
-      "name": "エムビーエス",
-      "market": "グロース（内国株式）",
-      "industry": "2050",
-      "reason": "ordinary-company"
     },
     {
       "code": "1432",
@@ -3061,13 +2095,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "1997",
-      "name": "暁飯島工業",
-      "market": "スタンダード（内国株式）",
-      "industry": "2050",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "199A",
       "name": "メディエア",
       "market": "PRO Market",
@@ -3122,13 +2149,6 @@
       "market": "プライム（内国株式）",
       "industry": "9050",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "2164",
-      "name": "地域新聞社",
-      "market": "スタンダード（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
     },
     {
       "code": "216A",
@@ -3187,34 +2207,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "2301",
-      "name": "学情",
-      "market": "プライム（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "2303",
-      "name": "ドーン",
-      "market": "スタンダード（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "2370",
-      "name": "メディネット",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "2391",
-      "name": "プラネット",
-      "market": "スタンダード（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "239A",
       "name": "バレッグス",
       "market": "PRO Market",
@@ -3222,25 +2214,11 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "2410",
-      "name": "キャリアデザインセンター",
-      "market": "プライム（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "241A",
       "name": "ＲＯＸＸ",
       "market": "グロース（内国株式）",
       "industry": "5250",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "2428",
-      "name": "ウェルネット",
-      "market": "スタンダード（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
     },
     {
       "code": "243A",
@@ -3271,25 +2249,11 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "2477",
-      "name": "手間いらず",
-      "market": "スタンダード（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "247A",
       "name": "Ａｉロボティクス",
       "market": "グロース（内国株式）",
       "industry": "3200",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "2481",
-      "name": "タウンニュース社",
-      "market": "スタンダード（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
     },
     {
       "code": "249A",
@@ -3334,25 +2298,11 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "2652",
-      "name": "まんだらけ",
-      "market": "スタンダード（内国株式）",
-      "industry": "6100",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "265A",
       "name": "Ｈｍｃｏｍｍ",
       "market": "グロース（内国株式）",
       "industry": "5250",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "2667",
-      "name": "イメージ　ワン",
-      "market": "スタンダード（内国株式）",
-      "industry": "6050",
-      "reason": "ordinary-company"
     },
     {
       "code": "266A",
@@ -3397,25 +2347,11 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "2820",
-      "name": "やまみ",
-      "market": "スタンダード（内国株式）",
-      "industry": "3050",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "284A",
       "name": "フクヤ建設",
       "market": "PRO Market",
       "industry": "2050",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "2926",
-      "name": "篠崎屋",
-      "market": "スタンダード（内国株式）",
-      "industry": "3050",
-      "reason": "ordinary-company"
     },
     {
       "code": "292A",
@@ -3430,13 +2366,6 @@
       "market": "PRO Market",
       "industry": "6100",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "2961",
-      "name": "日本調理機",
-      "market": "スタンダード（内国株式）",
-      "industry": "3550",
-      "reason": "ordinary-company"
     },
     {
       "code": "2985",
@@ -3481,13 +2410,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "2999",
-      "name": "ホームポジション",
-      "market": "スタンダード（内国株式）",
-      "industry": "8050",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "301A",
       "name": "インデックス",
       "market": "PRO Market",
@@ -3500,13 +2422,6 @@
       "market": "グロース（内国株式）",
       "industry": "5250",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "3045",
-      "name": "カワサキ",
-      "market": "スタンダード（内国株式）",
-      "industry": "6050",
-      "reason": "ordinary-company"
     },
     {
       "code": "304A",
@@ -3572,20 +2487,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "3191",
-      "name": "ジョイフル本田",
-      "market": "プライム（内国株式）",
-      "industry": "6100",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "3192",
-      "name": "白鳩",
-      "market": "スタンダード（内国株式）",
-      "industry": "6100",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "320A",
       "name": "Ｄ＆Ｉ",
       "market": "PRO Market",
@@ -3605,13 +2506,6 @@
       "market": "PRO Market",
       "industry": "3400",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "3236",
-      "name": "プロパスト",
-      "market": "スタンダード（内国株式）",
-      "industry": "8050",
-      "reason": "ordinary-company"
     },
     {
       "code": "324A",
@@ -3635,32 +2529,11 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "3294",
-      "name": "イーグランド",
-      "market": "スタンダード（内国株式）",
-      "industry": "8050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "3297",
-      "name": "東武住販",
-      "market": "スタンダード（内国株式）",
-      "industry": "8050",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "329A",
       "name": "ジールアソシエイツ",
       "market": "PRO Market",
       "industry": "9050",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "3329",
-      "name": "東和フードサービス",
-      "market": "スタンダード（内国株式）",
-      "industry": "6100",
-      "reason": "ordinary-company"
     },
     {
       "code": "333A",
@@ -3705,13 +2578,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "3426",
-      "name": "アトムリビンテック",
-      "market": "スタンダード（内国株式）",
-      "industry": "3550",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "3448",
       "name": "清鋼材",
       "market": "PRO Market",
@@ -3723,13 +2589,6 @@
       "name": "サトウ産業",
       "market": "PRO Market",
       "industry": "3550",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "3461",
-      "name": "パルマ",
-      "market": "スタンダード（内国株式）",
-      "industry": "8050",
       "reason": "ordinary-company"
     },
     {
@@ -3747,13 +2606,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "3494",
-      "name": "マリオン",
-      "market": "スタンダード（内国株式）",
-      "industry": "8050",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "351A",
       "name": "アクシスＩＴパートナーズ",
       "market": "PRO Market",
@@ -3766,13 +2618,6 @@
       "market": "PRO Market",
       "industry": "9050",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "3560",
-      "name": "ほぼ日",
-      "market": "スタンダード（内国株式）",
-      "industry": "6100",
-      "reason": "ordinary-company"
     },
     {
       "code": "357A",
@@ -3838,13 +2683,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "3723",
-      "name": "日本ファルコム",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "373A",
       "name": "リップス",
       "market": "グロース（内国株式）",
@@ -3887,39 +2725,11 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "3892",
-      "name": "岡山製紙",
-      "market": "スタンダード（内国株式）",
-      "industry": "3150",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "389A",
       "name": "八光オートメーション",
       "market": "PRO Market",
       "industry": "3650",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "3907",
-      "name": "シリコンスタジオ",
-      "market": "スタンダード（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "3920",
-      "name": "アイビーシー",
-      "market": "スタンダード（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "3930",
-      "name": "はてな",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
     },
     {
       "code": "393A",
@@ -3929,20 +2739,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "3984",
-      "name": "ユーザーローカル",
-      "market": "プライム（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "3986",
-      "name": "ビーブレイクシステムズ",
-      "market": "スタンダード（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "398A",
       "name": "リアルクオリティ",
       "market": "PRO Market",
@@ -3950,39 +2746,11 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "4014",
-      "name": "カラダノート",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "4026",
-      "name": "神島化学工業",
-      "market": "スタンダード（内国株式）",
-      "industry": "3400",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "403A",
       "name": "北條組",
       "market": "PRO Market",
       "industry": "2050",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "4057",
-      "name": "インターファクトリー",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "4059",
-      "name": "まぐまぐ",
-      "market": "スタンダード（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
     },
     {
       "code": "405A",
@@ -3997,20 +2765,6 @@
       "market": "PRO Market",
       "industry": "9050",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "4073",
-      "name": "ジィ・シィ企画",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "4075",
-      "name": "ブレインズテクノロジー",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
     },
     {
       "code": "407A",
@@ -4034,20 +2788,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "4172",
-      "name": "Ｈｉクラテス",
-      "market": "スタンダード（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "4199",
-      "name": "ワンダープラネット",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "419A",
       "name": "ラングローブ",
       "market": "PRO Market",
@@ -4060,20 +2800,6 @@
       "market": "PRO Market",
       "industry": "5250",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "4240",
-      "name": "クラスターテクノロジー",
-      "market": "スタンダード（内国株式）",
-      "industry": "3200",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "4263",
-      "name": "サスメド",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
     },
     {
       "code": "430A",
@@ -4125,32 +2851,11 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "4391",
-      "name": "ロジザード",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "4398",
-      "name": "ブロードバンドセキュリティ",
-      "market": "スタンダード（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "439A",
       "name": "アクトビ",
       "market": "PRO Market",
       "industry": "5250",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "4412",
-      "name": "サイエンスアーツ",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
     },
     {
       "code": "441A",
@@ -4174,20 +2879,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "4441",
-      "name": "トビラシステムズ",
-      "market": "スタンダード（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "4447",
-      "name": "ピー・ビーシステムズ",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "444A",
       "name": "アイテル",
       "market": "PRO Market",
@@ -4209,20 +2900,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "4479",
-      "name": "マクアケ",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "4556",
-      "name": "カイノス",
-      "market": "スタンダード（内国株式）",
-      "industry": "3250",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "455A",
       "name": "バリューソフトホールディングス",
       "market": "PRO Market",
@@ -4237,13 +2914,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "4575",
-      "name": "キャンバス",
-      "market": "グロース（内国株式）",
-      "industry": "3250",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "457A",
       "name": "ルリアン",
       "market": "PRO Market",
@@ -4256,13 +2926,6 @@
       "market": "PRO Market",
       "industry": "8050",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "4599",
-      "name": "ステムリム",
-      "market": "グロース（内国株式）",
-      "industry": "3250",
-      "reason": "ordinary-company"
     },
     {
       "code": "460A",
@@ -4300,13 +2963,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "4716",
-      "name": "日本オラクル",
-      "market": "スタンダード（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "476A",
       "name": "辻・本郷ＩＴコンサルティング",
       "market": "スタンダード（内国株式）",
@@ -4328,13 +2984,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "4809",
-      "name": "パラカ",
-      "market": "プライム（内国株式）",
-      "industry": "8050",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "481A",
       "name": "ＪＳｅｃｕｒｉｔｙ",
       "market": "PRO Market",
@@ -4347,13 +2996,6 @@
       "market": "スタンダード（内国株式）",
       "industry": "5250",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "4847",
-      "name": "インテリジェント　ウェイブ",
-      "market": "プライム（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
     },
     {
       "code": "484A",
@@ -4370,32 +3012,11 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "4884",
-      "name": "クリングルファーマ",
-      "market": "グロース（内国株式）",
-      "industry": "3250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "4885",
-      "name": "室町ケミカル",
-      "market": "スタンダード（内国株式）",
-      "industry": "3250",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "490A",
       "name": "センス・トラスト",
       "market": "PRO Market",
       "industry": "8050",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "4923",
-      "name": "コタ",
-      "market": "プライム（内国株式）",
-      "industry": "3200",
-      "reason": "ordinary-company"
     },
     {
       "code": "500A",
@@ -4416,20 +3037,6 @@
       "name": "レボインターナショナル",
       "market": "PRO Market",
       "industry": "3300",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "5032",
-      "name": "ＡＮＹＣＯＬＯＲ",
-      "market": "プライム（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "5034",
-      "name": "ｕｎｅｒｒｙ",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
       "reason": "ordinary-company"
     },
     {
@@ -4503,30 +3110,9 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "5125",
-      "name": "ファインズ",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "5130",
       "name": "ヒロホールディングス",
       "market": "PRO Market",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "5132",
-      "name": "ｐｌｕｓｚｅｒｏ",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "5134",
-      "name": "ＰＯＰＥＲ",
-      "market": "グロース（内国株式）",
       "industry": "5250",
       "reason": "ordinary-company"
     },
@@ -4587,13 +3173,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "5256",
-      "name": "Ｆｕｓｉｃ",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "525A",
       "name": "ｍａｎｅｂｉ",
       "market": "PRO Market",
@@ -4613,13 +3192,6 @@
       "market": "PRO Market",
       "industry": "5250",
       "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "5380",
-      "name": "新東",
-      "market": "スタンダード（内国株式）",
-      "industry": "3400",
-      "reason": "ordinary-company"
     },
     {
       "code": "542A",
@@ -4699,13 +3271,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "5532",
-      "name": "リアルゲイト",
-      "market": "グロース（内国株式）",
-      "industry": "8050",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "5534",
       "name": "エンゼルグループ",
       "market": "PRO Market",
@@ -4741,30 +3306,9 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "5570",
-      "name": "ジェノバ",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "5573",
       "name": "働楽ホールディングス",
       "market": "PRO Market",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "5574",
-      "name": "ＡＢＥＪＡ",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "5575",
-      "name": "Ｇｌｏｂｅｅ",
-      "market": "グロース（内国株式）",
       "industry": "5250",
       "reason": "ordinary-company"
     },
@@ -4779,13 +3323,6 @@
       "code": "5581",
       "name": "カイテクノロジー",
       "market": "PRO Market",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "5582",
-      "name": "グリッド",
-      "market": "グロース（内国株式）",
       "industry": "5250",
       "reason": "ordinary-company"
     },
@@ -4881,13 +3418,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "5721",
-      "name": "エスクリプトエナジー",
-      "market": "スタンダード（内国株式）",
-      "industry": "3500",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "574A",
       "name": "ＬＡＳＳＩＣ",
       "market": "PRO Market",
@@ -4902,31 +3432,10 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "5843",
-      "name": "ニッポンインシュア",
-      "market": "スタンダード（内国株式）",
-      "industry": "7200",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "5866",
       "name": "ＷｉｚＢｉｚ",
       "market": "PRO Market",
       "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "5869",
-      "name": "早稲田学習研究会",
-      "market": "スタンダード（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "5885",
-      "name": "ジーデップ・アドバンス",
-      "market": "スタンダード（内国株式）",
-      "industry": "6050",
       "reason": "ordinary-company"
     },
     {
@@ -4958,48 +3467,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "5921",
-      "name": "川岸工業",
-      "market": "スタンダード（内国株式）",
-      "industry": "3550",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "6036",
-      "name": "ＫｅｅＰｅｒ技研",
-      "market": "プライム（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "6037",
-      "name": "楽待",
-      "market": "スタンダード（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "6049",
-      "name": "イトクロ",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "6087",
-      "name": "アビスト",
-      "market": "スタンダード（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "6156",
-      "name": "エーワン精密",
-      "market": "スタンダード（内国株式）",
-      "industry": "3600",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "6168",
       "name": "ＯＮＥ　ＧＲＯＵＰ",
       "market": "PRO Market",
@@ -5011,34 +3478,6 @@
       "name": "デンタス",
       "market": "PRO Market",
       "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "6194",
-      "name": "アトラエ",
-      "market": "プライム（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "6196",
-      "name": "ストライクグループ",
-      "market": "プライム（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "6356",
-      "name": "日本ギア工業",
-      "market": "スタンダード（内国株式）",
-      "industry": "3600",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "6387",
-      "name": "サムコ",
-      "market": "プライム（内国株式）",
-      "industry": "3600",
       "reason": "ordinary-company"
     },
     {
@@ -5063,24 +3502,10 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "6656",
-      "name": "インスペック",
-      "market": "スタンダード（内国株式）",
-      "industry": "3650",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "7098",
       "name": "エージェント",
       "market": "PRO Market",
       "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7126",
-      "name": "グローバルスタイル",
-      "market": "スタンダード（内国株式）",
-      "industry": "6100",
       "reason": "ordinary-company"
     },
     {
@@ -5119,30 +3544,9 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "7265",
-      "name": "エイケン工業",
-      "market": "スタンダード（内国株式）",
-      "industry": "3700",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "7355",
       "name": "一寸房",
       "market": "PRO Market",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7356",
-      "name": "Ｒｅｔｔｙ",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7363",
-      "name": "ベビーカレンダー",
-      "market": "グロース（内国株式）",
       "industry": "9050",
       "reason": "ordinary-company"
     },
@@ -5154,69 +3558,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "7376",
-      "name": "ＢＣＣ",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7388",
-      "name": "ＦＰパートナー",
-      "market": "プライム（内国株式）",
-      "industry": "7150",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7409",
-      "name": "ＡｅｒｏＥｄｇｅ",
-      "market": "グロース（内国株式）",
-      "industry": "3700",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7462",
-      "name": "ＣＡＰＩＴＡ",
-      "market": "スタンダード（内国株式）",
-      "industry": "6100",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7500",
-      "name": "西川計測",
-      "market": "スタンダード（内国株式）",
-      "industry": "6050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7501",
-      "name": "ティムコ",
-      "market": "スタンダード（内国株式）",
-      "industry": "6050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7505",
-      "name": "扶桑電通",
-      "market": "スタンダード（内国株式）",
-      "industry": "6050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7513",
-      "name": "コジマ",
-      "market": "プライム（内国株式）",
-      "industry": "6100",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7524",
-      "name": "マルシェ",
-      "market": "スタンダード（内国株式）",
-      "industry": "6100",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "75505",
       "name": "ゼンショーホールディングス第１回社債型種類株式",
       "market": "プライム（内国株式）",
@@ -5224,58 +3565,9 @@
       "reason": "separate-model"
     },
     {
-      "code": "7578",
-      "name": "ニチリョク",
-      "market": "スタンダード（内国株式）",
-      "industry": "6100",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7585",
-      "name": "かんなん丸",
-      "market": "スタンダード（内国株式）",
-      "industry": "6100",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7636",
-      "name": "ハンズマン",
-      "market": "スタンダード（内国株式）",
-      "industry": "6100",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7643",
-      "name": "ダイイチ",
-      "market": "スタンダード（内国株式）",
-      "industry": "6100",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7646",
-      "name": "ＰＬＡＮＴ",
-      "market": "スタンダード（内国株式）",
-      "industry": "6100",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7673",
-      "name": "ダイコー通産",
-      "market": "スタンダード（内国株式）",
-      "industry": "6050",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "7680",
       "name": "軽自動車館",
       "market": "PRO Market",
-      "industry": "6100",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7682",
-      "name": "浜木綿",
-      "market": "スタンダード（内国株式）",
       "industry": "6100",
       "reason": "ordinary-company"
     },
@@ -5294,13 +3586,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "7692",
-      "name": "アースインフィニティ",
-      "market": "スタンダード（内国株式）",
-      "industry": "4050",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "7693",
       "name": "北海道歯科産業",
       "market": "PRO Market",
@@ -5315,73 +3600,10 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "7711",
-      "name": "助川電気工業",
-      "market": "スタンダード（内国株式）",
-      "industry": "3750",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7792",
-      "name": "コラントッテ",
-      "market": "グロース（内国株式）",
-      "industry": "3800",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7800",
-      "name": "アミファ",
-      "market": "スタンダード（内国株式）",
-      "industry": "3800",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7805",
-      "name": "プリントネット",
-      "market": "スタンダード（内国株式）",
-      "industry": "3800",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7809",
-      "name": "壽屋",
-      "market": "スタンダード（内国株式）",
-      "industry": "3800",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7863",
-      "name": "平賀",
-      "market": "スタンダード（内国株式）",
-      "industry": "3800",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7901",
-      "name": "マツモト",
-      "market": "スタンダード（内国株式）",
-      "industry": "3800",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7980",
-      "name": "重松製作所",
-      "market": "スタンダード（内国株式）",
-      "industry": "3800",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "8301",
       "name": "日本銀行　出資証券",
       "market": "出資証券",
       "industry": "-",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "8887",
-      "name": "シーラホールディングス",
-      "market": "スタンダード（内国株式）",
-      "industry": "8050",
       "reason": "ordinary-company"
     },
     {
@@ -5413,20 +3635,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "9159",
-      "name": "Ｗ　ＴＯＫＹＯ",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9165",
-      "name": "クオルテック",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "9169",
       "name": "大伸社",
       "market": "PRO Market",
@@ -5441,13 +3649,6 @@
       "reason": "separate-model"
     },
     {
-      "code": "9212",
-      "name": "Ｇｒｅｅｎ　Ｅａｒｔｈ　Ｉｎｓｔｉｔｕｔｅ",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "9222",
       "name": "ｍａｎａｂｙ",
       "market": "PRO Market",
@@ -5458,20 +3659,6 @@
       "code": "9226",
       "name": "アイガー",
       "market": "PRO Market",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9227",
-      "name": "マイクロ波化学",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9236",
-      "name": "ジャパンＭ＆Ａソリューション",
-      "market": "グロース（内国株式）",
       "industry": "9050",
       "reason": "ordinary-company"
     },
@@ -5497,20 +3684,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "9262",
-      "name": "シルバーライフ",
-      "market": "スタンダード（内国株式）",
-      "industry": "6100",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9330",
-      "name": "揚羽",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "9334",
       "name": "アイビスホールディングス",
       "market": "PRO Market",
@@ -5522,41 +3695,6 @@
       "name": "テクノクリエイティブ",
       "market": "PRO Market",
       "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9342",
-      "name": "スマサポ",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9344",
-      "name": "アクシスコンサルティング",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9346",
-      "name": "ココルポート",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9423",
-      "name": "フォーバル・リアルストレート",
-      "market": "スタンダード（内国株式）",
-      "industry": "5250",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9425",
-      "name": "ＲｅＹｕｕ　Ｊａｐａｎ",
-      "market": "スタンダード（内国株式）",
-      "industry": "5250",
       "reason": "ordinary-company"
     },
     {
@@ -5572,62 +3710,6 @@
       "market": "プライム（内国株式）",
       "industry": "5250",
       "reason": "separate-model"
-    },
-    {
-      "code": "9557",
-      "name": "エアークローゼット",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9558",
-      "name": "ジャパニアス",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9560",
-      "name": "プログリット",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9679",
-      "name": "ホウライ",
-      "market": "スタンダード（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9720",
-      "name": "ホテル、ニューグランド",
-      "market": "スタンダード（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9795",
-      "name": "ステップ",
-      "market": "プライム（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9872",
-      "name": "北恵",
-      "market": "スタンダード（内国株式）",
-      "industry": "6050",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "9941",
-      "name": "太洋物産",
-      "market": "スタンダード（内国株式）",
-      "industry": "6050",
-      "reason": "ordinary-company"
     }
   ],
   "policy": {
