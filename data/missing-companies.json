@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-06-26T20:15:16.407502+00:00",
+  "generatedAt": "2026-06-27T08:03:29.579531+00:00",
   "targetCompanies": 3919,
-  "implementedCompanies": 3511,
-  "missingCompanies": 416,
-  "ordinaryMissingCompanies": 212,
-  "newListingOrRecentIpo": 198,
+  "implementedCompanies": 3516,
+  "missingCompanies": 411,
+  "ordinaryMissingCompanies": 210,
+  "newListingOrRecentIpo": 195,
   "separateModelCompanies": 6,
   "reasons": {
     "new-listing-or-recent-ipo": [
@@ -639,13 +639,6 @@
         "reason": "new-listing-or-recent-ipo"
       },
       {
-        "code": "330A",
-        "name": "ＴａｌｅｎｔＸ",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
         "code": "333A",
         "name": "テクノスマイル",
         "market": "PRO Market",
@@ -905,13 +898,6 @@
         "reason": "new-listing-or-recent-ipo"
       },
       {
-        "code": "429A",
-        "name": "テクセンドフォトマスク",
-        "market": "プライム（内国株式）",
-        "industry": "3800",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
         "code": "430A",
         "name": "ネクストハンズ",
         "market": "PRO Market",
@@ -1077,13 +1063,6 @@
         "name": "辻・本郷ＩＴコンサルティング",
         "market": "スタンダード（内国株式）",
         "industry": "5250",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "477A",
-        "name": "スタートライン",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -2335,13 +2314,6 @@
         "reason": "ordinary-company"
       },
       {
-        "code": "7046",
-        "name": "ＴＤＳＥ",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "ordinary-company"
-      },
-      {
         "code": "7098",
         "name": "エージェント",
         "market": "PRO Market",
@@ -2610,13 +2582,6 @@
       {
         "code": "7809",
         "name": "壽屋",
-        "market": "スタンダード（内国株式）",
-        "industry": "3800",
-        "reason": "ordinary-company"
-      },
-      {
-        "code": "7851",
-        "name": "カワセコンピュータサプライ",
         "market": "スタンダード（内国株式）",
         "industry": "3800",
         "reason": "ordinary-company"
@@ -3796,13 +3761,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "330A",
-      "name": "ＴａｌｅｎｔＸ",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
       "code": "3329",
       "name": "東和フードサービス",
       "market": "スタンダード（内国株式）",
@@ -4237,13 +4195,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "429A",
-      "name": "テクセンドフォトマスク",
-      "market": "プライム（内国株式）",
-      "industry": "3800",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
       "code": "430A",
       "name": "ネクストハンズ",
       "market": "PRO Market",
@@ -4486,13 +4437,6 @@
       "name": "辻・本郷ＩＴコンサルティング",
       "market": "スタンダード（内国株式）",
       "industry": "5250",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "477A",
-      "name": "スタートライン",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
       "reason": "new-listing-or-recent-ipo"
     },
     {
@@ -5266,13 +5210,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "7046",
-      "name": "ＴＤＳＥ",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "ordinary-company"
-    },
-    {
       "code": "7098",
       "name": "エージェント",
       "market": "PRO Market",
@@ -5548,13 +5485,6 @@
     {
       "code": "7809",
       "name": "壽屋",
-      "market": "スタンダード（内国株式）",
-      "industry": "3800",
-      "reason": "ordinary-company"
-    },
-    {
-      "code": "7851",
-      "name": "カワセコンピュータサプライ",
       "market": "スタンダード（内国株式）",
       "industry": "3800",
       "reason": "ordinary-company"
