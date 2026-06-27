@@ -52,7 +52,7 @@ jobs:
           EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
           EDINET_LOOKBACK_DAYS: "540"
           EDINET_REFRESH_DAYS: "90"
-          EDINET_FILL_LIMIT: "80"
+          EDINET_FILL_LIMIT: "240"
         run: python scripts/update_missing_financials.py
 
       - name: Reclassify after EDINET fill
