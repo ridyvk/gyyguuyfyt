@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-06-27T08:03:29.579531+00:00",
+  "generatedAt": "2026-06-27T08:27:30.961155+00:00",
   "targetCompanies": 3919,
-  "implementedCompanies": 3516,
-  "missingCompanies": 411,
+  "implementedCompanies": 3518,
+  "missingCompanies": 409,
   "ordinaryMissingCompanies": 210,
-  "newListingOrRecentIpo": 195,
+  "newListingOrRecentIpo": 193,
   "separateModelCompanies": 6,
   "reasons": {
     "new-listing-or-recent-ipo": [
@@ -1052,13 +1052,6 @@
         "reason": "new-listing-or-recent-ipo"
       },
       {
-        "code": "475A",
-        "name": "ギミック",
-        "market": "スタンダード（内国株式）",
-        "industry": "9050",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
         "code": "476A",
         "name": "辻・本郷ＩＴコンサルティング",
         "market": "スタンダード（内国株式）",
@@ -1175,13 +1168,6 @@
         "name": "ベーシック",
         "market": "グロース（内国株式）",
         "industry": "5250",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "520A",
-        "name": "ジェイファーマ",
-        "market": "グロース（内国株式）",
-        "industry": "3250",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -4426,13 +4412,6 @@
       "reason": "ordinary-company"
     },
     {
-      "code": "475A",
-      "name": "ギミック",
-      "market": "スタンダード（内国株式）",
-      "industry": "9050",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
       "code": "476A",
       "name": "辻・本郷ＩＴコンサルティング",
       "market": "スタンダード（内国株式）",
@@ -4675,13 +4654,6 @@
       "name": "ベーシック",
       "market": "グロース（内国株式）",
       "industry": "5250",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "520A",
-      "name": "ジェイファーマ",
-      "market": "グロース（内国株式）",
-      "industry": "3250",
       "reason": "new-listing-or-recent-ipo"
     },
     {
