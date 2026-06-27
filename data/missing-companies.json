@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-06-27T08:27:30.961155+00:00",
+  "generatedAt": "2026-06-27T09:38:21.986073+00:00",
   "targetCompanies": 3919,
-  "implementedCompanies": 3518,
-  "missingCompanies": 409,
+  "implementedCompanies": 3519,
+  "missingCompanies": 408,
   "ordinaryMissingCompanies": 210,
-  "newListingOrRecentIpo": 193,
+  "newListingOrRecentIpo": 192,
   "separateModelCompanies": 6,
   "reasons": {
     "new-listing-or-recent-ipo": [
@@ -692,13 +692,6 @@
         "name": "アクシスＩＴパートナーズ",
         "market": "PRO Market",
         "industry": "5250",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "352A",
-        "name": "ＬＯＩＶＥ",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -3849,13 +3842,6 @@
       "name": "アクシスＩＴパートナーズ",
       "market": "PRO Market",
       "industry": "5250",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "352A",
-      "name": "ＬＯＩＶＥ",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
       "reason": "new-listing-or-recent-ipo"
     },
     {
