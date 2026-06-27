@@ -9,6 +9,7 @@ on:
       - main
     paths:
       - ".github/workflows/update-financial-data.yml"
+      - ".github/update-financial-data-trigger.txt"
       - "scripts/**"
       - "requirements-update.txt"
 
