@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kpi-scope-v7-preempt-detail-scroll'
+const CACHE_NAME = 'kpi-scope-v8-filter-fix'
 const APP_SHELL = [
   './',
   './index.html',
