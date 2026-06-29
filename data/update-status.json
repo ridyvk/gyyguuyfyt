@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-27T12:52:30.577428+00:00",
+  "generatedAt": "2026-06-29T20:32:10.963070+00:00",
   "mode": "jpx-universe-edinet-ordinary-autofill",
   "status": "ready",
   "source": "JPX+EDINET+TDnet",
@@ -9,13 +9,13 @@
   "tdnetOverlay": true,
   "quarterlyMerged": false,
   "batched": true,
-  "companies": 3663,
+  "companies": 3676,
   "targetCompanies": 3919,
-  "missingCompanies": 264,
+  "missingCompanies": 251,
   "ordinaryMissingCompanies": 73,
-  "newListingOrRecentIpo": 185,
+  "newListingOrRecentIpo": 172,
   "separateModelCompanies": 6,
-  "coverageRatio": 93.47,
+  "coverageRatio": 93.8,
   "edinetCompanies": 3083,
   "tdnetCompanies": 146,
   "edinetDocumentsScanned": 106377,
@@ -25,7 +25,7 @@
   "edinetEstimatedRemaining": 248,
   "edinetBatchFailures": 0,
   "ordinaryFallbackAddedTotal": 415,
-  "ordinaryLatestRefreshedTotal": 1162,
+  "ordinaryLatestRefreshedTotal": 1400,
   "ordinaryRefreshFailuresTotal": 0,
   "nonAnnualRecordsDropped": 0,
   "tdnetRowsScanned": 494,
@@ -34,5 +34,5 @@
   "tdnetFullYearFilings": 183,
   "tdnetDocumentsUpdated": 125,
   "tdnetStrictFailures": 0,
-  "message": "JPX上場企業ユニバースを更新し、対象3,919社中3,663社を取得済み、未取得264社。普通企業の未取得は73社。"
+  "message": "JPX上場企業ユニバースを更新し、対象3,919社中3,676社を取得済み、未取得251社。普通企業の未取得は73社。"
 }

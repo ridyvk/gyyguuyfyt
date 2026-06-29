@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-06-27T12:52:30.460950+00:00",
+  "generatedAt": "2026-06-29T20:32:10.847479+00:00",
   "targetCompanies": 3919,
-  "implementedCompanies": 3663,
-  "missingCompanies": 264,
+  "implementedCompanies": 3676,
+  "missingCompanies": 251,
   "ordinaryMissingCompanies": 73,
-  "newListingOrRecentIpo": 185,
+  "newListingOrRecentIpo": 172,
   "separateModelCompanies": 6,
   "reasons": {
     "new-listing-or-recent-ipo": [
@@ -34,13 +34,6 @@
         "name": "アプライズ",
         "market": "PRO Market",
         "industry": "9050",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "135A",
-        "name": "ＶＲＡＩＮ　Ｓｏｌｕｔｉｏｎ",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -153,13 +146,6 @@
         "name": "ネオホーム",
         "market": "PRO Market",
         "industry": "8050",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "173A",
-        "name": "ハンモック",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -359,13 +345,6 @@
         "reason": "new-listing-or-recent-ipo"
       },
       {
-        "code": "247A",
-        "name": "Ａｉロボティクス",
-        "market": "グロース（内国株式）",
-        "industry": "3200",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
         "code": "249A",
         "name": "ヒューマンアジャスト",
         "market": "PRO Market",
@@ -384,13 +363,6 @@
         "name": "ウェッジ",
         "market": "PRO Market",
         "industry": "6100",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "263A",
-        "name": "デジタルキューブ",
-        "market": "PRO Market",
-        "industry": "5250",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -436,13 +408,6 @@
         "reason": "new-listing-or-recent-ipo"
       },
       {
-        "code": "274A",
-        "name": "ガーデン",
-        "market": "スタンダード（内国株式）",
-        "industry": "6100",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
         "code": "279A",
         "name": "インターグ",
         "market": "PRO Market",
@@ -482,20 +447,6 @@
         "name": "インデックス",
         "market": "PRO Market",
         "industry": "8050",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "303A",
-        "name": "ｖｉｓｕｍｏ",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "304A",
-        "name": "フォルシア",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -639,13 +590,6 @@
         "reason": "new-listing-or-recent-ipo"
       },
       {
-        "code": "341A",
-        "name": "トヨコー",
-        "market": "グロース（内国株式）",
-        "industry": "2050",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
         "code": "347A",
         "name": "ＧＲＯＷＴＨ　ＰＯＷＥＲ",
         "market": "PRO Market",
@@ -699,13 +643,6 @@
         "name": "エクシオホールディングス",
         "market": "PRO Market",
         "industry": "9050",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "365A",
-        "name": "伊澤タオル",
-        "market": "スタンダード（内国株式）",
-        "industry": "3100",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -933,24 +870,10 @@
         "reason": "new-listing-or-recent-ipo"
       },
       {
-        "code": "446A",
-        "name": "ノースサンド",
-        "market": "グロース（内国株式）",
-        "industry": "9050",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
         "code": "455A",
         "name": "バリューソフトホールディングス",
         "market": "PRO Market",
         "industry": "5250",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "456A",
-        "name": "ＨＵＭＡＮ　ＭＡＤＥ",
-        "market": "グロース（内国株式）",
-        "industry": "6100",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -1027,13 +950,6 @@
         "code": "481A",
         "name": "ＪＳｅｃｕｒｉｔｙ",
         "market": "PRO Market",
-        "industry": "5250",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "483A",
-        "name": "テラテクノロジー",
-        "market": "スタンダード（内国株式）",
         "industry": "5250",
         "reason": "new-listing-or-recent-ipo"
       },
@@ -1203,13 +1119,6 @@
         "name": "ムニノバホールディングス",
         "market": "プライム（内国株式）",
         "industry": "7200",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "549A",
-        "name": "ヒトトヒトホールディングス",
-        "market": "スタンダード（内国株式）",
-        "industry": "9050",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -1892,13 +1801,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "135A",
-      "name": "ＶＲＡＩＮ　Ｓｏｌｕｔｉｏｎ",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
       "code": "136A",
       "name": "三興商事",
       "market": "PRO Market",
@@ -2029,13 +1931,6 @@
       "name": "ネオホーム",
       "market": "PRO Market",
       "industry": "8050",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "173A",
-      "name": "ハンモック",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
       "reason": "new-listing-or-recent-ipo"
     },
     {
@@ -2249,13 +2144,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "247A",
-      "name": "Ａｉロボティクス",
-      "market": "グロース（内国株式）",
-      "industry": "3200",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
       "code": "249A",
       "name": "ヒューマンアジャスト",
       "market": "PRO Market",
@@ -2282,13 +2170,6 @@
       "market": "プライム（内国株式）",
       "industry": "3050",
       "reason": "separate-model"
-    },
-    {
-      "code": "263A",
-      "name": "デジタルキューブ",
-      "market": "PRO Market",
-      "industry": "5250",
-      "reason": "new-listing-or-recent-ipo"
     },
     {
       "code": "264A",
@@ -2330,13 +2211,6 @@
       "name": "アクセリア",
       "market": "PRO Market",
       "industry": "5250",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "274A",
-      "name": "ガーデン",
-      "market": "スタンダード（内国株式）",
-      "industry": "6100",
       "reason": "new-listing-or-recent-ipo"
     },
     {
@@ -2414,20 +2288,6 @@
       "name": "インデックス",
       "market": "PRO Market",
       "industry": "8050",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "303A",
-      "name": "ｖｉｓｕｍｏ",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "304A",
-      "name": "フォルシア",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
       "reason": "new-listing-or-recent-ipo"
     },
     {
@@ -2571,13 +2431,6 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "341A",
-      "name": "トヨコー",
-      "market": "グロース（内国株式）",
-      "industry": "2050",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
       "code": "3448",
       "name": "清鋼材",
       "market": "PRO Market",
@@ -2652,13 +2505,6 @@
       "name": "エクシオホールディングス",
       "market": "PRO Market",
       "industry": "9050",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "365A",
-      "name": "伊澤タオル",
-      "market": "スタンダード（内国株式）",
-      "industry": "3100",
       "reason": "new-listing-or-recent-ipo"
     },
     {
@@ -2893,24 +2739,10 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
-      "code": "446A",
-      "name": "ノースサンド",
-      "market": "グロース（内国株式）",
-      "industry": "9050",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
       "code": "455A",
       "name": "バリューソフトホールディングス",
       "market": "PRO Market",
       "industry": "5250",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "456A",
-      "name": "ＨＵＭＡＮ　ＭＡＤＥ",
-      "market": "グロース（内国株式）",
-      "industry": "6100",
       "reason": "new-listing-or-recent-ipo"
     },
     {
@@ -2987,13 +2819,6 @@
       "code": "481A",
       "name": "ＪＳｅｃｕｒｉｔｙ",
       "market": "PRO Market",
-      "industry": "5250",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "483A",
-      "name": "テラテクノロジー",
-      "market": "スタンダード（内国株式）",
       "industry": "5250",
       "reason": "new-listing-or-recent-ipo"
     },
@@ -3233,13 +3058,6 @@
       "name": "ムニノバホールディングス",
       "market": "プライム（内国株式）",
       "industry": "7200",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "549A",
-      "name": "ヒトトヒトホールディングス",
-      "market": "スタンダード（内国株式）",
-      "industry": "9050",
       "reason": "new-listing-or-recent-ipo"
     },
     {
