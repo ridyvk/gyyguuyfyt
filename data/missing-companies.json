@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-06-29T20:32:10.847479+00:00",
+  "generatedAt": "2026-06-30T20:27:23.091054+00:00",
   "targetCompanies": 3919,
-  "implementedCompanies": 3676,
-  "missingCompanies": 251,
+  "implementedCompanies": 3677,
+  "missingCompanies": 250,
   "ordinaryMissingCompanies": 73,
-  "newListingOrRecentIpo": 172,
+  "newListingOrRecentIpo": 171,
   "separateModelCompanies": 6,
   "reasons": {
     "new-listing-or-recent-ipo": [
@@ -1126,13 +1126,6 @@
         "name": "ＩＺＵＭＩグループ",
         "market": "PRO Market",
         "industry": "9050",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "554A",
-        "name": "バトンズ",
-        "market": "グロース（内国株式）",
-        "industry": "5250",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -3101,13 +3094,6 @@
       "market": "PRO Market",
       "industry": "8050",
       "reason": "ordinary-company"
-    },
-    {
-      "code": "554A",
-      "name": "バトンズ",
-      "market": "グロース（内国株式）",
-      "industry": "5250",
-      "reason": "new-listing-or-recent-ipo"
     },
     {
       "code": "555A",
