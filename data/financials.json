@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-07-01T20:20:58.678178+00:00",
+  "generatedAt": "2026-07-02T19:59:19.231836+00:00",
   "source": "EDINET+TDnet",
   "status": "ready",
   "message": "EDINET年次ベースライン＋TDnet通期決算短信オーバーレイで更新済み。EDINET有価証券報告書ベースの年次データを基礎DBにし、TDnetの通期決算短信で直近分のみ上書きしています。四半期・中間短信は統合していません。対象3,734社のうち財務KPI取得済みは3,229社です。",
@@ -4267,60 +4267,40 @@
     "4750": {
       "code": "4750",
       "companyName": "ダイサン",
-      "documentId": "081220260602559173",
-      "documentType": "FullYearEarnings",
-      "filedAt": "2026-06-02T15:30:00+09:00",
+      "documentId": "S100YNWZ",
+      "documentType": "AnnualSecuritiesReport",
+      "filedAt": "2026-07-02 14:56",
       "periodEnd": "2026-04-20",
       "periodType": "annual",
-      "source": "TDnet",
-      "sourceDetail": "TDnet決算短信XBRL・通期のみ",
-      "sourceUrl": "https://www.release.tdnet.info/inbs/140120260602559173.pdf",
-      "title": "2026年４月期 決算短信[日本基準]（連結）",
+      "source": "EDINET",
+      "sourceUrl": "https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?S100YNWZ",
+      "sourceDetail": "EDINET有価証券報告書XBRL・未取得普通企業の自動補完",
       "metrics": {
-        "revenueGrowth": {
-          "value": 2.79
-        },
         "operatingMargin": {
-          "value": 2.41,
-          "previousValue": 3.41
+          "value": 2.41
         },
         "netMargin": {
-          "value": 2.35,
-          "previousValue": 3.09
+          "value": 2.35
         },
         "roe": {
-          "value": 4.64,
-          "previousValue": 6.02
+          "value": 4.58
         },
         "equityRatio": {
-          "value": 56.25,
-          "previousValue": 54.61
+          "value": 56.25
         },
-        "debtRatio": {
-          "value": 0.4
+        "operatingCfMargin": {
+          "value": 5.3
         },
         "netCash": {
-          "value": 3.81
-        },
-        "inventoryGrowth": {
-          "value": -16.34
-        },
-        "receivablesGrowth": {
-          "value": 5.3
+          "value": 26.89
         }
       },
       "history": [],
+      "valuation": {},
       "quality": {
-        "policy": "strict-full-year-only",
-        "quarterlySkipped": true,
-        "edinetMerged": false,
-        "ambiguousRevenueTagsExcluded": [
-          "OrdinaryIncome"
-        ],
-        "inventoryPolicy": "Inventoriesタグを優先し、無い場合は商品・製品、仕掛品、原材料等を合算"
-      },
-      "valuation": {
-        "bps": 892.93
+        "policy": "ordinary-edinet-latest-refresh",
+        "autoFilled": true,
+        "parserVersion": 1
       }
     },
     "6810": {
@@ -229941,7 +229921,7 @@
     "inventoryModelVersion": 2,
     "inventoryModelRefresh": false,
     "ordinaryFallbackAdded": 415,
-    "ordinaryLatestRefreshed": 1433,
+    "ordinaryLatestRefreshed": 1434,
     "ordinaryRefreshFailures": 0
   },
   "dataPolicy": {
