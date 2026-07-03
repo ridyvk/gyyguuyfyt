@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-02T19:59:19.647187+00:00",
-  "targetCompanies": 3919,
+  "generatedAt": "2026-07-03T19:56:33.697143+00:00",
+  "targetCompanies": 3903,
   "implementedCompanies": 3677,
-  "missingCompanies": 250,
+  "missingCompanies": 257,
   "ordinaryMissingCompanies": 73,
-  "newListingOrRecentIpo": 171,
-  "separateModelCompanies": 6,
+  "newListingOrRecentIpo": 177,
+  "separateModelCompanies": 7,
   "reasons": {
     "new-listing-or-recent-ipo": [
       {
@@ -34,13 +34,6 @@
         "name": "アプライズ",
         "market": "PRO Market",
         "industry": "9050",
-        "reason": "new-listing-or-recent-ipo"
-      },
-      {
-        "code": "136A",
-        "name": "三興商事",
-        "market": "PRO Market",
-        "industry": "2050",
         "reason": "new-listing-or-recent-ipo"
       },
       {
@@ -1204,6 +1197,55 @@
         "market": "PRO Market",
         "industry": "5250",
         "reason": "new-listing-or-recent-ipo"
+      },
+      {
+        "code": "575A",
+        "name": "前澤ホールディングス",
+        "market": "プライム（内国株式）",
+        "industry": "3600",
+        "reason": "new-listing-or-recent-ipo"
+      },
+      {
+        "code": "581A",
+        "name": "ＧＯ",
+        "market": "グロース（内国株式）",
+        "industry": "5250",
+        "reason": "new-listing-or-recent-ipo"
+      },
+      {
+        "code": "583A",
+        "name": "不動産流通システム",
+        "market": "PRO Market",
+        "industry": "8050",
+        "reason": "new-listing-or-recent-ipo"
+      },
+      {
+        "code": "584A",
+        "name": "ＬｉＮＫＸ",
+        "market": "グロース（内国株式）",
+        "industry": "5250",
+        "reason": "new-listing-or-recent-ipo"
+      },
+      {
+        "code": "589A",
+        "name": "ネイス",
+        "market": "グロース（内国株式）",
+        "industry": "9050",
+        "reason": "new-listing-or-recent-ipo"
+      },
+      {
+        "code": "591A",
+        "name": "西條",
+        "market": "PRO Market",
+        "industry": "6100",
+        "reason": "new-listing-or-recent-ipo"
+      },
+      {
+        "code": "595A",
+        "name": "不二興産",
+        "market": "PRO Market",
+        "industry": "8050",
+        "reason": "new-listing-or-recent-ipo"
       }
     ],
     "ordinary-company": [
@@ -1384,7 +1426,7 @@
       },
       {
         "code": "5531",
-        "name": "中山不動産",
+        "name": "エヌバイテクノロジーズ",
         "market": "PRO Market",
         "industry": "8050",
         "reason": "ordinary-company"
@@ -1742,6 +1784,13 @@
         "reason": "separate-model"
       },
       {
+        "code": "92015",
+        "name": "日本航空株式会社第１回社債型種類株式",
+        "market": "プライム（内国株式）",
+        "industry": "5150",
+        "reason": "separate-model"
+      },
+      {
         "code": "92025",
         "name": "ＡＮＡホールディングス第１回社債型種類株式",
         "market": "プライム（内国株式）",
@@ -1791,13 +1840,6 @@
       "name": "アプライズ",
       "market": "PRO Market",
       "industry": "9050",
-      "reason": "new-listing-or-recent-ipo"
-    },
-    {
-      "code": "136A",
-      "name": "三興商事",
-      "market": "PRO Market",
-      "industry": "2050",
       "reason": "new-listing-or-recent-ipo"
     },
     {
@@ -3076,7 +3118,7 @@
     },
     {
       "code": "5531",
-      "name": "中山不動産",
+      "name": "エヌバイテクノロジーズ",
       "market": "PRO Market",
       "industry": "8050",
       "reason": "ordinary-company"
@@ -3229,11 +3271,39 @@
       "reason": "new-listing-or-recent-ipo"
     },
     {
+      "code": "575A",
+      "name": "前澤ホールディングス",
+      "market": "プライム（内国株式）",
+      "industry": "3600",
+      "reason": "new-listing-or-recent-ipo"
+    },
+    {
+      "code": "581A",
+      "name": "ＧＯ",
+      "market": "グロース（内国株式）",
+      "industry": "5250",
+      "reason": "new-listing-or-recent-ipo"
+    },
+    {
+      "code": "583A",
+      "name": "不動産流通システム",
+      "market": "PRO Market",
+      "industry": "8050",
+      "reason": "new-listing-or-recent-ipo"
+    },
+    {
       "code": "5840",
       "name": "日本総険",
       "market": "PRO Market",
       "industry": "7150",
       "reason": "ordinary-company"
+    },
+    {
+      "code": "584A",
+      "name": "ＬｉＮＫＸ",
+      "market": "グロース（内国株式）",
+      "industry": "5250",
+      "reason": "new-listing-or-recent-ipo"
     },
     {
       "code": "5866",
@@ -3269,6 +3339,27 @@
       "market": "PRO Market",
       "industry": "6100",
       "reason": "ordinary-company"
+    },
+    {
+      "code": "589A",
+      "name": "ネイス",
+      "market": "グロース（内国株式）",
+      "industry": "9050",
+      "reason": "new-listing-or-recent-ipo"
+    },
+    {
+      "code": "591A",
+      "name": "西條",
+      "market": "PRO Market",
+      "industry": "6100",
+      "reason": "new-listing-or-recent-ipo"
+    },
+    {
+      "code": "595A",
+      "name": "不二興産",
+      "market": "PRO Market",
+      "industry": "8050",
+      "reason": "new-listing-or-recent-ipo"
     },
     {
       "code": "6168",
@@ -3444,6 +3535,13 @@
       "market": "PRO Market",
       "industry": "9050",
       "reason": "ordinary-company"
+    },
+    {
+      "code": "92015",
+      "name": "日本航空株式会社第１回社債型種類株式",
+      "market": "プライム（内国株式）",
+      "industry": "5150",
+      "reason": "separate-model"
     },
     {
       "code": "92025",

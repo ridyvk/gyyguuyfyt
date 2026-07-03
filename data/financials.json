@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-07-02T19:59:19.231836+00:00",
+  "generatedAt": "2026-07-03T19:56:33.289421+00:00",
   "source": "EDINET+TDnet",
   "status": "ready",
   "message": "EDINET年次ベースライン＋TDnet通期決算短信オーバーレイで更新済み。EDINET有価証券報告書ベースの年次データを基礎DBにし、TDnetの通期決算短信で直近分のみ上書きしています。四半期・中間短信は統合していません。対象3,734社のうち財務KPI取得済みは3,229社です。",

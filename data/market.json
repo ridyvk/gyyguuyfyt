@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-03T11:51:53.965470+00:00",
+  "generatedAt": "2026-07-03T19:57:24.656821+00:00",
   "source": "Yahoo Finance",
   "status": "ready",
   "message": "Yahoo Financeの公開株価データとEDINET・TDnetのEPS/BPSからPER・PBRを自動計算しています。株価はリアルタイム保証ではありません。",
@@ -378,8 +378,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 733.0,
-      "changePercent": -0.2729
+      "previousClose": 730.0,
+      "changePercent": 0.137
     },
     "1443": {
       "date": "2026-07-03",
@@ -777,17 +777,6 @@
       "previousClose": 692.0,
       "changePercent": 0.0
     },
-    "1726": {
-      "date": "2026-05-29",
-      "timestamp": "2026-05-29T15:30:00+09:00",
-      "close": 526.0,
-      "volume": 103000.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 526.0,
-      "changePercent": 0.0
-    },
     "1736": {
       "date": "2026-07-03",
       "timestamp": "2026-07-03T15:30:00+09:00",
@@ -972,8 +961,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 4910.0,
-      "changePercent": -0.2037
+      "previousClose": 4900.0,
+      "changePercent": 0.0
     },
     "1798": {
       "date": "2026-07-03",
@@ -4143,17 +4132,6 @@
       "previousClose": 1095.0,
       "changePercent": 2.7397
     },
-    "2540": {
-      "date": "2026-06-17",
-      "timestamp": "2026-06-17T15:30:00+09:00",
-      "close": 4030.0,
-      "volume": 25900.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 4025.0,
-      "changePercent": 0.1242
-    },
     "254A": {
       "date": "2026-07-03",
       "timestamp": "2026-07-03T15:30:00+09:00",
@@ -4594,17 +4572,6 @@
       "previousClose": 3400.0,
       "changePercent": 3.8235
     },
-    "2686": {
-      "date": "2026-06-22",
-      "timestamp": "2026-06-22T15:30:00+09:00",
-      "close": 297.0,
-      "volume": 190200.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 297.0,
-      "changePercent": 0.0
-    },
     "2687": {
       "date": "2026-07-03",
       "timestamp": "2026-07-03T15:30:00+09:00",
@@ -4855,8 +4822,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 3075.0,
-      "changePercent": 0.1626
+      "previousClose": 3080.0,
+      "changePercent": 0.0
     },
     "2749": {
       "date": "2026-07-03",
@@ -6384,8 +6351,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 1885.0,
-      "changePercent": 0.2122
+      "previousClose": 1889.0,
+      "changePercent": 0.0
     },
     "3050": {
       "date": "2026-07-03",
@@ -7388,17 +7355,6 @@
       "previousClose": 2819.5,
       "changePercent": 1.0463
     },
-    "3198": {
-      "date": "2026-06-26",
-      "timestamp": "2026-06-26T15:30:00+09:00",
-      "close": 2225.0,
-      "volume": 421600.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 2225.0,
-      "changePercent": 0.0
-    },
     "3199": {
       "date": "2026-07-03",
       "timestamp": "2026-07-03T15:30:00+09:00",
@@ -7805,17 +7761,6 @@
       "isRealtime": false,
       "previousClose": 762.0,
       "changePercent": -0.2625
-    },
-    "3294": {
-      "date": "2026-06-12",
-      "timestamp": "2026-06-12T15:23:11+09:00",
-      "close": 4840.0,
-      "volume": 13200.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 4835.0,
-      "changePercent": 0.1034
     },
     "3297": {
       "date": "2026-07-03",
@@ -8584,8 +8529,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 680.0,
-      "changePercent": 2.6471
+      "previousClose": 698.0,
+      "changePercent": 0.0
     },
     "343A": {
       "date": "2026-07-03",
@@ -9092,17 +9037,6 @@
       "isRealtime": false,
       "previousClose": 1257.0,
       "changePercent": -1.5911
-    },
-    "3546": {
-      "date": "2026-06-25",
-      "timestamp": "2026-06-25T15:30:00+09:00",
-      "close": 1455.0,
-      "volume": 12900.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 1458.0,
-      "changePercent": -0.2058
     },
     "3547": {
       "date": "2026-07-03",
@@ -14780,17 +14714,6 @@
       "previousClose": 298.0,
       "changePercent": -0.3356
     },
-    "4449": {
-      "date": "2026-06-26",
-      "timestamp": "2026-06-26T15:30:00+09:00",
-      "close": 995.0,
-      "volume": 129500.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 1047.0,
-      "changePercent": -4.9666
-    },
     "4450": {
       "date": "2026-07-03",
       "timestamp": "2026-07-03T15:30:00+09:00",
@@ -15076,17 +14999,6 @@
       "isRealtime": false,
       "previousClose": 1832.0,
       "changePercent": -1.583
-    },
-    "4494": {
-      "date": "2026-06-25",
-      "timestamp": "2026-06-25T15:30:00+09:00",
-      "close": 680.0,
-      "volume": 17000.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 654.0,
-      "changePercent": 3.9755
     },
     "4495": {
       "date": "2026-07-03",
@@ -15428,17 +15340,6 @@
       "isRealtime": false,
       "previousClose": 1952.0,
       "changePercent": 2.459
-    },
-    "4556": {
-      "date": "2026-06-10",
-      "timestamp": "2026-06-10T15:30:00+09:00",
-      "close": 2268.0,
-      "volume": 2700.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 2268.0,
-      "changePercent": 0.0
     },
     "4558": {
       "date": "2026-07-03",
@@ -15855,8 +15756,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 1832.0,
-      "changePercent": 0.4913
+      "previousClose": 1841.0,
+      "changePercent": 0.0
     },
     "4617": {
       "date": "2026-07-03",
@@ -16132,17 +16033,6 @@
       "isRealtime": false,
       "previousClose": 1597.0,
       "changePercent": 1.4402
-    },
-    "4659": {
-      "date": "2026-06-18",
-      "timestamp": "2026-06-18T13:16:59+09:00",
-      "close": 4420.0,
-      "volume": 1300.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 4420.0,
-      "changePercent": 0.0
     },
     "4661": {
       "date": "2026-07-03",
@@ -16790,8 +16680,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 1071.0,
-      "changePercent": 0.5602
+      "previousClose": 1069.0,
+      "changePercent": 0.7484
     },
     "476A": {
       "date": "2026-07-03",
@@ -17738,17 +17628,6 @@
       "isRealtime": false,
       "previousClose": 5590.0,
       "changePercent": -1.4311
-    },
-    "4974": {
-      "date": "2026-06-11",
-      "timestamp": "2026-06-11T15:30:00+09:00",
-      "close": 1144.0,
-      "volume": 338000.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 1143.0,
-      "changePercent": 0.0875
     },
     "4975": {
       "date": "2026-07-03",
@@ -20324,6 +20203,17 @@
       "previousClose": 5260.0,
       "changePercent": 1.711
     },
+    "575A": {
+      "date": "2026-07-03",
+      "timestamp": "2026-07-03T15:30:00+09:00",
+      "close": 1489.0,
+      "volume": 78100.0,
+      "source": "Yahoo Finance",
+      "priceType": "regular-market-price",
+      "isRealtime": false,
+      "previousClose": 1481.0,
+      "changePercent": 0.5402
+    },
     "5801": {
       "date": "2026-07-03",
       "timestamp": "2026-07-03T15:30:00+09:00",
@@ -20400,6 +20290,17 @@
       "isRealtime": false,
       "previousClose": 1764.0,
       "changePercent": -0.0567
+    },
+    "581A": {
+      "date": "2026-07-03",
+      "timestamp": "2026-07-03T15:30:00+09:00",
+      "close": 2376.0,
+      "volume": 1959100.0,
+      "source": "Yahoo Finance",
+      "priceType": "regular-market-price",
+      "isRealtime": false,
+      "previousClose": 2201.0,
+      "changePercent": 7.9509
     },
     "5820": {
       "date": "2026-07-03",
@@ -20522,6 +20423,17 @@
       "previousClose": 1010.0,
       "changePercent": 0.9901
     },
+    "584A": {
+      "date": "2026-07-03",
+      "timestamp": "2026-07-03T15:30:00+09:00",
+      "close": 2522.0,
+      "volume": 1784300.0,
+      "source": "Yahoo Finance",
+      "priceType": "regular-market-price",
+      "isRealtime": false,
+      "previousClose": 2795.0,
+      "changePercent": -9.7674
+    },
     "5851": {
       "date": "2026-07-03",
       "timestamp": "2026-07-03T15:30:00+09:00",
@@ -20543,17 +20455,6 @@
       "isRealtime": false,
       "previousClose": 700.0,
       "changePercent": 1.4286
-    },
-    "5856": {
-      "date": "2026-06-25",
-      "timestamp": "2026-06-25T15:30:00+09:00",
-      "close": 1.0,
-      "volume": 23521600.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 3.0,
-      "changePercent": -66.6667
     },
     "5857": {
       "date": "2026-07-03",
@@ -20697,6 +20598,17 @@
       "isRealtime": false,
       "previousClose": 2074.0,
       "changePercent": 2.8447
+    },
+    "589A": {
+      "date": "2026-07-03",
+      "timestamp": "2026-07-03T15:30:00+09:00",
+      "close": 1348.0,
+      "volume": 2191200.0,
+      "source": "Yahoo Finance",
+      "priceType": "regular-market-price",
+      "isRealtime": false,
+      "previousClose": 1676.0,
+      "changePercent": -19.5704
     },
     "5900": {
       "date": "2026-07-03",
@@ -21135,8 +21047,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 2550.0,
-      "changePercent": -2.6667
+      "previousClose": 2486.0,
+      "changePercent": -0.1609
     },
     "5967": {
       "date": "2026-07-03",
@@ -21157,8 +21069,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 1209.0,
-      "changePercent": -1.737
+      "previousClose": 1188.0,
+      "changePercent": 0.0
     },
     "5970": {
       "date": "2026-07-03",
@@ -22348,17 +22260,6 @@
       "previousClose": 378.0,
       "changePercent": 2.1164
     },
-    "6173": {
-      "date": "2026-05-29",
-      "timestamp": "2026-05-29T15:30:00+09:00",
-      "close": 13.0,
-      "volume": 18332400.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 9.0,
-      "changePercent": 44.4444
-    },
     "6176": {
       "date": "2026-07-03",
       "timestamp": "2026-07-03T15:30:00+09:00",
@@ -22589,17 +22490,6 @@
       "isRealtime": false,
       "previousClose": 612.0,
       "changePercent": -0.3268
-    },
-    "6201": {
-      "date": "2026-05-29",
-      "timestamp": "2026-05-29T15:30:00+09:00",
-      "close": 20450.0,
-      "volume": 3446400.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 20450.0,
-      "changePercent": 0.0
     },
     "6203": {
       "date": "2026-07-03",
@@ -22873,8 +22763,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 1720.0,
-      "changePercent": 3.8953
+      "previousClose": 1770.0,
+      "changePercent": 0.9605
     },
     "6249": {
       "date": "2026-07-03",
@@ -23654,8 +23544,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 5410.0,
-      "changePercent": -0.9242
+      "previousClose": 5400.0,
+      "changePercent": -0.7407
     },
     "6366": {
       "date": "2026-07-03",
@@ -23852,8 +23742,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 7070.0,
-      "changePercent": 1.5559
+      "previousClose": 7140.0,
+      "changePercent": 0.5602
     },
     "6393": {
       "date": "2026-07-03",
@@ -23909,17 +23799,6 @@
       "isRealtime": false,
       "previousClose": 1476.0,
       "changePercent": -0.6775
-    },
-    "6403": {
-      "date": "2026-06-23",
-      "timestamp": "2026-06-23T15:30:00+09:00",
-      "close": 4015.0,
-      "volume": 1200.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 4015.0,
-      "changePercent": 0.0
     },
     "6405": {
       "date": "2026-07-03",
@@ -25581,17 +25460,6 @@
       "isRealtime": false,
       "previousClose": 3780.0,
       "changePercent": -1.3228
-    },
-    "6670": {
-      "date": "2026-06-15",
-      "timestamp": "2026-06-15T15:30:00+09:00",
-      "close": 2184.0,
-      "volume": 551600.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 2186.0,
-      "changePercent": -0.0915
     },
     "6674": {
       "date": "2026-07-03",
@@ -27944,8 +27812,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 1322.0,
-      "changePercent": 0.1513
+      "previousClose": 1330.0,
+      "changePercent": -0.4511
     },
     "7089": {
       "date": "2026-07-03",
@@ -28716,17 +28584,6 @@
       "isRealtime": false,
       "previousClose": 3850.0,
       "changePercent": -0.1299
-    },
-    "7229": {
-      "date": "2026-06-09",
-      "timestamp": "2026-06-09T15:30:00+09:00",
-      "close": 3005.0,
-      "volume": 11100.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 3000.0,
-      "changePercent": 0.1667
     },
     "7231": {
       "date": "2026-07-03",
@@ -30089,8 +29946,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 1911.0,
-      "changePercent": -2.1455
+      "previousClose": 1871.0,
+      "changePercent": -0.0534
     },
     "7480": {
       "date": "2026-07-03",
@@ -31090,8 +30947,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 2575.0,
-      "changePercent": -1.0097
+      "previousClose": 2599.0,
+      "changePercent": -1.9238
     },
     "7678": {
       "date": "2026-07-03",
@@ -31123,8 +30980,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 923.0,
-      "changePercent": -0.325
+      "previousClose": 920.0,
+      "changePercent": 0.0
     },
     "7682": {
       "date": "2026-07-03",
@@ -32589,17 +32446,6 @@
       "previousClose": 3340.0,
       "changePercent": 0.0
     },
-    "7922": {
-      "date": "2026-06-24",
-      "timestamp": "2026-06-24T15:30:00+09:00",
-      "close": 717.0,
-      "volume": 31300.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 716.0,
-      "changePercent": 0.1397
-    },
     "7927": {
       "date": "2026-07-03",
       "timestamp": "2026-07-03T15:30:00+09:00",
@@ -33116,17 +32962,6 @@
       "isRealtime": false,
       "previousClose": 1022.0,
       "changePercent": 0.1957
-    },
-    "7999": {
-      "date": "2026-06-09",
-      "timestamp": "2026-06-09T15:30:00+09:00",
-      "close": 7580.0,
-      "volume": 2200.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 7580.0,
-      "changePercent": 0.0
     },
     "8001": {
       "date": "2026-07-03",
@@ -34093,8 +33928,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 1354.0,
-      "changePercent": -2.2157
+      "previousClose": 1324.0,
+      "changePercent": 0.0
     },
     "8150": {
       "date": "2026-07-03",
@@ -34412,8 +34247,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 3300.0,
-      "changePercent": 1.2121
+      "previousClose": 3410.0,
+      "changePercent": -2.0528
     },
     "8226": {
       "date": "2026-07-03",
@@ -34656,17 +34491,6 @@
       "isRealtime": false,
       "previousClose": 691.0,
       "changePercent": 0.7236
-    },
-    "8289": {
-      "date": "2026-06-26",
-      "timestamp": "2026-06-26T15:30:00+09:00",
-      "close": 952.0,
-      "volume": 55100.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 952.0,
-      "changePercent": 0.0
     },
     "8291": {
       "date": "2026-07-03",
@@ -36128,8 +35952,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 1965.0,
-      "changePercent": 1.1705
+      "previousClose": 1988.0,
+      "changePercent": 0.0
     },
     "8892": {
       "date": "2026-07-03",
@@ -36846,17 +36670,6 @@
       "previousClose": 8564.0,
       "changePercent": 2.5222
     },
-    "9067": {
-      "date": "2026-06-03",
-      "timestamp": "2026-06-03T15:30:00+09:00",
-      "close": 942.0,
-      "volume": 15000.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 942.0,
-      "changePercent": 0.0
-    },
     "9068": {
       "date": "2026-07-03",
       "timestamp": "2026-07-03T15:30:00+09:00",
@@ -37253,6 +37066,17 @@
       "previousClose": 3011.0,
       "changePercent": 1.2953
     },
+    "92015": {
+      "date": "2026-07-03",
+      "timestamp": "2026-07-03T14:57:51+09:00",
+      "close": 10400.0,
+      "volume": 5300.0,
+      "source": "Yahoo Finance",
+      "priceType": "regular-market-price",
+      "isRealtime": false,
+      "previousClose": 10370.0,
+      "changePercent": 0.2893
+    },
     "9202": {
       "date": "2026-07-03",
       "timestamp": "2026-07-03T15:30:00+09:00",
@@ -37393,8 +37217,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 1210.0,
-      "changePercent": -0.0826
+      "previousClose": 1209.0,
+      "changePercent": 0.0
     },
     "9221": {
       "date": "2026-07-03",
@@ -37679,8 +37503,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 311.0,
-      "changePercent": -3.2154
+      "previousClose": 303.0,
+      "changePercent": -0.6601
     },
     "9259": {
       "date": "2026-07-03",
@@ -38076,17 +37900,6 @@
       "priceType": "regular-market-price",
       "isRealtime": false,
       "previousClose": 1650.0,
-      "changePercent": 0.0
-    },
-    "9338": {
-      "date": "2026-06-15",
-      "timestamp": "2026-06-15T15:30:00+09:00",
-      "close": 4530.0,
-      "volume": 9200.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 4530.0,
       "changePercent": 0.0
     },
     "9339": {
@@ -39549,8 +39362,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 2320.0,
-      "changePercent": 1.0776
+      "previousClose": 2295.0,
+      "changePercent": 2.1786
     },
     "9682": {
       "date": "2026-07-03",
@@ -39769,8 +39582,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 5400.0,
-      "changePercent": 1.8519
+      "previousClose": 5500.0,
+      "changePercent": 0.0
     },
     "9722": {
       "date": "2026-07-03",
@@ -40187,8 +40000,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 3550.0,
-      "changePercent": -0.4225
+      "previousClose": 3535.0,
+      "changePercent": 0.0
     },
     "9823": {
       "date": "2026-07-03",
@@ -40418,8 +40231,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 10210.0,
-      "changePercent": -2.9383
+      "previousClose": 10120.0,
+      "changePercent": -2.0751
     },
     "9869": {
       "date": "2026-07-03",
@@ -40652,17 +40465,6 @@
       "previousClose": 731.0,
       "changePercent": 0.1368
     },
-    "9927": {
-      "date": "2026-06-18",
-      "timestamp": "2026-06-18T15:30:00+09:00",
-      "close": 963.0,
-      "volume": 2200.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "isRealtime": false,
-      "previousClose": 963.0,
-      "changePercent": 0.0
-    },
     "9928": {
       "date": "2026-07-03",
       "timestamp": "2026-07-03T15:30:00+09:00",
@@ -40682,8 +40484,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 470.0,
-      "changePercent": -0.8511
+      "previousClose": 466.0,
+      "changePercent": 0.0
     },
     "9930": {
       "date": "2026-07-03",
@@ -66317,18 +66119,17 @@
     }
   },
   "stats": {
-    "quoteUniverse": 3731,
-    "companies": 3731,
+    "quoteUniverse": 3713,
+    "companies": 3713,
     "tradingDates": [
       "2026-07-03",
       "2026-07-02",
       "2026-07-01",
-      "2026-06-30",
-      "2026-06-26"
+      "2026-06-30"
     ],
     "fundamentals": 3200,
     "quoteFailures": 0,
-    "freshQuotesFetched": 3731,
+    "freshQuotesFetched": 3713,
     "staleQuotesRetained": 0,
     "quoteFailureExamples": []
   }
