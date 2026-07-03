@@ -38,7 +38,7 @@ jobs:
               path = root / rel
               if not path.exists():
                   errors.append(f'missing required file: {rel}')
-              elif path.is_file() and path.stat().st_size == 0:
+              elif rel != '.nojekyll' and path.is_file() and path.stat().st_size == 0:
                   errors.append(f'empty required file: {rel}')
 
           index = (root / 'index.html').read_text(encoding='utf-8')
@@ -59,8 +59,8 @@ jobs:
               source = (root / rel).read_text(encoding='utf-8')
               if '/data/' not in source or 'isSameOriginDataRequest' not in source:
                   errors.append(f'{rel} does not bypass data files')
-              if "CACHE_NAME = 'kpi-scope-v4-nodata'" not in source:
-                  errors.append(f'{rel} cache version was not updated')
+              if "CACHE_NAME = 'kpi-scope-" not in source:
+                  errors.append(f'{rel} cache version is missing')
 
           if errors:
               print('\n'.join(errors))

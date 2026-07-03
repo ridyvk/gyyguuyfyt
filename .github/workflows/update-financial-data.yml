@@ -58,6 +58,9 @@ jobs:
       - name: Reclassify after EDINET fill
         run: python scripts/classify_missing_companies.py
 
+      - name: Refresh market quotes
+        run: python scripts/update_market_quotes.py
+
       - name: Refresh update status
         run: python scripts/update_status_snapshot.py
 
