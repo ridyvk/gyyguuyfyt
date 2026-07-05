@@ -9,7 +9,7 @@ import {
   ScanSearch,
   X,
 } from 'lucide-react'
-import { lazy, Suspense, useState } from 'react'
+import { lazy, Suspense, useLayoutEffect, useState } from 'react'
 import { NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import StartupSplash from './components/StartupSplash'
 import { useApp } from './context/AppContext'
@@ -46,6 +46,25 @@ export default function App() {
   const stockQuoteCount = companies.filter(
     (company) => company.stockPrice,
   ).length
+
+  useLayoutEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual'
+    }
+  }, [])
+
+  useLayoutEffect(() => {
+    const resetScroll = () => {
+      window.scrollTo(0, 0)
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+    }
+
+    resetScroll()
+    const frameId = window.requestAnimationFrame(resetScroll)
+
+    return () => window.cancelAnimationFrame(frameId)
+  }, [location.key])
 
   return (
     <>
