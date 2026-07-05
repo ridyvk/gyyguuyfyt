@@ -36,32 +36,48 @@ import {
 
 const kpiKeys: KpiKey[] = [
   'revenueGrowth',
+  'operatingIncomeGrowth',
+  'epsGrowth',
   'operatingMargin',
   'netMargin',
   'roe',
+  'roa',
+  'roic',
   'equityRatio',
   'operatingCfMargin',
   'debtRatio',
   'netCash',
+  'wacc',
+  'ebitda',
   'inventoryGrowth',
   'receivablesGrowth',
   'per',
   'pbr',
+  'dividendYield',
+  'evEbitda',
 ]
 
 const neutralMetrics: RawMetrics = {
   revenueGrowth: 0,
+  operatingIncomeGrowth: 0,
+  epsGrowth: 0,
   operatingMargin: 5,
   netMargin: 3,
   roe: 8,
+  roa: 3,
+  roic: 7,
   equityRatio: 40,
   operatingCfMargin: 5,
   debtRatio: 1,
   netCash: 0,
+  wacc: 8,
+  ebitda: 0,
   inventoryGrowth: 0,
   receivablesGrowth: 0,
   per: 20,
   pbr: 1.5,
+  dividendYield: 1.5,
+  evEbitda: 10,
 }
 
 const unavailableScores: Scores = {
@@ -75,20 +91,36 @@ const unavailableScores: Scores = {
 
 const units: Record<KpiKey, KpiMetric['unit']> = {
   revenueGrowth: '%',
+  operatingIncomeGrowth: '%',
+  epsGrowth: '%',
   operatingMargin: '%',
   netMargin: '%',
   roe: '%',
+  roa: '%',
+  roic: '%',
   equityRatio: '%',
   operatingCfMargin: '%',
   debtRatio: '倍',
   netCash: '億円',
+  wacc: '%',
+  ebitda: '億円',
   inventoryGrowth: '%',
   receivablesGrowth: '%',
   per: '倍',
   pbr: '倍',
+  dividendYield: '%',
+  evEbitda: '倍',
 }
 
 const comments: Record<KpiKey, [string, string, string]> = {
+  operatingIncomeGrowth: ['利益成長が売上を伴う', '利益成長は中立圏', '利益成長の鈍化に注意'],
+  epsGrowth: ['1株利益の伸びが強い', 'EPSは安定成長', 'EPSの伸びを確認'],
+  roa: ['資産効率が良好', '資産効率は中立圏', '資産効率を確認'],
+  roic: ['投下資本効率が良好', '資本コスト付近の収益力', 'ROIC改善を確認'],
+  wacc: ['資本コストは低め', '標準的な資本コスト', '要求利回りが高め'],
+  ebitda: ['償却前利益の規模が厚い', 'EBITDAは中立圏', 'EBITDAの薄さを確認'],
+  dividendYield: ['配当利回りが厚い', '配当利回りは中立圏', '配当妙味は薄い'],
+  evEbitda: ['EV/EBITDAで割安', 'EV/EBITDAは中立圏', '買収倍率は高め'],
   revenueGrowth: ['成長ペースが強い', '緩やかな成長', '成長鈍化を確認'],
   operatingMargin: ['高い収益力', '標準的な水準', '採算性に注意'],
   netMargin: ['最終利益も堅調', '利益は安定圏', '利益の薄さに注意'],
@@ -137,6 +169,14 @@ const isReliableDailyQuoteComparison = (quote: MarketQuote) => {
 
 const metricStatus = (key: KpiKey, value: number): KpiStatus => {
   const thresholds: Record<KpiKey, [number, number, boolean]> = {
+    operatingIncomeGrowth: [0, 10, true],
+    epsGrowth: [0, 10, true],
+    roa: [2, 6, true],
+    roic: [5, 10, true],
+    wacc: [9.5, 6.5, false],
+    ebitda: [0, 300, true],
+    dividendYield: [1, 2.5, true],
+    evEbitda: [14, 8, false],
     revenueGrowth: [3, 10, true],
     operatingMargin: [5, 12, true],
     netMargin: [2, 8, true],
@@ -239,6 +279,10 @@ const isUsableLiveMetric = (
   }
   if (key === 'debtRatio' && value < 0) return false
   if (key === 'equityRatio' && (value < -100 || value > 100)) return false
+  if ((key === 'per' || key === 'pbr' || key === 'evEbitda') && value <= 0) return false
+  if (key === 'dividendYield' && (value < 0 || value > 20)) return false
+  if (key === 'wacc' && (value <= 0 || value > 25)) return false
+  if ((key === 'roa' || key === 'roic') && (value < -80 || value > 120)) return false
   return true
 }
 
@@ -248,27 +292,51 @@ const calculateLiveScores = (
 ): Scores => {
   const scores = calculateScores(rawMetrics, available)
   const weighted: Array<[keyof Omit<Scores, 'overall'>, number, boolean]> = [
-    ['growth', 0.22, available.has('revenueGrowth')],
+    [
+      'growth',
+      0.22,
+      available.has('revenueGrowth') ||
+        available.has('operatingIncomeGrowth') ||
+        available.has('epsGrowth'),
+    ],
     [
       'profitability',
       0.24,
-      available.has('operatingMargin') || available.has('roe'),
+      available.has('operatingMargin') ||
+        available.has('roe') ||
+        available.has('roa') ||
+        available.has('roic'),
     ],
     [
       'safety',
       0.2,
-      available.has('equityRatio') || available.has('debtRatio'),
+      available.has('equityRatio') ||
+        available.has('debtRatio') ||
+        available.has('wacc'),
     ],
     [
       'cashGeneration',
       0.2,
-      available.has('operatingCfMargin') || available.has('netCash'),
+      available.has('operatingCfMargin') ||
+        available.has('netCash') ||
+        available.has('ebitda'),
     ],
-    ['valuation', 0.14, available.has('per') || available.has('pbr')],
+    [
+      'valuation',
+      0.14,
+      available.has('per') ||
+        available.has('pbr') ||
+        available.has('dividendYield') ||
+        available.has('evEbitda'),
+    ],
   ]
   const active = weighted.filter(([, , isAvailable]) => isAvailable)
   const totalWeight = active.reduce((sum, [, weight]) => sum + weight, 0)
-  scores.valuation = available.has('per') || available.has('pbr')
+  scores.valuation =
+    available.has('per') ||
+    available.has('pbr') ||
+    available.has('dividendYield') ||
+    available.has('evEbitda')
     ? scores.valuation
     : 50
   scores.overall = totalWeight
@@ -316,7 +384,275 @@ const valuationMetrics = (
         : {}),
     }
   }
+  const rawDividendYield = fundamentals.dividendYield
+  if (hasFiniteNumber(rawDividendYield) && rawDividendYield > 0) {
+    metrics.dividendYield = {
+      value: rawDividendYield <= 1 ? rawDividendYield * 100 : rawDividendYield,
+      comparisonLabel: '前日差',
+      confidence: 'B',
+      confidenceReason: '市場データの配当利回りを表示しています。',
+    }
+  } else if (
+    hasFiniteNumber(fundamentals.dividendRate) &&
+    fundamentals.dividendRate > 0 &&
+    quote.close > 0
+  ) {
+    metrics.dividendYield = {
+      value: (fundamentals.dividendRate / quote.close) * 100,
+      comparisonLabel: '前日差',
+      confidence: 'B',
+      confidenceReason: '市場データの1株配当と最新株価から算出しています。',
+    }
+  }
   return metrics
+}
+
+const metricValue = (
+  metrics: Partial<Record<KpiKey, LiveMetricValue>>,
+  key: KpiKey,
+) => {
+  const value = metrics[key]?.value
+  return hasFiniteNumber(value) ? value : undefined
+}
+
+const previousMetricValue = (
+  metrics: Partial<Record<KpiKey, LiveMetricValue>>,
+  key: KpiKey,
+) => {
+  const value = metrics[key]?.previousValue
+  return hasFiniteNumber(value) ? value : undefined
+}
+
+const clampValue = (value: number, min: number, max: number) =>
+  Math.max(min, Math.min(max, value))
+
+const derivedMetric = (
+  value: number | undefined,
+  previousValue: number | undefined,
+  confidence: 'B' | 'C',
+  confidenceReason: string,
+): LiveMetricValue | undefined => {
+  if (!hasFiniteNumber(value)) return undefined
+  return {
+    value,
+    ...(hasFiniteNumber(previousValue)
+      ? {
+          previousValue,
+          trend: [previousValue, value],
+        }
+      : {}),
+    confidence,
+    confidenceReason,
+  }
+}
+
+const operatingIncomeGrowthFromMargins = (
+  revenueGrowth: number | undefined,
+  operatingMargin: number | undefined,
+  previousOperatingMargin: number | undefined,
+) => {
+  if (
+    !hasFiniteNumber(revenueGrowth) ||
+    !hasFiniteNumber(operatingMargin) ||
+    !hasFiniteNumber(previousOperatingMargin) ||
+    previousOperatingMargin <= 0
+  ) {
+    return undefined
+  }
+  return (
+    ((1 + revenueGrowth / 100) *
+      (operatingMargin / previousOperatingMargin) -
+      1) *
+    100
+  )
+}
+
+const profitGrowthFromMargins = (
+  revenueGrowth: number | undefined,
+  margin: number | undefined,
+  previousMargin: number | undefined,
+) => {
+  if (
+    !hasFiniteNumber(revenueGrowth) ||
+    !hasFiniteNumber(margin) ||
+    !hasFiniteNumber(previousMargin) ||
+    previousMargin <= 0
+  ) {
+    return undefined
+  }
+  return ((1 + revenueGrowth / 100) * (margin / previousMargin) - 1) * 100
+}
+
+const depreciationMarginEstimate = (industry: string) => {
+  if (/鉄鋼|非鉄|金属|機械|電気機器|輸送用機器|化学|石油|ガラス|電気・ガス/.test(industry)) {
+    return 4
+  }
+  if (/情報・通信|サービス|小売|卸売/.test(industry)) return 1.8
+  return 2.6
+}
+
+const latestRevenueOku = (record: LiveFinancialRecord) => {
+  const latest = [...(record.history ?? [])]
+    .reverse()
+    .find((point) => hasFiniteNumber(point.revenue))
+  return latest?.revenue
+}
+
+const deriveSupplementalMetrics = (
+  company: Company,
+  record: LiveFinancialRecord,
+  metrics: Partial<Record<KpiKey, LiveMetricValue>>,
+) => {
+  const next = { ...metrics }
+  const setIfMissing = (key: KpiKey, metric: LiveMetricValue | undefined) => {
+    if (!next[key] && metric) next[key] = metric
+  }
+
+  const revenueGrowth = metricValue(next, 'revenueGrowth')
+  const operatingMargin = metricValue(next, 'operatingMargin')
+  const previousOperatingMargin = previousMetricValue(next, 'operatingMargin')
+  const netMargin = metricValue(next, 'netMargin')
+  const previousNetMargin = previousMetricValue(next, 'netMargin')
+  const roe = metricValue(next, 'roe')
+  const previousRoe = previousMetricValue(next, 'roe')
+  const equityRatio = metricValue(next, 'equityRatio')
+  const previousEquityRatio = previousMetricValue(next, 'equityRatio')
+  const debtRatio = metricValue(next, 'debtRatio')
+  const netCash = metricValue(next, 'netCash')
+  const per = metricValue(next, 'per')
+  const revenueOku = latestRevenueOku(record)
+
+  setIfMissing(
+    'roa',
+    derivedMetric(
+      hasFiniteNumber(roe) && hasFiniteNumber(equityRatio)
+        ? (roe * equityRatio) / 100
+        : undefined,
+      hasFiniteNumber(previousRoe) && hasFiniteNumber(previousEquityRatio)
+        ? (previousRoe * previousEquityRatio) / 100
+        : undefined,
+      'B',
+      'ROEと自己資本比率から ROA = ROE × 自己資本比率 で算出しています。',
+    ),
+  )
+  setIfMissing(
+    'operatingIncomeGrowth',
+    derivedMetric(
+      operatingIncomeGrowthFromMargins(
+        revenueGrowth,
+        operatingMargin,
+        previousOperatingMargin,
+      ),
+      undefined,
+      'B',
+      '売上成長率と営業利益率の前年差から営業利益成長率を推定しています。',
+    ),
+  )
+  setIfMissing(
+    'epsGrowth',
+    derivedMetric(
+      profitGrowthFromMargins(revenueGrowth, netMargin, previousNetMargin),
+      undefined,
+      'C',
+      '株式数の変化を反映できないため、純利益成長率をEPS成長率の近似として表示しています。',
+    ),
+  )
+
+  const taxAdjustedOperatingReturn =
+    hasFiniteNumber(roe) &&
+    hasFiniteNumber(operatingMargin) &&
+    hasFiniteNumber(netMargin) &&
+    netMargin > 0
+      ? roe * (operatingMargin / netMargin) * 0.7
+      : undefined
+  setIfMissing(
+    'roic',
+    derivedMetric(
+      hasFiniteNumber(taxAdjustedOperatingReturn)
+        ? taxAdjustedOperatingReturn / (1 + Math.max(0, debtRatio ?? 0))
+        : undefined,
+      undefined,
+      'C',
+      'NOPATと投下資本を詳細取得できない会社では、ROE・利益率・D/Eから簡易推定しています。',
+    ),
+  )
+
+  const debtToEquity =
+    hasFiniteNumber(debtRatio)
+      ? Math.max(0, debtRatio)
+      : hasFiniteNumber(equityRatio) && equityRatio > 0
+        ? Math.max(0, (100 - equityRatio) / equityRatio)
+        : 0.7
+  const equityWeight = 1 / (1 + debtToEquity)
+  const debtWeight = debtToEquity / (1 + debtToEquity)
+  const betaEstimate = clampValue(
+    1 + ((50 - (equityRatio ?? 40)) / 150) + Math.max(0, debtToEquity - 1) * 0.07,
+    0.75,
+    1.55,
+  )
+  const costOfEquity = 1.2 + betaEstimate * 5.5
+  const afterTaxCostOfDebt = (1.2 + Math.min(2.5, debtToEquity * 0.5)) * 0.7
+  setIfMissing(
+    'wacc',
+    derivedMetric(
+      equityWeight * costOfEquity + debtWeight * afterTaxCostOfDebt,
+      undefined,
+      'C',
+      '市場ベータや実効金利が未取得のため、財務レバレッジから簡易推定したWACCです。',
+    ),
+  )
+
+  const depreciationMargin = depreciationMarginEstimate(company.industry)
+  const ebitdaValue =
+    hasFiniteNumber(revenueOku) && hasFiniteNumber(operatingMargin)
+      ? revenueOku * ((operatingMargin + depreciationMargin) / 100)
+      : undefined
+  const previousRevenueOku =
+    hasFiniteNumber(revenueOku) && hasFiniteNumber(revenueGrowth)
+      ? revenueOku / (1 + revenueGrowth / 100)
+      : undefined
+  const previousEbitda =
+    hasFiniteNumber(previousRevenueOku) && hasFiniteNumber(previousOperatingMargin)
+      ? previousRevenueOku * ((previousOperatingMargin + depreciationMargin) / 100)
+      : undefined
+  setIfMissing(
+    'ebitda',
+    derivedMetric(
+      ebitdaValue,
+      previousEbitda,
+      'C',
+      '減価償却費を未取得の会社では、業種別の償却率を営業利益に足して推定しています。',
+    ),
+  )
+
+  const ebitda = metricValue(next, 'ebitda')
+  const netIncomeOku =
+    hasFiniteNumber(revenueOku) && hasFiniteNumber(netMargin)
+      ? revenueOku * (netMargin / 100)
+      : undefined
+  const marketCapOku =
+    hasFiniteNumber(netIncomeOku) && hasFiniteNumber(per)
+      ? netIncomeOku * per
+      : undefined
+  const enterpriseValueOku =
+    hasFiniteNumber(marketCapOku)
+      ? marketCapOku - (hasFiniteNumber(netCash) ? netCash : 0)
+      : undefined
+  setIfMissing(
+    'evEbitda',
+    derivedMetric(
+      hasFiniteNumber(enterpriseValueOku) &&
+        hasFiniteNumber(ebitda) &&
+        ebitda > 0
+        ? enterpriseValueOku / ebitda
+        : undefined,
+      undefined,
+      'C',
+      '時価総額はPERと純利益から、EVはネットキャッシュを反映して簡易推定しています。',
+    ),
+  )
+
+  return next
 }
 
 const hasTrustedRoeProvenance = (record: LiveFinancialRecord) => {
@@ -337,7 +673,7 @@ const mergeRecord = (
   const history = record.history ?? []
   const policy = getIndustryKpiPolicy(company.industry)
   const applicable = new Set<KpiKey>(policy.applicable)
-  const recordMetrics: Partial<Record<KpiKey, LiveMetricValue>> = {
+  let recordMetrics: Partial<Record<KpiKey, LiveMetricValue>> = {
     ...record.metrics,
     ...valuationMetrics(quote, fundamentals ?? record.valuation),
   }
@@ -360,6 +696,7 @@ const mergeRecord = (
       trend: history.map((point) => point.roe),
     }
   }
+  recordMetrics = deriveSupplementalMetrics(company, record, recordMetrics)
   kpiKeys.forEach((key) => {
     const metric = recordMetrics[key]
     if (

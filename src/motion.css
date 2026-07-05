@@ -32,6 +32,9 @@
 .kpi-grid .kpi-tile:nth-child(4n + 2) { --kpi-delay: 55ms; }
 .kpi-grid .kpi-tile:nth-child(4n + 3) { --kpi-delay: 110ms; }
 .kpi-grid .kpi-tile:nth-child(4n + 4) { --kpi-delay: 165ms; }
+.kpi-category__tiles .kpi-tile:nth-child(4n + 2) { --kpi-delay: 55ms; }
+.kpi-category__tiles .kpi-tile:nth-child(4n + 3) { --kpi-delay: 110ms; }
+.kpi-category__tiles .kpi-tile:nth-child(4n + 4) { --kpi-delay: 165ms; }
 
 .kpi-tile--motion.is-visible {
   opacity: 1;

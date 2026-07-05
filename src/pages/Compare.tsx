@@ -37,12 +37,17 @@ const scoreMetrics: { key: ScoreKey | 'overall'; label: string; higher: boolean 
 ]
 const kpiMetrics: { key: KpiKey; label: string; higher: boolean }[] = [
   { key: 'revenueGrowth', label: '売上成長率', higher: true },
+  { key: 'operatingIncomeGrowth', label: '営業利益成長率', higher: true },
   { key: 'operatingMargin', label: '営業利益率', higher: true },
   { key: 'roe', label: 'ROE', higher: true },
+  { key: 'roic', label: 'ROIC', higher: true },
+  { key: 'wacc', label: 'WACC', higher: false },
   { key: 'equityRatio', label: '自己資本比率', higher: true },
   { key: 'operatingCfMargin', label: '営業CFマージン', higher: true },
+  { key: 'dividendYield', label: '配当利回り', higher: true },
   { key: 'per', label: 'PER', higher: false },
   { key: 'pbr', label: 'PBR', higher: false },
+  { key: 'evEbitda', label: 'EV/EBITDA', higher: false },
   { key: 'debtRatio', label: '有利子負債倍率', higher: false },
 ]
 

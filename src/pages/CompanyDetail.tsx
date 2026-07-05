@@ -1,10 +1,15 @@
 import {
+  Activity,
   ArrowLeft,
   Bookmark,
   Check,
   GitCompareArrows,
   Lightbulb,
   Save,
+  Scale,
+  ShieldCheck,
+  TrendingUp,
+  WalletCards,
 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
@@ -31,17 +36,25 @@ import type { AnalysisLevel, CompanyNote, KpiKey, ScoreKey } from '../types'
 
 const kpiLabels: Record<KpiKey, string> = {
   revenueGrowth: '売上成長率',
+  operatingIncomeGrowth: '営業利益成長率',
+  epsGrowth: 'EPS成長率',
   operatingMargin: '営業利益率',
   netMargin: '純利益率',
   roe: 'ROE',
+  roa: 'ROA',
+  roic: 'ROIC',
   equityRatio: '自己資本比率',
   operatingCfMargin: '営業CFマージン',
   debtRatio: '有利子負債倍率',
   netCash: 'ネットキャッシュ',
+  wacc: 'WACC',
+  ebitda: 'EBITDA',
   inventoryGrowth: '棚卸資産増加率',
   receivablesGrowth: '売掛金増加率',
   per: 'PER',
   pbr: 'PBR',
+  dividendYield: '配当利回り',
+  evEbitda: 'EV/EBITDA',
 }
 
 const analysisLevelLabels: Record<AnalysisLevel, string> = {
@@ -55,6 +68,55 @@ const insightConfidenceLabel = (confidence?: string) =>
   confidence === 'review' ? '要確認' : confidence ? `信頼度 ${confidence}` : null
 
 const kpiKeys = Object.keys(kpiLabels) as KpiKey[]
+const kpiGroups: {
+  id: string
+  title: string
+  kicker: string
+  accent: string
+  icon: typeof TrendingUp
+  keys: KpiKey[]
+}[] = [
+  {
+    id: 'growth',
+    title: '成長性',
+    kicker: 'GROWTH',
+    accent: '#FF9F0A',
+    icon: TrendingUp,
+    keys: ['revenueGrowth', 'operatingIncomeGrowth', 'epsGrowth'],
+  },
+  {
+    id: 'profitability',
+    title: '収益性・資本効率',
+    kicker: 'PROFITABILITY',
+    accent: '#007AFF',
+    icon: Activity,
+    keys: ['operatingMargin', 'netMargin', 'roe', 'roa', 'roic'],
+  },
+  {
+    id: 'safety',
+    title: '安全性',
+    kicker: 'SAFETY',
+    accent: '#34C759',
+    icon: ShieldCheck,
+    keys: ['equityRatio', 'debtRatio', 'netCash', 'wacc'],
+  },
+  {
+    id: 'cash',
+    title: 'キャッシュ品質',
+    kicker: 'CASH QUALITY',
+    accent: '#00A7C7',
+    icon: WalletCards,
+    keys: ['operatingCfMargin', 'ebitda', 'inventoryGrowth', 'receivablesGrowth'],
+  },
+  {
+    id: 'valuation',
+    title: '割安性',
+    kicker: 'VALUATION',
+    accent: '#5856D6',
+    icon: Scale,
+    keys: ['per', 'pbr', 'dividendYield', 'evEbitda'],
+  },
+]
 const scoreKeys: ScoreKey[] = [
   'growth',
   'profitability',
@@ -184,7 +246,7 @@ export default function CompanyDetail() {
           />
           <small>
             {financialAvailable
-              ? `表示 ${company.liveMetricCount ?? 0}/12 KPI / 信頼度A・B ${company.trustedMetricCount ?? 0}`
+              ? `表示 ${company.liveMetricCount ?? 0}/${kpiKeys.length} KPI / 信頼度A・B ${company.trustedMetricCount ?? 0}`
               : '企業情報のみ収録 / 財務数値は表示しません'}
           </small>
         </div>
@@ -247,10 +309,40 @@ export default function CompanyDetail() {
 
       <section className="section-block">
         <div className="section-heading"><div><span className="section-kicker">KEY METRICS</span><h2>KPIタイル</h2></div><p>数値・前年差・状態・信頼度・計算式・元データ</p></div>
-        <div className="kpi-grid">
-          {kpiKeys.map((key) => (
-            <KpiTile key={key} label={kpiLabels[key]} metric={company.metrics[key]} />
-          ))}
+        <div className="kpi-category-grid">
+          {kpiGroups.map((group) => {
+            const Icon = group.icon
+            const availableCount = group.keys.filter(
+              (key) =>
+                company.metrics[key].available !== false &&
+                company.metrics[key].applicable !== false,
+            ).length
+            return (
+              <article
+                className={`kpi-category kpi-category--${group.id}`}
+                key={group.id}
+                style={{ '--category-accent': group.accent } as React.CSSProperties}
+              >
+                <div className="kpi-category__head">
+                  <span className="kpi-category__icon"><Icon size={18} /></span>
+                  <div>
+                    <span className="section-kicker">{group.kicker}</span>
+                    <h3>{group.title}</h3>
+                  </div>
+                  <strong>{availableCount}/{group.keys.length}</strong>
+                </div>
+                <div className="kpi-category__tiles">
+                  {group.keys.map((key) => (
+                    <KpiTile
+                      key={key}
+                      label={kpiLabels[key]}
+                      metric={company.metrics[key]}
+                    />
+                  ))}
+                </div>
+              </article>
+            )
+          })}
         </div>
       </section>
 

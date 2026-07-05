@@ -2,17 +2,25 @@ import type { Scores } from '../types'
 
 export interface RawMetrics {
   revenueGrowth: number
+  operatingIncomeGrowth: number
+  epsGrowth: number
   operatingMargin: number
   netMargin: number
   roe: number
+  roa: number
+  roic: number
   equityRatio: number
   operatingCfMargin: number
   debtRatio: number
   netCash: number
+  wacc: number
+  ebitda: number
   inventoryGrowth: number
   receivablesGrowth: number
   per: number
   pbr: number
+  dividendYield: number
+  evEbitda: number
 }
 
 type RawMetricKey = keyof RawMetrics
@@ -46,54 +54,81 @@ export const calculateScores = (
 
   const growthValues: WeightedValue[] = []
   if (has('revenueGrowth')) {
-    growthValues.push([scale(metrics.revenueGrowth, -8, 20), 0.7])
+    growthValues.push([scale(metrics.revenueGrowth, -8, 20), 0.45])
+  }
+  if (has('operatingIncomeGrowth')) {
+    growthValues.push([scale(metrics.operatingIncomeGrowth, -12, 24), 0.28])
+  }
+  if (has('epsGrowth')) {
+    growthValues.push([scale(metrics.epsGrowth, -12, 24), 0.22])
   }
   if (has('inventoryGrowth', 'revenueGrowth')) {
     growthValues.push([
       scale(metrics.inventoryGrowth - metrics.revenueGrowth, 18, -8),
-      0.15,
+      0.03,
     ])
   }
   if (has('receivablesGrowth', 'revenueGrowth')) {
     growthValues.push([
       scale(metrics.receivablesGrowth - metrics.revenueGrowth, 18, -8),
-      0.15,
+      0.02,
     ])
   }
 
   const profitabilityValues: WeightedValue[] = []
   if (has('operatingMargin')) {
-    profitabilityValues.push([scale(metrics.operatingMargin, 0, 24), 0.45])
+    profitabilityValues.push([scale(metrics.operatingMargin, 0, 24), 0.25])
   }
   if (has('netMargin')) {
-    profitabilityValues.push([scale(metrics.netMargin, -2, 16), 0.2])
+    profitabilityValues.push([scale(metrics.netMargin, -2, 16), 0.12])
   }
   if (has('roe')) {
-    profitabilityValues.push([scale(metrics.roe, 2, 22), 0.35])
+    profitabilityValues.push([scale(metrics.roe, 2, 22), 0.23])
+  }
+  if (has('roa')) {
+    profitabilityValues.push([scale(metrics.roa, 0, 9), 0.16])
+  }
+  if (has('roic')) {
+    profitabilityValues.push([scale(metrics.roic, 2, 18), 0.24])
   }
 
   const safetyValues: WeightedValue[] = []
   if (has('equityRatio')) {
-    safetyValues.push([scale(metrics.equityRatio, 15, 75), 0.6])
+    safetyValues.push([scale(metrics.equityRatio, 15, 75), 0.45])
   }
   if (has('debtRatio')) {
-    safetyValues.push([inverseScale(metrics.debtRatio, 0.2, 3.5), 0.4])
+    safetyValues.push([inverseScale(metrics.debtRatio, 0.2, 3.5), 0.32])
+  }
+  if (has('netCash')) {
+    safetyValues.push([scale(metrics.netCash, -600, 800), 0.13])
+  }
+  if (has('wacc')) {
+    safetyValues.push([inverseScale(metrics.wacc, 5, 12), 0.1])
   }
 
   const cashValues: WeightedValue[] = []
   if (has('operatingCfMargin')) {
-    cashValues.push([scale(metrics.operatingCfMargin, -2, 22), 0.75])
+    cashValues.push([scale(metrics.operatingCfMargin, -2, 22), 0.62])
   }
   if (has('netCash')) {
-    cashValues.push([scale(metrics.netCash, -600, 800), 0.25])
+    cashValues.push([scale(metrics.netCash, -600, 800), 0.2])
+  }
+  if (has('ebitda')) {
+    cashValues.push([scale(metrics.ebitda, 0, 900), 0.18])
   }
 
   const valuationValues: WeightedValue[] = []
   if (has('per')) {
-    valuationValues.push([inverseScale(metrics.per, 8, 55), 0.55])
+    valuationValues.push([inverseScale(metrics.per, 8, 55), 0.34])
   }
   if (has('pbr')) {
-    valuationValues.push([inverseScale(metrics.pbr, 0.6, 6), 0.45])
+    valuationValues.push([inverseScale(metrics.pbr, 0.6, 6), 0.25])
+  }
+  if (has('evEbitda')) {
+    valuationValues.push([inverseScale(metrics.evEbitda, 5, 22), 0.24])
+  }
+  if (has('dividendYield')) {
+    valuationValues.push([scale(metrics.dividendYield, 0, 4), 0.17])
   }
 
   const growth = weightedAverage(growthValues)

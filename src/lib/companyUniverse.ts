@@ -21,32 +21,48 @@ const industries: Industry[] = Array.from(
 
 const kpiKeys: KpiKey[] = [
   'revenueGrowth',
+  'operatingIncomeGrowth',
+  'epsGrowth',
   'operatingMargin',
   'netMargin',
   'roe',
+  'roa',
+  'roic',
   'equityRatio',
   'operatingCfMargin',
   'debtRatio',
   'netCash',
+  'wacc',
+  'ebitda',
   'inventoryGrowth',
   'receivablesGrowth',
   'per',
   'pbr',
+  'dividendYield',
+  'evEbitda',
 ]
 
 const units: Record<KpiKey, KpiMetric['unit']> = {
   revenueGrowth: '%',
+  operatingIncomeGrowth: '%',
+  epsGrowth: '%',
   operatingMargin: '%',
   netMargin: '%',
   roe: '%',
+  roa: '%',
+  roic: '%',
   equityRatio: '%',
   operatingCfMargin: '%',
   debtRatio: '倍',
   netCash: '億円',
+  wacc: '%',
+  ebitda: '億円',
   inventoryGrowth: '%',
   receivablesGrowth: '%',
   per: '倍',
   pbr: '倍',
+  dividendYield: '%',
+  evEbitda: '倍',
 }
 
 const unavailableScores: Scores = {

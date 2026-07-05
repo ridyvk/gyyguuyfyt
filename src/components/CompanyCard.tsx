@@ -156,16 +156,16 @@ export default function CompanyCard({
           <strong>{formatMetric(company.metrics.pbr)}</strong>
         </div>
         <div>
-          <span>ROE</span>
-          <strong>{formatMetric(company.metrics.roe)}</strong>
+          <span>ROIC</span>
+          <strong>{formatMetric(company.metrics.roic)}</strong>
         </div>
         <div>
           <span>営業利益率</span>
           <strong>{formatMetric(company.metrics.operatingMargin)}</strong>
         </div>
         <div>
-          <span>自己資本比率</span>
-          <strong>{formatMetric(company.metrics.equityRatio)}</strong>
+          <span>EV/EBITDA</span>
+          <strong>{formatMetric(company.metrics.evEbitda)}</strong>
         </div>
       </div>
 

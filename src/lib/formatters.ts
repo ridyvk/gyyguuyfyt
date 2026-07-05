@@ -18,8 +18,7 @@ export const hasPreviousMetricValue = (metric: KpiMetric) =>
 
 export const formatMetric = (metric: KpiMetric) => {
   if (metric.available === false) return '—'
-  const sign = metric.unit === '億円' && metric.value > 0 ? '+' : ''
-  return `${sign}${numberFormat.format(metric.value)}${metric.unit}`
+  return `${numberFormat.format(metric.value)}${metric.unit}`
 }
 
 export const formatDelta = (metric: KpiMetric) => {

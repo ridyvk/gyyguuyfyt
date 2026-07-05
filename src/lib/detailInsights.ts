@@ -9,32 +9,48 @@ import type {
 
 const metricLabels: Record<KpiKey, string> = {
   revenueGrowth: '売上成長率',
+  operatingIncomeGrowth: '営業利益成長率',
+  epsGrowth: 'EPS成長率',
   operatingMargin: '営業利益率',
   netMargin: '純利益率',
   roe: 'ROE',
+  roa: 'ROA',
+  roic: 'ROIC',
   equityRatio: '自己資本比率',
   operatingCfMargin: '営業CFマージン',
   debtRatio: '有利子負債倍率',
   netCash: 'ネットキャッシュ',
+  wacc: 'WACC',
+  ebitda: 'EBITDA',
   inventoryGrowth: '棚卸資産増加率',
   receivablesGrowth: '売掛金増加率',
   per: 'PER',
   pbr: 'PBR',
+  dividendYield: '配当利回り',
+  evEbitda: 'EV/EBITDA',
 }
 
 const insightCandidates: readonly KpiKey[] = [
   'revenueGrowth',
+  'operatingIncomeGrowth',
+  'epsGrowth',
   'operatingMargin',
   'netMargin',
   'roe',
+  'roa',
+  'roic',
   'equityRatio',
   'debtRatio',
   'operatingCfMargin',
   'netCash',
+  'wacc',
+  'ebitda',
   'inventoryGrowth',
   'receivablesGrowth',
   'per',
   'pbr',
+  'dividendYield',
+  'evEbitda',
 ]
 
 const isAvailable = (metric: KpiMetric) =>
@@ -63,15 +79,15 @@ export const buildIndustryInsights = (
 ): IndustryKpi[] => {
   const selected = new Set<KpiKey>()
   const groups: readonly (readonly KpiKey[])[] = [
-    ['revenueGrowth'],
-    ['operatingMargin', 'netMargin', 'roe'],
-    ['roe'],
-    ['equityRatio', 'debtRatio'],
-    ['operatingCfMargin', 'netCash'],
+    ['revenueGrowth', 'operatingIncomeGrowth', 'epsGrowth'],
+    ['roic', 'roe', 'roa'],
+    ['operatingMargin', 'netMargin'],
+    ['equityRatio', 'debtRatio', 'wacc'],
+    ['operatingCfMargin', 'ebitda', 'netCash'],
     ['inventoryGrowth'],
     ['receivablesGrowth'],
-    ['per'],
-    ['pbr'],
+    ['evEbitda', 'per'],
+    ['pbr', 'dividendYield'],
   ]
 
   for (const group of groups) {

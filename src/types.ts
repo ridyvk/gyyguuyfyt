@@ -27,17 +27,25 @@ export type KpiComparisonLabel = '前年差' | '前日差'
 
 export type KpiKey =
   | 'revenueGrowth'
+  | 'operatingIncomeGrowth'
+  | 'epsGrowth'
   | 'operatingMargin'
   | 'netMargin'
   | 'roe'
+  | 'roa'
+  | 'roic'
   | 'equityRatio'
   | 'operatingCfMargin'
   | 'debtRatio'
   | 'netCash'
+  | 'wacc'
+  | 'ebitda'
   | 'inventoryGrowth'
   | 'receivablesGrowth'
   | 'per'
   | 'pbr'
+  | 'dividendYield'
+  | 'evEbitda'
 
 export interface KpiMetric {
   value: number
@@ -63,6 +71,8 @@ export interface FinancialYearPoint {
   operatingMargin: number
   netMargin: number
   roe: number
+  roa?: number
+  roic?: number
   operatingCfMargin: number
 }
 
@@ -127,6 +137,8 @@ export interface LiveMetricValue {
   comparisonLabel?: KpiComparisonLabel
   trend?: number[]
   provenance?: MetricProvenance
+  confidence?: KpiConfidence
+  confidenceReason?: string
 }
 
 export interface ReconciliationFieldComparison {
@@ -175,6 +187,8 @@ export interface ValuationBasis {
   eps?: number
   forecastEps?: number
   bps?: number
+  dividendRate?: number
+  dividendYield?: number
 }
 
 export interface LiveFinancialRecord {

@@ -7,6 +7,14 @@ import type {
 } from '../types'
 
 export const metricFormulaLabels: Record<KpiKey, string> = {
+  operatingIncomeGrowth: '(当期営業利益 / 前期営業利益 - 1) × 100',
+  epsGrowth: '(当期EPS / 前期EPS - 1) × 100',
+  roa: '当期純利益 / 総資産 × 100',
+  roic: 'NOPAT / 投下資本 × 100',
+  wacc: '株主資本コスト × 株主資本比率 + 負債コスト × (1 - 税率) × 負債比率',
+  ebitda: '営業利益 + 減価償却費',
+  dividendYield: '1株配当 / 株価 × 100',
+  evEbitda: 'EV / EBITDA',
   revenueGrowth: '(当期売上高 / 前期売上高 - 1) × 100',
   operatingMargin: '営業利益 / 売上高 × 100',
   netMargin: '親会社株主利益 / 売上高 × 100',
@@ -23,7 +31,7 @@ export const metricFormulaLabels: Record<KpiKey, string> = {
 
 export interface MetricConfidenceAssessment {
   confidence?: KpiConfidence
-  reason?: string
+  confidenceReason?: string
 }
 
 const isCompleteFact = (fact: XbrlSourceFact) =>
@@ -52,15 +60,22 @@ export const assessMetricConfidence = (
   if (isMetricQuarantined(key, record)) {
     return {
       confidence: 'review',
-      reason: '開示元の不一致または旧抽出値のため隔離中',
+      confidenceReason: '開示元の不一致または旧抽出値のため隔離中',
     }
   }
   if (!metric) return {}
 
+  if (metric.confidence) {
+    return {
+      confidence: metric.confidence,
+      confidenceReason: metric.confidenceReason,
+    }
+  }
+
   if ((key === 'per' || key === 'pbr') && !metric.provenance) {
     return {
       confidence: 'B',
-      reason: '開示済み1株指標と最新株価から算出',
+      confidenceReason: '開示済み1株指標と最新株価から算出',
     }
   }
 
@@ -68,19 +83,19 @@ export const assessMetricConfidence = (
   if (!metric.provenance || facts.length === 0) {
     return {
       confidence: 'C',
-      reason: '数値は取得済みですが元タグの証跡が未移行',
+      confidenceReason: '数値は取得済みですが元タグの証跡が未移行',
     }
   }
   if (!facts.every(isCompleteFact)) {
     return {
       confidence: 'review',
-      reason: '元タグのcontext・単位・連結区分が不完全',
+      confidenceReason: '元タグのcontext・単位・連結区分が不完全',
     }
   }
   if (facts.some((fact) => fact.consolidation !== 'consolidated')) {
     return {
       confidence: 'review',
-      reason: '連結区分が単体または不明のため確認が必要',
+      confidenceReason: '連結区分が単体または不明のため確認が必要',
     }
   }
 
@@ -90,11 +105,11 @@ export const assessMetricConfidence = (
   if (currentModel) {
     return {
       confidence: 'A',
-      reason: '元タグ・context・単位・連結区分を確認済み',
+      confidenceReason: '元タグ・context・単位・連結区分を確認済み',
     }
   }
   return {
     confidence: 'B',
-    reason: '出典は確認済みですが旧抽出モデル',
+    confidenceReason: '出典は確認済みですが旧抽出モデル',
   }
 }
