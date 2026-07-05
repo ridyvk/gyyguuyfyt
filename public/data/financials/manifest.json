@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-05T03:26:11.001928Z",
+  "generatedAt": "2026-07-05T04:15:18.350926Z",
   "recordCount": 3585,
   "snapshot": {
     "schemaVersion": 3,
-    "generatedAt": "2026-07-05T03:26:11.001928Z",
+    "generatedAt": "2026-07-05T04:15:18.350926Z",
     "source": "EDINET+TDnet",
     "status": "partial",
     "message": "EDINET年次ベースライン＋TDnet通期決算短信オーバーレイで更新済み。EDINET有価証券報告書ベースの年次データを基礎DBにし、TDnetの通期決算短信で直近分のみ上書きしています。四半期・中間短信は統合していません。対象3,728社のうち財務KPI取得済みは3,585社です。",
@@ -34,7 +34,7 @@
       "edinetBatchGeneratedAt": "2026-06-19T20:11:12.668131Z",
       "nonAnnualExistingRecordsDropped": 0,
       "annualOnly": true,
-      "nonAnnualRecordsDropped": 97,
+      "nonAnnualRecordsDropped": 0,
       "edinetEstimatedRemaining": 0,
       "targetCompanies": 3728,
       "edinetDocumentsProcessedThisBatch": 0,
@@ -4272,24 +4272,31 @@
       "ordinaryFallbackAdded": 415,
       "ordinaryLatestRefreshed": 1434,
       "ordinaryRefreshFailures": 0,
-      "invalidRecordsDropped": 97,
-      "validationFailures": {
-        "invalid-period-end": 87,
-        "not-in-company-master": 10
-      },
+      "invalidRecordsDropped": 0,
+      "validationFailures": {},
       "roeMetricsQuarantined": 0,
       "metricRangeQuarantined": 2,
       "metricRangeQuarantinedCompanies": 2,
       "historyTrendQuarantinedCompanies": 7,
-      "goldenAnchoredCompanies": 190,
-      "goldenAnchoredMetrics": 746,
-      "goldenFallbackRecords": 5,
+      "goldenAnchoredCompanies": 195,
+      "goldenAnchoredMetrics": 764,
+      "goldenFallbackRecords": 0,
       "sourceReconciliationCompanies": 0,
       "sourceMatchedMetrics": 0,
       "sourceQuarantinedMetrics": 0,
       "dataUpdatedAt": "2026-07-02 14:56",
       "latestPeriodEnd": "2026-05-20",
-      "lastCheckedAt": "2026-07-05T03:26:11.001928Z"
+      "lastCheckedAt": "2026-07-05T04:15:18.350926Z",
+      "supplementalMetricsModelVersion": 1,
+      "supplementalMetricsAdded": 14423,
+      "supplementalMetricsAddedByKey": {
+        "ebitda": 1459,
+        "epsGrowth": 1367,
+        "operatingIncomeGrowth": 1432,
+        "roa": 3560,
+        "roic": 3020,
+        "wacc": 3585
+      }
     },
     "dataPolicy": {
       "mode": "edinet-annual-baseline-tdnet-full-year-overlay-batched",

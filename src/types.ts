@@ -259,6 +259,9 @@ export interface FinancialStats {
   metricRangeQuarantined?: number
   metricRangeQuarantinedCompanies?: number
   historyTrendQuarantinedCompanies?: number
+  supplementalMetricsModelVersion?: number
+  supplementalMetricsAdded?: number
+  supplementalMetricsAddedByKey?: Record<string, number>
   sourceReconciliationCompanies?: number
   sourceMatchedMetrics?: number
   sourceQuarantinedMetrics?: number

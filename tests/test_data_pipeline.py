@@ -132,6 +132,51 @@ class RoeQuarantineTests(unittest.TestCase):
         self.assertEqual(tdnet["metrics"]["roe"]["value"], 8.4)
 
 
+class SupplementalMetricTests(unittest.TestCase):
+    def test_finalize_materializes_supported_supplemental_metrics(self) -> None:
+        candidate = record("1000")
+        candidate["metrics"] = {
+            "revenueGrowth": {"value": 25.0},
+            "operatingMargin": {"value": 10.0, "previousValue": 8.0},
+            "netMargin": {"value": 5.0, "previousValue": 4.0},
+            "roe": {"value": 12.0, "previousValue": 10.0},
+            "equityRatio": {"value": 50.0, "previousValue": 45.0},
+            "debtRatio": {"value": 0.5},
+            "netCash": {"value": 100.0},
+            "per": {"value": 15.0},
+        }
+        candidate["history"] = [
+            {"year": "2025/03", "revenue": 800.0},
+            {"year": "2026/03", "revenue": 1000.0},
+        ]
+
+        added = finalize_annual_dataset.materialize_supplemental_metrics(
+            candidate,
+            "機械",
+        )
+
+        self.assertEqual(added["roa"], 1)
+        self.assertEqual(added["operatingIncomeGrowth"], 1)
+        self.assertEqual(added["epsGrowth"], 1)
+        self.assertEqual(added["roic"], 1)
+        self.assertEqual(added["wacc"], 1)
+        self.assertEqual(added["ebitda"], 1)
+        self.assertEqual(added["evEbitda"], 1)
+        metrics = candidate["metrics"]
+        self.assertAlmostEqual(metrics["roa"]["value"], 6.0)
+        self.assertAlmostEqual(metrics["operatingIncomeGrowth"]["value"], 56.25)
+        self.assertAlmostEqual(metrics["epsGrowth"]["value"], 56.25)
+        self.assertAlmostEqual(metrics["roic"]["value"], 11.2)
+        self.assertAlmostEqual(metrics["ebitda"]["value"], 140.0)
+        self.assertAlmostEqual(metrics["evEbitda"]["value"], 4.6429)
+        self.assertEqual(metrics["roa"]["confidence"], "B")
+        self.assertEqual(metrics["roic"]["confidence"], "C")
+        self.assertEqual(
+            candidate["quality"]["supplementalMetricsModelVersion"],
+            finalize_annual_dataset.SUPPLEMENTAL_METRICS_MODEL_VERSION,
+        )
+
+
 class RoeCalculationTests(unittest.TestCase):
     def test_current_and_previous_roe_both_use_average_equity(self) -> None:
         profits = {

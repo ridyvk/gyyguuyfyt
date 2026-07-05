@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import math
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
@@ -29,24 +30,38 @@ CURRENT_ROE_EXTRACTION_POLICIES = {
     "ordinary-missing-edinet-fallback",
     "strict-annual-baseline-batched",
 }
+SUPPLEMENTAL_METRICS_MODEL_VERSION = 1
+SUPPLEMENTAL_METRIC_KEYS = (
+    "roa",
+    "operatingIncomeGrowth",
+    "epsGrowth",
+    "roic",
+    "wacc",
+    "ebitda",
+    "evEbitda",
+)
 
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
-def load_company_codes() -> set[str]:
+def load_company_master_by_code() -> dict[str, dict]:
     try:
         payload = json.loads(COMPANY_MASTER.read_text(encoding="utf-8"))
         return {
-            str(company["code"])
+            str(company["code"]): company
             for company in payload.get("companies", [])
             if isinstance(company, dict)
             and company.get("code")
             and normalize_security_code(company["code"]) == str(company["code"])
         }
     except Exception:
-        return set()
+        return {}
+
+
+def load_company_codes() -> set[str]:
+    return set(load_company_master_by_code())
 
 
 def load_golden_anchors() -> dict[str, dict]:
@@ -202,6 +217,315 @@ def has_trusted_roe_provenance(record: dict) -> bool:
     )
 
 
+def finite_number(value: object) -> float | None:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    parsed = float(value)
+    return parsed if math.isfinite(parsed) else None
+
+
+def metric_number(
+    metrics: dict[str, dict],
+    key: str,
+    field: str = "value",
+) -> float | None:
+    metric = metrics.get(key)
+    if not isinstance(metric, dict):
+        return None
+    return finite_number(metric.get(field))
+
+
+def latest_revenue_oku(record: dict) -> float | None:
+    for point in reversed(record.get("history") or []):
+        if not isinstance(point, dict):
+            continue
+        revenue = finite_number(point.get("revenue"))
+        if revenue is not None:
+            return revenue
+    return None
+
+
+def clamp_value(value: float, minimum: float, maximum: float) -> float:
+    return max(minimum, min(maximum, value))
+
+
+def derived_metric(
+    value: float | None,
+    previous_value: float | None,
+    confidence: str,
+    confidence_reason: str,
+) -> dict | None:
+    if value is None or not math.isfinite(value):
+        return None
+    metric = {
+        "value": round(value, 4),
+        "confidence": confidence,
+        "confidenceReason": confidence_reason,
+    }
+    if previous_value is not None and math.isfinite(previous_value):
+        metric["previousValue"] = round(previous_value, 4)
+        metric["trend"] = [round(previous_value, 4), round(value, 4)]
+    return metric
+
+
+def operating_income_growth_from_margins(
+    revenue_growth: float | None,
+    operating_margin: float | None,
+    previous_operating_margin: float | None,
+) -> float | None:
+    if (
+        revenue_growth is None
+        or operating_margin is None
+        or previous_operating_margin is None
+        or previous_operating_margin <= 0
+    ):
+        return None
+    return (
+        ((1 + revenue_growth / 100) * (operating_margin / previous_operating_margin))
+        - 1
+    ) * 100
+
+
+def profit_growth_from_margins(
+    revenue_growth: float | None,
+    margin: float | None,
+    previous_margin: float | None,
+) -> float | None:
+    if (
+        revenue_growth is None
+        or margin is None
+        or previous_margin is None
+        or previous_margin <= 0
+    ):
+        return None
+    return ((1 + revenue_growth / 100) * (margin / previous_margin) - 1) * 100
+
+
+def depreciation_margin_estimate(industry: str) -> float:
+    heavy_asset_tokens = (
+        "鉄鋼",
+        "非鉄金属",
+        "金属製品",
+        "機械",
+        "電気機器",
+        "輸送用機器",
+        "化学",
+        "石油",
+        "ガラス",
+        "電気・ガス",
+    )
+    light_asset_tokens = ("情報・通信", "サービス", "小売", "卸売")
+    if any(token in industry for token in heavy_asset_tokens):
+        return 4.0
+    if any(token in industry for token in light_asset_tokens):
+        return 1.8
+    return 2.6
+
+
+def is_usable_supplemental_metric(key: str, metric: dict | None) -> bool:
+    if not isinstance(metric, dict):
+        return False
+    value = finite_number(metric.get("value"))
+    if value is None:
+        return False
+    if key == "wacc":
+        return 0 < value <= 25
+    if key in {"roa", "roic"}:
+        return -80 <= value <= 120
+    if key == "evEbitda":
+        return 0 < value <= 200
+    return True
+
+
+def materialize_supplemental_metrics(record: dict, industry: str = "") -> Counter[str]:
+    metrics = record.get("metrics")
+    if not isinstance(metrics, dict):
+        return Counter()
+
+    added: Counter[str] = Counter()
+
+    def set_if_missing(key: str, metric: dict | None) -> None:
+        if key in metrics or not is_usable_supplemental_metric(key, metric):
+            return
+        metrics[key] = metric
+        added[key] += 1
+
+    revenue_growth = metric_number(metrics, "revenueGrowth")
+    operating_margin = metric_number(metrics, "operatingMargin")
+    previous_operating_margin = metric_number(
+        metrics,
+        "operatingMargin",
+        "previousValue",
+    )
+    net_margin = metric_number(metrics, "netMargin")
+    previous_net_margin = metric_number(metrics, "netMargin", "previousValue")
+    roe = metric_number(metrics, "roe")
+    previous_roe = metric_number(metrics, "roe", "previousValue")
+    equity_ratio = metric_number(metrics, "equityRatio")
+    previous_equity_ratio = metric_number(metrics, "equityRatio", "previousValue")
+    debt_ratio = metric_number(metrics, "debtRatio")
+    net_cash = metric_number(metrics, "netCash")
+    per = metric_number(metrics, "per")
+    revenue_oku = latest_revenue_oku(record)
+
+    set_if_missing(
+        "roa",
+        derived_metric(
+            (roe * equity_ratio) / 100
+            if roe is not None and equity_ratio is not None
+            else None,
+            (previous_roe * previous_equity_ratio) / 100
+            if previous_roe is not None and previous_equity_ratio is not None
+            else None,
+            "B",
+            "ROEと自己資本比率から ROA = ROE × 自己資本比率 で補完しています。",
+        ),
+    )
+    set_if_missing(
+        "operatingIncomeGrowth",
+        derived_metric(
+            operating_income_growth_from_margins(
+                revenue_growth,
+                operating_margin,
+                previous_operating_margin,
+            ),
+            None,
+            "B",
+            "売上成長率と営業利益率の前年差から営業利益成長率を補完しています。",
+        ),
+    )
+    set_if_missing(
+        "epsGrowth",
+        derived_metric(
+            profit_growth_from_margins(
+                revenue_growth,
+                net_margin,
+                previous_net_margin,
+            ),
+            None,
+            "C",
+            "株式数の変化を反映できないため、純利益成長率をEPS成長率の近似として表示しています。",
+        ),
+    )
+
+    tax_adjusted_operating_return = (
+        roe * (operating_margin / net_margin) * 0.7
+        if roe is not None
+        and operating_margin is not None
+        and net_margin is not None
+        and net_margin > 0
+        else None
+    )
+    set_if_missing(
+        "roic",
+        derived_metric(
+            tax_adjusted_operating_return / (1 + max(0, debt_ratio or 0))
+            if tax_adjusted_operating_return is not None
+            else None,
+            None,
+            "C",
+            "NOPATと投下資本を直接取得できない会社では、ROE・利益率・D/Eから簡易推定しています。",
+        ),
+    )
+
+    inferred_debt_to_equity = (
+        max(0, debt_ratio)
+        if debt_ratio is not None
+        else max(0, (100 - equity_ratio) / equity_ratio)
+        if equity_ratio is not None and equity_ratio > 0
+        else 0.7
+    )
+    equity_weight = 1 / (1 + inferred_debt_to_equity)
+    debt_weight = inferred_debt_to_equity / (1 + inferred_debt_to_equity)
+    beta_estimate = clamp_value(
+        1
+        + ((50 - (equity_ratio if equity_ratio is not None else 40)) / 150)
+        + max(0, inferred_debt_to_equity - 1) * 0.07,
+        0.75,
+        1.55,
+    )
+    cost_of_equity = 1.2 + beta_estimate * 5.5
+    after_tax_cost_of_debt = (
+        1.2 + min(2.5, inferred_debt_to_equity * 0.5)
+    ) * 0.7
+    set_if_missing(
+        "wacc",
+        derived_metric(
+            equity_weight * cost_of_equity + debt_weight * after_tax_cost_of_debt,
+            None,
+            "C",
+            "市場ベータや実効税率を直接取得できないため、財務レバレッジから簡易推定したWACCです。",
+        ),
+    )
+
+    depreciation_margin = depreciation_margin_estimate(industry)
+    ebitda_value = (
+        revenue_oku * ((operating_margin + depreciation_margin) / 100)
+        if revenue_oku is not None and operating_margin is not None
+        else None
+    )
+    previous_revenue_oku = (
+        revenue_oku / (1 + revenue_growth / 100)
+        if revenue_oku is not None
+        and revenue_growth is not None
+        and (1 + revenue_growth / 100) != 0
+        else None
+    )
+    previous_ebitda = (
+        previous_revenue_oku
+        * ((previous_operating_margin + depreciation_margin) / 100)
+        if previous_revenue_oku is not None
+        and previous_operating_margin is not None
+        else None
+    )
+    set_if_missing(
+        "ebitda",
+        derived_metric(
+            ebitda_value,
+            previous_ebitda,
+            "C",
+            "減価償却費を直接取得できない会社では、業種別の償却率を営業利益に足して推定しています。",
+        ),
+    )
+
+    ebitda = metric_number(metrics, "ebitda")
+    net_income_oku = (
+        revenue_oku * (net_margin / 100)
+        if revenue_oku is not None and net_margin is not None
+        else None
+    )
+    market_cap_oku = (
+        net_income_oku * per
+        if net_income_oku is not None and per is not None
+        else None
+    )
+    enterprise_value_oku = (
+        market_cap_oku - (net_cash if net_cash is not None else 0)
+        if market_cap_oku is not None
+        else None
+    )
+    set_if_missing(
+        "evEbitda",
+        derived_metric(
+            enterprise_value_oku / ebitda
+            if enterprise_value_oku is not None
+            and ebitda is not None
+            and ebitda > 0
+            else None,
+            None,
+            "C",
+            "時価総額をPERと純利益から、EVをネットキャッシュ控除で簡易推定しています。",
+        ),
+    )
+
+    if added:
+        quality = record.setdefault("quality", {})
+        quality["supplementalMetricsModelVersion"] = (
+            SUPPLEMENTAL_METRICS_MODEL_VERSION
+        )
+    return added
+
+
 def quarantine_untrusted_roe(record: dict) -> bool:
     metrics = record.get("metrics") or {}
     if "roe" not in metrics or has_trusted_roe_provenance(record):
@@ -222,7 +546,8 @@ def main() -> int:
     generated_at = utc_now()
     snapshot = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
     original_records = snapshot.get("records", {}) or {}
-    current_codes = load_company_codes()
+    company_master_by_code = load_company_master_by_code()
+    current_codes = set(company_master_by_code)
     if not current_codes:
         raise RuntimeError("Company master is empty or invalid.")
     golden_anchored_companies, golden_anchored_metrics = apply_golden_anchors(
@@ -243,6 +568,15 @@ def main() -> int:
     roe_quarantined = sum(
         1 for record in annual_records.values() if quarantine_untrusted_roe(record)
     )
+    supplemental_metric_counts: Counter[str] = Counter()
+    for code, record in annual_records.items():
+        company = company_master_by_code.get(str(code)) or {}
+        supplemental_metric_counts.update(
+            materialize_supplemental_metrics(
+                record,
+                str(company.get("industry") or ""),
+            )
+        )
     metric_range_quarantined = sum(
         len(
             (
@@ -325,6 +659,11 @@ def main() -> int:
             "metricRangeQuarantined": metric_range_quarantined,
             "metricRangeQuarantinedCompanies": metric_range_quarantined_companies,
             "historyTrendQuarantinedCompanies": history_trend_quarantined_companies,
+            "supplementalMetricsModelVersion": SUPPLEMENTAL_METRICS_MODEL_VERSION,
+            "supplementalMetricsAdded": sum(supplemental_metric_counts.values()),
+            "supplementalMetricsAddedByKey": dict(
+                sorted(supplemental_metric_counts.items())
+            ),
             "goldenAnchoredCompanies": golden_anchored_companies,
             "goldenAnchoredMetrics": golden_anchored_metrics,
             "goldenFallbackRecords": golden_fallback_records,
@@ -405,6 +744,11 @@ def main() -> int:
         "metricRangeQuarantined": metric_range_quarantined,
         "metricRangeQuarantinedCompanies": metric_range_quarantined_companies,
         "historyTrendQuarantinedCompanies": history_trend_quarantined_companies,
+        "supplementalMetricsModelVersion": SUPPLEMENTAL_METRICS_MODEL_VERSION,
+        "supplementalMetricsAdded": sum(supplemental_metric_counts.values()),
+        "supplementalMetricsAddedByKey": dict(
+            sorted(supplemental_metric_counts.items())
+        ),
         "goldenAnchoredCompanies": golden_anchored_companies,
         "goldenAnchoredMetrics": golden_anchored_metrics,
         "goldenFallbackRecords": golden_fallback_records,
@@ -436,6 +780,7 @@ def main() -> int:
         f"EDINET {edinet_count}, TDnet {tdnet_count}, "
         f"remaining about {estimated_remaining}, dropped {dropped} non-annual records, "
         f"quarantined {roe_quarantined} stale ROE metrics, "
+        f"materialized {sum(supplemental_metric_counts.values())} supplemental metrics, "
         f"{metric_range_quarantined} impossible metrics, "
         f"{history_trend_quarantined_companies} stale histories and "
         f"{source_quarantined} EDINET/TDnet mismatches; "

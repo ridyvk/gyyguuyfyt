@@ -14,6 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 COMPANY_MASTER = ROOT / "src" / "data" / "listedCompanies.json"
 FINANCIALS = ROOT / "public" / "data" / "financials.json"
+MARKET = ROOT / "public" / "data" / "market.json"
 DEFAULT_OUTPUT = ROOT / "public" / "data" / "all-company-audit.json"
 
 SCHEMA_VERSION = 2
@@ -22,6 +23,53 @@ STALE_PERIOD_DAYS = 800
 PROVENANCE_FIELDS = ("tag", "contextRef", "unitRef", "consolidation")
 RATE_TOLERANCE_POINTS = 0.25
 PIPELINE_RATE_TOLERANCE_POINTS = 0.5
+KPI_KEYS = (
+    "revenueGrowth",
+    "operatingIncomeGrowth",
+    "epsGrowth",
+    "operatingMargin",
+    "netMargin",
+    "roe",
+    "roa",
+    "roic",
+    "equityRatio",
+    "operatingCfMargin",
+    "debtRatio",
+    "netCash",
+    "wacc",
+    "ebitda",
+    "inventoryGrowth",
+    "receivablesGrowth",
+    "per",
+    "pbr",
+    "dividendYield",
+    "evEbitda",
+)
+SUPPLEMENTAL_METRIC_KEYS = {
+    "operatingIncomeGrowth",
+    "epsGrowth",
+    "roa",
+    "roic",
+    "wacc",
+    "ebitda",
+    "evEbitda",
+}
+MARKET_DERIVED_METRIC_KEYS = {"per", "pbr", "dividendYield", "evEbitda"}
+FINANCIAL_INDUSTRY_POLICIES = {
+    "銀行業": ("roe", "roa", "per", "pbr", "dividendYield"),
+    "証券、商品先物取引業": ("roe", "roa", "per", "pbr", "dividendYield"),
+    "保険業": ("roe", "roa", "per", "pbr", "dividendYield"),
+    "その他金融業": (
+        "revenueGrowth",
+        "epsGrowth",
+        "netMargin",
+        "roe",
+        "roa",
+        "per",
+        "pbr",
+        "dividendYield",
+    ),
+}
 
 
 def utc_now() -> str:
@@ -45,6 +93,184 @@ def finite_metrics(record: dict) -> dict[str, float]:
         ):
             result[str(key)] = float(value)
     return result
+
+
+def number(value: object) -> float | None:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    parsed = float(value)
+    return parsed if math.isfinite(parsed) else None
+
+
+def applicable_kpis(industry: str) -> set[str]:
+    return set(FINANCIAL_INDUSTRY_POLICIES.get(industry, KPI_KEYS))
+
+
+def latest_revenue_oku(record: dict | None) -> float | None:
+    if not isinstance(record, dict):
+        return None
+    for point in reversed(record.get("history") or []):
+        if not isinstance(point, dict):
+            continue
+        revenue = number(point.get("revenue"))
+        if revenue is not None:
+            return revenue
+    return None
+
+
+def market_metric_available(
+    key: str,
+    code: str,
+    record: dict | None,
+    metrics: dict[str, float],
+    market_snapshot: dict | None,
+) -> tuple[bool, str | None]:
+    if key not in MARKET_DERIVED_METRIC_KEYS:
+        return False, None
+    market = market_snapshot if isinstance(market_snapshot, dict) else {}
+    quote = (market.get("quotes") or {}).get(code)
+    fundamentals = (market.get("fundamentals") or {}).get(code)
+    if not isinstance(fundamentals, dict) and isinstance(record, dict):
+        fundamentals = record.get("valuation")
+    if not isinstance(quote, dict):
+        return False, "missing-market-quote"
+    if quote.get("stale"):
+        return False, "stale-market-quote"
+    close = number(quote.get("close"))
+    if close is None or close <= 0:
+        return False, "invalid-market-quote"
+    if not isinstance(fundamentals, dict):
+        return False, "missing-valuation-input"
+
+    eps = number(fundamentals.get("forecastEps")) or number(fundamentals.get("eps"))
+    bps = number(fundamentals.get("bps"))
+    dividend_yield = number(fundamentals.get("dividendYield"))
+    dividend_rate = number(fundamentals.get("dividendRate"))
+
+    if key == "per":
+        return (eps is not None and eps > 0, "missing-eps")
+    if key == "pbr":
+        return (bps is not None and bps > 0, "missing-bps")
+    if key == "dividendYield":
+        available = (
+            dividend_yield is not None
+            and dividend_yield > 0
+        ) or (dividend_rate is not None and dividend_rate > 0)
+        return available, "missing-dividend-input"
+
+    per = metrics.get("per")
+    if per is None and eps is not None and eps > 0:
+        per = close / eps
+    ebitda = metrics.get("ebitda")
+    net_margin = metrics.get("netMargin")
+    revenue_oku = latest_revenue_oku(record)
+    available = (
+        per is not None
+        and per > 0
+        and ebitda is not None
+        and ebitda > 0
+        and net_margin is not None
+        and revenue_oku is not None
+    )
+    return available, "missing-ev-ebitda-input"
+
+
+def missing_metric_reason(
+    key: str,
+    company_status: str,
+    code: str,
+    record: dict | None,
+    metrics: dict[str, float],
+    market_snapshot: dict | None,
+) -> str:
+    available_from_market, market_reason = market_metric_available(
+        key,
+        code,
+        record,
+        metrics,
+        market_snapshot,
+    )
+    if available_from_market:
+        return "available-from-market"
+    if company_status == "missing":
+        return "missing-financial-record"
+    if market_reason:
+        return market_reason
+    if key in SUPPLEMENTAL_METRIC_KEYS:
+        return "missing-supplemental-input"
+    return "source-fact-unavailable"
+
+
+def build_metric_coverage(
+    audited: list[dict],
+    records: dict,
+    market_snapshot: dict | None,
+) -> dict[str, dict]:
+    coverage = {
+        key: {
+            "available": 0,
+            "missing": 0,
+            "notApplicable": 0,
+            "availabilityRatio": 0.0,
+            "missingReasons": Counter(),
+            "kind": (
+                "market-derived"
+                if key in {"per", "pbr", "dividendYield"}
+                else "supplemental-or-market-derived"
+                if key == "evEbitda"
+                else "supplemental-derived"
+                if key in SUPPLEMENTAL_METRIC_KEYS
+                else "source-extracted"
+            ),
+        }
+        for key in KPI_KEYS
+    }
+
+    for company in audited:
+        code = str(company.get("code") or "")
+        industry = str(company.get("industry") or "")
+        record = records.get(code)
+        metrics = finite_metrics(record) if isinstance(record, dict) else {}
+        applicable = applicable_kpis(industry)
+        for key in KPI_KEYS:
+            item = coverage[key]
+            if key not in applicable:
+                item["notApplicable"] += 1
+                continue
+            if key in metrics:
+                item["available"] += 1
+                continue
+            market_available, _ = market_metric_available(
+                key,
+                code,
+                record,
+                metrics,
+                market_snapshot,
+            )
+            if market_available:
+                item["available"] += 1
+                continue
+            item["missing"] += 1
+            item["missingReasons"][
+                missing_metric_reason(
+                    key,
+                    str(company.get("status") or ""),
+                    code,
+                    record,
+                    metrics,
+                    market_snapshot,
+                )
+            ] += 1
+
+    normalized = {}
+    for key, item in coverage.items():
+        denominator = item["available"] + item["missing"]
+        normalized[key] = {
+            **item,
+            "availabilityRatio": percentage(item["available"], denominator),
+            "missingReasons": dict(sorted(item["missingReasons"].items())),
+        }
+    return normalized
 
 
 def provenance_counts(record: dict) -> tuple[int, int]:
@@ -103,6 +329,24 @@ def trusted_metric_count(record: dict) -> int:
     return trusted
 
 
+def source_backed_metric_count(record: dict) -> int:
+    source_backed = 0
+    for metric in (record.get("metrics") or {}).values():
+        if not isinstance(metric, dict):
+            continue
+        value = metric.get("value")
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(value)
+        ):
+            continue
+        if metric.get("confidence") in {"B", "C"} and not metric.get("provenance"):
+            continue
+        source_backed += 1
+    return source_backed
+
+
 def percentage(numerator: int | float, denominator: int | float) -> float:
     return round(numerator / denominator * 100, 2) if denominator else 0.0
 
@@ -136,6 +380,7 @@ def audit_company(
             "periodEnd": None,
             "periodAgeDays": None,
             "metricCount": 0,
+            "sourceBackedMetricCount": 0,
             "provenanceMetricCount": 0,
             "trustedMetricCount": 0,
             "issues": [{"code": "missing-financial-record", "severity": "missing"}],
@@ -208,6 +453,7 @@ def audit_company(
         "periodEnd": period_end,
         "periodAgeDays": period_age_days,
         "metricCount": len(metrics),
+        "sourceBackedMetricCount": source_backed_metric_count(record),
         "provenanceMetricCount": complete_provenance,
         "trustedMetricCount": trusted_metric_count(record),
         "dataModelVersion": quality.get("dataModelVersion"),
@@ -289,6 +535,7 @@ def regression_violations(
 def build_report(
     company_master: dict,
     snapshot: dict,
+    market_snapshot: dict | None = None,
     previous_report: dict | None = None,
     today: date | None = None,
 ) -> dict:
@@ -337,6 +584,9 @@ def build_report(
     total = len(audited)
     records_available = total - status_counts["missing"]
     total_metric_count = sum(company["metricCount"] for company in audited)
+    source_backed_metrics = sum(
+        company["sourceBackedMetricCount"] for company in audited
+    )
     trusted_metrics = sum(company["trustedMetricCount"] for company in audited)
     stats = snapshot.get("stats") or {}
     edinet_batch_failures = int(stats.get("edinetBatchFailures") or 0)
@@ -358,8 +608,9 @@ def build_report(
         "review": status_counts["review"],
         "missing": status_counts["missing"],
         "totalMetricCount": total_metric_count,
+        "sourceBackedMetricCount": source_backed_metrics,
         "trustedMetricCount": trusted_metrics,
-        "trustedMetricRatio": percentage(trusted_metrics, total_metric_count),
+        "trustedMetricRatio": percentage(trusted_metrics, source_backed_metrics),
         "missingProvenanceRate": percentage(
             issue_counts["missing-provenance"],
             records_available,
@@ -421,6 +672,11 @@ def build_report(
         }
         for industry, counts in sorted(industry_statuses.items())
     }
+    metric_coverage = build_metric_coverage(
+        audited,
+        records,
+        market_snapshot,
+    )
 
     violations = regression_violations(summary, previous_report or {})
     if int(company_master.get("companyCount") or 0) != total:
@@ -478,6 +734,7 @@ def build_report(
             "pipelineRateTolerancePoints": PIPELINE_RATE_TOLERANCE_POINTS,
         },
         "summary": summary,
+        "metricCoverage": metric_coverage,
         "industries": industries,
         "integrity": {
             "duplicateMasterCodes": duplicate_codes,
@@ -538,6 +795,7 @@ def main() -> int:
     report = build_report(
         load_json(COMPANY_MASTER),
         load_json(FINANCIALS),
+        load_json(MARKET),
         previous_report=previous_report,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)

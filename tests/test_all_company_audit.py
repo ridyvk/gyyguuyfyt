@@ -96,6 +96,7 @@ class AllCompanyAuditTests(unittest.TestCase):
                 "review": 1,
                 "missing": 1,
                 "totalMetricCount": 3,
+                "sourceBackedMetricCount": 3,
                 "trustedMetricCount": 2,
                 "trustedMetricRatio": 66.67,
                 "missingProvenanceRate": 33.33,
@@ -157,6 +158,50 @@ class AllCompanyAuditTests(unittest.TestCase):
             {issue["code"] for issue in result["issues"]},
             {"missing-provenance", "incomplete-provenance-facts"},
         )
+
+    def test_metric_coverage_counts_market_derived_values(self) -> None:
+        enriched = record("1000")
+        enriched["metrics"].update(
+            {
+                "netMargin": {"value": 5.0},
+                "ebitda": {"value": 120.0},
+            }
+        )
+        enriched["history"] = [{"year": "2026/03", "revenue": 1000.0}]
+        report = audit_all_companies.build_report(
+            {
+                "companyCount": 1,
+                "companies": [company("1000")],
+            },
+            {
+                "generatedAt": "2026-06-21T00:00:00Z",
+                "records": {"1000": enriched},
+            },
+            market_snapshot={
+                "quotes": {
+                    "1000": {
+                        "date": "2026-06-19",
+                        "close": 100.0,
+                        "stale": False,
+                    }
+                },
+                "fundamentals": {
+                    "1000": {
+                        "eps": 10.0,
+                        "bps": 50.0,
+                        "dividendRate": 3.0,
+                    }
+                },
+            },
+            today=date(2026, 6, 21),
+        )
+
+        coverage = report["metricCoverage"]
+        self.assertEqual(coverage["per"]["available"], 1)
+        self.assertEqual(coverage["pbr"]["available"], 1)
+        self.assertEqual(coverage["dividendYield"]["available"], 1)
+        self.assertEqual(coverage["evEbitda"]["available"], 1)
+        self.assertEqual(coverage["per"]["missing"], 0)
 
     def test_previous_report_establishes_non_regression_baseline(self) -> None:
         summary = {
