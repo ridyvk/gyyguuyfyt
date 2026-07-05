@@ -36,6 +36,7 @@ MAX_WITHOUT_PROVENANCE = 33
 MAX_OLD_EDINET_MODELS = 30
 MIN_HEALTHY_RECORDS = 7
 MIN_EDINET_DATA_MODEL = 9
+MIN_PROVENANCE_MODEL = 1
 
 
 def load_json(path: Path) -> dict:
@@ -71,6 +72,13 @@ def provenance_metric_count(record: dict) -> int:
         if isinstance(metric, dict)
         and isinstance(metric.get("provenance"), dict)
         and bool(metric["provenance"].get("sourceFacts"))
+    )
+
+
+def has_current_edinet_model(quality: dict) -> bool:
+    return (
+        int(quality.get("dataModelVersion") or 0) >= MIN_EDINET_DATA_MODEL
+        or int(quality.get("provenanceModelVersion") or 0) >= MIN_PROVENANCE_MODEL
     )
 
 
@@ -120,7 +128,7 @@ def audit_case(
 
     if (
         record.get("source") == "EDINET"
-        and int(quality.get("dataModelVersion") or 0) < MIN_EDINET_DATA_MODEL
+        and not has_current_edinet_model(quality)
     ):
         issues.append({"code": "old-edinet-model", "severity": "warning"})
 
@@ -221,6 +229,8 @@ def build_report(
             "maxWithoutProvenance": MAX_WITHOUT_PROVENANCE,
             "maxOldEdinetModels": MAX_OLD_EDINET_MODELS,
             "minHealthyRecords": MIN_HEALTHY_RECORDS,
+            "minEdinetDataModelVersion": MIN_EDINET_DATA_MODEL,
+            "minProvenanceModelVersion": MIN_PROVENANCE_MODEL,
         },
         "summary": summary,
         "violations": violations,

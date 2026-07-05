@@ -53,6 +53,27 @@ class GoldenCompanyAuditTests(unittest.TestCase):
         self.assertEqual(result["status"], "ok")
         self.assertEqual(result["issues"], [])
 
+    def test_provenance_model_satisfies_current_edinet_model(self) -> None:
+        result = audit_golden_companies.audit_case(
+            case(),
+            record(quality={"provenanceModelVersion": 1}),
+            {"code": "1234", "industry": case()["industry"]},
+            date(2026, 6, 21),
+        )
+        self.assertEqual(result["status"], "ok")
+        self.assertEqual(result["issues"], [])
+
+    def test_old_edinet_without_provenance_model_is_warning(self) -> None:
+        result = audit_golden_companies.audit_case(
+            case(),
+            record(quality={}),
+            {"code": "1234", "industry": case()["industry"]},
+            date(2026, 6, 21),
+        )
+        issue_codes = {issue["code"] for issue in result["issues"]}
+        self.assertIn("old-edinet-model", issue_codes)
+        self.assertEqual(result["status"], "warning")
+
     def test_low_roe_case_cannot_regress_to_zero(self) -> None:
         result = audit_golden_companies.audit_case(
             case(riskFlags=["low-roe-not-zero"]),
