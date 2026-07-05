@@ -91,7 +91,7 @@ jobs:
         shell: bash
         run: |
           cd source
-          pnpm install --frozen-lockfile
+          pnpm install --no-frozen-lockfile
           pnpm run build
 
       - name: Checkout site
