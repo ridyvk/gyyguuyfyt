@@ -1418,17 +1418,32 @@ select {
 
 .kpi-category {
   --category-accent: var(--teal);
+  --category-border: color-mix(in srgb, var(--category-accent) 18%, rgba(120, 128, 148, 0.22));
+  --category-glass: color-mix(in srgb, var(--category-accent) 12%, rgba(255, 255, 255, 0.74));
+  --category-wash: color-mix(in srgb, var(--category-accent) 6%, rgba(255, 255, 255, 0.88));
+  position: relative;
   min-width: 0;
-  padding: 16px 0 0 18px;
-  border-left: 4px solid var(--category-accent);
+  padding: 18px;
+  overflow: hidden;
+  border: 1px solid var(--category-border);
+  border-radius: 20px;
+  background:
+    linear-gradient(135deg, var(--category-glass), var(--category-wash) 48%, rgba(255, 255, 255, 0.68)),
+    var(--surface);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    0 14px 34px color-mix(in srgb, var(--category-accent) 12%, rgba(31, 41, 55, 0.05));
+  backdrop-filter: saturate(145%) blur(18px);
+  -webkit-backdrop-filter: saturate(145%) blur(18px);
 }
 
 .kpi-category__head {
+  position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .kpi-category__icon {
@@ -1439,14 +1454,15 @@ select {
   place-items: center;
   border: 1px solid color-mix(in srgb, var(--category-accent) 24%, transparent);
   border-radius: 12px;
-  background: color-mix(in srgb, var(--category-accent) 10%, transparent);
+  background: color-mix(in srgb, var(--category-accent) 13%, rgba(255, 255, 255, 0.58));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
 }
 
 .kpi-category__head h3 {
   margin: 0;
   font-size: 17px;
   font-weight: 600;
-  letter-spacing: -0.035em;
+  letter-spacing: 0;
 }
 
 .kpi-category__head .section-kicker {
@@ -1463,13 +1479,20 @@ select {
   font-weight: 700;
   border: 1px solid color-mix(in srgb, var(--category-accent) 24%, transparent);
   border-radius: 999px;
-  background: color-mix(in srgb, var(--category-accent) 8%, transparent);
+  background: color-mix(in srgb, var(--category-accent) 10%, rgba(255, 255, 255, 0.62));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
 }
 
 .kpi-category__tiles {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
+}
+
+.kpi-category .kpi-tile {
+  border-color: color-mix(in srgb, var(--category-accent) 10%, rgba(120, 128, 148, 0.2));
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.74);
 }
 
 .kpi-tile {

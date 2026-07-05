@@ -7,6 +7,7 @@ import argparse
 import json
 import math
 import sys
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from data_quality import is_iso_date, normalize_security_code, validate_financial_record
@@ -15,6 +16,8 @@ ROOT = Path(__file__).resolve().parents[1]
 MASTER = ROOT / "src/data/listedCompanies.json"
 FINANCIALS = ROOT / "public/data/financials.json"
 MARKET = ROOT / "public/data/market.json"
+JST = timezone(timedelta(hours=9))
+MAX_MARKET_DATA_AGE_DAYS = 7
 
 
 def load(path: Path) -> dict:
@@ -65,6 +68,28 @@ def validate_market(codes: set[str]) -> list[str]:
     payload = load(MARKET)
     quotes = payload.get("quotes", {}) or {}
     errors: list[str] = []
+    if int(payload.get("schemaVersion") or 0) < 3:
+        errors.append("market schemaVersion must be at least 3")
+    latest_trading_date = str(payload.get("latestTradingDate") or "")
+    if not is_iso_date(latest_trading_date):
+        errors.append("market latestTradingDate is invalid")
+    else:
+        latest_date = datetime.fromisoformat(latest_trading_date).date()
+        today_jst = datetime.now(JST).date()
+        if (today_jst - latest_date).days > MAX_MARKET_DATA_AGE_DAYS:
+            errors.append(
+                "market latestTradingDate is too old: "
+                f"{latest_trading_date}"
+            )
+
+    missing_quote_codes = sorted(codes - set(quotes))
+    if missing_quote_codes:
+        sample = ", ".join(missing_quote_codes[:10])
+        errors.append(
+            f"market is missing {len(missing_quote_codes)} company quote(s): {sample}"
+        )
+
+    quote_dates: list[str] = []
     for code, quote in quotes.items():
         if code not in codes:
             errors.append(f"market quote {code} is not in company master")
@@ -72,9 +97,29 @@ def validate_market(codes: set[str]) -> list[str]:
         if not isinstance(quote, dict) or not is_iso_date(quote.get("date")):
             errors.append(f"market quote {code} has invalid date")
             continue
+        quote_dates.append(str(quote["date"]))
         close = quote.get("close")
         if not isinstance(close, (int, float)) or not math.isfinite(close) or close <= 0:
             errors.append(f"market quote {code} has invalid close")
+    latest_quote_date = max(quote_dates, default="")
+    if latest_trading_date and latest_quote_date and latest_trading_date != latest_quote_date:
+        errors.append(
+            "market latestTradingDate does not match quote max date: "
+            f"{latest_trading_date} != {latest_quote_date}"
+        )
+    stale_flag_errors = [
+        code
+        for code, quote in quotes.items()
+        if isinstance(quote, dict)
+        and is_iso_date(quote.get("date"))
+        and str(quote["date"]) < latest_quote_date
+        and not quote.get("stale")
+    ]
+    if stale_flag_errors:
+        sample = ", ".join(stale_flag_errors[:10])
+        errors.append(
+            f"market has {len(stale_flag_errors)} older quote(s) without stale=true: {sample}"
+        )
     stats_count = int((payload.get("stats") or {}).get("companies") or 0)
     if stats_count != len(quotes):
         errors.append(f"market stats companies={stats_count} but quotes={len(quotes)}")

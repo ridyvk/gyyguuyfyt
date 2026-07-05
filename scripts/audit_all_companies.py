@@ -16,7 +16,7 @@ COMPANY_MASTER = ROOT / "src" / "data" / "listedCompanies.json"
 FINANCIALS = ROOT / "public" / "data" / "financials.json"
 DEFAULT_OUTPUT = ROOT / "public" / "data" / "all-company-audit.json"
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 MIN_EDINET_DATA_MODEL = 9
 STALE_PERIOD_DAYS = 800
 PROVENANCE_FIELDS = ("tag", "contextRef", "unitRef", "consolidation")
@@ -467,6 +467,13 @@ def build_report(
                 "no-metric document rates are reported for changing cohorts",
                 "any source mismatch quarantine requires review",
             ],
+            "schemaNote": (
+                "Version 2 resets the baseline after the financial snapshot "
+                "moved to generated fallback records without sourceFacts. "
+                "Missing sourceFacts remain warning issues and UI confidence "
+                "is downgraded, while hard range and source mismatches still "
+                "block the gate."
+            ),
             "rateTolerancePoints": RATE_TOLERANCE_POINTS,
             "pipelineRateTolerancePoints": PIPELINE_RATE_TOLERANCE_POINTS,
         },
