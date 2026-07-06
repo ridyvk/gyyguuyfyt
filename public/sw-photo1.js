@@ -1,13 +1,13 @@
-const CACHE_NAME = 'kpi-scope-v9-kpi-groups'
+const CACHE_NAME = 'kpi-scope-v10-dividend-removed'
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './icon-180-scope-v2.png',
-  './icon-192-scope-v2.png',
-  './icon-512-scope-v2.webp',
-  './icon-maskable-192-scope-v2.png',
-  './icon-maskable-512-scope-v2.webp',
+  './icon-180.png',
+  './icon-192.png',
+  './icon-512.png',
+  './icon-maskable-192.png',
+  './icon-maskable-512.png',
 ]
 
 const isSameOriginDataRequest = (request) => {
