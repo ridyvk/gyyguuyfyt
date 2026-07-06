@@ -44,7 +44,6 @@ export type KpiKey =
   | 'receivablesGrowth'
   | 'per'
   | 'pbr'
-  | 'dividendYield'
   | 'evEbitda'
 
 export interface KpiMetric {
@@ -187,8 +186,6 @@ export interface ValuationBasis {
   eps?: number
   forecastEps?: number
   bps?: number
-  dividendRate?: number
-  dividendYield?: number
 }
 
 export interface LiveFinancialRecord {

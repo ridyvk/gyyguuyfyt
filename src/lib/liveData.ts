@@ -53,7 +53,6 @@ const kpiKeys: KpiKey[] = [
   'receivablesGrowth',
   'per',
   'pbr',
-  'dividendYield',
   'evEbitda',
 ]
 
@@ -76,7 +75,6 @@ const neutralMetrics: RawMetrics = {
   receivablesGrowth: 0,
   per: 20,
   pbr: 1.5,
-  dividendYield: 1.5,
   evEbitda: 10,
 }
 
@@ -108,7 +106,6 @@ const units: Record<KpiKey, KpiMetric['unit']> = {
   receivablesGrowth: '%',
   per: '倍',
   pbr: '倍',
-  dividendYield: '%',
   evEbitda: '倍',
 }
 
@@ -119,7 +116,6 @@ const comments: Record<KpiKey, [string, string, string]> = {
   roic: ['投下資本効率が良好', '資本コスト付近の収益力', 'ROIC改善を確認'],
   wacc: ['資本コストは低め', '標準的な資本コスト', '要求利回りが高め'],
   ebitda: ['償却前利益の規模が厚い', 'EBITDAは中立圏', 'EBITDAの薄さを確認'],
-  dividendYield: ['配当利回りが厚い', '配当利回りは中立圏', '配当妙味は薄い'],
   evEbitda: ['EV/EBITDAで割安', 'EV/EBITDAは中立圏', '買収倍率は高め'],
   revenueGrowth: ['成長ペースが強い', '緩やかな成長', '成長鈍化を確認'],
   operatingMargin: ['高い収益力', '標準的な水準', '採算性に注意'],
@@ -175,7 +171,6 @@ const metricStatus = (key: KpiKey, value: number): KpiStatus => {
     roic: [5, 10, true],
     wacc: [9.5, 6.5, false],
     ebitda: [0, 300, true],
-    dividendYield: [1, 2.5, true],
     evEbitda: [14, 8, false],
     revenueGrowth: [3, 10, true],
     operatingMargin: [5, 12, true],
@@ -280,7 +275,6 @@ const isUsableLiveMetric = (
   if (key === 'debtRatio' && value < 0) return false
   if (key === 'equityRatio' && (value < -100 || value > 100)) return false
   if ((key === 'per' || key === 'pbr' || key === 'evEbitda') && value <= 0) return false
-  if (key === 'dividendYield' && (value < 0 || value > 20)) return false
   if (key === 'wacc' && (value <= 0 || value > 25)) return false
   if ((key === 'roa' || key === 'roic') && (value < -80 || value > 120)) return false
   return true
@@ -326,7 +320,6 @@ const calculateLiveScores = (
       0.14,
       available.has('per') ||
         available.has('pbr') ||
-        available.has('dividendYield') ||
         available.has('evEbitda'),
     ],
   ]
@@ -335,7 +328,6 @@ const calculateLiveScores = (
   scores.valuation =
     available.has('per') ||
     available.has('pbr') ||
-    available.has('dividendYield') ||
     available.has('evEbitda')
     ? scores.valuation
     : 50
@@ -382,26 +374,6 @@ const valuationMetrics = (
             trend: [quote.previousClose! / bps, quote.close / bps],
           }
         : {}),
-    }
-  }
-  const rawDividendYield = fundamentals.dividendYield
-  if (hasFiniteNumber(rawDividendYield) && rawDividendYield > 0) {
-    metrics.dividendYield = {
-      value: rawDividendYield <= 1 ? rawDividendYield * 100 : rawDividendYield,
-      comparisonLabel: '前日差',
-      confidence: 'B',
-      confidenceReason: '市場データの配当利回りを表示しています。',
-    }
-  } else if (
-    hasFiniteNumber(fundamentals.dividendRate) &&
-    fundamentals.dividendRate > 0 &&
-    quote.close > 0
-  ) {
-    metrics.dividendYield = {
-      value: (fundamentals.dividendRate / quote.close) * 100,
-      comparisonLabel: '前日差',
-      confidence: 'B',
-      confidenceReason: '市場データの1株配当と最新株価から算出しています。',
     }
   }
   return metrics

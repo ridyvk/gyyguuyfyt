@@ -53,7 +53,6 @@ const kpiLabels: Record<KpiKey, string> = {
   receivablesGrowth: '売掛金増加率',
   per: 'PER',
   pbr: 'PBR',
-  dividendYield: '配当利回り',
   evEbitda: 'EV/EBITDA',
 }
 
@@ -114,7 +113,7 @@ const kpiGroups: {
     kicker: 'VALUATION',
     accent: '#5856D6',
     icon: Scale,
-    keys: ['per', 'pbr', 'dividendYield', 'evEbitda'],
+    keys: ['per', 'pbr', 'evEbitda'],
   },
 ]
 const scoreKeys: ScoreKey[] = [

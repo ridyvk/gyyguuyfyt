@@ -38,7 +38,6 @@ const kpiKeys: KpiKey[] = [
   'receivablesGrowth',
   'per',
   'pbr',
-  'dividendYield',
   'evEbitda',
 ]
 
@@ -61,7 +60,6 @@ const units: Record<KpiKey, KpiMetric['unit']> = {
   receivablesGrowth: '%',
   per: '倍',
   pbr: '倍',
-  dividendYield: '%',
   evEbitda: '倍',
 }
 

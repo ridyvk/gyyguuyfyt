@@ -42,7 +42,6 @@ KPI_KEYS = (
     "receivablesGrowth",
     "per",
     "pbr",
-    "dividendYield",
     "evEbitda",
 )
 SUPPLEMENTAL_METRIC_KEYS = {
@@ -54,11 +53,11 @@ SUPPLEMENTAL_METRIC_KEYS = {
     "ebitda",
     "evEbitda",
 }
-MARKET_DERIVED_METRIC_KEYS = {"per", "pbr", "dividendYield", "evEbitda"}
+MARKET_DERIVED_METRIC_KEYS = {"per", "pbr", "evEbitda"}
 FINANCIAL_INDUSTRY_POLICIES = {
-    "銀行業": ("roe", "roa", "per", "pbr", "dividendYield"),
-    "証券、商品先物取引業": ("roe", "roa", "per", "pbr", "dividendYield"),
-    "保険業": ("roe", "roa", "per", "pbr", "dividendYield"),
+    "銀行業": ("roe", "roa", "per", "pbr"),
+    "証券、商品先物取引業": ("roe", "roa", "per", "pbr"),
+    "保険業": ("roe", "roa", "per", "pbr"),
     "その他金融業": (
         "revenueGrowth",
         "epsGrowth",
@@ -67,7 +66,6 @@ FINANCIAL_INDUSTRY_POLICIES = {
         "roa",
         "per",
         "pbr",
-        "dividendYield",
     ),
 }
 
@@ -144,19 +142,10 @@ def market_metric_available(
 
     eps = number(fundamentals.get("forecastEps")) or number(fundamentals.get("eps"))
     bps = number(fundamentals.get("bps"))
-    dividend_yield = number(fundamentals.get("dividendYield"))
-    dividend_rate = number(fundamentals.get("dividendRate"))
-
     if key == "per":
         return (eps is not None and eps > 0, "missing-eps")
     if key == "pbr":
         return (bps is not None and bps > 0, "missing-bps")
-    if key == "dividendYield":
-        available = (
-            dividend_yield is not None
-            and dividend_yield > 0
-        ) or (dividend_rate is not None and dividend_rate > 0)
-        return available, "missing-dividend-input"
 
     per = metrics.get("per")
     if per is None and eps is not None and eps > 0:
@@ -215,7 +204,7 @@ def build_metric_coverage(
             "missingReasons": Counter(),
             "kind": (
                 "market-derived"
-                if key in {"per", "pbr", "dividendYield"}
+                if key in {"per", "pbr"}
                 else "supplemental-or-market-derived"
                 if key == "evEbitda"
                 else "supplemental-derived"

@@ -26,7 +26,6 @@ const metricLabels: Record<KpiKey, string> = {
   receivablesGrowth: '売掛金増加率',
   per: 'PER',
   pbr: 'PBR',
-  dividendYield: '配当利回り',
   evEbitda: 'EV/EBITDA',
 }
 
@@ -49,7 +48,6 @@ const insightCandidates: readonly KpiKey[] = [
   'receivablesGrowth',
   'per',
   'pbr',
-  'dividendYield',
   'evEbitda',
 ]
 
@@ -87,7 +85,7 @@ export const buildIndustryInsights = (
     ['inventoryGrowth'],
     ['receivablesGrowth'],
     ['evEbitda', 'per'],
-    ['pbr', 'dividendYield'],
+    ['pbr'],
   ]
 
   for (const group of groups) {

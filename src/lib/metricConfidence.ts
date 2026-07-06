@@ -13,7 +13,6 @@ export const metricFormulaLabels: Record<KpiKey, string> = {
   roic: 'NOPAT / 投下資本 × 100',
   wacc: '株主資本コスト × 株主資本比率 + 負債コスト × (1 - 税率) × 負債比率',
   ebitda: '営業利益 + 減価償却費',
-  dividendYield: '1株配当 / 株価 × 100',
   evEbitda: 'EV / EBITDA',
   revenueGrowth: '(当期売上高 / 前期売上高 - 1) × 100',
   operatingMargin: '営業利益 / 売上高 × 100',

@@ -107,9 +107,6 @@ export const buildStrengths = (
   if (has('evEbitda') && metrics.evEbitda <= 8) {
     strengths.push('EV/EBITDAで割安感')
   }
-  if (has('dividendYield') && metrics.dividendYield >= 3) {
-    strengths.push('配当利回りが厚い')
-  }
 
   return strengths.slice(0, 4)
 }

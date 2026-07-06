@@ -189,7 +189,6 @@ class AllCompanyAuditTests(unittest.TestCase):
                     "1000": {
                         "eps": 10.0,
                         "bps": 50.0,
-                        "dividendRate": 3.0,
                     }
                 },
             },
@@ -199,7 +198,6 @@ class AllCompanyAuditTests(unittest.TestCase):
         coverage = report["metricCoverage"]
         self.assertEqual(coverage["per"]["available"], 1)
         self.assertEqual(coverage["pbr"]["available"], 1)
-        self.assertEqual(coverage["dividendYield"]["available"], 1)
         self.assertEqual(coverage["evEbitda"]["available"], 1)
         self.assertEqual(coverage["per"]["missing"], 0)
 

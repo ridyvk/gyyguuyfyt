@@ -19,7 +19,6 @@ export interface RawMetrics {
   receivablesGrowth: number
   per: number
   pbr: number
-  dividendYield: number
   evEbitda: number
 }
 
@@ -125,10 +124,7 @@ export const calculateScores = (
     valuationValues.push([inverseScale(metrics.pbr, 0.6, 6), 0.25])
   }
   if (has('evEbitda')) {
-    valuationValues.push([inverseScale(metrics.evEbitda, 5, 22), 0.24])
-  }
-  if (has('dividendYield')) {
-    valuationValues.push([scale(metrics.dividendYield, 0, 4), 0.17])
+    valuationValues.push([inverseScale(metrics.evEbitda, 5, 22), 0.41])
   }
 
   const growth = weightedAverage(growthValues)

@@ -44,7 +44,6 @@ const kpiMetrics: { key: KpiKey; label: string; higher: boolean }[] = [
   { key: 'wacc', label: 'WACC', higher: false },
   { key: 'equityRatio', label: '自己資本比率', higher: true },
   { key: 'operatingCfMargin', label: '営業CFマージン', higher: true },
-  { key: 'dividendYield', label: '配当利回り', higher: true },
   { key: 'per', label: 'PER', higher: false },
   { key: 'pbr', label: 'PBR', higher: false },
   { key: 'evEbitda', label: 'EV/EBITDA', higher: false },
