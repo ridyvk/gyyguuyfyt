@@ -105,7 +105,7 @@ jobs:
           set -euo pipefail
           git config user.name "kpi-scope-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add src/data/listedCompanies.json public/data
+          git add src/data/listedCompanies.json src/lib/companySource.ts public/data
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "No data changes."
