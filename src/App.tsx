@@ -25,7 +25,7 @@ const Compare = lazy(() => import('./pages/Compare'))
 
 const navigation = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/search', label: 'Search', icon: Search },
+  { to: '/?view=search', label: 'Search', icon: Search },
   { to: '/universe', label: 'Universe', icon: Building2 },
   { to: '/watchlist', label: 'Watchlist', icon: Bookmark },
   { to: '/compare', label: 'Compare', icon: GitCompareArrows },
@@ -48,6 +48,9 @@ export default function App() {
   const stockQuoteCount = companies.filter(
     (company) => company.stockPrice,
   ).length
+  const homeIsSearch =
+    location.pathname === '/' &&
+    new URLSearchParams(location.search).get('view') === 'search'
 
   useLayoutEffect(() => {
     if ('scrollRestoration' in window.history) {
@@ -97,7 +100,15 @@ export default function App() {
               to={to}
               end={to === '/'}
               onClick={() => setMenuOpen(false)}
-              className={({ isActive }) => (isActive ? 'is-active' : '')}
+              className={({ isActive }) => {
+                const active =
+                  label === 'Search'
+                    ? homeIsSearch
+                    : label === 'Dashboard'
+                      ? isActive && !homeIsSearch
+                      : isActive
+                return active ? 'is-active' : ''
+              }}
             >
               <Icon size={17} />
               <span>{label}</span>
@@ -139,8 +150,7 @@ export default function App() {
                 className="route-transition"
               >
                 <Routes location={location}>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/search" element={<Universe searchMode />} />
+                  <Route path="/" element={homeIsSearch ? <Universe searchMode /> : <Dashboard />} />
                   <Route path="/universe" element={<Universe />} />
                   <Route path="/watchlist" element={<Watchlist />} />
                   <Route path="/company/:companyId" element={<CompanyDetail />} />
