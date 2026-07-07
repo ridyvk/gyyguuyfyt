@@ -1,6 +1,6 @@
 name: Deploy latest develop once
 
-# trigger-develop-sha: c7e29f9d327547e2433fe0cd1e07ba16df47da60
+# trigger-develop-sha: 4154967605ae928ecb82881e5e209c0d699cf3a4
 on:
   push:
     branches: [main]
