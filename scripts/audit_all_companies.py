@@ -24,9 +24,6 @@ PROVENANCE_FIELDS = ("tag", "contextRef", "unitRef", "consolidation")
 RATE_TOLERANCE_POINTS = 0.25
 PIPELINE_RATE_TOLERANCE_POINTS = 0.5
 KPI_KEYS = (
-    "revenueGrowth",
-    "operatingIncomeGrowth",
-    "epsGrowth",
     "operatingMargin",
     "netMargin",
     "roe",
@@ -34,26 +31,15 @@ KPI_KEYS = (
     "roic",
     "equityRatio",
     "operatingCfMargin",
-    "debtRatio",
     "netCash",
     "wacc",
-    "ebitda",
-    "inventoryGrowth",
-    "receivablesGrowth",
-    "per",
-    "pbr",
-    "evEbitda",
 )
 SUPPLEMENTAL_METRIC_KEYS = {
-    "operatingIncomeGrowth",
-    "epsGrowth",
     "roa",
     "roic",
     "wacc",
-    "ebitda",
-    "evEbitda",
 }
-MARKET_DERIVED_METRIC_KEYS = {"per", "pbr", "evEbitda"}
+MARKET_DERIVED_METRIC_KEYS = set()
 FINANCIAL_INDUSTRY_POLICIES = {
     "銀行業": ("roe", "roa", "per", "pbr"),
     "証券、商品先物取引業": ("roe", "roa", "per", "pbr"),
@@ -67,6 +53,11 @@ FINANCIAL_INDUSTRY_POLICIES = {
         "per",
         "pbr",
     ),
+}
+
+FINANCIAL_INDUSTRY_POLICIES = {
+    industry: tuple(key for key in keys if key in KPI_KEYS)
+    for industry, keys in FINANCIAL_INDUSTRY_POLICIES.items()
 }
 
 

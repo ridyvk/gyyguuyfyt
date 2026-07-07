@@ -30,25 +30,15 @@ const metricLabels: Record<KpiKey, string> = {
 }
 
 const insightCandidates: readonly KpiKey[] = [
-  'revenueGrowth',
-  'operatingIncomeGrowth',
-  'epsGrowth',
   'operatingMargin',
   'netMargin',
   'roe',
   'roa',
   'roic',
   'equityRatio',
-  'debtRatio',
   'operatingCfMargin',
   'netCash',
   'wacc',
-  'ebitda',
-  'inventoryGrowth',
-  'receivablesGrowth',
-  'per',
-  'pbr',
-  'evEbitda',
 ]
 
 const isAvailable = (metric: KpiMetric) =>
@@ -77,15 +67,10 @@ export const buildIndustryInsights = (
 ): IndustryKpi[] => {
   const selected = new Set<KpiKey>()
   const groups: readonly (readonly KpiKey[])[] = [
-    ['revenueGrowth', 'operatingIncomeGrowth', 'epsGrowth'],
     ['roic', 'roe', 'roa'],
     ['operatingMargin', 'netMargin'],
-    ['equityRatio', 'debtRatio', 'wacc'],
-    ['operatingCfMargin', 'ebitda', 'netCash'],
-    ['inventoryGrowth'],
-    ['receivablesGrowth'],
-    ['evEbitda', 'per'],
-    ['pbr'],
+    ['equityRatio', 'netCash', 'wacc'],
+    ['operatingCfMargin'],
   ]
 
   for (const group of groups) {

@@ -35,9 +35,6 @@ import {
 } from './metricConfidence'
 
 const kpiKeys: KpiKey[] = [
-  'revenueGrowth',
-  'operatingIncomeGrowth',
-  'epsGrowth',
   'operatingMargin',
   'netMargin',
   'roe',
@@ -45,16 +42,11 @@ const kpiKeys: KpiKey[] = [
   'roic',
   'equityRatio',
   'operatingCfMargin',
-  'debtRatio',
   'netCash',
   'wacc',
-  'ebitda',
-  'inventoryGrowth',
-  'receivablesGrowth',
-  'per',
-  'pbr',
-  'evEbitda',
 ]
+
+const estimatedMetricKeys = new Set<KpiKey>(['roa', 'roic', 'wacc'])
 
 const neutralMetrics: RawMetrics = {
   revenueGrowth: 0,
@@ -256,6 +248,9 @@ const createLiveMetric = (
     trend: normalizedTrend.map((point) => round(point)),
     available: true,
     formula: metricFormulaLabels[key],
+    ...(estimatedMetricKeys.has(key) && source?.confidence && !source.provenance
+      ? { estimated: true }
+      : {}),
     ...(source?.provenance ? { provenance: source.provenance } : {}),
     ...assessment,
   }
@@ -287,50 +282,32 @@ const calculateLiveScores = (
   const scores = calculateScores(rawMetrics, available)
   const weighted: Array<[keyof Omit<Scores, 'overall'>, number, boolean]> = [
     [
-      'growth',
-      0.22,
-      available.has('revenueGrowth') ||
-        available.has('operatingIncomeGrowth') ||
-        available.has('epsGrowth'),
-    ],
-    [
       'profitability',
-      0.24,
+      0.42,
       available.has('operatingMargin') ||
+        available.has('netMargin') ||
         available.has('roe') ||
         available.has('roa') ||
         available.has('roic'),
     ],
     [
       'safety',
-      0.2,
+      0.34,
       available.has('equityRatio') ||
-        available.has('debtRatio') ||
+        available.has('netCash') ||
         available.has('wacc'),
     ],
     [
       'cashGeneration',
-      0.2,
+      0.24,
       available.has('operatingCfMargin') ||
-        available.has('netCash') ||
-        available.has('ebitda'),
-    ],
-    [
-      'valuation',
-      0.14,
-      available.has('per') ||
-        available.has('pbr') ||
-        available.has('evEbitda'),
+        available.has('netCash'),
     ],
   ]
   const active = weighted.filter(([, , isAvailable]) => isAvailable)
   const totalWeight = active.reduce((sum, [, weight]) => sum + weight, 0)
-  scores.valuation =
-    available.has('per') ||
-    available.has('pbr') ||
-    available.has('evEbitda')
-    ? scores.valuation
-    : 50
+  scores.growth = 50
+  scores.valuation = 50
   scores.overall = totalWeight
     ? active.reduce(
         (sum, [key, weight]) => sum + scores[key] * weight,

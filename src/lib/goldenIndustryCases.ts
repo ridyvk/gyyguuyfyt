@@ -26,14 +26,14 @@ export interface GoldenIndustryCase {
 }
 
 const commonOperatingKpis = [
-  'revenueGrowth',
   'operatingMargin',
   'netMargin',
   'roe',
+  'roa',
   'equityRatio',
 ] as const satisfies readonly KpiKey[]
 
-const financialKpis = ['roe', 'per', 'pbr'] as const satisfies readonly KpiKey[]
+const financialKpis = ['roe', 'roa'] as const satisfies readonly KpiKey[]
 
 export const goldenIndustryCases = [
   {
@@ -232,7 +232,7 @@ export const goldenIndustryCases = [
     code: '9432',
     companyName: '日本電信電話',
     industry: '情報・通信業',
-    reason: '通信大型株として、安定収益・負債・PER/PBRの標準確認に使う',
+    reason: '通信大型株として、安定収益・自己資本比率・キャッシュ品質の標準確認に使う',
     riskFlags: ['baseline-industry-coverage', 'large-cap-cross-check'],
     minimumKpis: commonOperatingKpis,
   },
@@ -282,7 +282,7 @@ export const goldenIndustryCases = [
     industry: 'その他金融業',
     reason: 'その他金融業で負債・ネットキャッシュを一般企業扱いしないための代表ケース',
     riskFlags: ['baseline-industry-coverage', 'other-financial-policy'],
-    minimumKpis: ['revenueGrowth', 'netMargin', 'roe', 'per', 'pbr'],
+    minimumKpis: ['netMargin', 'roe', 'roa'],
   },
   {
     code: '8801',
@@ -362,7 +362,7 @@ export const goldenIndustryCases = [
     industry: 'その他金融業',
     reason: 'その他金融の追加ケース。市場インフラ型金融として一般負債評価を避ける',
     riskFlags: ['other-financial-policy'],
-    minimumKpis: ['revenueGrowth', 'netMargin', 'roe', 'per', 'pbr'],
+    minimumKpis: ['netMargin', 'roe', 'roa'],
   },
   {
     code: '8601',

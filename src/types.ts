@@ -58,6 +58,7 @@ export interface KpiMetric {
   applicable?: boolean
   confidence?: KpiConfidence
   confidenceReason?: string
+  estimated?: boolean
   formula?: string
   provenance?: MetricProvenance
 }
@@ -377,8 +378,9 @@ export interface CompanyFilter {
   sort:
     | 'code-asc'
     | 'score-desc'
-    | 'per-asc'
-    | 'pbr-asc'
     | 'roe-desc'
+    | 'roic-desc'
+    | 'equityRatio-desc'
+    | 'wacc-asc'
     | 'operatingMargin-desc'
 }

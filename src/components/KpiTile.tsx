@@ -99,6 +99,14 @@ export default function KpiTile({ label, metric }: KpiTileProps) {
       <div className="kpi-tile__top">
         <span className="kpi-tile__label">{label}</span>
         <span className="kpi-tile__badges">
+          {metric.estimated && (
+            <span
+              className="confidence-pill confidence-pill--estimated"
+              title={metric.confidenceReason}
+            >
+              推定
+            </span>
+          )}
           {metric.confidence && (
             <span
               className={`confidence-pill confidence-pill--${metric.confidence}`}

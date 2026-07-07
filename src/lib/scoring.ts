@@ -52,27 +52,6 @@ export const calculateScores = (
     keys.every((key) => available.has(key))
 
   const growthValues: WeightedValue[] = []
-  if (has('revenueGrowth')) {
-    growthValues.push([scale(metrics.revenueGrowth, -8, 20), 0.45])
-  }
-  if (has('operatingIncomeGrowth')) {
-    growthValues.push([scale(metrics.operatingIncomeGrowth, -12, 24), 0.28])
-  }
-  if (has('epsGrowth')) {
-    growthValues.push([scale(metrics.epsGrowth, -12, 24), 0.22])
-  }
-  if (has('inventoryGrowth', 'revenueGrowth')) {
-    growthValues.push([
-      scale(metrics.inventoryGrowth - metrics.revenueGrowth, 18, -8),
-      0.03,
-    ])
-  }
-  if (has('receivablesGrowth', 'revenueGrowth')) {
-    growthValues.push([
-      scale(metrics.receivablesGrowth - metrics.revenueGrowth, 18, -8),
-      0.02,
-    ])
-  }
 
   const profitabilityValues: WeightedValue[] = []
   if (has('operatingMargin')) {
@@ -93,39 +72,24 @@ export const calculateScores = (
 
   const safetyValues: WeightedValue[] = []
   if (has('equityRatio')) {
-    safetyValues.push([scale(metrics.equityRatio, 15, 75), 0.45])
-  }
-  if (has('debtRatio')) {
-    safetyValues.push([inverseScale(metrics.debtRatio, 0.2, 3.5), 0.32])
+    safetyValues.push([scale(metrics.equityRatio, 15, 75), 0.55])
   }
   if (has('netCash')) {
-    safetyValues.push([scale(metrics.netCash, -600, 800), 0.13])
+    safetyValues.push([scale(metrics.netCash, -600, 800), 0.25])
   }
   if (has('wacc')) {
-    safetyValues.push([inverseScale(metrics.wacc, 5, 12), 0.1])
+    safetyValues.push([inverseScale(metrics.wacc, 5, 12), 0.2])
   }
 
   const cashValues: WeightedValue[] = []
   if (has('operatingCfMargin')) {
-    cashValues.push([scale(metrics.operatingCfMargin, -2, 22), 0.62])
+    cashValues.push([scale(metrics.operatingCfMargin, -2, 22), 0.7])
   }
   if (has('netCash')) {
-    cashValues.push([scale(metrics.netCash, -600, 800), 0.2])
-  }
-  if (has('ebitda')) {
-    cashValues.push([scale(metrics.ebitda, 0, 900), 0.18])
+    cashValues.push([scale(metrics.netCash, -600, 800), 0.3])
   }
 
   const valuationValues: WeightedValue[] = []
-  if (has('per')) {
-    valuationValues.push([inverseScale(metrics.per, 8, 55), 0.34])
-  }
-  if (has('pbr')) {
-    valuationValues.push([inverseScale(metrics.pbr, 0.6, 6), 0.25])
-  }
-  if (has('evEbitda')) {
-    valuationValues.push([inverseScale(metrics.evEbitda, 5, 22), 0.41])
-  }
 
   const growth = weightedAverage(growthValues)
   const profitability = weightedAverage(profitabilityValues)
@@ -134,11 +98,9 @@ export const calculateScores = (
   const valuation = weightedAverage(valuationValues)
 
   const categories: Array<readonly [number, number, boolean]> = [
-    [growth, 0.22, growthValues.length > 0],
-    [profitability, 0.24, profitabilityValues.length > 0],
-    [safety, 0.2, safetyValues.length > 0],
-    [cashGeneration, 0.2, cashValues.length > 0],
-    [valuation, 0.14, valuationValues.length > 0],
+    [profitability, 0.42, profitabilityValues.length > 0],
+    [safety, 0.34, safetyValues.length > 0],
+    [cashGeneration, 0.24, cashValues.length > 0],
   ]
   const activeCategories = categories.filter(([, , active]) => active)
   const overall = weightedAverage(

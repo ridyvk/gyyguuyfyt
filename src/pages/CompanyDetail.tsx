@@ -6,9 +6,7 @@ import {
   GitCompareArrows,
   Lightbulb,
   Save,
-  Scale,
   ShieldCheck,
-  TrendingUp,
   WalletCards,
 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
@@ -66,13 +64,12 @@ const analysisLevelLabels: Record<AnalysisLevel, string> = {
 const insightConfidenceLabel = (confidence?: string) =>
   confidence === 'review' ? '要確認' : confidence ? `信頼度 ${confidence}` : null
 
-const kpiKeys = Object.keys(kpiLabels) as KpiKey[]
 const kpiGroups: {
   id: string
   title: string
   kicker: string
   accent: string
-  icon: typeof TrendingUp
+  icon: typeof Activity
   keys: KpiKey[]
 }[] = [
   {
@@ -80,8 +77,8 @@ const kpiGroups: {
     title: '成長性',
     kicker: 'GROWTH',
     accent: '#FF9F0A',
-    icon: TrendingUp,
-    keys: ['revenueGrowth', 'operatingIncomeGrowth', 'epsGrowth'],
+    icon: Activity,
+    keys: [],
   },
   {
     id: 'profitability',
@@ -97,7 +94,7 @@ const kpiGroups: {
     kicker: 'SAFETY',
     accent: '#34C759',
     icon: ShieldCheck,
-    keys: ['equityRatio', 'debtRatio', 'netCash', 'wacc'],
+    keys: ['equityRatio', 'netCash', 'wacc'],
   },
   {
     id: 'cash',
@@ -105,23 +102,23 @@ const kpiGroups: {
     kicker: 'CASH QUALITY',
     accent: '#00A7C7',
     icon: WalletCards,
-    keys: ['operatingCfMargin', 'ebitda', 'inventoryGrowth', 'receivablesGrowth'],
+    keys: ['operatingCfMargin'],
   },
   {
     id: 'valuation',
     title: '割安性',
     kicker: 'VALUATION',
     accent: '#5856D6',
-    icon: Scale,
-    keys: ['per', 'pbr', 'evEbitda'],
+    icon: Activity,
+    keys: [],
   },
 ]
+const visibleKpiGroups = kpiGroups.filter((group) => group.keys.length > 0)
+const kpiKeys = visibleKpiGroups.flatMap((group) => group.keys)
 const scoreKeys: ScoreKey[] = [
-  'growth',
   'profitability',
   'safety',
   'cashGeneration',
-  'valuation',
 ]
 
 const emptyNote: CompanyNote = {
@@ -279,7 +276,7 @@ export default function CompanyDetail() {
 
       <section className="detail-overview-grid">
         <article className="panel">
-          <div className="panel__heading"><div><span className="section-kicker">SCORE SHAPE</span><h2>5分類スコア</h2></div></div>
+          <div className="panel__heading"><div><span className="section-kicker">SCORE SHAPE</span><h2>3分類スコア</h2></div></div>
           {scorable ? (
             <RadarScoreChart scores={company.scores} height={300} />
           ) : (
@@ -309,7 +306,7 @@ export default function CompanyDetail() {
       <section className="section-block">
         <div className="section-heading"><div><span className="section-kicker">KEY METRICS</span><h2>KPIタイル</h2></div><p>数値・前年差・状態・信頼度・計算式・元データ</p></div>
         <div className="kpi-category-grid">
-          {kpiGroups.map((group) => {
+          {visibleKpiGroups.map((group) => {
             const Icon = group.icon
             const availableCount = group.keys.filter(
               (key) =>

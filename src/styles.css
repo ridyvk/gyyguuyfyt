@@ -1638,6 +1638,11 @@ select {
   background: rgba(255, 159, 10, 0.11);
 }
 
+.confidence-pill--estimated {
+  color: #0b6f72;
+  background: rgba(0, 167, 199, 0.12);
+}
+
 .confidence-pill--review {
   color: #d72f27;
   background: rgba(255, 59, 48, 0.09);

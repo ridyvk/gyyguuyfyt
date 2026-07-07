@@ -159,12 +159,12 @@ class AllCompanyAuditTests(unittest.TestCase):
             {"missing-provenance", "incomplete-provenance-facts"},
         )
 
-    def test_metric_coverage_counts_market_derived_values(self) -> None:
+    def test_metric_coverage_uses_display_metric_set(self) -> None:
         enriched = record("1000")
         enriched["metrics"].update(
             {
+                "operatingMargin": {"value": 8.0},
                 "netMargin": {"value": 5.0},
-                "ebitda": {"value": 120.0},
             }
         )
         enriched["history"] = [{"year": "2026/03", "revenue": 1000.0}]
@@ -196,10 +196,11 @@ class AllCompanyAuditTests(unittest.TestCase):
         )
 
         coverage = report["metricCoverage"]
-        self.assertEqual(coverage["per"]["available"], 1)
-        self.assertEqual(coverage["pbr"]["available"], 1)
-        self.assertEqual(coverage["evEbitda"]["available"], 1)
-        self.assertEqual(coverage["per"]["missing"], 0)
+        self.assertNotIn("per", coverage)
+        self.assertNotIn("pbr", coverage)
+        self.assertNotIn("evEbitda", coverage)
+        self.assertEqual(coverage["operatingMargin"]["available"], 1)
+        self.assertEqual(coverage["netMargin"]["available"], 1)
 
     def test_previous_report_establishes_non_regression_baseline(self) -> None:
         summary = {

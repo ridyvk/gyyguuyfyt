@@ -1,9 +1,6 @@
 import type { KpiKey } from '../types'
 
 export const allKpiKeys = [
-  'revenueGrowth',
-  'operatingIncomeGrowth',
-  'epsGrowth',
   'operatingMargin',
   'netMargin',
   'roe',
@@ -11,15 +8,8 @@ export const allKpiKeys = [
   'roic',
   'equityRatio',
   'operatingCfMargin',
-  'debtRatio',
   'netCash',
   'wacc',
-  'ebitda',
-  'inventoryGrowth',
-  'receivablesGrowth',
-  'per',
-  'pbr',
-  'evEbitda',
 ] as const satisfies readonly KpiKey[]
 
 export const jpxIndustries = [
@@ -84,22 +74,22 @@ const operatingCompanyPolicy = createPolicy(
 )
 
 const bankPolicy = createPolicy(
-  ['roe', 'roa', 'per', 'pbr'],
+  ['roe', 'roa'],
   '銀行は預金・貸出を事業として扱うため、一般事業会社の利益率・負債・キャッシュ・運転資本指標を共通評価しません',
 )
 
 const securitiesPolicy = createPolicy(
-  ['roe', 'roa', 'per', 'pbr'],
+  ['roe', 'roa'],
   '証券会社は市場取引と顧客資産の影響が大きいため、一般事業会社の利益率・負債・キャッシュ・運転資本指標を共通評価しません',
 )
 
 const insurancePolicy = createPolicy(
-  ['roe', 'roa', 'per', 'pbr'],
+  ['roe', 'roa'],
   '保険会社は保険負債と運用資産が中心のため、一般事業会社の利益率・負債・キャッシュ・運転資本指標を共通評価しません',
 )
 
 const otherFinancialPolicy = createPolicy(
-  ['revenueGrowth', 'epsGrowth', 'netMargin', 'roe', 'roa', 'per', 'pbr'],
+  ['netMargin', 'roe', 'roa'],
   'その他金融業は資金調達自体が事業構造に含まれるため、負債・ネットキャッシュ・営業CF・運転資本指標を共通評価しません',
 )
 

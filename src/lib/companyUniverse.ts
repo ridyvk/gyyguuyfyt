@@ -20,9 +20,6 @@ const industries: Industry[] = Array.from(
 ).sort((a, b) => a.localeCompare(b, 'ja'))
 
 const kpiKeys: KpiKey[] = [
-  'revenueGrowth',
-  'operatingIncomeGrowth',
-  'epsGrowth',
   'operatingMargin',
   'netMargin',
   'roe',
@@ -30,15 +27,8 @@ const kpiKeys: KpiKey[] = [
   'roic',
   'equityRatio',
   'operatingCfMargin',
-  'debtRatio',
   'netCash',
   'wacc',
-  'ebitda',
-  'inventoryGrowth',
-  'receivablesGrowth',
-  'per',
-  'pbr',
-  'evEbitda',
 ]
 
 const units: Record<KpiKey, KpiMetric['unit']> = {

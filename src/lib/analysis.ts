@@ -151,5 +151,5 @@ export const buildAnalysisComment = (
   if (has('revenueGrowth', 'operatingMargin')) {
     return `売上成長率は${formatPercent(metrics.revenueGrowth)}、営業利益率は${formatPercent(metrics.operatingMargin)}です。主要KPIは大きな偏りなく推移しており、次回決算では成長率と利益率の持続性を確認したい状態です。`
   }
-  return '主要KPIは大きな偏りなく推移しています。次回決算では成長率と利益率の持続性を確認したい状態です。'
+  return '主要KPIは大きな偏りなく推移しています。次回決算では収益性・安全性・キャッシュ品質の持続性を確認したい状態です。'
 }
