@@ -40,13 +40,15 @@ const kpiKeys: KpiKey[] = [
   'roe',
   'roa',
   'roic',
+  'roicWaccSpread',
   'equityRatio',
   'operatingCfMargin',
+  'cashProfitGap',
   'netCash',
   'wacc',
 ]
 
-const estimatedMetricKeys = new Set<KpiKey>(['roa', 'roic', 'wacc'])
+const estimatedMetricKeys = new Set<KpiKey>(['roa', 'roic', 'wacc', 'roicWaccSpread'])
 
 const neutralMetrics: RawMetrics = {
   revenueGrowth: 0,
@@ -57,8 +59,10 @@ const neutralMetrics: RawMetrics = {
   roe: 8,
   roa: 3,
   roic: 7,
+  roicWaccSpread: 0,
   equityRatio: 40,
   operatingCfMargin: 5,
+  cashProfitGap: 0,
   debtRatio: 1,
   netCash: 0,
   wacc: 8,
@@ -88,8 +92,10 @@ const units: Record<KpiKey, KpiMetric['unit']> = {
   roe: '%',
   roa: '%',
   roic: '%',
+  roicWaccSpread: '%',
   equityRatio: '%',
   operatingCfMargin: '%',
+  cashProfitGap: '%',
   debtRatio: '倍',
   netCash: '億円',
   wacc: '%',
@@ -101,7 +107,7 @@ const units: Record<KpiKey, KpiMetric['unit']> = {
   evEbitda: '倍',
 }
 
-const comments: Record<KpiKey, [string, string, string]> = {
+const comments: Partial<Record<KpiKey, [string, string, string]>> = {
   operatingIncomeGrowth: ['利益成長が売上を伴う', '利益成長は中立圏', '利益成長の鈍化に注意'],
   epsGrowth: ['1株利益の伸びが強い', 'EPSは安定成長', 'EPSの伸びを確認'],
   roa: ['資産効率が良好', '資産効率は中立圏', '資産効率を確認'],
@@ -161,6 +167,7 @@ const metricStatus = (key: KpiKey, value: number): KpiStatus => {
     epsGrowth: [0, 10, true],
     roa: [2, 6, true],
     roic: [5, 10, true],
+    roicWaccSpread: [0, 3, true],
     wacc: [9.5, 6.5, false],
     ebitda: [0, 300, true],
     evEbitda: [14, 8, false],
@@ -170,6 +177,7 @@ const metricStatus = (key: KpiKey, value: number): KpiStatus => {
     roe: [7, 12, true],
     equityRatio: [30, 50, true],
     operatingCfMargin: [4, 10, true],
+    cashProfitGap: [-3, 2, true],
     debtRatio: [1.5, 0.8, false],
     netCash: [0, 180, true],
     inventoryGrowth: [15, 7, false],
@@ -230,6 +238,7 @@ const createLiveMetric = (
 ): KpiMetric => {
   const status = metricStatus(key, value)
   const commentIndex = status === 'good' ? 0 : status === 'normal' ? 1 : 2
+  const metricComments = derivedComments[key] ?? comments[key] ?? fallbackComments
   const normalizedTrend =
     trend && trend.length >= 2
       ? trend
@@ -244,7 +253,7 @@ const createLiveMetric = (
       : { comparisonLabel }),
     unit: units[key],
     status,
-    comment: comments[key][commentIndex],
+    comment: metricComments[commentIndex],
     trend: normalizedTrend.map((point) => round(point)),
     available: true,
     formula: metricFormulaLabels[key],
@@ -255,6 +264,13 @@ const createLiveMetric = (
     ...assessment,
   }
 }
+
+const derivedComments: Partial<Record<KpiKey, [string, string, string]>> = {
+  roicWaccSpread: ['ROICがWACCを上回る', '資本コストと接近', 'ROICがWACCを下回る'],
+  cashProfitGap: ['CFが利益を上回る', 'CFと利益は概ね連動', 'CFが利益に追いつかない'],
+}
+
+const fallbackComments: [string, string, string] = ['良好', '中立', '要確認']
 
 const isUsableLiveMetric = (
   key: KpiKey,
@@ -272,6 +288,7 @@ const isUsableLiveMetric = (
   if ((key === 'per' || key === 'pbr' || key === 'evEbitda') && value <= 0) return false
   if (key === 'wacc' && (value <= 0 || value > 25)) return false
   if ((key === 'roa' || key === 'roic') && (value < -80 || value > 120)) return false
+  if ((key === 'roicWaccSpread' || key === 'cashProfitGap') && (value < -120 || value > 120)) return false
   return true
 }
 
@@ -288,7 +305,8 @@ const calculateLiveScores = (
         available.has('netMargin') ||
         available.has('roe') ||
         available.has('roa') ||
-        available.has('roic'),
+        available.has('roic') ||
+        available.has('roicWaccSpread'),
     ],
     [
       'safety',
@@ -301,6 +319,7 @@ const calculateLiveScores = (
       'cashGeneration',
       0.24,
       available.has('operatingCfMargin') ||
+        available.has('cashProfitGap') ||
         available.has('netCash'),
     ],
   ]
@@ -462,6 +481,8 @@ const deriveSupplementalMetrics = (
   const previousOperatingMargin = previousMetricValue(next, 'operatingMargin')
   const netMargin = metricValue(next, 'netMargin')
   const previousNetMargin = previousMetricValue(next, 'netMargin')
+  const operatingCfMargin = metricValue(next, 'operatingCfMargin')
+  const previousOperatingCfMargin = previousMetricValue(next, 'operatingCfMargin')
   const roe = metricValue(next, 'roe')
   const previousRoe = previousMetricValue(next, 'roe')
   const equityRatio = metricValue(next, 'equityRatio')
@@ -548,6 +569,33 @@ const deriveSupplementalMetrics = (
       undefined,
       'C',
       '市場ベータや実効金利が未取得のため、財務レバレッジから簡易推定したWACCです。',
+    ),
+  )
+
+  const derivedRoic = metricValue(next, 'roic')
+  const derivedWacc = metricValue(next, 'wacc')
+  setIfMissing(
+    'roicWaccSpread',
+    derivedMetric(
+      hasFiniteNumber(derivedRoic) && hasFiniteNumber(derivedWacc)
+        ? derivedRoic - derivedWacc
+        : undefined,
+      undefined,
+      'C',
+      'ROICからWACCを差し引き、資本コストをどれだけ上回っているかを推定表示しています。',
+    ),
+  )
+  setIfMissing(
+    'cashProfitGap',
+    derivedMetric(
+      hasFiniteNumber(operatingCfMargin) && hasFiniteNumber(netMargin)
+        ? operatingCfMargin - netMargin
+        : undefined,
+      hasFiniteNumber(previousOperatingCfMargin) && hasFiniteNumber(previousNetMargin)
+        ? previousOperatingCfMargin - previousNetMargin
+        : undefined,
+      'B',
+      '営業CFマージンから純利益率を差し引き、利益がキャッシュで裏付けられているかを計算しています。',
     ),
   )
 

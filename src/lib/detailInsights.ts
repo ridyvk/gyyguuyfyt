@@ -16,8 +16,10 @@ const metricLabels: Record<KpiKey, string> = {
   roe: 'ROE',
   roa: 'ROA',
   roic: 'ROIC',
+  roicWaccSpread: 'ROIC-WACCスプレッド',
   equityRatio: '自己資本比率',
   operatingCfMargin: '営業CFマージン',
+  cashProfitGap: 'キャッシュ利益ギャップ',
   debtRatio: '有利子負債倍率',
   netCash: 'ネットキャッシュ',
   wacc: 'WACC',
@@ -35,8 +37,10 @@ const insightCandidates: readonly KpiKey[] = [
   'roe',
   'roa',
   'roic',
+  'roicWaccSpread',
   'equityRatio',
   'operatingCfMargin',
+  'cashProfitGap',
   'netCash',
   'wacc',
 ]
@@ -67,10 +71,10 @@ export const buildIndustryInsights = (
 ): IndustryKpi[] => {
   const selected = new Set<KpiKey>()
   const groups: readonly (readonly KpiKey[])[] = [
-    ['roic', 'roe', 'roa'],
+    ['roicWaccSpread', 'roic', 'roe', 'roa'],
     ['operatingMargin', 'netMargin'],
     ['equityRatio', 'netCash', 'wacc'],
-    ['operatingCfMargin'],
+    ['cashProfitGap', 'operatingCfMargin'],
   ]
 
   for (const group of groups) {

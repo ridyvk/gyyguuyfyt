@@ -41,8 +41,10 @@ const kpiLabels: Record<KpiKey, string> = {
   roe: 'ROE',
   roa: 'ROA',
   roic: 'ROIC',
+  roicWaccSpread: 'ROIC-WACCスプレッド',
   equityRatio: '自己資本比率',
   operatingCfMargin: '営業CFマージン',
+  cashProfitGap: 'キャッシュ利益ギャップ',
   debtRatio: '有利子負債倍率',
   netCash: 'ネットキャッシュ',
   wacc: 'WACC',
@@ -86,7 +88,7 @@ const kpiGroups: {
     kicker: 'PROFITABILITY',
     accent: '#007AFF',
     icon: Activity,
-    keys: ['operatingMargin', 'netMargin', 'roe', 'roa', 'roic'],
+    keys: ['operatingMargin', 'netMargin', 'roe', 'roa', 'roic', 'roicWaccSpread'],
   },
   {
     id: 'safety',
@@ -102,7 +104,7 @@ const kpiGroups: {
     kicker: 'CASH QUALITY',
     accent: '#00A7C7',
     icon: WalletCards,
-    keys: ['operatingCfMargin'],
+    keys: ['operatingCfMargin', 'cashProfitGap'],
   },
   {
     id: 'valuation',

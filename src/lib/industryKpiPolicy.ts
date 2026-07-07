@@ -6,8 +6,10 @@ export const allKpiKeys = [
   'roe',
   'roa',
   'roic',
+  'roicWaccSpread',
   'equityRatio',
   'operatingCfMargin',
+  'cashProfitGap',
   'netCash',
   'wacc',
 ] as const satisfies readonly KpiKey[]

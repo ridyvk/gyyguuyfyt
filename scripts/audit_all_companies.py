@@ -29,14 +29,18 @@ KPI_KEYS = (
     "roe",
     "roa",
     "roic",
+    "roicWaccSpread",
     "equityRatio",
     "operatingCfMargin",
+    "cashProfitGap",
     "netCash",
     "wacc",
 )
 SUPPLEMENTAL_METRIC_KEYS = {
     "roa",
     "roic",
+    "roicWaccSpread",
+    "cashProfitGap",
     "wacc",
 }
 MARKET_DERIVED_METRIC_KEYS = set()
@@ -71,7 +75,7 @@ def load_json(path: Path, default: dict | None = None) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def finite_metrics(record: dict) -> dict[str, float]:
+def finite_metrics(record: dict, include_derived: bool = False) -> dict[str, float]:
     result: dict[str, float] = {}
     for key, metric in (record.get("metrics") or {}).items():
         value = metric.get("value") if isinstance(metric, dict) else None
@@ -81,6 +85,20 @@ def finite_metrics(record: dict) -> dict[str, float]:
             and math.isfinite(value)
         ):
             result[str(key)] = float(value)
+    if not include_derived:
+        return result
+    roic = result.get("roic")
+    wacc = result.get("wacc")
+    if "roicWaccSpread" not in result and roic is not None and wacc is not None:
+        result["roicWaccSpread"] = roic - wacc
+    operating_cf_margin = result.get("operatingCfMargin")
+    net_margin = result.get("netMargin")
+    if (
+        "cashProfitGap" not in result
+        and operating_cf_margin is not None
+        and net_margin is not None
+    ):
+        result["cashProfitGap"] = operating_cf_margin - net_margin
     return result
 
 
@@ -210,7 +228,7 @@ def build_metric_coverage(
         code = str(company.get("code") or "")
         industry = str(company.get("industry") or "")
         record = records.get(code)
-        metrics = finite_metrics(record) if isinstance(record, dict) else {}
+        metrics = finite_metrics(record, include_derived=True) if isinstance(record, dict) else {}
         applicable = applicable_kpis(industry)
         for key in KPI_KEYS:
             item = coverage[key]

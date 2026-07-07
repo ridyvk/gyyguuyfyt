@@ -154,16 +154,16 @@ export default function CompanyCard({
           <strong>{formatMetric(company.metrics.roe)}</strong>
         </div>
         <div>
-          <span>ROIC</span>
-          <strong>{formatMetric(company.metrics.roic)}</strong>
+          <span>ROIC-WACC</span>
+          <strong>{formatMetric(company.metrics.roicWaccSpread)}</strong>
         </div>
         <div>
           <span>自己資本比率</span>
           <strong>{formatMetric(company.metrics.equityRatio)}</strong>
         </div>
         <div>
-          <span>営業CF</span>
-          <strong>{formatMetric(company.metrics.operatingCfMargin)}</strong>
+          <span>CF利益ギャップ</span>
+          <strong>{formatMetric(company.metrics.cashProfitGap)}</strong>
         </div>
       </div>
 

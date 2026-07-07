@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-07T02:29:40.341781Z",
+  "generatedAt": "2026-07-07T03:02:07.391998Z",
   "financialSnapshotGeneratedAt": "2026-07-05T04:15:18.350926Z",
   "policy": {
     "stalePeriodDays": 800,
@@ -116,6 +116,17 @@
       },
       "kind": "supplemental-derived"
     },
+    "roicWaccSpread": {
+      "available": 2966,
+      "missing": 593,
+      "notApplicable": 169,
+      "availabilityRatio": 83.34,
+      "missingReasons": {
+        "missing-financial-record": 139,
+        "missing-supplemental-input": 454
+      },
+      "kind": "supplemental-derived"
+    },
     "equityRatio": {
       "available": 3418,
       "missing": 141,
@@ -137,6 +148,17 @@
         "source-fact-unavailable": 329
       },
       "kind": "source-extracted"
+    },
+    "cashProfitGap": {
+      "available": 3091,
+      "missing": 468,
+      "notApplicable": 169,
+      "availabilityRatio": 86.85,
+      "missingReasons": {
+        "missing-financial-record": 139,
+        "missing-supplemental-input": 329
+      },
+      "kind": "supplemental-derived"
     },
     "netCash": {
       "available": 3027,

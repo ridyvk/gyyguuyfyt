@@ -165,6 +165,9 @@ class AllCompanyAuditTests(unittest.TestCase):
             {
                 "operatingMargin": {"value": 8.0},
                 "netMargin": {"value": 5.0},
+                "roic": {"value": 9.0},
+                "wacc": {"value": 5.0},
+                "operatingCfMargin": {"value": 7.0},
             }
         )
         enriched["history"] = [{"year": "2026/03", "revenue": 1000.0}]
@@ -201,6 +204,8 @@ class AllCompanyAuditTests(unittest.TestCase):
         self.assertNotIn("evEbitda", coverage)
         self.assertEqual(coverage["operatingMargin"]["available"], 1)
         self.assertEqual(coverage["netMargin"]["available"], 1)
+        self.assertEqual(coverage["roicWaccSpread"]["available"], 1)
+        self.assertEqual(coverage["cashProfitGap"]["available"], 1)
 
     def test_previous_report_establishes_non_regression_baseline(self) -> None:
         summary = {

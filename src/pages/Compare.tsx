@@ -39,8 +39,10 @@ const kpiMetrics: { key: KpiKey; label: string; higher: boolean }[] = [
   { key: 'roe', label: 'ROE', higher: true },
   { key: 'roa', label: 'ROA', higher: true },
   { key: 'roic', label: 'ROIC', higher: true },
+  { key: 'roicWaccSpread', label: 'ROIC-WACC', higher: true },
   { key: 'equityRatio', label: '自己資本比率', higher: true },
   { key: 'operatingCfMargin', label: '営業CFマージン', higher: true },
+  { key: 'cashProfitGap', label: 'CF利益ギャップ', higher: true },
   { key: 'netCash', label: 'ネットキャッシュ', higher: true },
   { key: 'wacc', label: 'WACC', higher: false },
 ]

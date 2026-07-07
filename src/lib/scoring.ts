@@ -9,8 +9,10 @@ export interface RawMetrics {
   roe: number
   roa: number
   roic: number
+  roicWaccSpread: number
   equityRatio: number
   operatingCfMargin: number
+  cashProfitGap: number
   debtRatio: number
   netCash: number
   wacc: number
@@ -67,7 +69,10 @@ export const calculateScores = (
     profitabilityValues.push([scale(metrics.roa, 0, 9), 0.16])
   }
   if (has('roic')) {
-    profitabilityValues.push([scale(metrics.roic, 2, 18), 0.24])
+    profitabilityValues.push([scale(metrics.roic, 2, 18), 0.2])
+  }
+  if (has('roicWaccSpread')) {
+    profitabilityValues.push([scale(metrics.roicWaccSpread, -5, 10), 0.12])
   }
 
   const safetyValues: WeightedValue[] = []
@@ -83,10 +88,13 @@ export const calculateScores = (
 
   const cashValues: WeightedValue[] = []
   if (has('operatingCfMargin')) {
-    cashValues.push([scale(metrics.operatingCfMargin, -2, 22), 0.7])
+    cashValues.push([scale(metrics.operatingCfMargin, -2, 22), 0.55])
+  }
+  if (has('cashProfitGap')) {
+    cashValues.push([scale(metrics.cashProfitGap, -8, 8), 0.25])
   }
   if (has('netCash')) {
-    cashValues.push([scale(metrics.netCash, -600, 800), 0.3])
+    cashValues.push([scale(metrics.netCash, -600, 800), 0.2])
   }
 
   const valuationValues: WeightedValue[] = []
