@@ -20,7 +20,11 @@ const initialFilter: CompanyFilter = {
   sort: 'score-desc',
 }
 
-export default function Universe() {
+interface UniverseProps {
+  searchMode?: boolean
+}
+
+export default function Universe({ searchMode = false }: UniverseProps) {
   const [searchParams] = useSearchParams()
   const {
     companies,
@@ -95,6 +99,7 @@ export default function Universe() {
             <SearchBox
               value={filter.query}
               onChange={(query) => setFilter({ ...filter, query })}
+              autoFocus={searchMode}
             />
             <div className="results-toolbar__note">
               <Sparkles size={15} />

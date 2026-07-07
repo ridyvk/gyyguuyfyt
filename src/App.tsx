@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Menu,
   ScanSearch,
+  Search,
   X,
 } from 'lucide-react'
 import { lazy, Suspense, useLayoutEffect, useState } from 'react'
@@ -24,6 +25,7 @@ const Compare = lazy(() => import('./pages/Compare'))
 
 const navigation = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/search', label: 'Search', icon: Search },
   { to: '/universe', label: 'Universe', icon: Building2 },
   { to: '/watchlist', label: 'Watchlist', icon: Bookmark },
   { to: '/compare', label: 'Compare', icon: GitCompareArrows },
@@ -138,6 +140,7 @@ export default function App() {
               >
                 <Routes location={location}>
                   <Route path="/" element={<Dashboard />} />
+                  <Route path="/search" element={<Universe searchMode />} />
                   <Route path="/universe" element={<Universe />} />
                   <Route path="/watchlist" element={<Watchlist />} />
                   <Route path="/company/:companyId" element={<CompanyDetail />} />

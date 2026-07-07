@@ -3,13 +3,15 @@ import { Search, X } from 'lucide-react'
 interface SearchBoxProps {
   value: string
   onChange: (value: string) => void
+  autoFocus?: boolean
 }
 
-export default function SearchBox({ value, onChange }: SearchBoxProps) {
+export default function SearchBox({ value, onChange, autoFocus = false }: SearchBoxProps) {
   return (
     <label className="search-box">
       <Search size={18} />
       <input
+        autoFocus={autoFocus}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder="企業名・証券コードで検索"
