@@ -29,6 +29,10 @@ COMPANY_MASTER = (
 YAHOO_CHART = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
 JST = timezone(timedelta(hours=9))
 MAX_FALLBACK_QUOTE_AGE_DAYS = 10
+INTRADAY_RANGE = "5d"
+INTRADAY_INTERVAL = "15m"
+DAILY_RANGE = "7d"
+DAILY_INTERVAL = "1d"
 
 
 def number(value: object) -> float | None:
@@ -58,6 +62,90 @@ def get_json(url: str, retries: int = 4) -> dict:
                 raise
             time.sleep(0.7 * (attempt + 1))
     raise RuntimeError("request failed")
+
+
+def chart_url(symbol: str, range_: str, interval: str) -> str:
+    query = urllib.parse.urlencode({"range": range_, "interval": interval})
+    return f"{YAHOO_CHART.format(symbol=urllib.parse.quote(symbol))}?{query}"
+
+
+def chart_result(symbol: str, range_: str, interval: str) -> dict:
+    payload = get_json(chart_url(symbol, range_, interval))
+    result = (payload.get("chart", {}).get("result") or [None])[0]
+    if not result:
+        raise RuntimeError(payload.get("chart", {}).get("error") or "no result")
+    return result
+
+
+def valid_chart_points(result: dict) -> list[tuple[int, float, float | None]]:
+    quote = (result.get("indicators", {}).get("quote") or [{}])[0]
+    timestamps = result.get("timestamp") or []
+    closes = quote.get("close") or []
+    volumes = quote.get("volume") or []
+    return [
+        (int(timestamp), float(close), number(volume))
+        for timestamp, close, volume in zip(timestamps, closes, volumes)
+        if number(close) is not None and number(close) > 0
+    ]
+
+
+def quote_payload_from_chart_result(result: dict, interval: str) -> dict:
+    meta = result.get("meta", {})
+    points = valid_chart_points(result)
+    meta_price = number(meta.get("regularMarketPrice"))
+    meta_time = int(meta.get("regularMarketTime") or 0)
+    meta_volume = number(meta.get("regularMarketVolume"))
+
+    if points:
+        latest_time, close, volume = points[-1]
+        previous_close = number(meta.get("chartPreviousClose"))
+        if previous_close is None and interval == DAILY_INTERVAL and len(points) > 1:
+            previous_close = points[-2][1]
+        price_type = (
+            f"intraday-{interval}"
+            if interval != DAILY_INTERVAL
+            else "daily-close"
+        )
+        use_meta_price = (
+            meta_price is not None
+            and meta_price > 0
+            and (
+                meta_time > latest_time
+                or (interval == DAILY_INTERVAL and meta_time >= latest_time)
+            )
+        )
+        if use_meta_price:
+            latest_time, close, volume = (
+                meta_time,
+                meta_price,
+                meta_volume or volume,
+            )
+            price_type = "regular-market-price"
+    else:
+        if meta_price is None or meta_price <= 0:
+            raise RuntimeError("close price not found")
+        latest_time, close, volume = meta_time or int(time.time()), meta_price, meta_volume
+        previous_close = number(meta.get("chartPreviousClose"))
+        price_type = "regular-market-price"
+
+    timestamp_jst = datetime.fromtimestamp(int(latest_time), JST)
+    quote_payload = {
+        "date": timestamp_jst.date().isoformat(),
+        "timestamp": timestamp_jst.isoformat(),
+        "close": round(float(close), 4),
+        "volume": volume,
+        "source": "Yahoo Finance",
+        "priceType": price_type,
+        "quoteInterval": interval,
+        "isRealtime": False,
+    }
+    if previous_close is not None and previous_close > 0:
+        quote_payload["previousClose"] = round(float(previous_close), 4)
+        quote_payload["changePercent"] = round(
+            (float(close) / float(previous_close) - 1) * 100,
+            4,
+        )
+    return quote_payload
 
 
 def load_json(path: Path) -> dict:
@@ -102,64 +190,17 @@ def valuation_fundamentals() -> dict[str, dict]:
 
 def fetch_quote(code: str) -> tuple[str, dict]:
     symbol = f"{code}.T"
-    url = YAHOO_CHART.format(symbol=urllib.parse.quote(symbol)) + (
-        "?range=7d&interval=1d"
-    )
-    payload = get_json(url)
-    result = (payload.get("chart", {}).get("result") or [None])[0]
-    if not result:
-        raise RuntimeError(payload.get("chart", {}).get("error") or "no result")
-    meta = result.get("meta", {})
-    quote = (result.get("indicators", {}).get("quote") or [{}])[0]
-    timestamps = result.get("timestamp") or []
-    closes = quote.get("close") or []
-    volumes = quote.get("volume") or []
-    points = [
-        (timestamp, number(close), number(volume))
-        for timestamp, close, volume in zip(timestamps, closes, volumes)
-        if number(close) is not None and number(close) > 0
-    ]
-
-    meta_price = number(meta.get("regularMarketPrice"))
-    meta_time = int(meta.get("regularMarketTime") or 0)
-    meta_volume = number(meta.get("regularMarketVolume"))
-
-    if points:
-        latest_time, close, volume = points[-1]
-        previous_close = points[-2][1] if len(points) > 1 else number(
-            meta.get("chartPreviousClose")
-        )
-        price_type = "daily-close"
-        # When Yahoo exposes a newer regularMarketPrice, use it as the most
-        # recent public quote and keep the daily bar as fallback.
-        if meta_price is not None and meta_price > 0 and meta_time >= int(latest_time):
-            latest_time, close, volume = meta_time, meta_price, meta_volume or volume
-            previous_close = number(meta.get("chartPreviousClose")) or previous_close
-            price_type = "regular-market-price"
-    else:
-        if meta_price is None or meta_price <= 0:
-            raise RuntimeError("close price not found")
-        latest_time, close, volume = meta_time or int(time.time()), meta_price, meta_volume
-        previous_close = number(meta.get("chartPreviousClose"))
-        price_type = "regular-market-price"
-
-    timestamp_jst = datetime.fromtimestamp(int(latest_time), JST)
-    quote_payload = {
-        "date": timestamp_jst.date().isoformat(),
-        "timestamp": timestamp_jst.isoformat(),
-        "close": round(float(close), 4),
-        "volume": volume,
-        "source": "Yahoo Finance",
-        "priceType": price_type,
-        "isRealtime": False,
-    }
-    if previous_close is not None and previous_close > 0:
-        quote_payload["previousClose"] = round(float(previous_close), 4)
-        quote_payload["changePercent"] = round(
-            (float(close) / float(previous_close) - 1) * 100,
-            4,
-        )
-    return code, quote_payload
+    try:
+        result = chart_result(symbol, INTRADAY_RANGE, INTRADAY_INTERVAL)
+        return code, quote_payload_from_chart_result(result, INTRADAY_INTERVAL)
+    except Exception as intraday_error:
+        try:
+            result = chart_result(symbol, DAILY_RANGE, DAILY_INTERVAL)
+            return code, quote_payload_from_chart_result(result, DAILY_INTERVAL)
+        except Exception as daily_error:
+            raise RuntimeError(
+                f"intraday failed: {intraday_error}; daily failed: {daily_error}"
+            ) from daily_error
 
 
 def fetch_quotes(codes: list[str], workers: int) -> tuple[dict[str, dict], list[str]]:
