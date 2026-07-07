@@ -37,6 +37,20 @@ const themePalette = [
   { from: '#F4CCA2', to: '#E4A263' },
 ]
 
+const jstDateFormatter = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Asia/Tokyo',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+})
+
+const marketDateLabel = (latestTradingDate: string | null | undefined) => {
+  if (!latestTradingDate) return '更新日未取得'
+  return latestTradingDate < jstDateFormatter.format(new Date())
+    ? `前営業日 ${latestTradingDate}`
+    : latestTradingDate
+}
+
 export default function Dashboard() {
   const {
     companies,
@@ -160,7 +174,7 @@ export default function Dashboard() {
           </div>
           <span>
             {marketSnapshot?.status === 'ready' || marketSnapshot?.status === 'partial'
-              ? `${marketSnapshot.source} / ${marketSnapshot.latestTradingDate ?? '更新日未取得'}`
+              ? `${marketSnapshot.source} / ${marketDateLabel(marketSnapshot.latestTradingDate)}`
               : '自動更新待ち'}
           </span>
         </div>

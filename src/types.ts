@@ -331,7 +331,8 @@ export interface MarketQuote {
   changePercent?: number
   volume?: number
   source: 'Yahoo Finance' | 'J-Quants'
-  priceType?: 'daily-close' | 'regular-market-price'
+  priceType?: 'daily-close' | 'regular-market-price' | 'intraday-15m'
+  quoteInterval?: '15m' | '1d'
   isRealtime?: boolean
   stale?: boolean
 }
@@ -345,6 +346,7 @@ export interface MarketSnapshot {
   status: 'ready' | 'partial' | 'setup-required' | 'error'
   message: string
   latestTradingDate: string | null
+  latestQuoteTimestamp?: string | null
   quotes: Record<string, MarketQuote>
   fundamentals: Record<string, MarketFundamentals>
   stats: {

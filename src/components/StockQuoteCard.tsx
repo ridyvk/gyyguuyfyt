@@ -18,6 +18,31 @@ interface StockQuoteCardProps {
   variant?: 'card' | 'hero' | 'compare' | 'mini'
 }
 
+const jstDateFormatter = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Asia/Tokyo',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+})
+
+const jstTimeFormatter = new Intl.DateTimeFormat('ja-JP', {
+  timeZone: 'Asia/Tokyo',
+  month: 'numeric',
+  day: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+})
+
+const todayJst = () => jstDateFormatter.format(new Date())
+
+const quoteDateLabel = (quote: MarketQuote) => {
+  const previousSession = quote.date < todayJst()
+  if (quote.quoteInterval === '15m' && quote.timestamp && !previousSession) {
+    return `15分 ${jstTimeFormatter.format(new Date(quote.timestamp))}`
+  }
+  return `${previousSession ? '前営業日 ' : ''}${quote.date}`
+}
+
 const trendPath = (quote: MarketQuote) => {
   const previous = quote.previousClose ?? quote.close
   const values = [previous, quote.close]
@@ -121,7 +146,7 @@ export default function StockQuoteCard({
       </svg>
 
       <div className="stock-quote-card__meta">
-        <span>{quote.date}{quote.stale ? '（更新遅延）' : ''}</span>
+        <span>{quoteDateLabel(quote)}{quote.stale ? '（更新遅延）' : ''}</span>
         <span>出来高 {formatVolume(quote.volume)}</span>
       </div>
     </div>
