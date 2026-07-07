@@ -75,6 +75,12 @@ def load_json(path: Path, default: dict | None = None) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def usable_display_metric(key: str, value: float) -> bool:
+    if key in {"roicWaccSpread", "cashProfitGap"} and (value < -120 or value > 120):
+        return False
+    return True
+
+
 def finite_metrics(record: dict, include_derived: bool = False) -> dict[str, float]:
     result: dict[str, float] = {}
     for key, metric in (record.get("metrics") or {}).items():
@@ -90,7 +96,9 @@ def finite_metrics(record: dict, include_derived: bool = False) -> dict[str, flo
     roic = result.get("roic")
     wacc = result.get("wacc")
     if "roicWaccSpread" not in result and roic is not None and wacc is not None:
-        result["roicWaccSpread"] = roic - wacc
+        value = roic - wacc
+        if usable_display_metric("roicWaccSpread", value):
+            result["roicWaccSpread"] = value
     operating_cf_margin = result.get("operatingCfMargin")
     net_margin = result.get("netMargin")
     if (
@@ -98,7 +106,9 @@ def finite_metrics(record: dict, include_derived: bool = False) -> dict[str, flo
         and operating_cf_margin is not None
         and net_margin is not None
     ):
-        result["cashProfitGap"] = operating_cf_margin - net_margin
+        value = operating_cf_margin - net_margin
+        if usable_display_metric("cashProfitGap", value):
+            result["cashProfitGap"] = value
     return result
 
 

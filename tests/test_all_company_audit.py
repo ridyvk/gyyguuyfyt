@@ -207,6 +207,35 @@ class AllCompanyAuditTests(unittest.TestCase):
         self.assertEqual(coverage["roicWaccSpread"]["available"], 1)
         self.assertEqual(coverage["cashProfitGap"]["available"], 1)
 
+    def test_metric_coverage_excludes_derived_values_hidden_by_app(self) -> None:
+        enriched = record("1000")
+        enriched["metrics"].update(
+            {
+                "netMargin": {"value": 5.0},
+                "operatingCfMargin": {"value": 200.0},
+            }
+        )
+
+        report = audit_all_companies.build_report(
+            {
+                "companyCount": 1,
+                "companies": [company("1000")],
+            },
+            {
+                "generatedAt": "2026-06-21T00:00:00Z",
+                "records": {"1000": enriched},
+            },
+            today=date(2026, 6, 21),
+        )
+
+        coverage = report["metricCoverage"]
+        self.assertEqual(coverage["operatingCfMargin"]["available"], 1)
+        self.assertEqual(coverage["cashProfitGap"]["available"], 0)
+        self.assertEqual(
+            coverage["cashProfitGap"]["missingReasons"],
+            {"missing-supplemental-input": 1},
+        )
+
     def test_previous_report_establishes_non_regression_baseline(self) -> None:
         summary = {
             "missing": 11,
