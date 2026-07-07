@@ -2,8 +2,8 @@ name: Auto refresh data and deploy
 
 on:
   schedule:
-    # Weekdays 09:00-16:30 JST. GitHub may delay scheduled runs.
-    - cron: '*/30 0-7 * * 1-5'
+    # Weekdays 09:00-16:45 JST. GitHub may delay scheduled runs.
+    - cron: '*/15 0-7 * * 1-5'
     # Daily 03:40 JST for financial filings and quality audit.
     - cron: '40 18 * * *'
   workflow_dispatch:
@@ -45,7 +45,7 @@ jobs:
           mode="$REQUESTED_MODE"
           if [ "${{ github.event_name }}" = "schedule" ]; then
             case "${{ github.event.schedule }}" in
-              "*/30 0-7 * * 1-5") mode="market" ;;
+              "*/15 0-7 * * 1-5") mode="market" ;;
               "40 18 * * *") mode="financial" ;;
               *) mode="market" ;;
             esac
