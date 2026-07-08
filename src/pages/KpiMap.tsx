@@ -704,30 +704,30 @@ export default function KpiMap() {
             <div className="kpi-map-field__head">
               <div>
                 <LineChart size={17} />
-                <span>KPI Signal Chart</span>
+                <span>KPI分布チャート</span>
               </div>
-              <p>{marketChart.summary.total.toLocaleString('ja-JP')} companies / {focusConfig.xLabel} - {focusConfig.yLabel}</p>
+              <p>{marketChart.summary.total.toLocaleString('ja-JP')}社 / {focusConfig.xLabel} - {focusConfig.yLabel}</p>
             </div>
             <div className="kpi-map-chart-summary">
               <div>
-                <span>Average</span>
+                <span>平均スコア</span>
                 <strong>{Math.round(marketChart.summary.average)}</strong>
               </div>
               <div>
-                <span>Strong</span>
+                <span>強い企業</span>
                 <strong>{Math.round(marketChart.summary.strongShare)}%</strong>
               </div>
               <div>
-                <span>Watch</span>
+                <span>注意ゾーン</span>
                 <strong>{Math.round(marketChart.summary.watchShare)}%</strong>
               </div>
               <div>
-                <span>Dense Zone</span>
+                <span>最多ゾーン</span>
                 <strong>{marketChart.summary.densestCount.toLocaleString('ja-JP')}</strong>
               </div>
             </div>
             <div className="kpi-map-field__plot">
-              <div className="kpi-map-density-grid" aria-label="KPI signal density by axis">
+              <div className="kpi-map-density-grid" aria-label="KPI分布チャート">
                 {marketChart.cells.map((cell) => (
                   <span
                     key={cell.index}
@@ -738,22 +738,22 @@ export default function KpiMap() {
                         '--cell-delay': `${Math.min(cell.index * 10, 260)}ms`,
                       } as CSSProperties
                     }
-                    aria-label={`${cell.count} companies, average ${Math.round(cell.average)} signal`}
+                    aria-label={`${cell.count}社、平均${Math.round(cell.average)}点`}
                   >
                     <strong>{cell.count ? cell.count.toLocaleString('ja-JP') : '-'}</strong>
-                    <em>{cell.count ? `${Math.round(cell.average)} avg` : 'empty'}</em>
+                    <em>{cell.count ? `平均 ${Math.round(cell.average)}` : 'なし'}</em>
                   </span>
                 ))}
               </div>
               <span className="kpi-map-axis kpi-map-axis--x">{focusConfig.xLabel}</span>
               <span className="kpi-map-axis kpi-map-axis--y">{focusConfig.yLabel}</span>
               <div className="kpi-map-chart-legend">
-                <span><i className="is-strong" />Strong</span>
-                <span><i className="is-steady" />Steady</span>
-                <span><i className="is-watch" />Watch</span>
+                <span><i className="is-strong" />強い</span>
+                <span><i className="is-steady" />安定</span>
+                <span><i className="is-watch" />注意</span>
               </div>
             </div>
-            <div className="kpi-map-chart-bars" aria-label="Signal score distribution">
+            <div className="kpi-map-chart-bars" aria-label="スコア帯別の企業分布">
               {marketChart.bands.map((band) => (
                 <div className={`kpi-map-chart-bar is-${band.tone}`} key={band.key}>
                   <div>
