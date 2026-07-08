@@ -7,7 +7,7 @@ import {
   GitCompareArrows,
   LineChart,
   ListFilter,
-  Map,
+  Map as MapIcon,
   Search,
   Sparkles,
   Target,
@@ -68,6 +68,8 @@ interface Lane {
   items: RankedCompany[]
 }
 
+type HeatTone = 'strong' | 'steady' | 'watch' | 'empty'
+
 const initialFilter: KpiMapFilter = {
   query: '',
   market: 'all',
@@ -114,13 +116,6 @@ const hashString = (value: string) =>
 
 const jitter = (id: string, salt: string, spread: number) =>
   ((Math.abs(hashString(`${id}:${salt}`)) % 1000) / 1000 - 0.5) * spread
-
-const spreadAxis = (value: number, id: string, salt: string, spread: number) => {
-  const offset = jitter(id, salt, spread)
-  if (value >= 88) return clamp(value - Math.abs(offset), 5, 95)
-  if (value <= 12) return clamp(value + Math.abs(offset), 5, 95)
-  return clamp(value + offset, 5, 95)
-}
 
 const finiteMetric = (company: Company, key: KpiKey) => {
   const metric = company.metrics[key]
@@ -448,33 +443,149 @@ export default function KpiMap() {
     ]
   }, [filteredCompanies])
 
-  const fieldPoints = useMemo(
-    () =>
-      ranked
-        .filter((item) => hasFinancialData(item.company))
-        .slice(0, 42)
-        .map((item, index) => {
-          const axis = focusConfig.axis(item.company)
-          const size = 10 + clamp(item.score, 0, 100) / 6.8
-          const color =
-            item.tone === 'strong'
-              ? '#14b86a'
-              : item.tone === 'steady'
-                ? '#1677ff'
-                : '#e17b2f'
-          return {
-            ...item,
-            x: spreadAxis(axis.x, item.company.id, 'x', 52),
-            y: spreadAxis(axis.y, item.company.id, 'y', 44),
-            size,
-            color,
-            delay: `${Math.min(index * 18, 320)}ms`,
-            compactHidden: index >= 12,
-            rank: index + 1,
-          }
-        }),
-    [focusConfig, ranked],
-  )
+  const fieldPoints = useMemo(() => {
+    const candidates = ranked
+      .filter((item) => hasFinancialData(item.company))
+      .slice(0, 56)
+      .map((item, index) => ({
+        item,
+        index,
+        axis: focusConfig.axis(item.company),
+      }))
+
+    const stableAxisSort = (axisKey: 'x' | 'y') => (a: (typeof candidates)[number], b: (typeof candidates)[number]) => {
+      const delta = a.axis[axisKey] - b.axis[axisKey]
+      if (Math.abs(delta) > 0.001) return delta
+      return (
+        Math.abs(hashString(`${a.item.company.id}:${axisKey}`)) -
+        Math.abs(hashString(`${b.item.company.id}:${axisKey}`))
+      )
+    }
+
+    const columnCount = 7
+    const rowCount = Math.max(4, Math.ceil(candidates.length / columnCount))
+    const desktopSlots = new globalThis.Map<
+      string,
+      { column: number; row: number; x: number; y: number }
+    >()
+
+    const byX = [...candidates].sort(stableAxisSort('x'))
+    const columnSize = Math.max(1, Math.ceil(byX.length / columnCount))
+    const columns = Array.from({ length: columnCount }, () => [] as typeof candidates)
+
+    byX.forEach((point, index) => {
+      const column = clamp(Math.floor(index / columnSize), 0, columnCount - 1)
+      columns[column].push(point)
+    })
+
+    columns.forEach((columnPoints, column) => {
+      const byY = [...columnPoints].sort(stableAxisSort('y'))
+      byY.forEach((point, rowIndex) => {
+        const row =
+          byY.length <= 1 ? Math.floor(rowCount / 2) : Math.round((rowIndex / (byY.length - 1)) * (rowCount - 1))
+        desktopSlots.set(point.item.company.id, {
+          column,
+          row,
+          x: ((column + 0.5) / columnCount) * 100,
+          y: ((row + 0.5) / rowCount) * 100,
+        })
+      })
+    })
+
+    const mobileSlots = new globalThis.Map<string, { x: number; y: number }>()
+    const mobileColumns = 4
+    const mobileRows = 3
+    candidates.slice(0, mobileColumns * mobileRows).forEach((point, index) => {
+      const column = index % mobileColumns
+      const row = Math.floor(index / mobileColumns)
+      mobileSlots.set(point.item.company.id, {
+        x: ((column + 0.5) / mobileColumns) * 100,
+        y: 84 - row * (56 / Math.max(1, mobileRows - 1)),
+      })
+    })
+
+    const axisRanks = (axisKey: 'x' | 'y') => {
+      const sorted = [...candidates].sort((a, b) => {
+        const delta = a.axis[axisKey] - b.axis[axisKey]
+        if (Math.abs(delta) > 0.001) return delta
+        return (
+          Math.abs(hashString(`${a.item.company.id}:${axisKey}`)) -
+          Math.abs(hashString(`${b.item.company.id}:${axisKey}`))
+        )
+      })
+      return new Map(
+        sorted.map((point, index) => [
+          point.item.company.id,
+          sorted.length <= 1 ? 50 : 4 + (index / (sorted.length - 1)) * 92,
+        ]),
+      )
+    }
+
+    const xRanks = axisRanks('x')
+    const yRanks = axisRanks('y')
+
+    return candidates.map(({ item, index }) => {
+      const slot = desktopSlots.get(item.company.id)
+      const mobileSlot = mobileSlots.get(item.company.id) ?? slot
+      const size = 10 + clamp(item.score, 0, 100) / 6.8
+      const color =
+        item.tone === 'strong'
+          ? '#14b86a'
+          : item.tone === 'steady'
+            ? '#1677ff'
+            : '#e17b2f'
+      return {
+        ...item,
+        x: clamp((slot?.x ?? xRanks.get(item.company.id) ?? 50) + jitter(item.company.id, 'xFine', 2.4), 4, 96),
+        y: clamp((slot?.y ?? yRanks.get(item.company.id) ?? 50) + jitter(item.company.id, 'yFine', 2.4), 4, 96),
+        mobileX: clamp((mobileSlot?.x ?? 50) + jitter(item.company.id, 'mobileX', 1.6), 7, 93),
+        mobileY: clamp((mobileSlot?.y ?? 50) + jitter(item.company.id, 'mobileY', 1.6), 18, 86),
+        size,
+        color,
+        delay: `${Math.min(index * 14, 320)}ms`,
+        compactHidden: index >= 12,
+        rank: index + 1,
+      }
+    })
+  }, [focusConfig, ranked])
+
+  const heatCells = useMemo(() => {
+    const gridSize = 7
+    const cells = Array.from({ length: gridSize * gridSize }, (_, index) => ({
+      index,
+      count: 0,
+      score: 0,
+      strong: 0,
+      steady: 0,
+      watch: 0,
+    }))
+
+    fieldPoints.forEach((point) => {
+      const column = clamp(Math.floor((point.x / 100) * gridSize), 0, gridSize - 1)
+      const row = clamp(Math.floor(((100 - point.y) / 100) * gridSize), 0, gridSize - 1)
+      const cell = cells[row * gridSize + column]
+      cell.count += 1
+      cell.score += point.score
+      cell[point.tone] += 1
+    })
+
+    const maxScore = Math.max(...cells.map((cell) => cell.score), 1)
+    return cells.map((cell) => {
+      const tone: HeatTone =
+        cell.count === 0
+          ? 'empty'
+          : cell.strong >= cell.steady && cell.strong >= cell.watch
+            ? 'strong'
+            : cell.steady >= cell.watch
+              ? 'steady'
+              : 'watch'
+      return {
+        ...cell,
+        tone,
+        intensity: clamp(0.08 + (cell.score / maxScore) * 0.76, 0.08, 0.84),
+      }
+    })
+  }, [fieldPoints])
 
   const visibleRanked = ranked.slice(0, visibleCount)
 
@@ -645,12 +756,25 @@ export default function KpiMap() {
           <section className="kpi-map-field" aria-label="Static KPI matrix">
             <div className="kpi-map-field__head">
               <div>
-                <Map size={17} />
-                <span>KPI Field</span>
+                <MapIcon size={17} />
+                <span>KPI Heat Field</span>
               </div>
               <p>{focusConfig.xLabel} × {focusConfig.yLabel}</p>
             </div>
             <div className="kpi-map-field__plot">
+              <div className="kpi-map-heat-grid" aria-hidden="true">
+                {heatCells.map((cell) => (
+                  <span
+                    key={cell.index}
+                    className={`kpi-map-heat-cell is-${cell.tone}`}
+                    style={
+                      {
+                        '--heat-strength': cell.intensity.toFixed(3),
+                      } as CSSProperties
+                    }
+                  />
+                ))}
+              </div>
               <span className="kpi-map-axis kpi-map-axis--x">{focusConfig.xLabel}</span>
               <span className="kpi-map-axis kpi-map-axis--y">{focusConfig.yLabel}</span>
               {fieldPoints.map((item) => (
@@ -667,6 +791,8 @@ export default function KpiMap() {
                     {
                       '--point-x': `${item.x}%`,
                       '--point-y': `${100 - item.y}%`,
+                      '--mobile-point-x': `${item.mobileX}%`,
+                      '--mobile-point-y': `${100 - item.mobileY}%`,
                       '--point-size': `${item.size}px`,
                       '--point-color': item.color,
                       '--point-delay': item.delay,
