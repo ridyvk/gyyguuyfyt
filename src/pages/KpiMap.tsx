@@ -106,6 +106,22 @@ const visibleMetricKeys: KpiKey[] = [
 const clamp = (value: number, min = 0, max = 100) =>
   Math.max(min, Math.min(max, value))
 
+const hashString = (value: string) =>
+  Array.from(value).reduce((hash, char) => {
+    const next = (hash << 5) - hash + char.charCodeAt(0)
+    return next | 0
+  }, 0)
+
+const jitter = (id: string, salt: string, spread: number) =>
+  ((Math.abs(hashString(`${id}:${salt}`)) % 1000) / 1000 - 0.5) * spread
+
+const spreadAxis = (value: number, id: string, salt: string, spread: number) => {
+  const offset = jitter(id, salt, spread)
+  if (value >= 88) return clamp(value - Math.abs(offset), 5, 95)
+  if (value <= 12) return clamp(value + Math.abs(offset), 5, 95)
+  return clamp(value + offset, 5, 95)
+}
+
 const finiteMetric = (company: Company, key: KpiKey) => {
   const metric = company.metrics[key]
   if (!metric || metric.available === false || !Number.isFinite(metric.value)) {
@@ -436,10 +452,10 @@ export default function KpiMap() {
     () =>
       ranked
         .filter((item) => hasFinancialData(item.company))
-        .slice(0, 24)
+        .slice(0, 42)
         .map((item, index) => {
           const axis = focusConfig.axis(item.company)
-          const size = 9 + clamp(item.score, 0, 100) / 8
+          const size = 10 + clamp(item.score, 0, 100) / 6.8
           const color =
             item.tone === 'strong'
               ? '#14b86a'
@@ -448,11 +464,13 @@ export default function KpiMap() {
                 : '#e17b2f'
           return {
             ...item,
-            x: clamp(axis.x, 5, 95),
-            y: clamp(axis.y, 5, 95),
+            x: spreadAxis(axis.x, item.company.id, 'x', 52),
+            y: spreadAxis(axis.y, item.company.id, 'y', 44),
             size,
             color,
             delay: `${Math.min(index * 18, 320)}ms`,
+            compactHidden: index >= 12,
+            rank: index + 1,
           }
         }),
     [focusConfig, ranked],
@@ -624,6 +642,73 @@ export default function KpiMap() {
             </div>
           </div>
 
+          <section className="kpi-map-field" aria-label="Static KPI matrix">
+            <div className="kpi-map-field__head">
+              <div>
+                <Map size={17} />
+                <span>KPI Field</span>
+              </div>
+              <p>{focusConfig.xLabel} × {focusConfig.yLabel}</p>
+            </div>
+            <div className="kpi-map-field__plot">
+              <span className="kpi-map-axis kpi-map-axis--x">{focusConfig.xLabel}</span>
+              <span className="kpi-map-axis kpi-map-axis--y">{focusConfig.yLabel}</span>
+              {fieldPoints.map((item) => (
+                <button
+                  type="button"
+                  key={item.company.id}
+                  className={[
+                    selectedCompany?.id === item.company.id
+                      ? 'kpi-map-point is-selected'
+                      : `kpi-map-point is-${item.tone}`,
+                    item.compactHidden ? 'is-mobile-hidden' : '',
+                  ].join(' ')}
+                  style={
+                    {
+                      '--point-x': `${item.x}%`,
+                      '--point-y': `${100 - item.y}%`,
+                      '--point-size': `${item.size}px`,
+                      '--point-color': item.color,
+                      '--point-delay': item.delay,
+                    } as CSSProperties
+                  }
+                  onClick={() => setSelectedId(item.company.id)}
+                  aria-label={`${item.company.name} ${Math.round(item.score)}点`}
+                >
+                  <span>{item.company.code}</span>
+                </button>
+              ))}
+              <div className="kpi-map-map-inspector">
+                <span>Selected</span>
+                <strong>{selectedCompany?.name ?? 'Signal standby'}</strong>
+                <em>
+                  {selectedRank
+                    ? `${Math.round(selectedRank.score)} signal / ${dataLabel(selectedRank.company)}`
+                    : 'No signal'}
+                </em>
+              </div>
+              <div className="kpi-map-map-legend">
+                <span><i className="is-strong" />Strong</span>
+                <span><i className="is-steady" />Steady</span>
+                <span><i className="is-watch" />Watch</span>
+              </div>
+            </div>
+            <div className="kpi-map-mobile-radar">
+              {fieldPoints.slice(0, 5).map((item) => (
+                <button
+                  type="button"
+                  key={`mobile-${item.company.id}`}
+                  className={selectedCompany?.id === item.company.id ? 'is-selected' : ''}
+                  onClick={() => setSelectedId(item.company.id)}
+                >
+                  <span>{item.rank}</span>
+                  <strong>{item.company.name}</strong>
+                  <em>{Math.round(item.score)}</em>
+                </button>
+              ))}
+            </div>
+          </section>
+
           <section className="kpi-map-lanes" aria-label="Signal lanes">
             {lanes.map((lane) => {
               const Icon = lane.icon
@@ -658,46 +743,6 @@ export default function KpiMap() {
                 </article>
               )
             })}
-          </section>
-
-          <section className="kpi-map-field" aria-label="Static KPI matrix">
-            <div className="kpi-map-field__head">
-              <div>
-                <Map size={17} />
-                <span>Light Matrix</span>
-              </div>
-              <p>
-                上位候補の位置関係
-              </p>
-            </div>
-            <div className="kpi-map-field__plot">
-              <span className="kpi-map-axis kpi-map-axis--x">{focusConfig.xLabel}</span>
-              <span className="kpi-map-axis kpi-map-axis--y">{focusConfig.yLabel}</span>
-              {fieldPoints.map((item) => (
-                <button
-                  type="button"
-                  key={item.company.id}
-                  className={
-                    selectedCompany?.id === item.company.id
-                      ? 'kpi-map-point is-selected'
-                      : `kpi-map-point is-${item.tone}`
-                  }
-                  style={
-                    {
-                      '--point-x': `${item.x}%`,
-                      '--point-y': `${100 - item.y}%`,
-                      '--point-size': `${item.size}px`,
-                      '--point-color': item.color,
-                      '--point-delay': item.delay,
-                    } as CSSProperties
-                  }
-                  onClick={() => setSelectedId(item.company.id)}
-                  aria-label={`${item.company.name} ${Math.round(item.score)}点`}
-                >
-                  <span>{item.company.code}</span>
-                </button>
-              ))}
-            </div>
           </section>
 
           <section className="kpi-map-shortlist" aria-label="Smart shortlist">
