@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-08T09:04:02.644400+00:00",
+  "generatedAt": "2026-07-08T09:33:21.466836+00:00",
   "source": "Yahoo Finance",
   "status": "ready",
   "message": "Yahoo Financeの公開株価データとEDINET・TDnetのEPS/BPSからPER・PBRを自動計算しています。株価はリアルタイム保証ではありません。",
@@ -1467,8 +1467,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 3690.0,
-      "changePercent": 0.271
+      "previousClose": 3640.0,
+      "changePercent": 1.6484
     },
     "189A": {
       "date": "2026-07-08",
@@ -3689,8 +3689,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 623.0,
-      "changePercent": -3.3708
+      "previousClose": 600.0,
+      "changePercent": 0.3333
     },
     "2437": {
       "date": "2026-07-08",
@@ -6769,8 +6769,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 3515.0,
-      "changePercent": 0.0
+      "previousClose": 3570.0,
+      "changePercent": -1.5406
     },
     "3111": {
       "date": "2026-07-08",
@@ -14069,7 +14069,7 @@
       "date": "2026-07-08",
       "timestamp": "2026-07-08T15:18:24+09:00",
       "close": 1175.0,
-      "volume": 1300.0,
+      "volume": 900.0,
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
@@ -14733,8 +14733,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 3327.0,
-      "changePercent": 0.3006
+      "previousClose": 3301.0,
+      "changePercent": 1.0906
     },
     "4461": {
       "date": "2026-07-08",
@@ -15943,8 +15943,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 782.0,
-      "changePercent": 4.0921
+      "previousClose": 801.0,
+      "changePercent": 1.623
     },
     "4642": {
       "date": "2026-07-08",
@@ -20222,8 +20222,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 3888.0,
-      "changePercent": -8.9249
+      "previousClose": 3674.0,
+      "changePercent": -3.62
     },
     "5802": {
       "date": "2026-07-08",
@@ -20233,8 +20233,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 2592.5,
-      "changePercent": -8.9103
+      "previousClose": 2443.0,
+      "changePercent": -3.3361
     },
     "5803": {
       "date": "2026-07-08",
@@ -20482,7 +20482,7 @@
       "date": "2026-07-08",
       "timestamp": "2026-07-08T15:19:12+09:00",
       "close": 1178.0,
-      "volume": 400.0,
+      "volume": 500.0,
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
@@ -27313,7 +27313,7 @@
       "date": "2026-07-08",
       "timestamp": "2026-07-08T15:18:33+09:00",
       "close": 668.0,
-      "volume": 300.0,
+      "volume": 200.0,
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
@@ -28732,7 +28732,7 @@
       "date": "2026-07-08",
       "timestamp": "2026-07-08T15:19:04+09:00",
       "close": 473.0,
-      "volume": 2800.0,
+      "volume": 3100.0,
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
@@ -29671,8 +29671,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 1223.0,
-      "changePercent": 0.8994
+      "previousClose": 1225.0,
+      "changePercent": 0.7347
     },
     "7426": {
       "date": "2026-07-08",
@@ -29847,8 +29847,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 1725.0,
-      "changePercent": 1.2174
+      "previousClose": 1696.0,
+      "changePercent": 2.9481
     },
     "7461": {
       "date": "2026-07-08",
@@ -29869,8 +29869,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 320.0,
-      "changePercent": 6.5625
+      "previousClose": 342.0,
+      "changePercent": -0.2924
     },
     "7463": {
       "date": "2026-07-08",
@@ -31669,7 +31669,7 @@
       "date": "2026-07-08",
       "timestamp": "2026-07-08T15:18:35+09:00",
       "close": 765.0,
-      "volume": 5400.0,
+      "volume": 4700.0,
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
@@ -32850,8 +32850,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 716.0,
-      "changePercent": 2.6536
+      "previousClose": 723.0,
+      "changePercent": 1.6598
     },
     "7986": {
       "date": "2026-07-08",
@@ -33323,8 +33323,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 1591.0,
-      "changePercent": -1.6656
+      "previousClose": 1609.5,
+      "changePercent": -2.7959
     },
     "8056": {
       "date": "2026-07-08",
@@ -37114,7 +37114,7 @@
       "date": "2026-07-08",
       "timestamp": "2026-07-08T15:19:06+09:00",
       "close": 1950.0,
-      "volume": 100.0,
+      "volume": 200.0,
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
@@ -38141,8 +38141,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 900.0,
-      "changePercent": 0.2222
+      "previousClose": 915.0,
+      "changePercent": -1.4208
     },
     "9369": {
       "date": "2026-07-08",
@@ -40462,8 +40462,8 @@
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "isRealtime": false,
-      "previousClose": 725.0,
-      "changePercent": 0.0
+      "previousClose": 731.0,
+      "changePercent": -0.8208
     },
     "9928": {
       "date": "2026-07-08",
