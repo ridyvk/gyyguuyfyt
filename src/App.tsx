@@ -6,6 +6,7 @@ import {
   GitCompareArrows,
   LayoutDashboard,
   Menu,
+  Radar,
   ScanSearch,
   Search,
   X,
@@ -22,10 +23,12 @@ const Universe = lazy(() => import('./pages/Universe'))
 const Watchlist = lazy(() => import('./pages/Watchlist'))
 const CompanyDetail = lazy(() => import('./pages/CompanyDetail'))
 const Compare = lazy(() => import('./pages/Compare'))
+const KpiMap = lazy(() => import('./pages/KpiMap'))
 
 const navigation = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/?view=search', label: 'Search', icon: Search },
+  { to: '/map', label: 'KPI Map', icon: Radar },
   { to: '/universe', label: 'Universe', icon: Building2 },
   { to: '/watchlist', label: 'Watchlist', icon: Bookmark },
   { to: '/compare', label: 'Compare', icon: GitCompareArrows },
@@ -151,6 +154,7 @@ export default function App() {
               >
                 <Routes location={location}>
                   <Route path="/" element={homeIsSearch ? <Universe searchMode /> : <Dashboard />} />
+                  <Route path="/map" element={<KpiMap />} />
                   <Route path="/universe" element={<Universe />} />
                   <Route path="/watchlist" element={<Watchlist />} />
                   <Route path="/company/:companyId" element={<CompanyDetail />} />

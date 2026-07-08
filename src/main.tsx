@@ -8,6 +8,7 @@ import './live-data.css'
 import './chart-focus.css'
 import './motion.css'
 import './stock-display.css'
+import './kpi-map.css'
 
 class AppErrorBoundary extends Component<
   { children: ReactNode },
