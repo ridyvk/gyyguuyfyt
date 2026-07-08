@@ -7,7 +7,6 @@ import {
   GitCompareArrows,
   LineChart,
   ListFilter,
-  Map as MapIcon,
   Search,
   Sparkles,
   Target,
@@ -70,6 +69,24 @@ interface Lane {
 
 type HeatTone = 'strong' | 'steady' | 'watch' | 'empty'
 
+interface MarketChartCell {
+  index: number
+  count: number
+  average: number
+  share: number
+  tone: HeatTone
+  intensity: number
+}
+
+interface ScoreBand {
+  key: string
+  label: string
+  count: number
+  average: number
+  share: number
+  tone: Exclude<HeatTone, 'empty'>
+}
+
 const initialFilter: KpiMapFilter = {
   query: '',
   market: 'all',
@@ -107,15 +124,6 @@ const visibleMetricKeys: KpiKey[] = [
 
 const clamp = (value: number, min = 0, max = 100) =>
   Math.max(min, Math.min(max, value))
-
-const hashString = (value: string) =>
-  Array.from(value).reduce((hash, char) => {
-    const next = (hash << 5) - hash + char.charCodeAt(0)
-    return next | 0
-  }, 0)
-
-const jitter = (id: string, salt: string, spread: number) =>
-  ((Math.abs(hashString(`${id}:${salt}`)) % 1000) / 1000 - 0.5) * spread
 
 const finiteMetric = (company: Company, key: KpiKey) => {
   const metric = company.metrics[key]
@@ -443,149 +451,88 @@ export default function KpiMap() {
     ]
   }, [filteredCompanies])
 
-  const fieldPoints = useMemo(() => {
-    const candidates = ranked
-      .filter((item) => hasFinancialData(item.company))
-      .slice(0, 56)
-      .map((item, index) => ({
-        item,
-        index,
-        axis: focusConfig.axis(item.company),
-      }))
-
-    const stableAxisSort = (axisKey: 'x' | 'y') => (a: (typeof candidates)[number], b: (typeof candidates)[number]) => {
-      const delta = a.axis[axisKey] - b.axis[axisKey]
-      if (Math.abs(delta) > 0.001) return delta
-      return (
-        Math.abs(hashString(`${a.item.company.id}:${axisKey}`)) -
-        Math.abs(hashString(`${b.item.company.id}:${axisKey}`))
-      )
-    }
-
-    const columnCount = 7
-    const rowCount = Math.max(4, Math.ceil(candidates.length / columnCount))
-    const desktopSlots = new globalThis.Map<
-      string,
-      { column: number; row: number; x: number; y: number }
-    >()
-
-    const byX = [...candidates].sort(stableAxisSort('x'))
-    const columnSize = Math.max(1, Math.ceil(byX.length / columnCount))
-    const columns = Array.from({ length: columnCount }, () => [] as typeof candidates)
-
-    byX.forEach((point, index) => {
-      const column = clamp(Math.floor(index / columnSize), 0, columnCount - 1)
-      columns[column].push(point)
-    })
-
-    columns.forEach((columnPoints, column) => {
-      const byY = [...columnPoints].sort(stableAxisSort('y'))
-      byY.forEach((point, rowIndex) => {
-        const row =
-          byY.length <= 1 ? Math.floor(rowCount / 2) : Math.round((rowIndex / (byY.length - 1)) * (rowCount - 1))
-        desktopSlots.set(point.item.company.id, {
-          column,
-          row,
-          x: ((column + 0.5) / columnCount) * 100,
-          y: ((row + 0.5) / rowCount) * 100,
-        })
-      })
-    })
-
-    const mobileSlots = new globalThis.Map<string, { x: number; y: number }>()
-    const mobileColumns = 4
-    const mobileRows = 3
-    candidates.slice(0, mobileColumns * mobileRows).forEach((point, index) => {
-      const column = index % mobileColumns
-      const row = Math.floor(index / mobileColumns)
-      mobileSlots.set(point.item.company.id, {
-        x: ((column + 0.5) / mobileColumns) * 100,
-        y: 84 - row * (56 / Math.max(1, mobileRows - 1)),
-      })
-    })
-
-    const axisRanks = (axisKey: 'x' | 'y') => {
-      const sorted = [...candidates].sort((a, b) => {
-        const delta = a.axis[axisKey] - b.axis[axisKey]
-        if (Math.abs(delta) > 0.001) return delta
-        return (
-          Math.abs(hashString(`${a.item.company.id}:${axisKey}`)) -
-          Math.abs(hashString(`${b.item.company.id}:${axisKey}`))
-        )
-      })
-      return new Map(
-        sorted.map((point, index) => [
-          point.item.company.id,
-          sorted.length <= 1 ? 50 : 4 + (index / (sorted.length - 1)) * 92,
-        ]),
-      )
-    }
-
-    const xRanks = axisRanks('x')
-    const yRanks = axisRanks('y')
-
-    return candidates.map(({ item, index }) => {
-      const slot = desktopSlots.get(item.company.id)
-      const mobileSlot = mobileSlots.get(item.company.id) ?? slot
-      const size = 10 + clamp(item.score, 0, 100) / 6.8
-      const color =
-        item.tone === 'strong'
-          ? '#14b86a'
-          : item.tone === 'steady'
-            ? '#1677ff'
-            : '#e17b2f'
-      return {
-        ...item,
-        x: clamp((slot?.x ?? xRanks.get(item.company.id) ?? 50) + jitter(item.company.id, 'xFine', 2.4), 4, 96),
-        y: clamp((slot?.y ?? yRanks.get(item.company.id) ?? 50) + jitter(item.company.id, 'yFine', 2.4), 4, 96),
-        mobileX: clamp((mobileSlot?.x ?? 50) + jitter(item.company.id, 'mobileX', 1.6), 7, 93),
-        mobileY: clamp((mobileSlot?.y ?? 50) + jitter(item.company.id, 'mobileY', 1.6), 18, 86),
-        size,
-        color,
-        delay: `${Math.min(index * 14, 320)}ms`,
-        compactHidden: index >= 12,
-        rank: index + 1,
-      }
-    })
-  }, [focusConfig, ranked])
-
-  const heatCells = useMemo(() => {
+  const marketChart = useMemo(() => {
     const gridSize = 7
     const cells = Array.from({ length: gridSize * gridSize }, (_, index) => ({
       index,
       count: 0,
-      score: 0,
+      scoreTotal: 0,
       strong: 0,
       steady: 0,
       watch: 0,
     }))
+    const chartItems = ranked
+      .filter((item) => hasFinancialData(item.company))
+      .map((item) => ({
+        ...item,
+        axis: focusConfig.axis(item.company),
+      }))
 
-    fieldPoints.forEach((point) => {
-      const column = clamp(Math.floor((point.x / 100) * gridSize), 0, gridSize - 1)
-      const row = clamp(Math.floor(((100 - point.y) / 100) * gridSize), 0, gridSize - 1)
+    chartItems.forEach((item) => {
+      const column = clamp(Math.floor((item.axis.x / 100) * gridSize), 0, gridSize - 1)
+      const row = clamp(Math.floor(((100 - item.axis.y) / 100) * gridSize), 0, gridSize - 1)
       const cell = cells[row * gridSize + column]
       cell.count += 1
-      cell.score += point.score
-      cell[point.tone] += 1
+      cell.scoreTotal += item.score
+      if (item.tone === 'strong') cell.strong += 1
+      if (item.tone === 'steady') cell.steady += 1
+      if (item.tone === 'watch') cell.watch += 1
     })
 
-    const maxScore = Math.max(...cells.map((cell) => cell.score), 1)
-    return cells.map((cell) => {
-      const tone: HeatTone =
-        cell.count === 0
-          ? 'empty'
-          : cell.strong >= cell.steady && cell.strong >= cell.watch
-            ? 'strong'
-            : cell.steady >= cell.watch
-              ? 'steady'
-              : 'watch'
+    const total = chartItems.length
+    const scoreTotal = chartItems.reduce((sum, item) => sum + item.score, 0)
+    const maxCount = Math.max(...cells.map((cell) => cell.count), 1)
+    const chartCells: MarketChartCell[] = cells.map((cell) => {
+      const average = cell.count ? cell.scoreTotal / cell.count : 0
+      const tone = cell.count ? toneForScore(average) : 'empty'
       return {
-        ...cell,
+        index: cell.index,
+        count: cell.count,
+        average,
+        share: total ? (cell.count / total) * 100 : 0,
         tone,
-        intensity: clamp(0.08 + (cell.score / maxScore) * 0.76, 0.08, 0.84),
+        intensity: cell.count ? clamp(0.16 + (cell.count / maxCount) * 0.72, 0.16, 0.88) : 0.05,
       }
     })
-  }, [fieldPoints])
+
+    const bandDefs = [
+      { key: '80', label: '80+', min: 80, max: 101, tone: 'strong' as const },
+      { key: '70', label: '70-79', min: 70, max: 80, tone: 'strong' as const },
+      { key: '60', label: '60-69', min: 60, max: 70, tone: 'steady' as const },
+      { key: '50', label: '50-59', min: 50, max: 60, tone: 'steady' as const },
+      { key: 'under50', label: '<50', min: -1, max: 50, tone: 'watch' as const },
+    ]
+    const scoreBands: ScoreBand[] = bandDefs.map((band) => {
+      const matches = chartItems.filter(
+        (item) => item.score >= band.min && item.score < band.max,
+      )
+      const bandTotal = matches.reduce((sum, item) => sum + item.score, 0)
+      return {
+        ...band,
+        count: matches.length,
+        average: matches.length ? bandTotal / matches.length : 0,
+        share: total ? (matches.length / total) * 100 : 0,
+      }
+    })
+    const strongCount = chartItems.filter((item) => item.tone === 'strong').length
+    const watchCount = chartItems.filter((item) => item.tone === 'watch').length
+    const densest = chartCells.reduce((best, cell) =>
+      cell.count > best.count ? cell : best,
+    )
+
+    return {
+      cells: chartCells,
+      bands: scoreBands,
+      summary: {
+        total,
+        average: total ? scoreTotal / total : 0,
+        strongShare: total ? (strongCount / total) * 100 : 0,
+        watchShare: total ? (watchCount / total) * 100 : 0,
+        densestCount: densest.count,
+        densestAverage: densest.average,
+      },
+    }
+  }, [focusConfig, ranked])
 
   const visibleRanked = ranked.slice(0, visibleCount)
 
@@ -753,84 +700,75 @@ export default function KpiMap() {
             </div>
           </div>
 
-          <section className="kpi-map-field" aria-label="Static KPI matrix">
+          <section className="kpi-map-field" aria-label="KPI market distribution chart">
             <div className="kpi-map-field__head">
               <div>
-                <MapIcon size={17} />
-                <span>KPI Heat Field</span>
+                <LineChart size={17} />
+                <span>KPI Signal Chart</span>
               </div>
-              <p>{focusConfig.xLabel} × {focusConfig.yLabel}</p>
+              <p>{marketChart.summary.total.toLocaleString('ja-JP')} companies / {focusConfig.xLabel} - {focusConfig.yLabel}</p>
+            </div>
+            <div className="kpi-map-chart-summary">
+              <div>
+                <span>Average</span>
+                <strong>{Math.round(marketChart.summary.average)}</strong>
+              </div>
+              <div>
+                <span>Strong</span>
+                <strong>{Math.round(marketChart.summary.strongShare)}%</strong>
+              </div>
+              <div>
+                <span>Watch</span>
+                <strong>{Math.round(marketChart.summary.watchShare)}%</strong>
+              </div>
+              <div>
+                <span>Dense Zone</span>
+                <strong>{marketChart.summary.densestCount.toLocaleString('ja-JP')}</strong>
+              </div>
             </div>
             <div className="kpi-map-field__plot">
-              <div className="kpi-map-heat-grid" aria-hidden="true">
-                {heatCells.map((cell) => (
+              <div className="kpi-map-density-grid" aria-label="KPI signal density by axis">
+                {marketChart.cells.map((cell) => (
                   <span
                     key={cell.index}
-                    className={`kpi-map-heat-cell is-${cell.tone}`}
+                    className={`kpi-map-density-cell is-${cell.tone}`}
                     style={
                       {
-                        '--heat-strength': cell.intensity.toFixed(3),
+                        '--cell-intensity': cell.intensity.toFixed(3),
+                        '--cell-delay': `${Math.min(cell.index * 10, 260)}ms`,
                       } as CSSProperties
                     }
-                  />
+                    aria-label={`${cell.count} companies, average ${Math.round(cell.average)} signal`}
+                  >
+                    <strong>{cell.count ? cell.count.toLocaleString('ja-JP') : '-'}</strong>
+                    <em>{cell.count ? `${Math.round(cell.average)} avg` : 'empty'}</em>
+                  </span>
                 ))}
               </div>
               <span className="kpi-map-axis kpi-map-axis--x">{focusConfig.xLabel}</span>
               <span className="kpi-map-axis kpi-map-axis--y">{focusConfig.yLabel}</span>
-              {fieldPoints.map((item) => (
-                <button
-                  type="button"
-                  key={item.company.id}
-                  className={[
-                    selectedCompany?.id === item.company.id
-                      ? 'kpi-map-point is-selected'
-                      : `kpi-map-point is-${item.tone}`,
-                    item.compactHidden ? 'is-mobile-hidden' : '',
-                  ].join(' ')}
-                  style={
-                    {
-                      '--point-x': `${item.x}%`,
-                      '--point-y': `${100 - item.y}%`,
-                      '--mobile-point-x': `${item.mobileX}%`,
-                      '--mobile-point-y': `${100 - item.mobileY}%`,
-                      '--point-size': `${item.size}px`,
-                      '--point-color': item.color,
-                      '--point-delay': item.delay,
-                    } as CSSProperties
-                  }
-                  onClick={() => setSelectedId(item.company.id)}
-                  aria-label={`${item.company.name} ${Math.round(item.score)}点`}
-                >
-                  <span>{item.company.code}</span>
-                </button>
-              ))}
-              <div className="kpi-map-map-inspector">
-                <span>Selected</span>
-                <strong>{selectedCompany?.name ?? 'Signal standby'}</strong>
-                <em>
-                  {selectedRank
-                    ? `${Math.round(selectedRank.score)} signal / ${dataLabel(selectedRank.company)}`
-                    : 'No signal'}
-                </em>
-              </div>
-              <div className="kpi-map-map-legend">
+              <div className="kpi-map-chart-legend">
                 <span><i className="is-strong" />Strong</span>
                 <span><i className="is-steady" />Steady</span>
                 <span><i className="is-watch" />Watch</span>
               </div>
             </div>
-            <div className="kpi-map-mobile-radar">
-              {fieldPoints.slice(0, 5).map((item) => (
-                <button
-                  type="button"
-                  key={`mobile-${item.company.id}`}
-                  className={selectedCompany?.id === item.company.id ? 'is-selected' : ''}
-                  onClick={() => setSelectedId(item.company.id)}
-                >
-                  <span>{item.rank}</span>
-                  <strong>{item.company.name}</strong>
-                  <em>{Math.round(item.score)}</em>
-                </button>
+            <div className="kpi-map-chart-bars" aria-label="Signal score distribution">
+              {marketChart.bands.map((band) => (
+                <div className={`kpi-map-chart-bar is-${band.tone}`} key={band.key}>
+                  <div>
+                    <span>{band.label}</span>
+                    <strong>{band.count.toLocaleString('ja-JP')}</strong>
+                    <em>{Math.round(band.share)}%</em>
+                  </div>
+                  <i
+                    style={
+                      {
+                        '--bar-width': `${Math.max(4, band.share)}%`,
+                      } as CSSProperties
+                    }
+                  />
+                </div>
               ))}
             </div>
           </section>
