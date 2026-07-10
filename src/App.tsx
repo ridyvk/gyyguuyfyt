@@ -5,8 +5,8 @@ import {
   DatabaseZap,
   GitCompareArrows,
   LayoutDashboard,
+  ListFilter,
   Menu,
-  Radar,
   ScanSearch,
   X,
 } from 'lucide-react'
@@ -26,7 +26,7 @@ const KpiMap = lazy(() => import('./pages/KpiMap'))
 
 const navigation = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/map', label: 'KPI Map', icon: Radar },
+  { to: '/map', label: 'KPI Finder', icon: ListFilter },
   { to: '/universe', label: 'Universe', icon: Building2 },
   { to: '/watchlist', label: 'Watchlist', icon: Bookmark },
   { to: '/compare', label: 'Compare', icon: GitCompareArrows },

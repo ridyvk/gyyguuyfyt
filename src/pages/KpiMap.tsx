@@ -1,126 +1,169 @@
 import {
   AlertTriangle,
-  ArrowDownRight,
-  ArrowUpRight,
+  ArrowRight,
   Bookmark,
+  Check,
   ChevronRight,
   GitCompareArrows,
-  LineChart,
+  Landmark,
   ListFilter,
   Search,
+  ShieldCheck,
   Sparkles,
-  Target,
-  TrendingUp,
+  WalletCards,
   X,
-  Zap,
 } from 'lucide-react'
-import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import AnimatedNumber from '../components/AnimatedNumber'
-import ScoreBadge from '../components/ScoreBadge'
-import ScoreBar from '../components/ScoreBar'
 import { useApp } from '../context/AppContext'
 import { industriesList, marketsList } from '../lib/companyUniverse'
-import {
-  formatChangePercent,
-  formatMetric,
-  formatStockPrice,
-  formatVolume,
-} from '../lib/formatters'
-import { hasFinancialData, hasScorableData } from '../lib/liveData'
+import { formatMetric } from '../lib/formatters'
+import { hasFinancialData } from '../lib/liveData'
 import type { Company, KpiKey, Market } from '../types'
 
-type FocusMode = 'balanced' | 'quality' | 'capital' | 'cash' | 'momentum'
+type FinderMode = 'balanced' | 'capital' | 'safety' | 'cash'
 
-interface KpiMapFilter {
+interface FinderFilter {
   query: string
   market: Market | 'all'
   industry: string | 'all'
   watchOnly: boolean
-  warningsOnly: boolean
-  dataOnly: boolean
+  rankableOnly: boolean
+  excludeWarnings: boolean
 }
 
-interface FocusConfig {
+interface MetricRule {
+  key: KpiKey
+  weight: number
+  min: number
+  max: number
+  inverse?: boolean
+  signOnly?: boolean
+}
+
+interface FinderConfig {
   label: string
-  shortLabel: string
+  kicker: string
+  question: string
   description: string
-  xLabel: string
-  yLabel: string
-  score: (company: Company) => number
-  axis: (company: Company) => { x: number; y: number }
+  formula: string
+  icon: typeof Sparkles
+  rules: MetricRule[]
+  columns: Array<{ key: KpiKey; label: string }>
+  minimumMetrics: number
 }
 
 interface RankedCompany {
   company: Company
   score: number
+  coverage: number
+  availableMetrics: number
+  rankable: boolean
+  estimated: boolean
   reasons: string[]
-  tone: 'strong' | 'steady' | 'watch'
-  hasEstimate: boolean
 }
 
-interface Lane {
-  key: string
-  title: string
-  subtitle: string
-  icon: typeof Sparkles
-  items: RankedCompany[]
-}
-
-type HeatTone = 'strong' | 'steady' | 'watch' | 'empty'
-
-interface MarketChartCell {
-  index: number
-  count: number
-  average: number
-  share: number
-  tone: HeatTone
-  intensity: number
-}
-
-interface ScoreBand {
-  key: string
-  label: string
-  count: number
-  average: number
-  share: number
-  tone: Exclude<HeatTone, 'empty'>
-}
-
-const initialFilter: KpiMapFilter = {
+const initialFilter: FinderFilter = {
   query: '',
   market: 'all',
   industry: 'all',
   watchOnly: false,
-  warningsOnly: false,
-  dataOnly: true,
+  rankableOnly: true,
+  excludeWarnings: false,
 }
 
-const metricLabels: Partial<Record<KpiKey, string>> = {
-  roic: 'ROIC',
-  wacc: 'WACC',
-  roicWaccSpread: 'ROIC-WACC',
-  operatingMargin: '営業利益率',
-  operatingCfMargin: '営業CF率',
-  cashProfitGap: 'CF利益差',
-  equityRatio: '自己資本比率',
-  netCash: 'ネット現金',
+const focusConfigs: Record<FinderMode, FinderConfig> = {
+  balanced: {
+    label: '総合力',
+    kicker: 'ALL-ROUND',
+    question: '収益・資本・安全・現金がそろう企業は？',
+    description:
+      '特定の指標だけで決めず、稼ぐ力・資本効率・財務余力・キャッシュの裏付けを均等に確認します。',
+    formula: '収益力 25% + 資本効率 30% + 財務安全性 20% + 現金品質 25%',
+    icon: Sparkles,
+    rules: [
+      { key: 'operatingMargin', weight: 0.12, min: -10, max: 30 },
+      { key: 'netMargin', weight: 0.08, min: -10, max: 20 },
+      { key: 'roe', weight: 0.1, min: -10, max: 30 },
+      { key: 'roa', weight: 0.07, min: -5, max: 15 },
+      { key: 'roic', weight: 0.14, min: -5, max: 25 },
+      { key: 'roicWaccSpread', weight: 0.12, min: -12, max: 15 },
+      { key: 'wacc', weight: 0.04, min: 3, max: 14, inverse: true },
+      { key: 'equityRatio', weight: 0.13, min: 0, max: 80 },
+      { key: 'operatingCfMargin', weight: 0.14, min: -10, max: 30 },
+      { key: 'cashProfitGap', weight: 0.06, min: -12, max: 12 },
+    ],
+    columns: [
+      { key: 'roe', label: 'ROE' },
+      { key: 'roicWaccSpread', label: 'ROIC−WACC' },
+      { key: 'operatingCfMargin', label: '営業CF率' },
+    ],
+    minimumMetrics: 5,
+  },
+  capital: {
+    label: '資本効率',
+    kicker: 'CAPITAL EDGE',
+    question: '投じた資本以上の価値を生んでいる企業は？',
+    description:
+      'ROICが高いだけでなく、資本コストをどれだけ上回れているかまで見て順位付けします。',
+    formula: 'ROIC 45% + ROIC−WACC 35% + 低いWACC 20%',
+    icon: Landmark,
+    rules: [
+      { key: 'roic', weight: 0.45, min: -5, max: 25 },
+      { key: 'roicWaccSpread', weight: 0.35, min: -12, max: 15 },
+      { key: 'wacc', weight: 0.2, min: 3, max: 14, inverse: true },
+    ],
+    columns: [
+      { key: 'roic', label: 'ROIC' },
+      { key: 'wacc', label: 'WACC' },
+      { key: 'roicWaccSpread', label: '超過収益力' },
+    ],
+    minimumMetrics: 2,
+  },
+  safety: {
+    label: '財務安全性',
+    kicker: 'RESILIENCE',
+    question: '逆風でも守りが崩れにくい企業は？',
+    description:
+      '自己資本の厚さを中心に、資産効率・資本コスト・ネットキャッシュの正負を確認します。',
+    formula: '自己資本比率 50% + ROA 20% + 低いWACC 15% + ネットキャッシュ 15%',
+    icon: ShieldCheck,
+    rules: [
+      { key: 'equityRatio', weight: 0.5, min: 0, max: 80 },
+      { key: 'roa', weight: 0.2, min: -5, max: 15 },
+      { key: 'wacc', weight: 0.15, min: 3, max: 14, inverse: true },
+      { key: 'netCash', weight: 0.15, min: 0, max: 1, signOnly: true },
+    ],
+    columns: [
+      { key: 'equityRatio', label: '自己資本比率' },
+      { key: 'netCash', label: 'ネットキャッシュ' },
+      { key: 'roa', label: 'ROA' },
+    ],
+    minimumMetrics: 2,
+  },
+  cash: {
+    label: '現金品質',
+    kicker: 'CASH QUALITY',
+    question: '利益がきちんと現金で残っている企業は？',
+    description:
+      '営業キャッシュフローの厚さと利益との差を重視し、帳簿上の利益だけに偏らず比べます。',
+    formula: '営業CF率 55% + CF利益差 25% + 純利益率 10% + ネットキャッシュ 10%',
+    icon: WalletCards,
+    rules: [
+      { key: 'operatingCfMargin', weight: 0.55, min: -10, max: 30 },
+      { key: 'cashProfitGap', weight: 0.25, min: -12, max: 12 },
+      { key: 'netMargin', weight: 0.1, min: -10, max: 20 },
+      { key: 'netCash', weight: 0.1, min: 0, max: 1, signOnly: true },
+    ],
+    columns: [
+      { key: 'operatingCfMargin', label: '営業CF率' },
+      { key: 'cashProfitGap', label: 'CF利益差' },
+      { key: 'netCash', label: 'ネットキャッシュ' },
+    ],
+    minimumMetrics: 2,
+  },
 }
-
-const scoreLabels = {
-  profitability: '収益性',
-  safety: '安全性',
-  cashGeneration: '現金創出',
-} as const
-
-const visibleMetricKeys: KpiKey[] = [
-  'roic',
-  'wacc',
-  'roicWaccSpread',
-  'operatingCfMargin',
-  'cashProfitGap',
-  'equityRatio',
-]
 
 const clamp = (value: number, min = 0, max = 100) =>
   Math.max(min, Math.min(max, value))
@@ -133,198 +176,83 @@ const finiteMetric = (company: Company, key: KpiKey) => {
   return metric.value
 }
 
-const hasMetric = (company: Company, key: KpiKey) =>
-  finiteMetric(company, key) !== undefined
-
-const normalizeRange = (value: number | undefined, min: number, max: number) => {
-  if (value === undefined || min === max) return 50
-  return clamp(((value - min) / (max - min)) * 100)
+const metricScore = (value: number, rule: MetricRule) => {
+  if (rule.signOnly) {
+    if (value > 0) return 82
+    if (value < 0) return 22
+    return 50
+  }
+  const normalized = clamp(((value - rule.min) / (rule.max - rule.min)) * 100)
+  return rule.inverse ? 100 - normalized : normalized
 }
 
-const latestRevenue = (company: Company) =>
-  [...company.history].reverse().find((point) => Number.isFinite(point.revenue))
-    ?.revenue
+const calculateScore = (company: Company, config: FinderConfig) => {
+  let weightedScore = 0
+  let availableWeight = 0
+  let availableMetrics = 0
 
-const qualitySignal = (company: Company) => {
-  if (!hasScorableData(company)) return 0
-  return clamp(
-    company.scores.profitability * 0.42 +
-      company.scores.safety * 0.32 +
-      company.scores.cashGeneration * 0.26,
-  )
+  config.rules.forEach((rule) => {
+    const value = finiteMetric(company, rule.key)
+    if (value === undefined) return
+    weightedScore += metricScore(value, rule) * rule.weight
+    availableWeight += rule.weight
+    availableMetrics += 1
+  })
+
+  const totalWeight = config.rules.reduce((sum, rule) => sum + rule.weight, 0)
+  const coverage = totalWeight ? availableWeight / totalWeight : 0
+  const rawScore = availableWeight ? weightedScore / availableWeight : 0
+  const missingDataAdjustment = 0.74 + coverage * 0.26
+
+  return {
+    score: clamp(rawScore * missingDataAdjustment),
+    coverage,
+    availableMetrics,
+    rankable: availableMetrics >= config.minimumMetrics,
+  }
 }
 
-const capitalSignal = (company: Company) => {
-  if (!hasFinancialData(company)) return 0
-  const roic = normalizeRange(finiteMetric(company, 'roic'), -4, 22)
-  const spread = normalizeRange(finiteMetric(company, 'roicWaccSpread'), -12, 12)
-  const wacc = 100 - normalizeRange(finiteMetric(company, 'wacc'), 3, 14)
-  return clamp(roic * 0.46 + spread * 0.38 + wacc * 0.16)
-}
-
-const cashSignal = (company: Company) => {
-  if (!hasFinancialData(company)) return 0
-  const cf = normalizeRange(finiteMetric(company, 'operatingCfMargin'), -8, 24)
-  const gap = normalizeRange(finiteMetric(company, 'cashProfitGap'), -12, 12)
-  const netCash = normalizeRange(finiteMetric(company, 'netCash'), -250, 650)
-  return clamp(cf * 0.52 + gap * 0.34 + netCash * 0.14)
-}
-
-const momentumSignal = (company: Company) => {
-  const change = company.stockPrice?.changePercent
-  const quote = change === undefined ? 50 : normalizeRange(change, -10, 10)
-  const base = hasScorableData(company) ? company.scores.overall : 42
-  return clamp(base * 0.58 + quote * 0.42)
-}
-
-const balancedSignal = (company: Company) => {
-  if (!hasFinancialData(company)) return 0
-  const base = hasScorableData(company) ? company.scores.overall : 50
-  return clamp(
-    base * 0.36 +
-      qualitySignal(company) * 0.2 +
-      capitalSignal(company) * 0.22 +
-      cashSignal(company) * 0.16 +
-      momentumSignal(company) * 0.06,
-  )
-}
-
-const focusModes: Record<FocusMode, FocusConfig> = {
-  balanced: {
-    label: 'Smart Shortlist',
-    shortLabel: '総合',
-    description: '財務・資本効率・現金品質・株価反応を軽く合成',
-    xLabel: '収益性',
-    yLabel: '安全性',
-    score: balancedSignal,
-    axis: (company) => ({
-      x: hasScorableData(company) ? company.scores.profitability : 50,
-      y: hasScorableData(company) ? company.scores.safety : 50,
-    }),
-  },
-  quality: {
-    label: 'Quality Check',
-    shortLabel: '安全・収益',
-    description: '収益性と安全性を優先して安定候補を抽出',
-    xLabel: '収益性',
-    yLabel: '安全性',
-    score: qualitySignal,
-    axis: (company) => ({
-      x: hasScorableData(company) ? company.scores.profitability : 50,
-      y: hasScorableData(company) ? company.scores.safety : 50,
-    }),
-  },
-  capital: {
-    label: 'Capital Edge',
-    shortLabel: '資本効率',
-    description: 'ROIC、WACC、ROIC-WACCで資本効率を比較',
-    xLabel: 'ROIC',
-    yLabel: 'ROIC-WACC',
-    score: capitalSignal,
-    axis: (company) => ({
-      x: normalizeRange(finiteMetric(company, 'roic'), -4, 22),
-      y: normalizeRange(finiteMetric(company, 'roicWaccSpread'), -12, 12),
-    }),
-  },
-  cash: {
-    label: 'Cash Quality',
-    shortLabel: '現金品質',
-    description: '利益がキャッシュで裏付けられている企業を上に出す',
-    xLabel: '営業CF率',
-    yLabel: 'CF利益差',
-    score: cashSignal,
-    axis: (company) => ({
-      x: normalizeRange(finiteMetric(company, 'operatingCfMargin'), -8, 24),
-      y: normalizeRange(finiteMetric(company, 'cashProfitGap'), -12, 12),
-    }),
-  },
-  momentum: {
-    label: 'Market Reaction',
-    shortLabel: '株価反応',
-    description: 'KPIの強さと直近の株価反応を並べて確認',
-    xLabel: 'KPI score',
-    yLabel: '株価変化',
-    score: momentumSignal,
-    axis: (company) => ({
-      x: hasScorableData(company) ? company.scores.overall : 50,
-      y: normalizeRange(company.stockPrice?.changePercent, -10, 10),
-    }),
-  },
-}
-
-const toneForScore = (score: number): RankedCompany['tone'] => {
-  if (score >= 72) return 'strong'
-  if (score >= 54) return 'steady'
-  return 'watch'
-}
-
-const metricText = (company: Company, key: KpiKey) => {
+const formatMetricValue = (company: Company, key: KpiKey) => {
   const metric = company.metrics[key]
   return metric ? formatMetric(metric) : '—'
 }
 
-const metricChip = (company: Company, key: KpiKey) => {
-  if (!hasMetric(company, key)) return null
-  const metric = company.metrics[key]
-  const label = metricLabels[key] ?? key
-  return `${label} ${formatMetric(metric)}${metric.estimated ? ' 推定' : ''}`
-}
+const hasEstimatedMetric = (company: Company, config: FinderConfig) =>
+  config.rules.some((rule) => company.metrics[rule.key]?.estimated)
 
-const buildReasons = (company: Company, focus: FocusMode) => {
-  const candidates: Array<string | null> = [
-    focus === 'capital' || focus === 'balanced'
-      ? metricChip(company, 'roicWaccSpread') ?? metricChip(company, 'roic')
-      : null,
-    focus === 'cash' || focus === 'balanced'
-      ? metricChip(company, 'operatingCfMargin') ?? metricChip(company, 'cashProfitGap')
-      : null,
-    focus === 'quality' || focus === 'balanced'
-      ? `収益 ${Math.round(company.scores.profitability)} / 安全 ${Math.round(
-          company.scores.safety,
-        )}`
-      : null,
-    focus === 'momentum'
-      ? `株価 ${formatChangePercent(company.stockPrice?.changePercent)}`
-      : null,
-    hasMetric(company, 'equityRatio')
-      ? `自己資本 ${metricText(company, 'equityRatio')}`
-      : null,
-  ]
-  return candidates.filter((item): item is string => Boolean(item)).slice(0, 3)
-}
+const buildReasons = (company: Company, config: FinderConfig) =>
+  config.columns
+    .filter(({ key }) => finiteMetric(company, key) !== undefined)
+    .map(({ key, label }) => `${label} ${formatMetricValue(company, key)}`)
+    .slice(0, 2)
 
-const hasEstimate = (company: Company) =>
-  visibleMetricKeys.some((key) => company.metrics[key]?.estimated)
-
-const dataLabel = (company: Company) => {
-  if (!hasFinancialData(company)) return '財務未取得'
-  const count = company.trustedMetricCount ?? company.liveMetricCount ?? 0
-  return `${company.dataSource ?? 'DATA'} / ${count}指標`
-}
-
-const rankCompany = (company: Company, focus: FocusMode): RankedCompany => {
-  const rawScore = focusModes[focus].score(company)
-  const warningPenalty = company.hasWarning ? 5 : 0
-  const score = clamp(rawScore - warningPenalty)
+const rankCompany = (company: Company, config: FinderConfig): RankedCompany => {
+  const result = calculateScore(company, config)
   return {
     company,
-    score,
-    reasons: buildReasons(company, focus),
-    tone: toneForScore(score),
-    hasEstimate: hasEstimate(company),
+    ...result,
+    estimated: hasEstimatedMetric(company, config),
+    reasons: buildReasons(company, config),
   }
 }
 
 const compareRanked = (a: RankedCompany, b: RankedCompany) => {
+  if (a.rankable !== b.rankable) return a.rankable ? -1 : 1
   if (b.score !== a.score) return b.score - a.score
   return a.company.code.localeCompare(b.company.code, 'ja-JP')
 }
 
-const formatRevenue = (company: Company) => {
-  const revenue = latestRevenue(company)
-  if (!revenue) return '売上 —'
-  if (revenue >= 10_000) return `売上 ${(revenue / 10_000).toFixed(1)}兆円`
-  return `売上 ${Math.round(revenue).toLocaleString('ja-JP')}億円`
+const scoreTone = (score: number) => {
+  if (score >= 72) return 'high'
+  if (score >= 54) return 'mid'
+  return 'low'
+}
+
+const dataStatus = (item: RankedCompany) => {
+  if (!item.rankable) return '判定データ不足'
+  if (item.estimated) return '推定を含む'
+  if (item.coverage >= 0.8) return '実測中心'
+  return '一部指標なし'
 }
 
 export default function KpiMap() {
@@ -337,726 +265,416 @@ export default function KpiMap() {
     toggleWatchlist,
     toggleCompare,
   } = useApp()
-  const [filter, setFilter] = useState<KpiMapFilter>(initialFilter)
-  const [focus, setFocus] = useState<FocusMode>('balanced')
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [visibleCount, setVisibleCount] = useState(28)
+  const [mode, setMode] = useState<FinderMode>('balanced')
+  const [filter, setFilter] = useState<FinderFilter>(initialFilter)
+  const [visibleCount, setVisibleCount] = useState(30)
   const [compareNotice, setCompareNotice] = useState('')
 
+  const config = focusConfigs[mode]
+  const MethodIcon = config.icon
   const watchedIds = useMemo(() => new Set(watchlist), [watchlist])
-  const focusConfig = focusModes[focus]
 
-  const filteredCompanies = useMemo(() => {
+  const allRanked = useMemo(
+    () => companies.map((company) => rankCompany(company, config)),
+    [companies, config],
+  )
+
+  const ranked = useMemo(() => {
     const query = filter.query.trim().toLowerCase()
-    return companies.filter((company) => {
-      const matchesQuery =
-        !query ||
-        company.name.toLowerCase().includes(query) ||
-        company.code.toLowerCase().includes(query)
-      const matchesMarket = filter.market === 'all' || company.market === filter.market
-      const matchesIndustry =
-        filter.industry === 'all' || company.industry === filter.industry
-      const matchesWatch = !filter.watchOnly || watchedIds.has(company.id)
-      const matchesWarning = !filter.warningsOnly || company.hasWarning
-      const matchesData = !filter.dataOnly || hasFinancialData(company)
-      return (
-        matchesQuery &&
-        matchesMarket &&
-        matchesIndustry &&
-        matchesWatch &&
-        matchesWarning &&
-        matchesData
-      )
-    })
-  }, [companies, filter, watchedIds])
-
-  const ranked = useMemo(
-    () => filteredCompanies.map((company) => rankCompany(company, focus)).sort(compareRanked),
-    [filteredCompanies, focus],
-  )
-
-  const selectedRank = useMemo(
-    () => ranked.find((item) => item.company.id === selectedId) ?? ranked[0] ?? null,
-    [ranked, selectedId],
-  )
-  const selectedCompany = selectedRank?.company ?? null
-
-  useEffect(() => {
-    if (!ranked.length) {
-      setSelectedId(null)
-      return
-    }
-    if (!selectedId || !ranked.some((item) => item.company.id === selectedId)) {
-      setSelectedId(ranked[0].company.id)
-    }
-  }, [ranked, selectedId])
-
-  useEffect(() => {
-    setVisibleCount(28)
-  }, [filter, focus])
+    return allRanked
+      .filter((item) => {
+        const { company } = item
+        const matchesQuery =
+          !query ||
+          company.name.toLowerCase().includes(query) ||
+          company.code.toLowerCase().includes(query)
+        const matchesMarket =
+          filter.market === 'all' || company.market === filter.market
+        const matchesIndustry =
+          filter.industry === 'all' || company.industry === filter.industry
+        const matchesWatch = !filter.watchOnly || watchedIds.has(company.id)
+        const matchesData =
+          !filter.rankableOnly || (hasFinancialData(company) && item.rankable)
+        const matchesWarnings =
+          !filter.excludeWarnings || !company.hasWarning
+        return (
+          matchesQuery &&
+          matchesMarket &&
+          matchesIndustry &&
+          matchesWatch &&
+          matchesData &&
+          matchesWarnings
+        )
+      })
+      .sort(compareRanked)
+  }, [allRanked, filter, watchedIds])
 
   const stats = useMemo(() => {
-    const financial = filteredCompanies.filter(hasFinancialData).length
-    const quote = filteredCompanies.filter((company) => company.stockPrice).length
-    const estimated = filteredCompanies.filter(hasEstimate).length
-    const warning = filteredCompanies.filter((company) => company.hasWarning).length
-    return { financial, quote, estimated, warning }
-  }, [filteredCompanies])
-
-  const lanes = useMemo<Lane[]>(() => {
-    const quality = filteredCompanies
-      .map((company) => rankCompany(company, 'quality'))
-      .sort(compareRanked)
-    const capital = filteredCompanies
-      .filter((company) => hasMetric(company, 'roic') || hasMetric(company, 'roicWaccSpread'))
-      .map((company) => rankCompany(company, 'capital'))
-      .sort(compareRanked)
-    const cash = filteredCompanies
-      .filter((company) => hasMetric(company, 'operatingCfMargin') || hasMetric(company, 'cashProfitGap'))
-      .map((company) => rankCompany(company, 'cash'))
-      .sort(compareRanked)
-    const reaction = filteredCompanies
-      .filter((company) => company.stockPrice?.changePercent !== undefined)
-      .map((company) => rankCompany(company, 'momentum'))
-      .sort(compareRanked)
-    return [
-      {
-        key: 'quality',
-        title: '安定して強い',
-        subtitle: '収益性と安全性が両立',
-        icon: Sparkles,
-        items: quality.slice(0, 4),
-      },
-      {
-        key: 'capital',
-        title: '資本効率が良い',
-        subtitle: 'ROICが資本コストを上回る',
-        icon: Target,
-        items: capital.slice(0, 4),
-      },
-      {
-        key: 'cash',
-        title: '現金品質が高い',
-        subtitle: '利益がキャッシュで残る',
-        icon: Zap,
-        items: cash.slice(0, 4),
-      },
-      {
-        key: 'momentum',
-        title: '市場が反応中',
-        subtitle: 'KPIと株価反応を同時確認',
-        icon: TrendingUp,
-        items: reaction.slice(0, 4),
-      },
-    ]
-  }, [filteredCompanies])
-
-  const marketChart = useMemo(() => {
-    const gridSize = 7
-    const cells = Array.from({ length: gridSize * gridSize }, (_, index) => ({
-      index,
-      count: 0,
-      scoreTotal: 0,
-      strong: 0,
-      steady: 0,
-      watch: 0,
-    }))
-    const chartItems = ranked
-      .filter((item) => hasFinancialData(item.company))
-      .map((item) => ({
-        ...item,
-        axis: focusConfig.axis(item.company),
-      }))
-
-    chartItems.forEach((item) => {
-      const column = clamp(Math.floor((item.axis.x / 100) * gridSize), 0, gridSize - 1)
-      const row = clamp(Math.floor(((100 - item.axis.y) / 100) * gridSize), 0, gridSize - 1)
-      const cell = cells[row * gridSize + column]
-      cell.count += 1
-      cell.scoreTotal += item.score
-      if (item.tone === 'strong') cell.strong += 1
-      if (item.tone === 'steady') cell.steady += 1
-      if (item.tone === 'watch') cell.watch += 1
-    })
-
-    const total = chartItems.length
-    const scoreTotal = chartItems.reduce((sum, item) => sum + item.score, 0)
-    const maxCount = Math.max(...cells.map((cell) => cell.count), 1)
-    const chartCells: MarketChartCell[] = cells.map((cell) => {
-      const average = cell.count ? cell.scoreTotal / cell.count : 0
-      const tone = cell.count ? toneForScore(average) : 'empty'
-      return {
-        index: cell.index,
-        count: cell.count,
-        average,
-        share: total ? (cell.count / total) * 100 : 0,
-        tone,
-        intensity: cell.count ? clamp(0.16 + (cell.count / maxCount) * 0.72, 0.16, 0.88) : 0.05,
-      }
-    })
-
-    const bandDefs = [
-      { key: '80', label: '80+', min: 80, max: 101, tone: 'strong' as const },
-      { key: '70', label: '70-79', min: 70, max: 80, tone: 'strong' as const },
-      { key: '60', label: '60-69', min: 60, max: 70, tone: 'steady' as const },
-      { key: '50', label: '50-59', min: 50, max: 60, tone: 'steady' as const },
-      { key: 'under50', label: '<50', min: -1, max: 50, tone: 'watch' as const },
-    ]
-    const scoreBands: ScoreBand[] = bandDefs.map((band) => {
-      const matches = chartItems.filter(
-        (item) => item.score >= band.min && item.score < band.max,
-      )
-      const bandTotal = matches.reduce((sum, item) => sum + item.score, 0)
-      return {
-        ...band,
-        count: matches.length,
-        average: matches.length ? bandTotal / matches.length : 0,
-        share: total ? (matches.length / total) * 100 : 0,
-      }
-    })
-    const strongCount = chartItems.filter((item) => item.tone === 'strong').length
-    const watchCount = chartItems.filter((item) => item.tone === 'watch').length
-    const densest = chartCells.reduce((best, cell) =>
-      cell.count > best.count ? cell : best,
+    const rankable = allRanked.filter(
+      (item) => hasFinancialData(item.company) && item.rankable,
     )
-
     return {
-      cells: chartCells,
-      bands: scoreBands,
-      summary: {
-        total,
-        average: total ? scoreTotal / total : 0,
-        strongShare: total ? (strongCount / total) * 100 : 0,
-        watchShare: total ? (watchCount / total) * 100 : 0,
-        densestCount: densest.count,
-        densestAverage: densest.average,
-      },
+      rankable: rankable.length,
+      highCoverage: rankable.filter((item) => item.coverage >= 0.8).length,
+      estimated: rankable.filter((item) => item.estimated).length,
     }
-  }, [focusConfig, ranked])
+  }, [allRanked])
 
+  const topThree = ranked.filter((item) => item.rankable).slice(0, 3)
   const visibleRanked = ranked.slice(0, visibleCount)
+
+  const updateFilter = (next: Partial<FinderFilter>) => {
+    setFilter((current) => ({ ...current, ...next }))
+    setVisibleCount(30)
+  }
+
+  const selectMode = (nextMode: FinderMode) => {
+    setMode(nextMode)
+    setVisibleCount(30)
+    setCompareNotice('')
+  }
 
   const handleCompare = (company: Company) => {
     const ok = toggleCompare(company.id)
-    setCompareNotice(ok ? '' : '比較は最大5社までです')
+    setCompareNotice(ok ? '' : '比較は最大5社までです。登録中の企業を1社外してください。')
   }
 
   return (
-    <div className="page kpi-map-page">
-      <header className="kpi-map-hero">
-        <div className="kpi-map-hero__copy">
-          <span className="page-eyebrow">KPI MAP / LIGHT SIGNAL BOARD</span>
-          <h1>KPI Map</h1>
+    <div className="page kpi-finder-page">
+      <header className="kpi-finder-hero">
+        <div className="kpi-finder-hero__copy">
+          <span className="page-eyebrow">KPI FINDER / DECISION SHORTLIST</span>
+          <h1>目的から、見るべき企業を絞る。</h1>
           <p>
-            上場企業の財務シグナルを、資本効率・現金品質・市場反応の軸で整理します。
+            知りたいことを1つ選ぶと、同じ基準で企業を順位付けします。
+            点数だけでなく、順位の根拠と使用データまで確認できます。
           </p>
         </div>
-        <div className="kpi-map-hero__stats" aria-label="KPI Map summary">
-          <div>
-            <span>VISIBLE</span>
-            <strong><AnimatedNumber value={filteredCompanies.length} /></strong>
-          </div>
-          <div>
-            <span>FINANCIAL</span>
-            <strong><AnimatedNumber value={stats.financial} /></strong>
-          </div>
-          <div>
-            <span>QUOTE</span>
-            <strong><AnimatedNumber value={stats.quote} /></strong>
-          </div>
-        </div>
+        <ol className="kpi-finder-guide" aria-label="KPI Finderの使い方">
+          <li>
+            <span>1</span>
+            <div><strong>目的を選ぶ</strong><small>4つの観点から選択</small></div>
+          </li>
+          <li>
+            <span>2</span>
+            <div><strong>根拠を確認</strong><small>主要KPIとデータ状態</small></div>
+          </li>
+          <li>
+            <span>3</span>
+            <div><strong>比較に送る</strong><small>最大5社を横並び</small></div>
+          </li>
+        </ol>
       </header>
 
-      <section className="kpi-map-controls" aria-label="KPI Map filters">
-        <label className="kpi-map-search">
+      <section className="kpi-finder-modes" aria-label="分析目的を選ぶ">
+        {(Object.entries(focusConfigs) as Array<[FinderMode, FinderConfig]>).map(
+          ([key, item]) => {
+            const Icon = item.icon
+            return (
+              <button
+                type="button"
+                key={key}
+                className={mode === key ? 'is-active' : ''}
+                onClick={() => selectMode(key)}
+                aria-pressed={mode === key}
+              >
+                <span className="kpi-finder-mode__icon"><Icon size={19} /></span>
+                <span className="kpi-finder-mode__text">
+                  <small>{item.kicker}</small>
+                  <strong>{item.label}</strong>
+                  <em>{item.question}</em>
+                </span>
+                <span className="kpi-finder-mode__check">
+                  {mode === key ? <Check size={15} /> : <ChevronRight size={15} />}
+                </span>
+              </button>
+            )
+          },
+        )}
+      </section>
+
+      <section className="kpi-finder-method" aria-live="polite">
+        <div className="kpi-finder-method__icon"><MethodIcon size={22} /></div>
+        <div className="kpi-finder-method__copy">
+          <span>現在の目的</span>
+          <h2>{config.label}</h2>
+          <p>{config.description}</p>
+        </div>
+        <div className="kpi-finder-method__formula">
+          <span>順位のつくり方</span>
+          <strong>{config.formula}</strong>
+          <small>欠損が多い企業はスコアを調整。ネットキャッシュは規模差を避けるため正負のみ評価。</small>
+        </div>
+        <div className="kpi-finder-method__stats">
+          <div><span>判定可能</span><strong><AnimatedNumber value={stats.rankable} /></strong><small>社</small></div>
+          <div><span>充足度80%+</span><strong><AnimatedNumber value={stats.highCoverage} /></strong><small>社</small></div>
+          <div><span>推定を含む</span><strong><AnimatedNumber value={stats.estimated} /></strong><small>社</small></div>
+        </div>
+      </section>
+
+      <section className="kpi-finder-controls" aria-label="候補を絞り込む">
+        <label className="kpi-finder-search">
           <Search size={17} />
           <input
             value={filter.query}
-            onChange={(event) =>
-              setFilter((current) => ({ ...current, query: event.target.value }))
-            }
-            placeholder="企業名・コードで検索"
+            onChange={(event) => updateFilter({ query: event.target.value })}
+            placeholder="この順位表を企業名・コードで絞り込む"
           />
           {filter.query && (
             <button
               type="button"
-              aria-label="検索をクリア"
-              onClick={() => setFilter((current) => ({ ...current, query: '' }))}
+              onClick={() => updateFilter({ query: '' })}
+              aria-label="入力をクリア"
             >
               <X size={15} />
             </button>
           )}
         </label>
 
-        <div className="kpi-map-selects">
+        <div className="kpi-finder-selects">
           <label>
-            市場
+            <span>市場</span>
             <select
               value={filter.market}
               onChange={(event) =>
-                setFilter((current) => ({
-                  ...current,
-                  market: event.target.value as KpiMapFilter['market'],
-                }))
+                updateFilter({ market: event.target.value as FinderFilter['market'] })
               }
             >
-              <option value="all">すべて</option>
+              <option value="all">すべての市場</option>
               {marketsList.map((market) => (
-                <option value={market} key={market}>
-                  {market}
-                </option>
+                <option value={market} key={market}>{market}</option>
               ))}
             </select>
           </label>
           <label>
-            業種
+            <span>業種</span>
             <select
               value={filter.industry}
-              onChange={(event) =>
-                setFilter((current) => ({ ...current, industry: event.target.value }))
-              }
+              onChange={(event) => updateFilter({ industry: event.target.value })}
             >
-              <option value="all">すべて</option>
+              <option value="all">すべての業種</option>
               {industriesList.map((industry) => (
-                <option value={industry} key={industry}>
-                  {industry}
-                </option>
+                <option value={industry} key={industry}>{industry}</option>
               ))}
             </select>
           </label>
         </div>
 
-        <div className="kpi-map-mode-strip" role="tablist" aria-label="Focus mode">
-          {(Object.entries(focusModes) as Array<[FocusMode, FocusConfig]>).map(
-            ([key, item]) => (
-              <button
-                key={key}
-                type="button"
-                className={focus === key ? 'is-active' : ''}
-                onClick={() => setFocus(key)}
-              >
-                <span>{item.shortLabel}</span>
-                <strong>{item.label}</strong>
-              </button>
-            ),
-          )}
-        </div>
-
-        <div className="kpi-map-filter-toggles">
+        <div className="kpi-finder-toggles">
           <label>
             <input
               type="checkbox"
-              checked={filter.dataOnly}
-              onChange={(event) =>
-                setFilter((current) => ({ ...current, dataOnly: event.target.checked }))
-              }
+              checked={filter.rankableOnly}
+              onChange={(event) => updateFilter({ rankableOnly: event.target.checked })}
             />
-            財務データあり
+            <span>判定可能のみ</span>
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={filter.excludeWarnings}
+              onChange={(event) => updateFilter({ excludeWarnings: event.target.checked })}
+            />
+            <span>注意企業を除く</span>
           </label>
           <label>
             <input
               type="checkbox"
               checked={filter.watchOnly}
-              onChange={(event) =>
-                setFilter((current) => ({ ...current, watchOnly: event.target.checked }))
-              }
+              onChange={(event) => updateFilter({ watchOnly: event.target.checked })}
             />
-            Watchlist
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={filter.warningsOnly}
-              onChange={(event) =>
-                setFilter((current) => ({ ...current, warningsOnly: event.target.checked }))
-              }
-            />
-            注意あり
+            <span>ウォッチのみ</span>
           </label>
           <button
             type="button"
             onClick={() => {
               setFilter(initialFilter)
-              setFocus('balanced')
+              setVisibleCount(30)
             }}
           >
             <ListFilter size={15} />
-            Reset
+            条件をリセット
           </button>
         </div>
       </section>
 
-      <main className="kpi-map-layout">
-        <section className="kpi-map-main">
-          <div className="kpi-map-board-head">
+      {topThree.length > 0 && (
+        <section className="kpi-finder-podium" aria-label={`${config.label}の上位3社`}>
+          <div className="kpi-finder-section-head">
             <div>
-              <span className="section-kicker">CURRENT FOCUS</span>
-              <h2>{focusConfig.label}</h2>
-              <p>{focusConfig.description}</p>
+              <span className="section-kicker">TOP PICKS</span>
+              <h2>{config.label}の上位3社</h2>
+              <p>まず見るならこの3社。指標値を確認してから比較へ追加できます。</p>
             </div>
-            <div className="kpi-map-health">
-              <span>{stats.estimated}社に推定指標</span>
-              <span>{stats.warning}社に注意</span>
-            </div>
+            {compareList.length > 0 && (
+              <Link className="kpi-finder-compare-link" to="/compare">
+                比較中 {compareList.length}/5
+                <ArrowRight size={15} />
+              </Link>
+            )}
           </div>
-
-          <section className="kpi-map-field" aria-label="KPI market distribution chart">
-            <div className="kpi-map-field__head">
-              <div>
-                <LineChart size={17} />
-                <span>KPI分布チャート</span>
-              </div>
-              <p>{marketChart.summary.total.toLocaleString('ja-JP')}社 / {focusConfig.xLabel} - {focusConfig.yLabel}</p>
-            </div>
-            <div className="kpi-map-chart-summary">
-              <div>
-                <span>平均スコア</span>
-                <strong>{Math.round(marketChart.summary.average)}</strong>
-              </div>
-              <div>
-                <span>強い企業</span>
-                <strong>{Math.round(marketChart.summary.strongShare)}%</strong>
-              </div>
-              <div>
-                <span>注意ゾーン</span>
-                <strong>{Math.round(marketChart.summary.watchShare)}%</strong>
-              </div>
-              <div>
-                <span>最多ゾーン</span>
-                <strong>{marketChart.summary.densestCount.toLocaleString('ja-JP')}</strong>
-              </div>
-            </div>
-            <div className="kpi-map-field__plot">
-              <div className="kpi-map-density-grid" aria-label="KPI分布チャート">
-                {marketChart.cells.map((cell) => (
-                  <span
-                    key={cell.index}
-                    className={`kpi-map-density-cell is-${cell.tone}`}
-                    style={
-                      {
-                        '--cell-intensity': cell.intensity.toFixed(3),
-                        '--cell-delay': `${Math.min(cell.index * 10, 260)}ms`,
-                      } as CSSProperties
-                    }
-                    aria-label={`${cell.count}社、平均${Math.round(cell.average)}点`}
-                  >
-                    <strong>{cell.count ? cell.count.toLocaleString('ja-JP') : '-'}</strong>
-                    <em>{cell.count ? `平均 ${Math.round(cell.average)}` : 'なし'}</em>
-                  </span>
-                ))}
-              </div>
-              <span className="kpi-map-axis kpi-map-axis--x">{focusConfig.xLabel}</span>
-              <span className="kpi-map-axis kpi-map-axis--y">{focusConfig.yLabel}</span>
-              <div className="kpi-map-chart-legend">
-                <span><i className="is-strong" />強い</span>
-                <span><i className="is-steady" />安定</span>
-                <span><i className="is-watch" />注意</span>
-              </div>
-            </div>
-            <div className="kpi-map-chart-bars" aria-label="スコア帯別の企業分布">
-              {marketChart.bands.map((band) => (
-                <div className={`kpi-map-chart-bar is-${band.tone}`} key={band.key}>
+          <div className="kpi-finder-podium__grid">
+            {topThree.map((item, index) => (
+              <article className={`kpi-finder-pick is-${index + 1}`} key={item.company.id}>
+                <div className="kpi-finder-pick__head">
+                  <span className="kpi-finder-pick__rank">{index + 1}</span>
                   <div>
-                    <span>{band.label}</span>
-                    <strong>{band.count.toLocaleString('ja-JP')}</strong>
-                    <em>{Math.round(band.share)}%</em>
+                    <small>{item.company.code} · {item.company.market}</small>
+                    <Link to={`/company/${item.company.id}`}>{item.company.name}</Link>
+                    <span>{item.company.industry}</span>
                   </div>
-                  <i
-                    style={
-                      {
-                        '--bar-width': `${Math.max(4, band.share)}%`,
-                      } as CSSProperties
-                    }
-                  />
+                  <div className={`kpi-finder-score is-${scoreTone(item.score)}`}>
+                    <strong>{Math.round(item.score)}</strong>
+                    <span>適合度</span>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="kpi-map-lanes" aria-label="Signal lanes">
-            {lanes.map((lane) => {
-              const Icon = lane.icon
-              return (
-                <article className="kpi-map-lane" key={lane.key}>
-                  <div className="kpi-map-lane__head">
-                    <Icon size={17} />
-                    <div>
-                      <h3>{lane.title}</h3>
-                      <p>{lane.subtitle}</p>
+                <div className="kpi-finder-pick__metrics">
+                  {config.columns.map(({ key, label }) => (
+                    <div key={key}>
+                      <span>{label}</span>
+                      <strong>{formatMetricValue(item.company, key)}</strong>
                     </div>
-                  </div>
-                  <div className="kpi-map-lane__list">
-                    {lane.items.map((item, index) => (
-                      <button
-                        type="button"
-                        className={
-                          selectedCompany?.id === item.company.id
-                            ? 'kpi-map-lane-item is-selected'
-                            : 'kpi-map-lane-item'
-                        }
-                        key={`${lane.key}-${item.company.id}`}
-                        onClick={() => setSelectedId(item.company.id)}
-                      >
-                        <span>{index + 1}</span>
-                        <strong>{item.company.name}</strong>
-                        <em>{Math.round(item.score)}</em>
-                      </button>
-                    ))}
-                    {!lane.items.length && <p className="kpi-map-empty-line">該当なし</p>}
-                  </div>
-                </article>
-              )
-            })}
-          </section>
-
-          <section className="kpi-map-shortlist" aria-label="Smart shortlist">
-            <div className="kpi-map-section-title">
-              <div>
-                <span className="section-kicker">SMART LIST</span>
-                <h2>候補リスト</h2>
-              </div>
-              <span>{visibleRanked.length} / {ranked.length}</span>
-            </div>
-
-            <div className="kpi-map-company-list">
-              {visibleRanked.map((item, index) => (
-                <article
-                  key={item.company.id}
-                  className={
-                    selectedCompany?.id === item.company.id
-                      ? `kpi-map-company is-${item.tone} is-selected`
-                      : `kpi-map-company is-${item.tone}`
-                  }
-                >
-                  <button
-                    type="button"
-                    className="kpi-map-company__select"
-                    onClick={() => setSelectedId(item.company.id)}
-                  >
-                    <span className="kpi-map-company__rank">{index + 1}</span>
-                    <div className="kpi-map-company__name">
-                      <span>{item.company.code} / {item.company.market}</span>
-                      <strong>{item.company.name}</strong>
-                      <em>{item.company.industry}</em>
-                    </div>
-                    <div className="kpi-map-company__score">
-                      <strong>{Math.round(item.score)}</strong>
-                      <span>signal</span>
-                    </div>
-                  </button>
-
-                  <div className="kpi-map-company__meta">
-                    <span>{dataLabel(item.company)}</span>
-                    <span>{formatRevenue(item.company)}</span>
-                    {item.hasEstimate && <span className="is-estimated">推定あり</span>}
-                    {item.company.hasWarning && <span className="is-warning">注意</span>}
-                  </div>
-
-                  <div className="kpi-map-company__reasons">
-                    {item.reasons.map((reason) => (
-                      <span key={reason}>{reason}</span>
-                    ))}
-                  </div>
-
-                  <div className="kpi-map-company__actions">
+                  ))}
+                </div>
+                <div className="kpi-finder-pick__foot">
+                  <span className={`kpi-finder-data-state ${item.estimated ? 'is-estimated' : ''}`}>
+                    {dataStatus(item)}
+                  </span>
+                  <div>
                     <button
                       type="button"
-                      aria-label="ウォッチリスト"
                       className={isWatched(item.company.id) ? 'is-active' : ''}
                       onClick={() => toggleWatchlist(item.company.id)}
+                      aria-label={`${item.company.name}をウォッチ`}
                     >
-                      <Bookmark
-                        size={15}
-                        fill={isWatched(item.company.id) ? 'currentColor' : 'none'}
-                      />
+                      <Bookmark size={15} fill={isWatched(item.company.id) ? 'currentColor' : 'none'} />
                     </button>
                     <button
                       type="button"
-                      aria-label="比較"
                       className={isCompared(item.company.id) ? 'is-active' : ''}
-                      disabled={!hasFinancialData(item.company) || (!isCompared(item.company.id) && compareList.length >= 5)}
+                      disabled={!isCompared(item.company.id) && compareList.length >= 5}
                       onClick={() => handleCompare(item.company)}
+                      aria-label={`${item.company.name}を比較`}
                     >
                       <GitCompareArrows size={15} />
                     </button>
-                    <Link aria-label="詳細" to={`/company/${item.company.id}`}>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section className="kpi-finder-ranking" aria-label={`${config.label}の順位表`}>
+        <div className="kpi-finder-section-head">
+          <div>
+            <span className="section-kicker">RANKING WITH EVIDENCE</span>
+            <h2>根拠つき順位表</h2>
+            <p>{ranked.length.toLocaleString('ja-JP')}社が現在の条件に一致</p>
+          </div>
+          <div className="kpi-finder-legend">
+            <span><i className="is-high" />72以上</span>
+            <span><i className="is-mid" />54–71</span>
+            <span><i className="is-low" />53以下</span>
+          </div>
+        </div>
+
+        {visibleRanked.length > 0 ? (
+          <div className="kpi-finder-table-wrap">
+            <div className="kpi-finder-table-head" aria-hidden="true">
+              <span>順位</span>
+              <span>企業</span>
+              <span>適合度</span>
+              {config.columns.map(({ key, label }) => <span key={key}>{label}</span>)}
+              <span>順位の根拠</span>
+              <span>操作</span>
+            </div>
+            <div className="kpi-finder-rows">
+              {visibleRanked.map((item, index) => (
+                <article className="kpi-finder-row" key={item.company.id}>
+                  <span className="kpi-finder-row__rank">{index + 1}</span>
+                  <div className="kpi-finder-row__company">
+                    <span>{item.company.code} · {item.company.market}</span>
+                    <Link to={`/company/${item.company.id}`}>{item.company.name}</Link>
+                    <small>{item.company.industry}</small>
+                  </div>
+                  <div className={`kpi-finder-score is-${scoreTone(item.score)}`}>
+                    <strong>{item.rankable ? Math.round(item.score) : '—'}</strong>
+                    <span>{item.rankable ? '適合度' : '判定不可'}</span>
+                  </div>
+                  {config.columns.map(({ key, label }) => (
+                    <div className="kpi-finder-row__metric" key={key} data-label={label}>
+                      <span>{label}</span>
+                      <strong>{formatMetricValue(item.company, key)}</strong>
+                      {item.company.metrics[key]?.estimated && <em>推定</em>}
+                    </div>
+                  ))}
+                  <div className="kpi-finder-row__evidence">
+                    <div>
+                      {item.reasons.length ? item.reasons.map((reason) => (
+                        <span key={reason}>{reason}</span>
+                      )) : <span>表示できる主要指標なし</span>}
+                    </div>
+                    <small className={item.company.hasWarning ? 'is-warning' : ''}>
+                      {item.company.hasWarning && <AlertTriangle size={12} />}
+                      {item.company.hasWarning
+                        ? `注意 ${item.company.warnings.length}件`
+                        : dataStatus(item)}
+                    </small>
+                  </div>
+                  <div className="kpi-finder-row__actions">
+                    <button
+                      type="button"
+                      className={isWatched(item.company.id) ? 'is-active' : ''}
+                      onClick={() => toggleWatchlist(item.company.id)}
+                      title="ウォッチ"
+                    >
+                      <Bookmark size={15} fill={isWatched(item.company.id) ? 'currentColor' : 'none'} />
+                    </button>
+                    <button
+                      type="button"
+                      className={isCompared(item.company.id) ? 'is-active' : ''}
+                      disabled={!item.rankable || (!isCompared(item.company.id) && compareList.length >= 5)}
+                      onClick={() => handleCompare(item.company)}
+                      title="比較"
+                    >
+                      <GitCompareArrows size={15} />
+                    </button>
+                    <Link to={`/company/${item.company.id}`} title="企業詳細">
                       <ChevronRight size={16} />
                     </Link>
                   </div>
                 </article>
               ))}
             </div>
+          </div>
+        ) : (
+          <div className="kpi-finder-empty">
+            <Search size={24} />
+            <strong>条件に合う企業がありません</strong>
+            <span>市場・業種・チェック条件を少しゆるめてください。</span>
+          </div>
+        )}
 
-            {visibleCount < ranked.length && (
-              <button
-                type="button"
-                className="kpi-map-load-more"
-                onClick={() => setVisibleCount((current) => current + 28)}
-              >
-                さらに表示
-              </button>
-            )}
+        {visibleCount < ranked.length && (
+          <button
+            type="button"
+            className="kpi-finder-more"
+            onClick={() => setVisibleCount((current) => current + 30)}
+          >
+            次の30社を表示
+          </button>
+        )}
+      </section>
 
-            {!ranked.length && (
-              <div className="kpi-map-empty-state">
-                <Search size={24} />
-                <strong>条件に合う企業がありません</strong>
-                <span>検索条件かフィルターを少しゆるめてください。</span>
-              </div>
-            )}
-          </section>
-        </section>
-
-        <aside className="kpi-map-detail" aria-label="Selected company detail">
-          {selectedCompany ? (
-            <>
-              <div className="kpi-map-detail__head">
-                <div>
-                  <span>{selectedCompany.code} / {selectedCompany.market}</span>
-                  <h2>{selectedCompany.name}</h2>
-                  <p>{selectedCompany.industry}</p>
-                </div>
-                <ScoreBadge
-                  score={selectedCompany.scores.overall}
-                  compact
-                  available={hasScorableData(selectedCompany)}
-                />
-              </div>
-
-              <div className="kpi-map-detail__quote">
-                <div>
-                  <span>株価</span>
-                  <strong>
-                    {selectedCompany.stockPrice
-                      ? formatStockPrice(selectedCompany.stockPrice.close)
-                      : '—'}
-                  </strong>
-                </div>
-                <div>
-                  <span>変化率</span>
-                  <strong
-                    className={
-                      (selectedCompany.stockPrice?.changePercent ?? 0) >= 0
-                        ? 'is-up'
-                        : 'is-down'
-                    }
-                  >
-                    {(selectedCompany.stockPrice?.changePercent ?? 0) >= 0 ? (
-                      <ArrowUpRight size={16} />
-                    ) : (
-                      <ArrowDownRight size={16} />
-                    )}
-                    {formatChangePercent(selectedCompany.stockPrice?.changePercent)}
-                  </strong>
-                </div>
-                <div>
-                  <span>出来高</span>
-                  <strong>{formatVolume(selectedCompany.stockPrice?.volume)}</strong>
-                </div>
-              </div>
-
-              <div className="kpi-map-detail__scores">
-                <ScoreBar
-                  label={scoreLabels.profitability}
-                  score={selectedCompany.scores.profitability}
-                  available={hasScorableData(selectedCompany)}
-                />
-                <ScoreBar
-                  label={scoreLabels.safety}
-                  score={selectedCompany.scores.safety}
-                  available={hasScorableData(selectedCompany)}
-                />
-                <ScoreBar
-                  label={scoreLabels.cashGeneration}
-                  score={selectedCompany.scores.cashGeneration}
-                  available={hasScorableData(selectedCompany)}
-                />
-              </div>
-
-              <div className="kpi-map-detail__metrics">
-                {visibleMetricKeys.map((key) => {
-                  const metric = selectedCompany.metrics[key]
-                  return (
-                    <div key={key}>
-                      <span>
-                        {metricLabels[key]}
-                        {metric?.estimated && <em>推定</em>}
-                      </span>
-                      <strong>{metric ? formatMetric(metric) : '—'}</strong>
-                    </div>
-                  )
-                })}
-              </div>
-
-              <div className="kpi-map-detail__tags">
-                <span className={hasFinancialData(selectedCompany) ? 'is-ready' : ''}>
-                  {dataLabel(selectedCompany)}
-                </span>
-                <span className={hasEstimate(selectedCompany) ? 'is-estimated' : 'is-ready'}>
-                  {hasEstimate(selectedCompany) ? '推定指標あり' : '実測中心'}
-                </span>
-                {selectedCompany.hasWarning ? (
-                  <span className="is-warning">
-                    <AlertTriangle size={13} />
-                    注意 {selectedCompany.warnings.length}
-                  </span>
-                ) : (
-                  <span className="is-ready">注意なし</span>
-                )}
-              </div>
-
-              <div className="kpi-map-detail__memo">
-                <h3>見るポイント</h3>
-                <ul>
-                  {(selectedCompany.strengths.length
-                    ? selectedCompany.strengths
-                    : selectedRank?.reasons ?? []
-                  ).slice(0, 3).map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                  {selectedCompany.warnings.slice(0, 2).map((item) => (
-                    <li className="is-warning" key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="kpi-map-detail__actions">
-                <button
-                  type="button"
-                  className={`button ${isWatched(selectedCompany.id) ? 'button--active' : 'button--secondary'}`}
-                  onClick={() => toggleWatchlist(selectedCompany.id)}
-                >
-                  <Bookmark
-                    size={16}
-                    fill={isWatched(selectedCompany.id) ? 'currentColor' : 'none'}
-                  />
-                  {isWatched(selectedCompany.id) ? '登録済み' : 'ウォッチ'}
-                </button>
-                <button
-                  type="button"
-                  className={`button ${isCompared(selectedCompany.id) ? 'button--active' : 'button--secondary'}`}
-                  disabled={!hasFinancialData(selectedCompany) || (!isCompared(selectedCompany.id) && compareList.length >= 5)}
-                  onClick={() => handleCompare(selectedCompany)}
-                >
-                  <GitCompareArrows size={16} />
-                  {isCompared(selectedCompany.id) ? '比較中' : '比較'}
-                </button>
-                <Link className="button button--ghost" to={`/company/${selectedCompany.id}`}>
-                  詳細
-                  <ChevronRight size={16} />
-                </Link>
-              </div>
-              {compareNotice && <small className="kpi-map-notice">{compareNotice}</small>}
-            </>
-          ) : (
-            <div className="kpi-map-detail__empty">
-              <LineChart size={26} />
-              <strong>Signal standby</strong>
-              <span>候補を選ぶと、ここに主要指標と判断材料が出ます。</span>
-            </div>
-          )}
-        </aside>
-      </main>
+      {compareNotice && (
+        <div className="kpi-finder-notice" role="status">
+          <AlertTriangle size={15} />
+          {compareNotice}
+          <Link to="/compare">比較画面へ</Link>
+        </div>
+      )}
     </div>
   )
 }
