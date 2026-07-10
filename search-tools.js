@@ -38,13 +38,17 @@
     const list = root.querySelector('[data-search-history]')
     const clear = root.querySelector('[data-clear-history]')
     const history = readHistory()
-    list.innerHTML = history.length
-      ? history.map((item) => `<button type="button" class="search-history-chip" data-query="${item.replace(/"/g, '&quot;')}">${item}</button>`).join('')
-      : '<span class="search-history-empty">検索履歴はまだありません</span>'
+    const signature = JSON.stringify(history)
+    if (list.dataset.signature !== signature) {
+      list.dataset.signature = signature
+      list.innerHTML = history.length
+        ? history.map((item) => `<button type="button" class="search-history-chip" data-query="${item.replace(/"/g, '&quot;')}">${item}</button>`).join('')
+        : '<span class="search-history-empty">検索履歴はまだありません</span>'
+      list.querySelectorAll('[data-query]').forEach((button) => {
+        button.addEventListener('click', () => setSearch(input, button.dataset.query || ''))
+      })
+    }
     clear.hidden = history.length === 0
-    list.querySelectorAll('[data-query]').forEach((button) => {
-      button.addEventListener('click', () => setSearch(input, button.dataset.query || ''))
-    })
   }
 
   const mount = () => {
