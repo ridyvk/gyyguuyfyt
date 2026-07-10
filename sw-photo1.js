@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kpi-scope-v14-search-discovery'
+const CACHE_NAME = 'kpi-scope-v15-bundled-discovery'
 const APP_SHELL = [
   './',
   './index.html',
