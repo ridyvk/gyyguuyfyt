@@ -95,7 +95,7 @@ const focusConfigs: Record<FinderMode, FinderConfig> = {
       { key: 'cashProfitGap', weight: 0.06, min: -12, max: 12 },
     ],
     columns: [
-      { key: 'roe', label: 'ROE' },
+      { key: 'operatingMargin', label: '営業利益率' },
       { key: 'roicWaccSpread', label: 'ROIC−WACC' },
       { key: 'operatingCfMargin', label: '営業CF率' },
     ],
