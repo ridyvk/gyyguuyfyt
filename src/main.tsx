@@ -56,8 +56,22 @@ createRoot(document.getElementById('root')!).render(
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw-photo1.js').catch((error) => {
-      console.warn('KPI Scope service worker registration failed', error)
+    const removeLegacyAppCache = async () => {
+      const registrations = await navigator.serviceWorker.getRegistrations()
+      await Promise.all(registrations.map((registration) => registration.unregister()))
+
+      if ('caches' in window) {
+        const cacheKeys = await window.caches.keys()
+        await Promise.all(
+          cacheKeys
+            .filter((key) => key.startsWith('kpi-scope'))
+            .map((key) => window.caches.delete(key)),
+        )
+      }
+    }
+
+    void removeLegacyAppCache().catch((error) => {
+      console.warn('KPI Scope legacy cache cleanup failed', error)
     })
   })
 }
