@@ -62,6 +62,61 @@ export default function Universe({ searchMode = false }: UniverseProps) {
     setPage(1)
   }, [filter])
 
+  if (searchMode) {
+    const hasQuery = deferredQuery.trim().length > 0
+
+    return (
+      <div className="page search-page">
+        <header className="page-header">
+          <span className="page-eyebrow">COMPANY SEARCH</span>
+          <h1>企業検索</h1>
+          <p>企業名または証券コードを入力してください。</p>
+        </header>
+
+        <section className="universe-results">
+          <div className="results-toolbar">
+            <SearchBox
+              value={filter.query}
+              onChange={(query) => setFilter({ ...filter, query })}
+              autoFocus
+            />
+          </div>
+
+          {hasQuery ? (
+            visibleCompanies.length ? (
+              <div
+                key={resultsKey}
+                className="company-grid company-grid--refresh"
+                aria-live="polite"
+              >
+                {visibleCompanies.map((company, index) => (
+                  <CompanyCard
+                    key={`${resultsKey}:${company.id}`}
+                    company={company}
+                    watched={isWatched(company.id)}
+                    motionIndex={index}
+                    onToggleWatch={() => toggleWatchlist(company.id)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state">
+                <Database size={30} />
+                <h2>該当する企業がありません</h2>
+                <p>企業名または証券コードを確認してください。</p>
+              </div>
+            )
+          ) : (
+            <div className="empty-state">
+              <h2>企業を検索</h2>
+              <p>企業名・証券コードから上場企業を探せます。</p>
+            </div>
+          )}
+        </section>
+      </div>
+    )
+  }
+
   return (
     <div className="page">
       <header className="page-header page-header--split">
