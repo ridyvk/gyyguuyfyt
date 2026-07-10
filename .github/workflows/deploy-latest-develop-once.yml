@@ -1,7 +1,7 @@
 name: Deploy latest develop once
 
-# trigger-develop-sha: a4383af05f08afb3e9f644883127322caca69e6b
-# recovery-redeploy: 2026-07-11T07:00+09:00
+# trigger-develop-sha: c5c5c76bdf7d40e5f291db051a986770259655bd
+# kpi-finder-deploy: 2026-07-11
 on:
   push:
     branches: [main]
