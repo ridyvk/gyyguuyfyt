@@ -8,7 +8,6 @@ import {
   Menu,
   Radar,
   ScanSearch,
-  Search,
   X,
 } from 'lucide-react'
 import { lazy, Suspense, useLayoutEffect, useState } from 'react'
@@ -27,7 +26,6 @@ const KpiMap = lazy(() => import('./pages/KpiMap'))
 
 const navigation = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/?view=search', label: 'Search', icon: Search },
   { to: '/map', label: 'KPI Map', icon: Radar },
   { to: '/universe', label: 'Universe', icon: Building2 },
   { to: '/watchlist', label: 'Watchlist', icon: Bookmark },
@@ -51,10 +49,6 @@ export default function App() {
   const stockQuoteCount = companies.filter(
     (company) => company.stockPrice,
   ).length
-  const homeIsSearch =
-    location.pathname === '/' &&
-    new URLSearchParams(location.search).get('view') === 'search'
-
   useLayoutEffect(() => {
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual'
@@ -103,15 +97,7 @@ export default function App() {
               to={to}
               end={to === '/'}
               onClick={() => setMenuOpen(false)}
-              className={({ isActive }) => {
-                const active =
-                  label === 'Search'
-                    ? homeIsSearch
-                    : label === 'Dashboard'
-                      ? isActive && !homeIsSearch
-                      : isActive
-                return active ? 'is-active' : ''
-              }}
+              className={({ isActive }) => isActive ? 'is-active' : ''}
             >
               <Icon size={17} />
               <span>{label}</span>
@@ -153,7 +139,7 @@ export default function App() {
                 className="route-transition"
               >
                 <Routes location={location}>
-                  <Route path="/" element={homeIsSearch ? <Universe searchMode /> : <Dashboard />} />
+                  <Route path="/" element={<Dashboard />} />
                   <Route path="/map" element={<KpiMap />} />
                   <Route path="/universe" element={<Universe />} />
                   <Route path="/watchlist" element={<Watchlist />} />
