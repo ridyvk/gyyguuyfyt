@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react'
@@ -44,6 +45,10 @@ interface AppContextValue {
 }
 
 const AppContext = createContext<AppContextValue | null>(null)
+const MARKET_REFRESH_INTERVAL_MS = 15 * 60 * 1000
+
+const marketVersion = (snapshot: MarketSnapshot | null) =>
+  snapshot?.generatedAt ?? snapshot?.latestQuoteTimestamp ?? null
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [companies, setCompanies] = useState<Company[]>([])
@@ -56,6 +61,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     null,
   )
   const [updateStatus, setUpdateStatus] = useState<UpdateStatus | null>(null)
+  const companyUniverseRef = useRef<Company[]>([])
+  const financialSnapshotRef = useRef<FinancialSnapshot | null>(null)
+  const marketVersionRef = useRef<string | null>(null)
 
   useEffect(() => {
     let active = true
@@ -77,6 +85,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
           updateStatus,
         ]) => {
         if (!active) return
+        companyUniverseRef.current = companyModule.companies
+        financialSnapshotRef.current = snapshot
+        marketVersionRef.current = marketVersion(marketSnapshot)
         const loadedCompanies = mergeLiveCompanies(
           companyModule.companies,
           snapshot,
@@ -107,6 +118,57 @@ export function AppProvider({ children }: { children: ReactNode }) {
       active = false
     }
   }, [])
+
+  useEffect(() => {
+    if (!storageReady) return
+
+    let active = true
+    let refreshInFlight = false
+
+    const refreshMarket = async () => {
+      if (refreshInFlight || companyUniverseRef.current.length === 0) return
+      refreshInFlight = true
+      try {
+        const nextSnapshot = await loadMarketSnapshot()
+        if (!active) return
+        const nextVersion = marketVersion(nextSnapshot)
+        if (nextVersion === marketVersionRef.current) return
+        marketVersionRef.current = nextVersion
+        setMarketSnapshot(nextSnapshot)
+        setCompanies(
+          mergeLiveCompanies(
+            companyUniverseRef.current,
+            financialSnapshotRef.current,
+            nextSnapshot,
+          ),
+        )
+      } catch {
+        return
+      } finally {
+        refreshInFlight = false
+      }
+    }
+
+    const intervalId = window.setInterval(() => {
+      void refreshMarket()
+    }, MARKET_REFRESH_INTERVAL_MS)
+    const handleFocus = () => {
+      void refreshMarket()
+    }
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') void refreshMarket()
+    }
+
+    window.addEventListener('focus', handleFocus)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      active = false
+      window.clearInterval(intervalId)
+      window.removeEventListener('focus', handleFocus)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [storageReady])
 
   const toggleWatchlist = useCallback((companyId: string) => {
     setWatchlist((current) => {
