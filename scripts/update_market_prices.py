@@ -110,6 +110,38 @@ def fallback_session_volume(
     return sum(session_volumes) if session_volumes else None
 
 
+def previous_session_close(
+    meta: dict,
+    points: list[tuple[int, float, float | None]],
+    latest_time: int,
+) -> float | None:
+    """Return the prior trading session's close.
+
+    Yahoo's ``chartPreviousClose`` is the close immediately before the
+    requested chart range. With a multi-day range it is therefore not the
+    previous trading day's close. ``previousClose`` is the exchange comparison
+    basis; derive it from the chart sessions only when Yahoo omits that field.
+    """
+    for key in ("regularMarketPreviousClose", "previousClose"):
+        meta_previous_close = number(meta.get(key))
+        if meta_previous_close is not None and meta_previous_close > 0:
+            return meta_previous_close
+
+    latest_date = datetime.fromtimestamp(latest_time, JST).date()
+    prior_session_points = [
+        (timestamp, close)
+        for timestamp, close, _ in points
+        if datetime.fromtimestamp(timestamp, JST).date() < latest_date
+    ]
+    if prior_session_points:
+        return prior_session_points[-1][1]
+
+    chart_previous_close = number(meta.get("chartPreviousClose"))
+    if chart_previous_close is not None and chart_previous_close > 0:
+        return chart_previous_close
+    return None
+
+
 def quote_payload_from_chart_result(result: dict, interval: str) -> dict:
     meta = result.get("meta", {})
     points = valid_chart_points(result)
@@ -119,9 +151,6 @@ def quote_payload_from_chart_result(result: dict, interval: str) -> dict:
 
     if points:
         latest_time, close, volume = points[-1]
-        previous_close = number(meta.get("chartPreviousClose"))
-        if previous_close is None and interval == DAILY_INTERVAL and len(points) > 1:
-            previous_close = points[-2][1]
         price_type = (
             f"intraday-{interval}"
             if interval != DAILY_INTERVAL
@@ -146,8 +175,9 @@ def quote_payload_from_chart_result(result: dict, interval: str) -> dict:
         if meta_price is None or meta_price <= 0:
             raise RuntimeError("close price not found")
         latest_time, close, volume = meta_time or int(time.time()), meta_price, meta_volume
-        previous_close = number(meta.get("chartPreviousClose"))
         price_type = "regular-market-price"
+
+    previous_close = previous_session_close(meta, points, latest_time)
 
     if meta_volume is not None and meta_volume > 0:
         volume = meta_volume

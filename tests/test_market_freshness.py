@@ -33,12 +33,13 @@ class MarketFreshnessTests(unittest.TestCase):
         self.assertTrue(quotes["2000"]["stale"])
         self.assertTrue(quotes["3000"]["stale"])
 
-    def test_intraday_payload_keeps_previous_close_as_change_basis(self) -> None:
+    def test_intraday_payload_uses_market_previous_close_as_change_basis(self) -> None:
         first = int(datetime(2026, 7, 7, 9, 0, tzinfo=JST).timestamp())
         latest = int(datetime(2026, 7, 7, 9, 15, tzinfo=JST).timestamp())
         result = {
             "meta": {
                 "chartPreviousClose": 100.0,
+                "previousClose": 101.0,
                 "regularMarketPrice": 102.5,
                 "regularMarketTime": latest,
                 "regularMarketVolume": 1200,
@@ -62,6 +63,61 @@ class MarketFreshnessTests(unittest.TestCase):
         self.assertEqual(quote["quoteInterval"], "15m")
         self.assertEqual(quote["close"], 102.5)
         self.assertEqual(quote["volume"], 1200)
+        self.assertEqual(quote["previousClose"], 101.0)
+        self.assertEqual(quote["changePercent"], 1.4851)
+
+    def test_intraday_payload_does_not_use_chart_range_baseline(self) -> None:
+        range_start = int(datetime(2026, 7, 8, 15, 30, tzinfo=JST).timestamp())
+        previous_day = int(datetime(2026, 7, 13, 15, 30, tzinfo=JST).timestamp())
+        latest = int(datetime(2026, 7, 14, 15, 15, tzinfo=JST).timestamp())
+        result = {
+            "meta": {
+                "chartPreviousClose": 127.0,
+                "previousClose": 230.0,
+                "regularMarketPrice": 217.0,
+                "regularMarketTime": latest,
+                "regularMarketVolume": 18_004_700,
+            },
+            "timestamp": [range_start, previous_day, latest],
+            "indicators": {
+                "quote": [
+                    {
+                        "close": [127.0, 230.0, 217.0],
+                        "volume": [100, 200, 300],
+                    }
+                ]
+            },
+        }
+
+        quote = quote_payload_from_chart_result(result, INTRADAY_INTERVAL)
+
+        self.assertEqual(quote["previousClose"], 230.0)
+        self.assertEqual(quote["changePercent"], -5.6522)
+
+    def test_intraday_payload_derives_previous_session_when_meta_omits_it(self) -> None:
+        range_start = int(datetime(2026, 7, 6, 15, 30, tzinfo=JST).timestamp())
+        previous_day = int(datetime(2026, 7, 6, 15, 45, tzinfo=JST).timestamp())
+        latest = int(datetime(2026, 7, 7, 9, 15, tzinfo=JST).timestamp())
+        result = {
+            "meta": {
+                "chartPreviousClose": 90.0,
+                "regularMarketPrice": 102.5,
+                "regularMarketTime": latest,
+                "regularMarketVolume": 1200,
+            },
+            "timestamp": [range_start, previous_day, latest],
+            "indicators": {
+                "quote": [
+                    {
+                        "close": [99.0, 100.0, 102.5],
+                        "volume": [400, 500, 1200],
+                    }
+                ]
+            },
+        }
+
+        quote = quote_payload_from_chart_result(result, INTRADAY_INTERVAL)
+
         self.assertEqual(quote["previousClose"], 100.0)
         self.assertEqual(quote["changePercent"], 2.5)
 
