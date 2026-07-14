@@ -48,7 +48,7 @@ class MarketFreshnessTests(unittest.TestCase):
                 "quote": [
                     {
                         "close": [101.0, 102.5],
-                        "volume": [800, 1200],
+                        "volume": [800, 0],
                     }
                 ]
             },
@@ -61,8 +61,35 @@ class MarketFreshnessTests(unittest.TestCase):
         self.assertEqual(quote["priceType"], "intraday-15m")
         self.assertEqual(quote["quoteInterval"], "15m")
         self.assertEqual(quote["close"], 102.5)
+        self.assertEqual(quote["volume"], 1200)
         self.assertEqual(quote["previousClose"], 100.0)
         self.assertEqual(quote["changePercent"], 2.5)
+
+    def test_intraday_payload_sums_session_bars_when_meta_volume_is_zero(self) -> None:
+        previous_day = int(datetime(2026, 7, 6, 15, 15, tzinfo=JST).timestamp())
+        first = int(datetime(2026, 7, 7, 9, 0, tzinfo=JST).timestamp())
+        latest = int(datetime(2026, 7, 7, 9, 15, tzinfo=JST).timestamp())
+        result = {
+            "meta": {
+                "chartPreviousClose": 100.0,
+                "regularMarketPrice": 102.5,
+                "regularMarketTime": latest,
+                "regularMarketVolume": 0,
+            },
+            "timestamp": [previous_day, first, latest],
+            "indicators": {
+                "quote": [
+                    {
+                        "close": [100.0, 101.0, 102.5],
+                        "volume": [5000, 800, 400],
+                    }
+                ]
+            },
+        }
+
+        quote = quote_payload_from_chart_result(result, INTRADAY_INTERVAL)
+
+        self.assertEqual(quote["volume"], 1200)
 
     def test_daily_payload_uses_regular_market_time_when_newer(self) -> None:
         daily = int(datetime(2026, 7, 7, 9, 0, tzinfo=JST).timestamp())
@@ -91,6 +118,7 @@ class MarketFreshnessTests(unittest.TestCase):
         self.assertEqual(quote["priceType"], "regular-market-price")
         self.assertEqual(quote["quoteInterval"], "1d")
         self.assertEqual(quote["close"], 110.0)
+        self.assertEqual(quote["volume"], 2000)
 
 
 if __name__ == "__main__":

@@ -89,6 +89,27 @@ def valid_chart_points(result: dict) -> list[tuple[int, float, float | None]]:
     ]
 
 
+def fallback_session_volume(
+    points: list[tuple[int, float, float | None]],
+    latest_time: int,
+    interval: str,
+) -> float | None:
+    if not points:
+        return None
+    if interval == DAILY_INTERVAL:
+        return points[-1][2]
+
+    latest_date = datetime.fromtimestamp(latest_time, JST).date()
+    session_volumes = [
+        volume
+        for timestamp, _, volume in points
+        if volume is not None
+        and volume >= 0
+        and datetime.fromtimestamp(timestamp, JST).date() == latest_date
+    ]
+    return sum(session_volumes) if session_volumes else None
+
+
 def quote_payload_from_chart_result(result: dict, interval: str) -> dict:
     meta = result.get("meta", {})
     points = valid_chart_points(result)
@@ -118,7 +139,7 @@ def quote_payload_from_chart_result(result: dict, interval: str) -> dict:
             latest_time, close, volume = (
                 meta_time,
                 meta_price,
-                meta_volume or volume,
+                meta_volume if meta_volume is not None else volume,
             )
             price_type = "regular-market-price"
     else:
@@ -127,6 +148,11 @@ def quote_payload_from_chart_result(result: dict, interval: str) -> dict:
         latest_time, close, volume = meta_time or int(time.time()), meta_price, meta_volume
         previous_close = number(meta.get("chartPreviousClose"))
         price_type = "regular-market-price"
+
+    if meta_volume is not None and meta_volume > 0:
+        volume = meta_volume
+    elif points:
+        volume = fallback_session_volume(points, latest_time, interval)
 
     timestamp_jst = datetime.fromtimestamp(int(latest_time), JST)
     quote_payload = {
