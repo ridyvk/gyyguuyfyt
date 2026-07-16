@@ -43,6 +43,7 @@ GitHub Pagesで公開する場合は、まず`develop`でビルドと検証を�
 
 - **Dashboard**: 全企業数、ウォッチ数、注意企業数、平均スコア、業種・テーマ分布
 - **Universe**: 上場企業3,734社の検索、絞り込み、並び替え、ページネーション、ウォッチ登録
+- **Disclosure Radar**: TDnet・EDINET新着の重要度判定、カテゴリ絞り込み、訂正シグナル、企業別タイムライン
 - **Watchlist**: KPI、レーダー、トレンド、強み、注意点を企業カードで深掘り
 - **Company Detail**: 12種のKPIタイル、3年推移、業種別KPI、自動コメント、分析メモ
 - **Compare**: 最大5社の横棒・レーダー・KPIカード比較とBest表示
@@ -78,6 +79,7 @@ python scripts/update_jpx_companies.py
 - ウォッチリスト
 - 比較対象
 - 企業ごとの7項目の分析メモ
+- 既読にした重要開示（最大800件）
 
 ブラウザのサイトデータを削除すると保存内容も消去されます。
 
@@ -99,8 +101,25 @@ src/
   components/  共通UI・チャート
   context/     ウォッチリストと比較状態
   lib/         企業マスター、分析、スコア、検索、保存
-  pages/       5つの画面
+  pages/       6つの画面
   types.ts     共通型
+```
+
+## 開示レーダー
+
+`scripts/update_disclosures.py` はTDnetの適時開示とEDINETの提出メタデータを統合し、`public/data/disclosures.json` を生成します。
+
+- 決算、業績予想、配当、自己株式、M&A、資本政策、資金調達、人事、ガバナンスなどを分類
+- 上方・下方修正、増配・減配、希薄化、TOB、特別損失、訂正・差替えなどをタイトルから検出
+- 同じ企業・カテゴリの前回開示を関連付け、開示間隔と照合推奨を表示
+- 判定根拠はタイトルまたは提出メタデータに限定し、原文から取得していない数値差分は生成しない
+- Watchlist企業の重要開示と未読状態をDashboard・Watchlist・企業詳細へ連携
+- GitHub Actionsの市場更新時に直近3日を再走査し、120日間のタイムラインを維持
+
+ローカルで既存財務開示から初期データだけを作る場合:
+
+```bash
+python scripts/update_disclosures.py --bootstrap-only --retention-days 120
 ```
 
 ## EDINET年次ベースライン + TDnet通期オーバーレイ
