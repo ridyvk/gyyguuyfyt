@@ -70,6 +70,13 @@ jobs:
       - name: Update company master
         run: python scripts/update_jpx_companies.py
 
+      - name: Refresh disclosure radar
+        run: |
+          python scripts/update_disclosures.py \
+            --tdnet-days 3 \
+            --edinet-days 3 \
+            --retention-days 120
+
       - name: Refresh market quotes
         if: steps.mode.outputs.mode == 'market' || steps.mode.outputs.mode == 'all'
         run: python scripts/update_market_prices.py --max-companies 4500 --max-workers 8
@@ -92,6 +99,7 @@ jobs:
       - name: Validate datasets
         run: |
           set -euo pipefail
+          python scripts/validate_datasets.py --scope disclosure
           if [ "${{ steps.mode.outputs.mode }}" = "market" ]; then
             python scripts/validate_datasets.py --scope market
           else
