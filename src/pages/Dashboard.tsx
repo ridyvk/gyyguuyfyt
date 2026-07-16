@@ -24,10 +24,10 @@ import {
 import ChartReveal from '../components/ChartReveal'
 import AnimatedNumber from '../components/AnimatedNumber'
 import DisclosureEventCard from '../components/DisclosureEventCard'
+import MotionPageHeader from '../components/MotionPageHeader'
 import ScoreBadge from '../components/ScoreBadge'
 import StockQuoteCard from '../components/StockQuoteCard'
 import { useApp } from '../context/AppContext'
-import { listedCompanySource } from '../lib/companySource'
 import { hasFinancialData, hasScorableData } from '../lib/liveData'
 import '../dashboard-charts.css'
 
@@ -132,31 +132,7 @@ export default function Dashboard() {
 
   return (
     <div className="page">
-      <section className="hero-panel">
-        <div>
-          <span className="page-eyebrow">
-            OVERVIEW / JPX {listedCompanySource.date.slice(0, 4)}.
-            {listedCompanySource.date.slice(4, 6)}
-          </span>
-          <h1>企業の現在地を、<br />数字の輪郭からつかむ。</h1>
-          <p>
-            財務KPI、業種別の着眼点、強みと違和感をひとつの視界に。
-            株価ではなく、事業の変化を追う企業分析ワークスペースです。
-          </p>
-        </div>
-        <div className="hero-panel__score">
-          <span>Universe 平均</span>
-          <ScoreBadge
-            score={averageScore}
-            available={analyzableCompanies.length > 0}
-          />
-          <small>
-            {statusReady
-              ? `財務KPI取得 ${coverageCompanies.toLocaleString('ja-JP')} / ${targetCompanies.toLocaleString('ja-JP')}社`
-              : '財務データ取得待ち'}
-          </small>
-        </div>
-      </section>
+      <MotionPageHeader title="Dashboard" variant="dashboard" />
 
       <section
         className={`data-status data-status--${financialStatus}`}
