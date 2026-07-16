@@ -9,6 +9,7 @@ import './chart-focus.css'
 import './motion.css'
 import './stock-display.css'
 import './kpi-map.css'
+import './disclosure-radar.css'
 
 class AppErrorBoundary extends Component<
   { children: ReactNode },

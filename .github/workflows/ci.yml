@@ -22,6 +22,11 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Normalize generated financial dataset
+        run: |
+          python scripts/finalize_annual_dataset.py
+          python scripts/split_financials.py
+
       - name: Test data pipeline
         run: python -m unittest discover -s tests -p 'test_*.py'
 

@@ -33,6 +33,19 @@ export const saveCompareList = async (companyIds: string[]) => {
   await (await dbPromise).put('preferences', companyIds, 'compare')
 }
 
+export const loadReadDisclosureIds = async () =>
+  (await dbPromise)
+    .get('preferences', 'read-disclosures')
+    .then((value) => value ?? [])
+
+export const saveReadDisclosureIds = async (eventIds: string[]) => {
+  await (await dbPromise).put(
+    'preferences',
+    eventIds.slice(-800),
+    'read-disclosures',
+  )
+}
+
 export const loadNote = async (companyId: string) =>
   (await dbPromise).get('notes', companyId)
 

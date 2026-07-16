@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "update:financials": "python scripts/update_edinet_financials.py",
     "update:tdnet": "python scripts/update_tdnet_financials.py",
-    "update:market": "python scripts/update_market_prices.py"
+    "update:market": "python scripts/update_market_prices.py",
+    "update:disclosures": "python scripts/update_disclosures.py"
   },
   "dependencies": {
     "idb": "^8.0.3",

@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -16,12 +17,37 @@ ROOT = Path(__file__).resolve().parents[1]
 MASTER = ROOT / "src/data/listedCompanies.json"
 FINANCIALS = ROOT / "public/data/financials.json"
 MARKET = ROOT / "public/data/market.json"
+DISCLOSURES = ROOT / "public/data/disclosures.json"
+DISCLOSURE_MANIFEST = ROOT / "public/data/disclosures/manifest.json"
 JST = timezone(timedelta(hours=9))
 MAX_MARKET_DATA_AGE_DAYS = 7
 
 
 def load(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_disclosure_snapshot() -> dict:
+    if DISCLOSURES.exists():
+        return load(DISCLOSURES)
+    manifest = load(DISCLOSURE_MANIFEST)
+    if int(manifest.get("schemaVersion") or 0) != 1:
+        raise ValueError("disclosure shard manifest schemaVersion must be 1")
+    events: list[dict] = []
+    for entry in manifest.get("shards") or []:
+        filename = str((entry or {}).get("file") or "")
+        if not re.fullmatch(r"chunk-\d{3}\.json", filename):
+            raise ValueError(f"invalid disclosure shard filename: {filename}")
+        shard = load(DISCLOSURE_MANIFEST.parent / filename)
+        if shard.get("generatedAt") != manifest.get("generatedAt"):
+            raise ValueError(f"disclosure shard generation mismatch: {filename}")
+        shard_events = shard.get("events") or []
+        if len(shard_events) != int(entry.get("eventCount") or 0):
+            raise ValueError(f"disclosure shard count mismatch: {filename}")
+        events.extend(shard_events)
+    if len(events) != int(manifest.get("eventCount") or 0):
+        raise ValueError("disclosure manifest event count mismatch")
+    return {**(manifest.get("snapshot") or {}), "events": events}
 
 
 def validate_master() -> tuple[set[str], list[str]]:
@@ -126,11 +152,89 @@ def validate_market(codes: set[str]) -> list[str]:
     return errors
 
 
+def validate_disclosures(codes: set[str]) -> list[str]:
+    try:
+        payload = load_disclosure_snapshot()
+    except (FileNotFoundError, json.JSONDecodeError, OSError, ValueError) as error:
+        return [f"disclosure snapshot could not be loaded: {error}"]
+    events = payload.get("events", []) or []
+    stats = payload.get("stats", {}) or {}
+    errors: list[str] = []
+    if int(payload.get("schemaVersion") or 0) != 1:
+        errors.append("disclosures schemaVersion must be 1")
+    if not isinstance(events, list):
+        return ["disclosures events must be a list"]
+    if int(stats.get("events") or 0) != len(events):
+        errors.append(
+            f"disclosure stats events={stats.get('events')} but events={len(events)}"
+        )
+
+    event_ids: set[str] = set()
+    event_codes: set[str] = set()
+    filed_at_values: list[str] = []
+    valid_sources = {"TDnet", "EDINET"}
+    valid_importance = {"critical", "high", "medium", "low"}
+    valid_categories = {
+        "earnings",
+        "guidance",
+        "dividend",
+        "buyback",
+        "ma",
+        "capital",
+        "finance",
+        "governance",
+        "personnel",
+        "large-holding",
+        "annual-report",
+        "correction",
+        "other",
+    }
+    for index, event in enumerate(events):
+        if not isinstance(event, dict):
+            errors.append(f"disclosure event {index} is not an object")
+            continue
+        event_id = str(event.get("id") or "")
+        code = str(event.get("code") or "")
+        filed_at = str(event.get("filedAt") or "")
+        if not event_id:
+            errors.append(f"disclosure event {index} has no id")
+        elif event_id in event_ids:
+            errors.append(f"disclosures contain duplicate id {event_id}")
+        event_ids.add(event_id)
+        if code not in codes:
+            errors.append(f"disclosure event {event_id} has unknown code {code}")
+        event_codes.add(code)
+        try:
+            datetime.fromisoformat(filed_at.replace("Z", "+00:00"))
+            filed_at_values.append(filed_at)
+        except (TypeError, ValueError):
+            errors.append(f"disclosure event {event_id} has invalid filedAt")
+        if event.get("source") not in valid_sources:
+            errors.append(f"disclosure event {event_id} has invalid source")
+        if event.get("importance") not in valid_importance:
+            errors.append(f"disclosure event {event_id} has invalid importance")
+        if event.get("category") not in valid_categories:
+            errors.append(f"disclosure event {event_id} has invalid category")
+        if not str(event.get("title") or "").strip():
+            errors.append(f"disclosure event {event_id} has no title")
+        if not str(event.get("url") or "").startswith("https://"):
+            errors.append(f"disclosure event {event_id} has invalid url")
+
+    if int(stats.get("companies") or 0) != len(event_codes):
+        errors.append(
+            "disclosure stats companies does not match unique event companies"
+        )
+    latest_filed_at = str(payload.get("latestFiledAt") or "")
+    if filed_at_values and latest_filed_at != max(filed_at_values):
+        errors.append("disclosure latestFiledAt does not match the newest event")
+    return errors
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--scope",
-        choices=("all", "master", "financial", "market"),
+        choices=("all", "master", "financial", "market", "disclosure"),
         default="all",
     )
     args = parser.parse_args()
@@ -140,6 +244,8 @@ def main() -> int:
         errors.extend(validate_financials(codes))
     if args.scope in {"all", "market"}:
         errors.extend(validate_market(codes))
+    if args.scope in {"all", "disclosure"}:
+        errors.extend(validate_disclosures(codes))
 
     if errors:
         for error in errors[:100]:

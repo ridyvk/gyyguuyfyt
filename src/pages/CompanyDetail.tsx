@@ -1,6 +1,8 @@
 import {
   Activity,
+  ArrowRight,
   ArrowLeft,
+  BellRing,
   Bookmark,
   Check,
   GitCompareArrows,
@@ -22,6 +24,7 @@ import {
   YAxis,
 } from 'recharts'
 import KpiTile from '../components/KpiTile'
+import DisclosureEventCard from '../components/DisclosureEventCard'
 import RadarScoreChart from '../components/RadarScoreChart'
 import ScoreBadge from '../components/ScoreBadge'
 import ScoreBar, { scoreLabels } from '../components/ScoreBar'
@@ -151,6 +154,9 @@ export default function CompanyDetail() {
     isCompared,
     toggleWatchlist,
     toggleCompare,
+    disclosures,
+    isDisclosureRead,
+    markDisclosureRead,
   } = useApp()
   const company = useMemo(
     () => {
@@ -192,6 +198,12 @@ export default function CompanyDetail() {
   )
   const sourceLabel =
     company.dataSource === 'TDnet' ? 'TDnet決算短信' : 'EDINET実データ'
+  const companyDisclosures = disclosures
+    .filter((event) => event.code === company.code)
+    .slice(0, 6)
+  const importantDisclosureCount = companyDisclosures.filter(
+    (event) => event.importance === 'critical' || event.importance === 'high',
+  ).length
   const handleSave = async () => {
     await saveNote(company.id, note)
     setSaved(true)
@@ -274,6 +286,41 @@ export default function CompanyDetail() {
                 : '比較に追加'}
           </button>
         </div>
+      </section>
+
+      <section className="company-disclosure-section">
+        <div className="company-disclosure-section__head">
+          <div>
+            <span className="section-kicker">DISCLOSURE TIMELINE</span>
+            <h2>この企業の最新開示</h2>
+            <p>TDnet・EDINETの提出を時系列で確認できます。</p>
+          </div>
+          <div>
+            {importantDisclosureCount > 0 && (
+              <span><BellRing size={13} /> 重要 {importantDisclosureCount}件</span>
+            )}
+            <Link className="button button--secondary" to={`/radar?company=${company.code}`}>
+              全タイムライン <ArrowRight size={13} />
+            </Link>
+          </div>
+        </div>
+        {companyDisclosures.length ? (
+          <div className="company-disclosure-grid">
+            {companyDisclosures.slice(0, 3).map((event) => (
+              <DisclosureEventCard
+                compact
+                event={event}
+                read={isDisclosureRead(event.id)}
+                onRead={markDisclosureRead}
+                key={event.id}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="company-disclosure-empty">
+            この企業の開示は次回の自動更新で追加されます。
+          </div>
+        )}
       </section>
 
       <section className="detail-overview-grid">

@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   ListFilter,
   Menu,
+  Radar,
   ScanSearch,
   X,
 } from 'lucide-react'
@@ -23,11 +24,13 @@ const Watchlist = lazy(() => import('./pages/Watchlist'))
 const CompanyDetail = lazy(() => import('./pages/CompanyDetail'))
 const Compare = lazy(() => import('./pages/Compare'))
 const KpiMap = lazy(() => import('./pages/KpiMap'))
+const DisclosureRadar = lazy(() => import('./pages/DisclosureRadar'))
 
 const navigation = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/map', label: 'KPI Finder', icon: ListFilter },
   { to: '/universe', label: 'Universe', icon: Building2 },
+  { to: '/radar', label: 'Radar', icon: Radar },
   { to: '/watchlist', label: 'Watchlist', icon: Bookmark },
   { to: '/compare', label: 'Compare', icon: GitCompareArrows },
 ]
@@ -40,6 +43,7 @@ export default function App() {
     storageReady,
     financialSnapshot,
     marketSnapshot,
+    unreadDisclosureCount,
   } = useApp()
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
@@ -104,6 +108,11 @@ export default function App() {
               {label === 'Watchlist' && (
                 <b>{storageReady ? watchlist.length : '·'}</b>
               )}
+              {label === 'Radar' && unreadDisclosureCount > 0 && (
+                <b className="nav-badge--alert">
+                  {unreadDisclosureCount > 99 ? '99+' : unreadDisclosureCount}
+                </b>
+              )}
               {label === 'Compare' && compareList.length > 0 && (
                 <b>{compareList.length}</b>
               )}
@@ -142,6 +151,7 @@ export default function App() {
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/map" element={<KpiMap />} />
                   <Route path="/universe" element={<Universe />} />
+                  <Route path="/radar" element={<DisclosureRadar />} />
                   <Route path="/watchlist" element={<Watchlist />} />
                   <Route path="/company/:companyId" element={<CompanyDetail />} />
                   <Route path="/compare" element={<Compare />} />

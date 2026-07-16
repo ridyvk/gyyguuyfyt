@@ -10,18 +10,23 @@ import {
 } from 'react'
 import {
   loadCompareList,
+  loadReadDisclosureIds,
   loadWatchlist,
   saveCompareList,
+  saveReadDisclosureIds,
   saveWatchlist,
 } from '../lib/storage'
 import type {
   Company,
+  DisclosureEvent,
+  DisclosureSnapshot,
   FinancialSnapshot,
   MarketSnapshot,
   UpdateStatus,
 } from '../types'
 import {
   hasFinancialData,
+  loadDisclosureSnapshot,
   loadFinancialSnapshot,
   loadMarketSnapshot,
   loadUpdateStatus,
@@ -36,12 +41,19 @@ interface AppContextValue {
   financialSnapshot: FinancialSnapshot | null
   marketSnapshot: MarketSnapshot | null
   updateStatus: UpdateStatus | null
+  disclosureSnapshot: DisclosureSnapshot | null
+  disclosures: DisclosureEvent[]
+  readDisclosureIds: string[]
+  unreadDisclosureCount: number
   toggleWatchlist: (companyId: string) => void
   toggleCompare: (companyId: string) => boolean
   removeFromCompare: (companyId: string) => void
   clearCompare: () => void
   isWatched: (companyId: string) => boolean
   isCompared: (companyId: string) => boolean
+  isDisclosureRead: (eventId: string) => boolean
+  markDisclosureRead: (eventId: string) => void
+  markDisclosuresRead: (eventIds: string[]) => void
 }
 
 const AppContext = createContext<AppContextValue | null>(null)
@@ -50,10 +62,14 @@ const MARKET_REFRESH_INTERVAL_MS = 15 * 60 * 1000
 const marketVersion = (snapshot: MarketSnapshot | null) =>
   snapshot?.generatedAt ?? snapshot?.latestQuoteTimestamp ?? null
 
+const disclosureVersion = (snapshot: DisclosureSnapshot | null) =>
+  snapshot?.generatedAt ?? snapshot?.latestFiledAt ?? null
+
 export function AppProvider({ children }: { children: ReactNode }) {
   const [companies, setCompanies] = useState<Company[]>([])
   const [watchlist, setWatchlist] = useState<string[]>([])
   const [compareList, setCompareList] = useState<string[]>([])
+  const [readDisclosureIds, setReadDisclosureIds] = useState<string[]>([])
   const [storageReady, setStorageReady] = useState(false)
   const [financialSnapshot, setFinancialSnapshot] =
     useState<FinancialSnapshot | null>(null)
@@ -61,9 +77,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     null,
   )
   const [updateStatus, setUpdateStatus] = useState<UpdateStatus | null>(null)
+  const [disclosureSnapshot, setDisclosureSnapshot] =
+    useState<DisclosureSnapshot | null>(null)
   const companyUniverseRef = useRef<Company[]>([])
   const financialSnapshotRef = useRef<FinancialSnapshot | null>(null)
   const marketVersionRef = useRef<string | null>(null)
+  const disclosureVersionRef = useRef<string | null>(null)
 
   useEffect(() => {
     let active = true
@@ -71,6 +90,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       import('../lib/companyUniverse'),
       loadWatchlist(),
       loadCompareList(),
+      loadReadDisclosureIds(),
       loadFinancialSnapshot().catch(() => null),
       loadMarketSnapshot().catch(() => null),
       loadUpdateStatus().catch(() => null),
@@ -80,6 +100,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           companyModule,
           storedWatchlist,
           storedCompare,
+          storedReadDisclosureIds,
           snapshot,
           marketSnapshot,
           updateStatus,
@@ -97,6 +118,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setFinancialSnapshot(snapshot)
         setMarketSnapshot(marketSnapshot)
         setUpdateStatus(updateStatus)
+        setReadDisclosureIds(storedReadDisclosureIds)
         const validIds = new Set(
           loadedCompanies.map((company) => company.id),
         )
@@ -120,10 +142,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
+    let active = true
+    void loadDisclosureSnapshot()
+      .then((snapshot) => {
+        if (!active) return
+        disclosureVersionRef.current = disclosureVersion(snapshot)
+        setDisclosureSnapshot(snapshot)
+      })
+      .catch(() => undefined)
+    return () => {
+      active = false
+    }
+  }, [])
+
+  useEffect(() => {
     if (!storageReady) return
 
     let active = true
     let refreshInFlight = false
+    let disclosureRefreshInFlight = false
 
     const refreshMarket = async () => {
       if (refreshInFlight || companyUniverseRef.current.length === 0) return
@@ -149,14 +186,36 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
     }
 
+    const refreshDisclosures = async () => {
+      if (disclosureRefreshInFlight) return
+      disclosureRefreshInFlight = true
+      try {
+        const nextSnapshot = await loadDisclosureSnapshot()
+        if (!active) return
+        const nextVersion = disclosureVersion(nextSnapshot)
+        if (nextVersion === disclosureVersionRef.current) return
+        disclosureVersionRef.current = nextVersion
+        setDisclosureSnapshot(nextSnapshot)
+      } catch {
+        return
+      } finally {
+        disclosureRefreshInFlight = false
+      }
+    }
+
     const intervalId = window.setInterval(() => {
       void refreshMarket()
+      void refreshDisclosures()
     }, MARKET_REFRESH_INTERVAL_MS)
     const handleFocus = () => {
       void refreshMarket()
+      void refreshDisclosures()
     }
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') void refreshMarket()
+      if (document.visibilityState === 'visible') {
+        void refreshMarket()
+        void refreshDisclosures()
+      }
     }
 
     window.addEventListener('focus', handleFocus)
@@ -210,6 +269,45 @@ export function AppProvider({ children }: { children: ReactNode }) {
     void saveCompareList([])
   }, [])
 
+  const markDisclosuresRead = useCallback((eventIds: string[]) => {
+    if (!eventIds.length) return
+    setReadDisclosureIds((current) => {
+      const next = Array.from(new Set([...current, ...eventIds])).slice(-800)
+      void saveReadDisclosureIds(next)
+      return next
+    })
+  }, [])
+
+  const markDisclosureRead = useCallback(
+    (eventId: string) => markDisclosuresRead([eventId]),
+    [markDisclosuresRead],
+  )
+
+  const disclosures = useMemo(
+    () => disclosureSnapshot?.events ?? [],
+    [disclosureSnapshot],
+  )
+  const unreadDisclosureCount = useMemo(() => {
+    const readIds = new Set(readDisclosureIds)
+    const watchedIds = new Set(watchlist)
+    const now = Date.now()
+    const globalCutoff = now - 24 * 60 * 60 * 1000
+    const watchlistCutoff = now - 7 * 24 * 60 * 60 * 1000
+    return disclosures.filter(
+      (event) => {
+        if (
+          (event.importance !== 'critical' && event.importance !== 'high') ||
+          readIds.has(event.id)
+        ) return false
+        const filedAt = new Date(event.filedAt).getTime()
+        if (!Number.isFinite(filedAt)) return false
+        return filedAt >= globalCutoff || (
+          watchedIds.has(event.code) && filedAt >= watchlistCutoff
+        )
+      },
+    ).length
+  }, [disclosures, readDisclosureIds, watchlist])
+
   const value = useMemo<AppContextValue>(
     () => ({
       companies,
@@ -219,12 +317,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
       financialSnapshot,
       marketSnapshot,
       updateStatus,
+      disclosureSnapshot,
+      disclosures,
+      readDisclosureIds,
+      unreadDisclosureCount,
       toggleWatchlist,
       toggleCompare,
       removeFromCompare,
       clearCompare,
       isWatched: (companyId) => watchlist.includes(companyId),
       isCompared: (companyId) => compareList.includes(companyId),
+      isDisclosureRead: (eventId) => readDisclosureIds.includes(eventId),
+      markDisclosureRead,
+      markDisclosuresRead,
     }),
     [
       companies,
@@ -234,10 +339,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
       financialSnapshot,
       marketSnapshot,
       updateStatus,
+      disclosureSnapshot,
+      disclosures,
+      readDisclosureIds,
+      unreadDisclosureCount,
       toggleWatchlist,
       toggleCompare,
       removeFromCompare,
       clearCompare,
+      markDisclosureRead,
+      markDisclosuresRead,
     ],
   )
 
