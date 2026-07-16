@@ -40,6 +40,12 @@ class DisclosureClassificationTests(unittest.TestCase):
                 "critical",
                 {"新株発行による希薄化可能性"},
             ),
+            (
+                "事業譲受に関するお知らせ",
+                "ma",
+                "high",
+                set(),
+            ),
         ]
         for title, category, importance, labels in cases:
             with self.subTest(title=title):
@@ -66,7 +72,7 @@ class DisclosureClassificationTests(unittest.TestCase):
 
     def test_routine_equity_compensation_is_not_critical_dilution(self) -> None:
         result = update_disclosures.classify_title(
-            "譲渡制限付株式報酬としての新株式発行に関するお知らせ"
+            "譲渡制限付株式報酬としての新株発行に関するお知らせ"
         )
         self.assertEqual(result["category"], "capital")
         self.assertEqual(result["importance"], "medium")
