@@ -1,6 +1,7 @@
 import type {
   Company,
   CompanyMetrics,
+  DisclosureSnapshot,
   FinancialIndustryShard,
   FinancialShardManifest,
   FinancialSnapshot,
@@ -936,6 +937,23 @@ export const loadMarketSnapshot = async (): Promise<MarketSnapshot> => {
     throw new Error(`Market snapshot could not be loaded: ${response.status}`)
   }
   return response.json() as Promise<MarketSnapshot>
+}
+
+export const loadDisclosureSnapshot = async (): Promise<DisclosureSnapshot> => {
+  const url = `${import.meta.env.BASE_URL}data/disclosures.json?v=${Date.now()}`
+  const response = await fetch(url, { cache: 'no-store' })
+  if (!response.ok) {
+    throw new Error(`Disclosure snapshot could not be loaded: ${response.status}`)
+  }
+  const snapshot = (await response.json()) as DisclosureSnapshot
+  if (
+    snapshot.schemaVersion !== 1 ||
+    !Array.isArray(snapshot.events) ||
+    !snapshot.stats
+  ) {
+    throw new Error('Disclosure snapshot is invalid')
+  }
+  return snapshot
 }
 
 export const mergeLiveCompanies = (
