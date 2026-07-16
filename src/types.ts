@@ -436,6 +436,27 @@ export interface DisclosureSnapshot {
   }
 }
 
+export interface DisclosureShardEntry {
+  file: string
+  eventCount: number
+  firstFiledAt: string | null
+  lastFiledAt: string | null
+}
+
+export interface DisclosureShardManifest {
+  schemaVersion: 1
+  generatedAt: string
+  eventCount: number
+  snapshot: Omit<DisclosureSnapshot, 'events'>
+  shards: DisclosureShardEntry[]
+}
+
+export interface DisclosureShard {
+  schemaVersion: 1
+  generatedAt: string
+  events: DisclosureEvent[]
+}
+
 export interface CompanyNote {
   watchReason: string
   thesis: string
