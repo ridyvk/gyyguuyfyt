@@ -362,6 +362,80 @@ export interface MarketSnapshot {
   }
 }
 
+export type DisclosureSource = 'TDnet' | 'EDINET'
+export type DisclosureImportance = 'critical' | 'high' | 'medium' | 'low'
+export type DisclosureCategory =
+  | 'earnings'
+  | 'guidance'
+  | 'dividend'
+  | 'buyback'
+  | 'ma'
+  | 'capital'
+  | 'finance'
+  | 'governance'
+  | 'personnel'
+  | 'large-holding'
+  | 'annual-report'
+  | 'correction'
+  | 'other'
+
+export interface DisclosureSignal {
+  label: string
+  direction: 'positive' | 'negative' | 'neutral' | 'review'
+  basis: 'title' | 'metadata'
+}
+
+export interface DisclosureEvent {
+  id: string
+  source: DisclosureSource
+  documentId: string
+  code: string
+  companyName: string
+  filedAt: string
+  title: string
+  url: string
+  xbrlUrl?: string
+  category: DisclosureCategory
+  categoryLabel: string
+  importance: DisclosureImportance
+  importanceScore: number
+  summary: string
+  signals: DisclosureSignal[]
+  isCorrection: boolean
+  previousComparableId?: string
+  previousComparableFiledAt?: string
+  daysSincePrevious?: number
+}
+
+export interface DisclosureSourceStatus {
+  status: 'ready' | 'error' | 'bootstrap' | 'pending'
+  checkedAt?: string
+  eventsFetched?: number
+  message?: string
+}
+
+export interface DisclosureSnapshot {
+  schemaVersion: 1
+  generatedAt: string
+  latestFiledAt: string | null
+  status: 'ready' | 'partial' | 'error'
+  message: string
+  retentionDays: number
+  sourceStatus: Record<DisclosureSource, DisclosureSourceStatus>
+  events: DisclosureEvent[]
+  stats: {
+    events: number
+    companies: number
+    critical: number
+    high: number
+    corrections: number
+    byImportance: Partial<Record<DisclosureImportance, number>>
+    byCategory: Partial<Record<DisclosureCategory, number>>
+    bySource: Partial<Record<DisclosureSource, number>>
+    rowsScanned: Partial<Record<DisclosureSource, number>>
+  }
+}
+
 export interface CompanyNote {
   watchReason: string
   thesis: string
