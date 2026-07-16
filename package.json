@@ -16,7 +16,6 @@
     "update:disclosures": "python scripts/update_disclosures.py"
   },
   "dependencies": {
-    "@fontsource/barlow-condensed": "^5.2.8",
     "idb": "^8.0.3",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",

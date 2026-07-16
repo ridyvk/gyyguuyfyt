@@ -177,11 +177,12 @@
   background-position: 0% 50%;
   background-clip: text;
   -webkit-background-clip: text;
-  font-family: 'Barlow Condensed', 'Arial Narrow', 'Roboto Condensed', sans-serif;
-  font-size: clamp(38px, 4.3vw, 56px);
-  line-height: 0.98;
+  font-family: 'Yu Mincho Light', 'YuMincho-Light', 'Yu Mincho', 'YuMincho',
+    'Hiragino Mincho ProN', 'Hiragino Mincho Pro', 'Noto Serif JP', 'MS PMincho', serif;
+  font-size: clamp(34px, 4.15vw, 54px);
+  line-height: 1.08;
   font-weight: 300;
-  letter-spacing: 0.055em;
+  letter-spacing: 0.018em;
   -webkit-text-fill-color: transparent;
   font-synthesis: none;
   text-transform: none;
@@ -950,7 +951,7 @@
   }
 
   .motion-page-header__copy h1 {
-    font-size: clamp(34px, 10.5vw, 44px);
+    font-size: clamp(31px, 10.5vw, 42px);
   }
 
   .motion-page-header__ambient {
