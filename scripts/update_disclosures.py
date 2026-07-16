@@ -28,6 +28,9 @@ from update_tdnet_financials import get as get_tdnet
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "public/data/disclosures.json"
+SHARD_DIR = ROOT / "public/data/disclosures"
+SHARD_MANIFEST = SHARD_DIR / "manifest.json"
+DEFAULT_SHARD_SIZE = 400
 MASTER = ROOT / "src/data/listedCompanies.json"
 FINANCIALS = ROOT / "public/data/financials.json"
 JST = timezone(timedelta(hours=9))
@@ -102,6 +105,113 @@ def load_json(path: Path, default: dict) -> dict:
         return json.loads(path.read_text(encoding="utf-8"))
     except (FileNotFoundError, json.JSONDecodeError, OSError):
         return default
+
+
+def load_sharded_snapshot(manifest_path: Path = SHARD_MANIFEST) -> dict:
+    if not manifest_path.exists():
+        return {}
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as error:
+        raise ValueError("disclosure shard manifest could not be read") from error
+    if int(manifest.get("schemaVersion") or 0) != 1:
+        raise ValueError("disclosure shard manifest schemaVersion must be 1")
+    snapshot = dict(manifest.get("snapshot") or {})
+    events: list[dict] = []
+    for entry in manifest.get("shards") or []:
+        filename = compact_text((entry or {}).get("file"))
+        if not re.fullmatch(r"chunk-\d{3}\.json", filename):
+            raise ValueError(f"invalid disclosure shard filename: {filename}")
+        try:
+            payload = json.loads(
+                (manifest_path.parent / filename).read_text(encoding="utf-8")
+            )
+        except (FileNotFoundError, json.JSONDecodeError, OSError) as error:
+            raise ValueError(f"disclosure shard could not be read: {filename}") from error
+        if payload.get("generatedAt") != manifest.get("generatedAt"):
+            raise ValueError(f"disclosure shard generation mismatch: {filename}")
+        shard_events = payload.get("events")
+        if not isinstance(shard_events, list):
+            raise ValueError(f"disclosure shard events are invalid: {filename}")
+        if len(shard_events) != int((entry or {}).get("eventCount") or 0):
+            raise ValueError(f"disclosure shard count mismatch: {filename}")
+        events.extend(shard_events)
+    if len(events) != int(manifest.get("eventCount") or 0):
+        raise ValueError("disclosure manifest event count mismatch")
+    return {**snapshot, "events": events}
+
+
+def load_existing_snapshot(output: Path) -> dict:
+    snapshot = load_json(output, {})
+    if isinstance(snapshot.get("events"), list):
+        return snapshot
+    if output.resolve() == OUTPUT.resolve():
+        sharded = load_sharded_snapshot()
+        if sharded:
+            return sharded
+    return {"events": []}
+
+
+def write_sharded_snapshot(
+    snapshot: dict,
+    shard_dir: Path = SHARD_DIR,
+    shard_size: int = DEFAULT_SHARD_SIZE,
+) -> dict:
+    shard_dir.mkdir(parents=True, exist_ok=True)
+    events = snapshot.get("events") or []
+    shards: list[dict] = []
+    expected_files: set[str] = set()
+    for index, start in enumerate(range(0, len(events), max(1, shard_size)), 1):
+        filename = f"chunk-{index:03d}.json"
+        expected_files.add(filename)
+        shard_events = events[start : start + max(1, shard_size)]
+        payload = {
+            "schemaVersion": 1,
+            "generatedAt": snapshot.get("generatedAt"),
+            "events": shard_events,
+        }
+        (shard_dir / filename).write_text(
+            json.dumps(payload, ensure_ascii=False, separators=(",", ":")),
+            encoding="utf-8",
+        )
+        shards.append(
+            {
+                "file": filename,
+                "eventCount": len(shard_events),
+                "firstFiledAt": shard_events[0].get("filedAt") if shard_events else None,
+                "lastFiledAt": shard_events[-1].get("filedAt") if shard_events else None,
+            }
+        )
+    for stale_path in shard_dir.glob("chunk-*.json"):
+        if stale_path.name not in expected_files:
+            stale_path.unlink()
+    snapshot_metadata = {
+        key: value for key, value in snapshot.items() if key != "events"
+    }
+    manifest = {
+        "schemaVersion": 1,
+        "generatedAt": snapshot.get("generatedAt"),
+        "eventCount": len(events),
+        "snapshot": snapshot_metadata,
+        "shards": shards,
+    }
+    (shard_dir / "manifest.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, separators=(",", ":")),
+        encoding="utf-8",
+    )
+    return manifest
+
+
+def persist_snapshot(snapshot: dict, output: Path) -> None:
+    if output.resolve() == OUTPUT.resolve():
+        write_sharded_snapshot(snapshot)
+        output.unlink(missing_ok=True)
+        return
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(
+        json.dumps(snapshot, ensure_ascii=False, separators=(",", ":")),
+        encoding="utf-8",
+    )
 
 
 def company_master() -> dict[str, str]:
@@ -669,7 +779,7 @@ def refresh_disclosures(
     output: Path = OUTPUT,
 ) -> dict:
     companies = company_master()
-    previous = load_json(output, {"events": []})
+    previous = load_existing_snapshot(output)
     existing_events = previous.get("events") or []
     bootstrap_events = bootstrap_financial_events(companies)
     events = [*existing_events, *bootstrap_events]
@@ -731,11 +841,7 @@ def refresh_disclosures(
         scanned=scanned,
         bootstrap_only=bootstrap_only,
     )
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(
-        json.dumps(snapshot, ensure_ascii=False, separators=(",", ":")),
-        encoding="utf-8",
-    )
+    persist_snapshot(snapshot, output)
     return snapshot
 
 
