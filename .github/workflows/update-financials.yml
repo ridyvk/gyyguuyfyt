@@ -52,6 +52,15 @@ jobs:
       - name: Generate financial industry shards
         run: python scripts/split_financials.py
 
+      - name: Refresh disclosure radar
+        env:
+          EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
+        run: |
+          python scripts/update_disclosures.py \
+            --tdnet-days 30 \
+            --edinet-days 30 \
+            --retention-days 120
+
       - name: Validate financial datasets
         run: |
           python scripts/validate_datasets.py
