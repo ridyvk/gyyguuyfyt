@@ -760,8 +760,8 @@
 }
 
 @keyframes dashboard-title-settle {
-  from { opacity: 0; letter-spacing: 0.12em; transform: translateY(16px); }
-  to { opacity: 1; letter-spacing: 0.055em; transform: translateY(0); }
+  from { opacity: 0; letter-spacing: 0.06em; transform: translateY(16px); }
+  to { opacity: 1; letter-spacing: 0.018em; transform: translateY(0); }
 }
 
 @keyframes dashboard-bar-rise {
@@ -821,8 +821,8 @@
 }
 
 @keyframes universe-title-resolve {
-  from { opacity: 0; letter-spacing: 0.12em; transform: translateY(4px); }
-  to { opacity: 1; letter-spacing: 0.055em; transform: translateY(0); }
+  from { opacity: 0; letter-spacing: 0.07em; transform: translateY(4px); }
+  to { opacity: 1; letter-spacing: 0.018em; transform: translateY(0); }
 }
 
 @keyframes universe-orbit-float {
