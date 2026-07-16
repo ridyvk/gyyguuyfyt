@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -17,12 +18,36 @@ MASTER = ROOT / "src/data/listedCompanies.json"
 FINANCIALS = ROOT / "public/data/financials.json"
 MARKET = ROOT / "public/data/market.json"
 DISCLOSURES = ROOT / "public/data/disclosures.json"
+DISCLOSURE_MANIFEST = ROOT / "public/data/disclosures/manifest.json"
 JST = timezone(timedelta(hours=9))
 MAX_MARKET_DATA_AGE_DAYS = 7
 
 
 def load(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_disclosure_snapshot() -> dict:
+    if DISCLOSURES.exists():
+        return load(DISCLOSURES)
+    manifest = load(DISCLOSURE_MANIFEST)
+    if int(manifest.get("schemaVersion") or 0) != 1:
+        raise ValueError("disclosure shard manifest schemaVersion must be 1")
+    events: list[dict] = []
+    for entry in manifest.get("shards") or []:
+        filename = str((entry or {}).get("file") or "")
+        if not re.fullmatch(r"chunk-\d{3}\.json", filename):
+            raise ValueError(f"invalid disclosure shard filename: {filename}")
+        shard = load(DISCLOSURE_MANIFEST.parent / filename)
+        if shard.get("generatedAt") != manifest.get("generatedAt"):
+            raise ValueError(f"disclosure shard generation mismatch: {filename}")
+        shard_events = shard.get("events") or []
+        if len(shard_events) != int(entry.get("eventCount") or 0):
+            raise ValueError(f"disclosure shard count mismatch: {filename}")
+        events.extend(shard_events)
+    if len(events) != int(manifest.get("eventCount") or 0):
+        raise ValueError("disclosure manifest event count mismatch")
+    return {**(manifest.get("snapshot") or {}), "events": events}
 
 
 def validate_master() -> tuple[set[str], list[str]]:
@@ -128,7 +153,10 @@ def validate_market(codes: set[str]) -> list[str]:
 
 
 def validate_disclosures(codes: set[str]) -> list[str]:
-    payload = load(DISCLOSURES)
+    try:
+        payload = load_disclosure_snapshot()
+    except (FileNotFoundError, json.JSONDecodeError, OSError, ValueError) as error:
+        return [f"disclosure snapshot could not be loaded: {error}"]
     events = payload.get("events", []) or []
     stats = payload.get("stats", {}) or {}
     errors: list[str] = []
