@@ -16,6 +16,7 @@ import {
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import AnimatedNumber from '../components/AnimatedNumber'
+import MotionPageHeader from '../components/MotionPageHeader'
 import { useApp } from '../context/AppContext'
 import { industriesList, marketsList } from '../lib/companyUniverse'
 import { formatMetric } from '../lib/formatters'
@@ -341,15 +342,8 @@ export default function KpiMap() {
 
   return (
     <div className="page kpi-finder-page">
-      <header className="kpi-finder-hero">
-        <div className="kpi-finder-hero__copy">
-          <span className="page-eyebrow">KPI FINDER / DECISION SHORTLIST</span>
-          <h1>目的から、見るべき企業を絞る。</h1>
-          <p>
-            知りたいことを1つ選ぶと、同じ基準で企業を順位付けします。
-            点数だけでなく、順位の根拠と使用データまで確認できます。
-          </p>
-        </div>
+      <MotionPageHeader title="KPI Finder" variant="finder" />
+      <section className="kpi-finder-guide-panel" aria-label="KPI Finderの使い方">
         <ol className="kpi-finder-guide" aria-label="KPI Finderの使い方">
           <li>
             <span>1</span>
@@ -364,7 +358,7 @@ export default function KpiMap() {
             <div><strong>比較に送る</strong><small>最大5社を横並び</small></div>
           </li>
         </ol>
-      </header>
+      </section>
 
       <section className="kpi-finder-modes" aria-label="分析目的を選ぶ">
         {(Object.entries(focusConfigs) as Array<[FinderMode, FinderConfig]>).map(
