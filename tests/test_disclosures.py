@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 import sys
+import tempfile
 import unittest
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -127,6 +129,61 @@ class DisclosureComparisonTests(unittest.TestCase):
         newest = snapshot["events"][0]
         self.assertEqual(newest["previousComparableId"], "tdnet:old")
         self.assertEqual(newest["daysSincePrevious"], 10)
+
+
+class DisclosureShardTests(unittest.TestCase):
+    def test_sharded_snapshot_round_trip_preserves_all_events(self) -> None:
+        now = datetime.now(update_disclosures.JST).replace(microsecond=0)
+        events = [
+            update_disclosures.make_event(
+                source="TDnet",
+                document_id=f"doc-{index}",
+                code="7203",
+                company_name="Example",
+                filed_at=now - timedelta(minutes=index),
+                title=f"開示資料 {index}",
+                url=f"https://example.com/{index}.pdf",
+            )
+            for index in range(3)
+        ]
+        snapshot = update_disclosures.build_snapshot(
+            events,
+            retention_days=120,
+            source_status={
+                "TDnet": {"status": "ready"},
+                "EDINET": {"status": "ready"},
+            },
+            scanned={"TDnet": 3, "EDINET": 0},
+        )
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            shard_dir = Path(temporary_directory) / "disclosures"
+            manifest = update_disclosures.write_sharded_snapshot(
+                snapshot,
+                shard_dir,
+                shard_size=2,
+            )
+            restored = update_disclosures.load_sharded_snapshot(
+                shard_dir / "manifest.json"
+            )
+            first_shard_path = shard_dir / "chunk-001.json"
+            first_shard = json.loads(first_shard_path.read_text(encoding="utf-8"))
+            first_shard["generatedAt"] = "2000-01-01T00:00:00+09:00"
+            first_shard_path.write_text(
+                json.dumps(first_shard, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "generation mismatch"):
+                update_disclosures.load_sharded_snapshot(
+                    shard_dir / "manifest.json"
+                )
+
+        self.assertEqual(manifest["eventCount"], 3)
+        self.assertEqual(len(manifest["shards"]), 2)
+        self.assertEqual(
+            [event["id"] for event in restored["events"]],
+            [event["id"] for event in snapshot["events"]],
+        )
+        self.assertEqual(restored["retentionDays"], 120)
 
 
 if __name__ == "__main__":
