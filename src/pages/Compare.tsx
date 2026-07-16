@@ -18,6 +18,7 @@ import {
   YAxis,
 } from 'recharts'
 import RadarScoreChart from '../components/RadarScoreChart'
+import MotionPageHeader from '../components/MotionPageHeader'
 import ScoreBadge from '../components/ScoreBadge'
 import StockQuoteCard from '../components/StockQuoteCard'
 import WarningList from '../components/WarningList'
@@ -103,18 +104,14 @@ export default function Compare() {
 
   return (
     <div className="page">
-      <header className="page-header page-header--split">
-        <div>
-          <span className="page-eyebrow">COMPARE / MAX 5</span>
-          <h1>企業の形を、並べて比べる</h1>
-          <p>単純な順位ではなく、強みと弱みの組み合わせを比較します。</p>
-        </div>
-        {comparedCompanies.length > 0 && (
+      <MotionPageHeader title="Compare" variant="compare" />
+      {comparedCompanies.length > 0 && (
+        <div className="motion-page-actions">
           <button type="button" className="button button--ghost" onClick={clearCompare}>
             <RotateCcw size={16} />比較をクリア
           </button>
-        )}
-      </header>
+        </div>
+      )}
 
       <section className="compare-picker">
         <div className="compare-picker__slots">
