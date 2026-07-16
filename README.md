@@ -107,7 +107,7 @@ src/
 
 ## 開示レーダー
 
-`scripts/update_disclosures.py` はTDnetの適時開示とEDINETの提出メタデータを統合し、`public/data/disclosures.json` を生成します。
+`scripts/update_disclosures.py` はTDnetの適時開示とEDINETの提出メタデータを統合し、`public/data/disclosures/manifest.json` と分割チャンクを生成します。120日分の履歴を欠かさず保ちつつ、GitHub Pagesで安全に配信できるサイズへ自動分割します。
 
 - 決算、業績予想、配当、自己株式、M&A、資本政策、資金調達、人事、ガバナンスなどを分類
 - 上方・下方修正、増配・減配、希薄化、TOB、特別損失、訂正・差替えなどをタイトルから検出
