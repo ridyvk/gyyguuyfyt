@@ -1,6 +1,8 @@
 import type {
   Company,
   CompanyMetrics,
+  DisclosureShard,
+  DisclosureShardManifest,
   DisclosureSnapshot,
   FinancialIndustryShard,
   FinancialShardManifest,
@@ -940,12 +942,45 @@ export const loadMarketSnapshot = async (): Promise<MarketSnapshot> => {
 }
 
 export const loadDisclosureSnapshot = async (): Promise<DisclosureSnapshot> => {
-  const url = `${import.meta.env.BASE_URL}data/disclosures.json?v=${Date.now()}`
-  const response = await fetch(url, { cache: 'no-store' })
-  if (!response.ok) {
-    throw new Error(`Disclosure snapshot could not be loaded: ${response.status}`)
+  const version = Date.now()
+  const baseUrl = `${import.meta.env.BASE_URL}data/disclosures`
+  let snapshot: DisclosureSnapshot
+  try {
+    const manifest = await fetchFinancialJson<DisclosureShardManifest>(
+      `${baseUrl}/manifest.json?v=${version}`,
+    )
+    if (
+      manifest.schemaVersion !== 1 ||
+      !Array.isArray(manifest.shards) ||
+      !Number.isInteger(manifest.eventCount)
+    ) throw new Error('Disclosure shard manifest is invalid')
+    const shardPayloads = await Promise.all(
+      manifest.shards.map(async (entry) => {
+        if (!/^chunk-\d{3}\.json$/.test(entry.file)) {
+          throw new Error(`Unexpected disclosure shard: ${entry.file}`)
+        }
+        const shard = await fetchFinancialJson<DisclosureShard>(
+          `${baseUrl}/${entry.file}?v=${encodeURIComponent(manifest.generatedAt)}`,
+        )
+        if (
+          shard.schemaVersion !== 1 ||
+          shard.generatedAt !== manifest.generatedAt ||
+          !Array.isArray(shard.events) ||
+          shard.events.length !== entry.eventCount
+        ) throw new Error(`Disclosure shard metadata mismatch: ${entry.file}`)
+        return shard
+      }),
+    )
+    const events = shardPayloads.flatMap((shard) => shard.events)
+    if (events.length !== manifest.eventCount) {
+      throw new Error('Disclosure shard event count mismatch')
+    }
+    snapshot = { ...manifest.snapshot, events }
+  } catch {
+    snapshot = await fetchFinancialJson<DisclosureSnapshot>(
+      `${import.meta.env.BASE_URL}data/disclosures.json?v=${version}`,
+    )
   }
-  const snapshot = (await response.json()) as DisclosureSnapshot
   if (
     snapshot.schemaVersion !== 1 ||
     !Array.isArray(snapshot.events) ||
