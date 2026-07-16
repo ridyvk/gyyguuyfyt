@@ -176,7 +176,7 @@ export default function MotionPageHeader({ title, variant }: MotionPageHeaderPro
   return (
     <header className={`motion-page-header motion-page-header--${variant}`}>
       <div className="motion-page-header__copy">
-        <h1 data-title={title}>{title}</h1>
+        <h1 data-title={title} aria-label={title}>{title}</h1>
       </div>
       <div className="motion-page-header__visual">
         <Visual />
