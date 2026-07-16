@@ -124,7 +124,7 @@ export default function DisclosureRadar() {
     const selectedDays = Number.isFinite(days) && days > 0 ? days : 120
     return disclosures
       .filter((event) => {
-        if (!isWithinDays(event, selectedDays)) return false
+        if (days !== 120 && !isWithinDays(event, selectedDays)) return false
         if (category !== 'all' && event.category !== category) return false
         if (source !== 'all' && event.source !== source) return false
         if (
