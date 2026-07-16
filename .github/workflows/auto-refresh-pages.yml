@@ -1,5 +1,5 @@
 name: Auto refresh data and deploy
-# source-deploy: 167c54c0786a14d2602817943d8e85898a80ee8b
+# source-deploy: beceb6768932c5f2d06f247c15b397a66117ec55
 
 on:
   # Re-run immediately whenever this automation itself is changed on main.
