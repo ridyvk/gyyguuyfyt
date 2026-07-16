@@ -1,6 +1,7 @@
 import {
   AlertTriangle,
   ArrowRight,
+  BellRing,
   Bookmark,
   Building2,
   Gauge,
@@ -22,6 +23,7 @@ import {
 } from 'recharts'
 import ChartReveal from '../components/ChartReveal'
 import AnimatedNumber from '../components/AnimatedNumber'
+import DisclosureEventCard from '../components/DisclosureEventCard'
 import ScoreBadge from '../components/ScoreBadge'
 import StockQuoteCard from '../components/StockQuoteCard'
 import { useApp } from '../context/AppContext'
@@ -58,6 +60,10 @@ export default function Dashboard() {
     financialSnapshot,
     marketSnapshot,
     updateStatus,
+    disclosures,
+    disclosureSnapshot,
+    isDisclosureRead,
+    markDisclosureRead,
   } = useApp()
   const financialCompanies = companies.filter(
     hasFinancialData,
@@ -115,6 +121,14 @@ export default function Dashboard() {
         Math.abs(a.stockPrice?.changePercent ?? 0),
     )
     .slice(0, 3)
+  const disclosurePulse = disclosures
+    .filter(
+      (event) => event.importance === 'critical' || event.importance === 'high',
+    )
+    .slice(0, 4)
+  const dashboardDisclosureEvents = disclosurePulse.length
+    ? disclosurePulse
+    : disclosures.slice(0, 4)
 
   return (
     <div className="page">
@@ -200,6 +214,46 @@ export default function Dashboard() {
             </div>
           )}
         </div>
+      </section>
+
+      <section className="dashboard-disclosure-panel">
+        <div className="dashboard-disclosure-panel__head">
+          <div>
+            <span className="section-kicker">DISCLOSURE PULSE</span>
+            <h2>重要開示を、先に見る</h2>
+            <p>
+              TDnet・EDINETの新着から、業績修正・還元・資本政策などを優先表示。
+            </p>
+          </div>
+          <div className="dashboard-disclosure-panel__status">
+            <BellRing size={17} />
+            <span>
+              {disclosureSnapshot?.status === 'ready' ? '自動監視中' : '初期データ'}
+              <small>{disclosures.length.toLocaleString('ja-JP')}件</small>
+            </span>
+            <Link className="button button--secondary" to="/radar">
+              レーダーを開く <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
+        {dashboardDisclosureEvents.length ? (
+          <div className="dashboard-disclosure-grid">
+            {dashboardDisclosureEvents.map((event) => (
+              <DisclosureEventCard
+                compact
+                event={event}
+                read={isDisclosureRead(event.id)}
+                onRead={markDisclosureRead}
+                key={event.id}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="market-pulse__empty">
+            <strong>開示レーダーは次回の自動更新で表示されます</strong>
+            <span>TDnet・EDINETの新着を分類して表示します。</span>
+          </div>
+        )}
       </section>
 
       <section className="summary-grid">
