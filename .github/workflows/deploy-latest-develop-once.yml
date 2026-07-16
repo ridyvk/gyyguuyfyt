@@ -1,6 +1,6 @@
 name: Deploy latest develop once
 
-# trigger-develop-sha: e6f5190ee02591bdbbf57c1f0c1d99b2a3c5dce4
+# trigger-develop-sha: 7dc14378e8b73d974d56bde3ce8c155ff3951216
 # kpi-finder-deploy: 2026-07-11
 on:
   push:
