@@ -12,7 +12,7 @@ interface MotionPageHeaderProps {
 }
 
 const DashboardVisual = () => (
-  <svg viewBox="0 0 420 180" aria-hidden="true">
+  <svg viewBox="0 0 420 180" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
     <g className="motion-grid">
       <path d="M24 35H396M24 75H396M24 115H396M24 155H396" />
       <path d="M74 20V164M154 20V164M234 20V164M314 20V164" />
@@ -41,7 +41,7 @@ const DashboardVisual = () => (
 )
 
 const FinderVisual = () => (
-  <svg viewBox="0 0 420 180" aria-hidden="true">
+  <svg viewBox="0 0 420 180" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
     <g className="finder-input-lines">
       <path d="M34 31H112L191 90" />
       <path d="M34 61H124L191 90" />
@@ -75,7 +75,7 @@ const universeNodes = [
 ]
 
 const UniverseVisual = () => (
-  <svg viewBox="0 0 420 180" aria-hidden="true">
+  <svg viewBox="0 0 420 180" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
     <g className="universe-orbits">
       <ellipse cx="213" cy="89" rx="183" ry="69" />
       <ellipse cx="213" cy="89" rx="119" ry="45" />
@@ -95,7 +95,7 @@ const UniverseVisual = () => (
 )
 
 const RadarVisual = () => (
-  <svg viewBox="0 0 420 180" aria-hidden="true">
+  <svg viewBox="0 0 420 180" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
     <g className="radar-rings">
       <circle cx="220" cy="90" r="68" />
       <circle cx="220" cy="90" r="46" />
@@ -118,7 +118,7 @@ const RadarVisual = () => (
 )
 
 const WatchlistVisual = () => (
-  <svg viewBox="0 0 420 180" aria-hidden="true">
+  <svg viewBox="0 0 420 180" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
     <g className="watch-stream">
       {[31, 68, 105, 142].map((y, index) => (
         <g className={`watch-row watch-row--${index + 1}`} key={y}>
@@ -139,7 +139,7 @@ const WatchlistVisual = () => (
 )
 
 const CompareVisual = () => (
-  <svg viewBox="0 0 420 180" aria-hidden="true">
+  <svg viewBox="0 0 420 180" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
     <g className="compare-axis">
       <circle cx="210" cy="90" r="61" />
       <path d="M210 22V158M142 90H278M162 42L258 138M258 42L162 138" />
