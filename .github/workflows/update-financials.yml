@@ -71,4 +71,4 @@ jobs:
         with:
           branch: develop
           commit_message: "data: update annual financials"
-          file_pattern: public/data/*.json public/data/financials/*.json
+          file_pattern: public/data/*.json public/data/financials/*.json public/data/disclosures/*.json
