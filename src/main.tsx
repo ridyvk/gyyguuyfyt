@@ -1,6 +1,7 @@
 import { Component, StrictMode, type ErrorInfo, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'
+import '@fontsource/barlow-condensed/latin-300.css'
 import App from './App'
 import { AppProvider } from './context/AppContext'
 import './styles.css'
