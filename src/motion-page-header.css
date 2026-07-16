@@ -1180,11 +1180,17 @@
 }
 
 @keyframes universe-satellite-orbit-one {
-  to { transform: rotate(360deg); }
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-194px, -54px); }
+  50% { transform: translate(-386px, 1px); }
+  75% { transform: translate(-194px, 56px); }
 }
 
 @keyframes universe-satellite-orbit-two {
-  to { transform: rotate(360deg); }
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(163px, 9px); }
+  50% { transform: translate(316px, 52px); }
+  75% { transform: translate(163px, 95px); }
 }
 
 @keyframes universe-moon-rotate {
