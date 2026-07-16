@@ -2,6 +2,7 @@ import { ArrowRight, BellRing, Bookmark, GitCompareArrows } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import CompanyCard from '../components/CompanyCard'
 import DisclosureEventCard from '../components/DisclosureEventCard'
+import MotionPageHeader from '../components/MotionPageHeader'
 import { useApp } from '../context/AppContext'
 
 export default function Watchlist() {
@@ -34,17 +35,13 @@ export default function Watchlist() {
 
   return (
     <div className="page">
-      <header className="page-header page-header--split">
-        <div>
-          <span className="page-eyebrow">WATCHLIST / DEEP DIVE</span>
-          <h1>気になる企業を、深く見る</h1>
-          <p>KPIの形、直近の変化、強みと注意点をカード単位で追跡します。</p>
-        </div>
+      <MotionPageHeader title="Watchlist" variant="watchlist" />
+      <div className="motion-page-actions">
         <Link className="button button--primary" to="/compare">
           <GitCompareArrows size={17} />
           比較画面へ
         </Link>
-      </header>
+      </div>
 
       {!storageReady ? (
         <div className="empty-state"><p>ウォッチリストを読み込んでいます...</p></div>

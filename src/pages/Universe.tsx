@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 import CompanyCard from '../components/CompanyCard'
 import AnimatedNumber from '../components/AnimatedNumber'
 import FilterPanel from '../components/FilterPanel'
+import MotionPageHeader from '../components/MotionPageHeader'
 import SearchBox from '../components/SearchBox'
 import { useApp } from '../context/AppContext'
 import { filterCompanies } from '../lib/filterCompanies'
@@ -60,20 +61,8 @@ export default function Universe() {
 
   return (
     <div className="page">
-      <header className="page-header page-header--split">
-        <div>
-          <span className="page-eyebrow">
-            UNIVERSE / {companies.length.toLocaleString('ja-JP')} COMPANIES
-          </span>
-          <h1>企業を探す</h1>
-          <p>
-            {filter.warningsOnly
-              ? '注意フラグのある企業を証券コード順で表示しています。'
-              : filter.sort === 'code-asc'
-                ? '上場企業を証券コード順で表示しています。'
-                : '軽量な一覧から、気になる変化と分析対象を絞り込みます。'}
-          </p>
-        </div>
+      <MotionPageHeader title="Universe" variant="universe" />
+      <div className="motion-page-actions">
         <div className="universe-stat">
           <Database size={18} />
           <span>
@@ -84,7 +73,7 @@ export default function Universe() {
             {companies.length.toLocaleString('ja-JP')} companies
           </span>
         </div>
-      </header>
+      </div>
 
       <div className="universe-layout">
         <aside>

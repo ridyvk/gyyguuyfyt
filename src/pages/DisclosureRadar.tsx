@@ -8,7 +8,6 @@ import {
   Clock3,
   FilePenLine,
   Filter,
-  Radar,
   RefreshCw,
   Search,
   ShieldCheck,
@@ -18,6 +17,7 @@ import {
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import DisclosureEventCard from '../components/DisclosureEventCard'
+import MotionPageHeader from '../components/MotionPageHeader'
 import { useApp } from '../context/AppContext'
 import type {
   DisclosureCategory,
@@ -217,33 +217,23 @@ export default function DisclosureRadar() {
 
   return (
     <div className="page disclosure-page">
-      <section className="disclosure-hero">
-        <div className="disclosure-hero__content">
-          <span className="page-eyebrow">DISCLOSURE RADAR / TDnet + EDINET</span>
-          <h1>開示の変化を、<br />見逃さない。</h1>
-          <p>
-            決算、業績修正、配当、自己株式、M&amp;A、資本政策を自動分類。
-            重要度と訂正シグナルを添えて、原文まで最短でたどれます。
-          </p>
-          <div className="disclosure-hero__status">
-            <span className={`live-dot live-dot--${disclosureSnapshot?.status ?? 'error'}`} />
-            <strong>
-              {disclosureSnapshot?.status === 'ready'
-                ? '自動監視中'
-                : disclosureSnapshot?.status === 'partial'
-                  ? '初期データ・一部監視'
-                  : '取得状態を確認中'}
-            </strong>
-            <span>最終生成 {formatDateTime(disclosureSnapshot?.generatedAt)}</span>
-            <span>最新開示 {formatDateTime(disclosureSnapshot?.latestFiledAt)}</span>
-          </div>
+      <MotionPageHeader title="Radar" variant="radar" />
+      <section className="radar-live-strip" aria-label="開示データの更新状態">
+        <div className="radar-live-strip__status">
+          <span className={`live-dot live-dot--${disclosureSnapshot?.status ?? 'error'}`} />
+          <strong>
+            {disclosureSnapshot?.status === 'ready'
+              ? '自動監視中'
+              : disclosureSnapshot?.status === 'partial'
+                ? '初期データ・一部監視'
+                : '取得状態を確認中'}
+          </strong>
+          <span>最終生成 {formatDateTime(disclosureSnapshot?.generatedAt)}</span>
+          <span>最新開示 {formatDateTime(disclosureSnapshot?.latestFiledAt)}</span>
         </div>
-        <div className="disclosure-hero__orb">
-          <div>
-            <Radar size={32} />
-            <strong>{unreadImportant.length}</strong>
-            <span>未読の重要開示</span>
-          </div>
+        <div className="radar-live-strip__unread">
+          <span>未読の重要開示</span>
+          <strong>{unreadImportant.length}</strong>
         </div>
       </section>
 
