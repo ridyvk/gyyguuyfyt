@@ -175,6 +175,12 @@ export default function MotionPageHeader({ title, variant }: MotionPageHeaderPro
   const Visual = visuals[variant]
   return (
     <header className={`motion-page-header motion-page-header--${variant}`}>
+      <div className="motion-page-header__ambient" aria-hidden="true">
+        <span className="motion-page-header__orb motion-page-header__orb--one" />
+        <span className="motion-page-header__orb motion-page-header__orb--two" />
+        <span className="motion-page-header__beam" />
+        <span className="motion-page-header__particles" />
+      </div>
       <div className="motion-page-header__copy">
         <h1 data-title={title} aria-label={title}>{title}</h1>
       </div>
