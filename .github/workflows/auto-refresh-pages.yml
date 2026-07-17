@@ -1,5 +1,5 @@
 name: Auto refresh data and deploy
-# source-deploy: 18bc381dac2bc1a33c8b0b64d394c9cb42732611
+# source-deploy: manual-market-recovery-2026-07-17
 
 on:
   # Re-run immediately whenever this automation itself is changed on main.
