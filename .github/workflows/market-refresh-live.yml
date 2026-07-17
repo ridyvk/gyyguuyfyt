@@ -1,0 +1,87 @@
+name: Refresh live market prices
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/market-refresh-live.yml
+  schedule:
+    # Separate entries are intentional: each is an independent 15-minute slot.
+    # Weekdays 09:04-16:49 JST, offset from busy clock boundaries.
+    - cron: '4 0-7 * * 1-5'
+    - cron: '19 0-7 * * 1-5'
+    - cron: '34 0-7 * * 1-5'
+    - cron: '49 0-7 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: kpi-scope-live-market
+  cancel-in-progress: true
+
+jobs:
+  refresh-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout develop source
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Refresh market quotes
+        run: python scripts/update_market_prices.py --max-companies 4500 --max-workers 8
+
+      - name: Validate market dataset
+        run: python scripts/validate_datasets.py --scope market
+
+      - name: Commit refreshed market data
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "kpi-scope-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/data/market.json
+          if git diff --cached --quiet; then
+            echo "No market data changes."
+          else
+            git commit -m "data: live market refresh"
+            git pull --rebase origin develop
+            git push origin HEAD:develop
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build
+        run: npm run build
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
