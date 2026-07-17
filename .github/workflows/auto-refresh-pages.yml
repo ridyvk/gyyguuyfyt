@@ -8,9 +8,6 @@ on:
     paths:
       - .github/workflows/auto-refresh-pages.yml
   schedule:
-    # Weekdays, every 15 minutes from 09:07 through 16:52 JST.
-    # Offset from the top of the hour to reduce GitHub scheduler congestion.
-    - cron: '7,22,37,52 0-7 * * 1-5'
     # Daily 03:40 JST for financial filings and quality audit.
     - cron: '40 18 * * *'
   workflow_dispatch:
@@ -52,7 +49,6 @@ jobs:
           mode="$REQUESTED_MODE"
           if [ "${{ github.event_name }}" = "schedule" ]; then
             case "${{ github.event.schedule }}" in
-              "7,22,37,52 0-7 * * 1-5") mode="market" ;;
               "40 18 * * *") mode="financial" ;;
               *) mode="market" ;;
             esac
