@@ -932,13 +932,41 @@ export const loadUpdateStatus = async (): Promise<UpdateStatus> => {
   return response.json() as Promise<UpdateStatus>
 }
 
+const LIVE_MARKET_DATA_URL =
+  'https://raw.githubusercontent.com/ridyvk/gyyguuyfyt/develop/public/data/market.json'
+
 export const loadMarketSnapshot = async (): Promise<MarketSnapshot> => {
-  const url = `${import.meta.env.BASE_URL}data/market.json?v=${Date.now()}`
-  const response = await fetch(url, { cache: 'no-store' })
-  if (!response.ok) {
-    throw new Error(`Market snapshot could not be loaded: ${response.status}`)
+  const version = Date.now()
+  const bundledUrl = `${import.meta.env.BASE_URL}data/market.json?v=${version}`
+  const urls = import.meta.env.PROD
+    ? [`${LIVE_MARKET_DATA_URL}?v=${version}`, bundledUrl]
+    : [bundledUrl]
+
+  let lastError: unknown
+  for (const url of urls) {
+    try {
+      const response = await fetch(url, { cache: 'no-store' })
+      if (!response.ok) {
+        throw new Error(`Market snapshot could not be loaded: ${response.status}`)
+      }
+      const snapshot = (await response.json()) as MarketSnapshot
+      if (
+        !snapshot ||
+        !snapshot.quotes ||
+        typeof snapshot.quotes !== 'object' ||
+        Array.isArray(snapshot.quotes)
+      ) {
+        throw new Error('Market snapshot has an invalid shape')
+      }
+      return snapshot
+    } catch (error) {
+      lastError = error
+    }
   }
-  return response.json() as Promise<MarketSnapshot>
+
+  throw lastError instanceof Error
+    ? lastError
+    : new Error('Market snapshot could not be loaded')
 }
 
 export const loadDisclosureSnapshot = async (): Promise<DisclosureSnapshot> => {
