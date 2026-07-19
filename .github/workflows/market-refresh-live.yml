@@ -64,24 +64,30 @@ jobs:
           fi
 
       - name: Setup Node
+        if: github.event_name != 'schedule'
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
       - name: Install dependencies
+        if: github.event_name != 'schedule'
         run: npm install --no-audit --no-fund
 
       - name: Build
+        if: github.event_name != 'schedule'
         run: npm run build
 
       - name: Configure Pages
+        if: github.event_name != 'schedule'
         uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
+        if: github.event_name != 'schedule'
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
       - name: Deploy to GitHub Pages
+        if: github.event_name != 'schedule'
         id: deployment
         uses: actions/deploy-pages@v4
