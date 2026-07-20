@@ -8,7 +8,6 @@ import {
   ListFilter,
   Menu,
   Radar,
-  ScanSearch,
   X,
 } from 'lucide-react'
 import { lazy, Suspense, useLayoutEffect, useState } from 'react'
@@ -79,10 +78,16 @@ export default function App() {
         <header className="topbar">
         <NavLink className="brand" to="/" onClick={() => setMenuOpen(false)}>
           <span className="brand__mark">
-            <ScanSearch size={22} />
+            <img
+              src="./delta-icon-192.png"
+              alt=""
+              width="40"
+              height="40"
+              draggable="false"
+            />
           </span>
           <span>
-            <strong>KPI Scope</strong>
+            <strong>Delta</strong>
             <small>Company intelligence</small>
           </span>
         </NavLink>

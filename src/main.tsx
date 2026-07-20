@@ -24,7 +24,7 @@ class AppErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error('KPI Scope failed to render', error, info)
+    console.error('Delta failed to render', error, info)
   }
 
   render() {
@@ -32,7 +32,7 @@ class AppErrorBoundary extends Component<
       return (
         <main className="fatal-error">
           <div>
-            <strong>KPI Scopeを読み込めませんでした</strong>
+            <strong>Deltaを読み込めませんでした</strong>
             <p>古いキャッシュを削除して再読み込みします。</p>
             <button type="button" onClick={() => window.location.reload()}>
               再読み込み
@@ -74,7 +74,7 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
     }
 
     void removeLegacyAppCache().catch((error) => {
-      console.warn('KPI Scope legacy cache cleanup failed', error)
+      console.warn('Delta legacy cache cleanup failed', error)
     })
   })
 }
