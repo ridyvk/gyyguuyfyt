@@ -1,15 +1,10 @@
 name: Build and deploy Delta
 
-# Deploy only from the canonical develop source branch. Keeping this trigger on
-# develop avoids touching the legacy static main branch just to start a deploy.
+# Manual build from the canonical develop source branch.
 # Data update workflows are separate:
 # - Update annual financials
 # - Update market prices
 on:
-  push:
-    branches: [develop]
-    paths:
-      - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
 permissions:
