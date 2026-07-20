@@ -1,5 +1,12 @@
 body.startup-active {
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+@supports (overflow-x: clip) {
+  body.startup-active {
+    overflow-x: clip;
+  }
 }
 
 .startup-splash {

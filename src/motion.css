@@ -59,6 +59,8 @@
 .chart-reveal {
   position: relative;
   width: 100%;
+  max-width: 100%;
+  overflow: hidden;
   opacity: 0;
   transform: translateY(10px);
   transition:
