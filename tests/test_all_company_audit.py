@@ -258,6 +258,27 @@ class AllCompanyAuditTests(unittest.TestCase):
             {"missing", "review", "recordsAvailable"},
         )
 
+    def test_changing_company_cohort_uses_rates_not_absolute_counts(self) -> None:
+        summary = {
+            "companies": 3709,
+            "missing": 146,
+            "recordsAvailable": 3563,
+            "coverageRatio": 96.06,
+        }
+        previous = {
+            "schemaVersion": audit_all_companies.SCHEMA_VERSION,
+            "summary": {
+                "companies": 3728,
+                "missing": 143,
+                "recordsAvailable": 3585,
+                "coverageRatio": 96.16,
+            },
+        }
+
+        violations = audit_all_companies.regression_violations(summary, previous)
+
+        self.assertEqual(violations, [])
+
     def test_quality_rate_regressions_fail_the_gate(self) -> None:
         summary = {
             "missing": 10,

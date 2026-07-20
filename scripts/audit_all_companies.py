@@ -481,6 +481,12 @@ def regression_violations(
     ):
         return []
 
+    cohort_changed = (
+        int(summary.get("companies") or 0)
+        != int(previous.get("companies") or 0)
+    )
+    cohort_size_fields = {"missing", "recordsAvailable"}
+
     checks = (
         ("missing", "max", 0.0),
         ("review", "max", 0.0),
@@ -505,6 +511,8 @@ def regression_violations(
     violations = []
     for field, comparison, tolerance in checks:
         if field not in previous:
+            continue
+        if cohort_changed and field in cohort_size_fields:
             continue
         value = float(summary.get(field) or 0)
         baseline = float(previous.get(field) or 0)

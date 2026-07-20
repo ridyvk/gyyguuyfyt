@@ -1,10 +1,15 @@
-name: Build and deploy KPI Scope
+name: Build and deploy Delta
 
-# Manual deployment from the develop source branch.
+# Deploy only from the canonical develop source branch. Keeping this trigger on
+# develop avoids touching the legacy static main branch just to start a deploy.
 # Data update workflows are separate:
 # - Update annual financials
 # - Update market prices
 on:
+  push:
+    branches: [develop]
+    paths:
+      - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
 permissions:
