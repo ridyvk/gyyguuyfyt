@@ -47,11 +47,11 @@ export default function MiniTrendChart({
           {showTooltip && (
             <Tooltip
               contentStyle={{
-                background: 'rgba(255,255,255,0.96)',
-                color: '#1C1C1E',
-                border: '1px solid rgba(60,60,67,0.14)',
+                background: 'rgba(9,15,26,0.94)',
+                color: '#EDF4FF',
+                border: '1px solid rgba(129,174,241,0.20)',
                 borderRadius: 12,
-                boxShadow: '0 10px 28px rgba(31,38,55,0.12)',
+                boxShadow: '0 14px 32px rgba(0,0,0,0.32)',
                 fontSize: 12,
               }}
               labelFormatter={() => ''}

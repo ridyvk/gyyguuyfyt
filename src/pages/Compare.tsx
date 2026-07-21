@@ -162,10 +162,10 @@ export default function Compare() {
                     layout="vertical"
                     margin={{ left: 22, right: 12, top: 8, bottom: 8 }}
                   >
-                    <CartesianGrid stroke="rgba(60,60,67,0.13)" strokeDasharray="4 4" horizontal={false} />
-                    <XAxis type="number" domain={[0, 100]} tick={{ fill: '#8E8E93', fontSize: 11 }} />
-                    <YAxis type="category" dataKey="metric" width={78} tick={{ fill: '#636366', fontSize: 11 }} />
-                    <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.96)', color: '#1C1C1E', border: '1px solid rgba(60,60,67,0.14)', borderRadius: 14, boxShadow: '0 12px 32px rgba(31,38,55,0.12)' }} />
+                    <CartesianGrid stroke="rgba(132,164,212,0.14)" strokeDasharray="4 4" horizontal={false} />
+                    <XAxis type="number" domain={[0, 100]} tick={{ fill: '#7E8CA2', fontSize: 11 }} />
+                    <YAxis type="category" dataKey="metric" width={78} tick={{ fill: '#9AA9BF', fontSize: 11 }} />
+                    <Tooltip contentStyle={{ background: 'rgba(9,15,26,0.94)', color: '#EDF4FF', border: '1px solid rgba(129,174,241,0.20)', borderRadius: 14, boxShadow: '0 16px 38px rgba(0,0,0,0.34)' }} />
                     <Legend wrapperStyle={{ fontSize: 11 }} />
                     {chartCompanies.map((company, index) => (
                       <Bar

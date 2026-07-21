@@ -44,10 +44,10 @@ export default function RadarScoreChart({
     <div style={{ width: '100%', height }}>
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart data={data} outerRadius="68%" accessibilityLayer={false}>
-          <PolarGrid stroke="rgba(60,60,67,0.16)" />
+          <PolarGrid stroke="rgba(132,164,212,0.16)" />
           <PolarAngleAxis
             dataKey="subject"
-            tick={{ fill: '#636366', fontSize: 11 }}
+            tick={{ fill: '#9AA9BF', fontSize: 11 }}
           />
           <PolarRadiusAxis
             domain={[0, 100]}
@@ -56,11 +56,11 @@ export default function RadarScoreChart({
           />
           <Tooltip
             contentStyle={{
-              background: 'rgba(255,255,255,0.96)',
-              color: '#1C1C1E',
-              border: '1px solid rgba(60,60,67,0.14)',
+              background: 'rgba(9,15,26,0.94)',
+              color: '#EDF4FF',
+              border: '1px solid rgba(129,174,241,0.20)',
               borderRadius: 14,
-              boxShadow: '0 12px 32px rgba(31,38,55,0.12)',
+              boxShadow: '0 16px 38px rgba(0,0,0,0.34)',
               fontSize: 12,
             }}
           />

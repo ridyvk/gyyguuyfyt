@@ -1,6 +1,8 @@
 import {
+  Activity,
   AlertTriangle,
   ArrowRight,
+  ArrowUpRight,
   BellRing,
   Bookmark,
   Building2,
@@ -24,7 +26,6 @@ import {
 import ChartReveal from '../components/ChartReveal'
 import AnimatedNumber from '../components/AnimatedNumber'
 import DisclosureEventCard from '../components/DisclosureEventCard'
-import MotionPageHeader from '../components/MotionPageHeader'
 import ScoreBadge from '../components/ScoreBadge'
 import StockQuoteCard from '../components/StockQuoteCard'
 import { useApp } from '../context/AppContext'
@@ -32,11 +33,11 @@ import { hasFinancialData, hasScorableData } from '../lib/liveData'
 import '../dashboard-charts.css'
 
 const themePalette = [
-  { from: '#78BEF4', to: '#3A8FD8' },
-  { from: '#8DDDD4', to: '#4BAEA9' },
-  { from: '#AAA8ED', to: '#7570D4' },
-  { from: '#DAB4E8', to: '#AA75C5' },
-  { from: '#F4CCA2', to: '#E4A263' },
+  { from: '#78B9FF', to: '#3D75DE' },
+  { from: '#67D1FF', to: '#348BC9' },
+  { from: '#8C9FFF', to: '#5D62D8' },
+  { from: '#A99BFF', to: '#7066D3' },
+  { from: '#62BFE7', to: '#3973B8' },
 ]
 
 const jstDateFormatter = new Intl.DateTimeFormat('en-CA', {
@@ -121,6 +122,11 @@ export default function Dashboard() {
         Math.abs(a.stockPrice?.changePercent ?? 0),
     )
     .slice(0, 3)
+  const marketCoverageCount = companies.filter(
+    (company) => company.stockPrice,
+  ).length
+  const marketIsReady =
+    marketSnapshot?.status === 'ready' || marketSnapshot?.status === 'partial'
   const disclosurePulse = disclosures
     .filter(
       (event) => event.importance === 'critical' || event.importance === 'high',
@@ -132,7 +138,79 @@ export default function Dashboard() {
 
   return (
     <div className="page">
-      <MotionPageHeader title="Dashboard" variant="dashboard" />
+      <section className="delta-home" aria-labelledby="delta-home-title">
+        <div className="delta-home__field" aria-hidden="true">
+          <span className="delta-home__orb delta-home__orb--one" />
+          <span className="delta-home__orb delta-home__orb--two" />
+          <svg viewBox="0 0 520 210" role="presentation">
+            <defs>
+              <linearGradient id="deltaHomeLine" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#3d63ff" stopOpacity="0.08" />
+                <stop offset="45%" stopColor="#62a8ff" stopOpacity="0.92" />
+                <stop offset="100%" stopColor="#8dd7ff" stopOpacity="0.28" />
+              </linearGradient>
+              <linearGradient id="deltaHomeArea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#5797ff" stopOpacity="0.24" />
+                <stop offset="100%" stopColor="#5797ff" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <path className="delta-home__grid" d="M0 42H520M0 84H520M0 126H520M0 168H520M104 0V210M208 0V210M312 0V210M416 0V210" />
+            <path className="delta-home__area" d="M0 178 C54 171 78 133 126 141 S205 112 252 119 S319 57 367 75 S440 26 520 38 V210 H0 Z" />
+            <path className="delta-home__line" d="M0 178 C54 171 78 133 126 141 S205 112 252 119 S319 57 367 75 S440 26 520 38" />
+            <circle className="delta-home__point" cx="367" cy="75" r="4" />
+            <circle className="delta-home__point delta-home__point--last" cx="520" cy="38" r="5" />
+          </svg>
+        </div>
+
+        <div className="delta-home__copy">
+          <span className="delta-home__eyebrow">
+            <i /> Delta intelligence
+          </span>
+          <h1 id="delta-home-title">
+            <span>Delta</span>
+            <small>企業の変化を、一つの視界に。</small>
+          </h1>
+          <p>
+            株価、財務KPI、開示情報を横断し、次に見るべき企業と変化を静かに浮かび上がらせます。
+          </p>
+          <nav className="delta-home__links" aria-label="ホームのクイックアクセス">
+            <Link to="/universe">
+              企業を探す <ArrowUpRight size={14} />
+            </Link>
+            <Link to="/map">
+              KPIで絞る <ArrowUpRight size={14} />
+            </Link>
+            <Link to="/radar">
+              開示を監視 <ArrowUpRight size={14} />
+            </Link>
+          </nav>
+        </div>
+
+        <aside className="delta-home__pulse" aria-label="現在のデータ状況">
+          <div className="delta-home__pulse-head">
+            <span><Activity size={15} /> Market state</span>
+            <small className={marketIsReady ? 'is-live' : ''}>
+              {marketIsReady ? 'CONNECTED' : 'STANDBY'}
+            </small>
+          </div>
+          <strong>{marketCoverageCount.toLocaleString('ja-JP')}</strong>
+          <span>銘柄の株価を追跡</span>
+          <dl>
+            <div>
+              <dt>Trading date</dt>
+              <dd>{marketDateLabel(marketSnapshot?.latestTradingDate)}</dd>
+            </div>
+            <div>
+              <dt>Disclosures</dt>
+              <dd>{disclosures.length.toLocaleString('ja-JP')}件</dd>
+            </div>
+            <div>
+              <dt>Watchlist</dt>
+              <dd>{watchlist.length.toLocaleString('ja-JP')}社</dd>
+            </div>
+          </dl>
+        </aside>
+      </section>
 
       <section
         className={`data-status data-status--${financialStatus}`}
@@ -301,14 +379,14 @@ export default function Dashboard() {
                   </defs>
                   <CartesianGrid
                     vertical={false}
-                    stroke="rgba(88, 116, 136, 0.11)"
+                    stroke="rgba(132, 164, 212, 0.14)"
                     strokeDasharray="2 8"
                   />
                   <XAxis
                     dataKey="name"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#87959F', fontSize: 10 }}
+                    tick={{ fill: '#7E8CA2', fontSize: 10 }}
                     interval={0}
                     angle={-18}
                     textAnchor="end"
@@ -318,19 +396,19 @@ export default function Dashboard() {
                   <YAxis
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#9AA5AD', fontSize: 10 }}
+                    tick={{ fill: '#7E8CA2', fontSize: 10 }}
                     allowDecimals={false}
                     tickMargin={8}
                   />
                   <Tooltip
-                    cursor={{ fill: 'rgba(91, 174, 219, 0.055)' }}
+                    cursor={{ fill: 'rgba(91, 159, 255, 0.08)' }}
                     contentStyle={{
                       backdropFilter: 'blur(18px)',
-                      background: 'rgba(255,255,255,0.84)',
-                      color: '#25333B',
-                      border: '1px solid rgba(104,148,174,0.16)',
+                      background: 'rgba(9,15,26,0.94)',
+                      color: '#EDF4FF',
+                      border: '1px solid rgba(129,174,241,0.20)',
                       borderRadius: 13,
-                      boxShadow: '0 14px 35px rgba(44,79,99,0.12)',
+                      boxShadow: '0 16px 38px rgba(0,0,0,0.34)',
                     }}
                   />
                   <Bar
@@ -384,7 +462,7 @@ export default function Dashboard() {
                       dataKey="value"
                       startAngle={90}
                       endAngle={-270}
-                      stroke="rgba(255,255,255,0.88)"
+                      stroke="rgba(5,10,18,0.9)"
                       strokeWidth={2}
                       isAnimationActive
                       animationBegin={80}
@@ -401,11 +479,11 @@ export default function Dashboard() {
                     <Tooltip
                       contentStyle={{
                         backdropFilter: 'blur(18px)',
-                        background: 'rgba(255,255,255,0.84)',
-                        color: '#25333B',
-                        border: '1px solid rgba(104,148,174,0.16)',
+                        background: 'rgba(9,15,26,0.94)',
+                        color: '#EDF4FF',
+                        border: '1px solid rgba(129,174,241,0.20)',
                         borderRadius: 13,
-                        boxShadow: '0 14px 35px rgba(44,79,99,0.12)',
+                        boxShadow: '0 16px 38px rgba(0,0,0,0.34)',
                       }}
                     />
                   </PieChart>

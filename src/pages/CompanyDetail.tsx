@@ -403,10 +403,10 @@ export default function CompanyDetail() {
                   data={company.history}
                   margin={{ top: 10, right: 16, left: -8, bottom: 0 }}
                 >
-                  <CartesianGrid stroke="rgba(60,60,67,0.13)" strokeDasharray="4 4" vertical={false} />
-                  <XAxis dataKey="year" tick={{ fill: '#8E8E93', fontSize: 11 }} />
-                  <YAxis tick={{ fill: '#8E8E93', fontSize: 11 }} />
-                  <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.96)', color: '#1C1C1E', border: '1px solid rgba(60,60,67,0.14)', borderRadius: 14, boxShadow: '0 12px 32px rgba(31,38,55,0.12)' }} />
+                  <CartesianGrid stroke="rgba(132,164,212,0.14)" strokeDasharray="4 4" vertical={false} />
+                  <XAxis dataKey="year" tick={{ fill: '#7E8CA2', fontSize: 11 }} />
+                  <YAxis tick={{ fill: '#7E8CA2', fontSize: 11 }} />
+                  <Tooltip contentStyle={{ background: 'rgba(9,15,26,0.94)', color: '#EDF4FF', border: '1px solid rgba(129,174,241,0.20)', borderRadius: 14, boxShadow: '0 16px 38px rgba(0,0,0,0.34)' }} />
                   <Legend wrapperStyle={{ fontSize: 12 }} />
                   <Line type="monotone" dataKey="operatingMargin" name="営業利益率" stroke="#007AFF" strokeWidth={3} dot={{ r: 4 }} isAnimationActive={false} />
                   <Line type="monotone" dataKey="roe" name="ROE" stroke="#5856D6" strokeWidth={2} dot={{ r: 3 }} isAnimationActive={false} />

@@ -12,6 +12,7 @@ import './stock-display.css'
 import './kpi-map.css'
 import './disclosure-radar.css'
 import './motion-page-header.css'
+import './delta-theme.css'
 
 class AppErrorBoundary extends Component<
   { children: ReactNode },
