@@ -10,7 +10,14 @@ import {
   Radar,
   X,
 } from 'lucide-react'
-import { lazy, Suspense, useLayoutEffect, useState } from 'react'
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import { NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import StartupSplash from './components/StartupSplash'
 import { useApp } from './context/AppContext'
@@ -45,6 +52,9 @@ export default function App() {
     unreadDisclosureCount,
   } = useApp()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [menuButtonVisible, setMenuButtonVisible] = useState(true)
+  const lastScrollYRef = useRef(0)
+  const menuHideTimerRef = useRef<number | null>(null)
   const location = useLocation()
   const financialCompanyCount = companies.filter(
     hasFinancialData,
@@ -71,35 +81,78 @@ export default function App() {
     return () => window.cancelAnimationFrame(frameId)
   }, [location.key])
 
+  useEffect(() => {
+    const clearHideTimer = () => {
+      if (menuHideTimerRef.current !== null) {
+        window.clearTimeout(menuHideTimerRef.current)
+        menuHideTimerRef.current = null
+      }
+    }
+
+    const scheduleHide = () => {
+      clearHideTimer()
+      if (window.scrollY <= 56 || menuOpen) return
+
+      menuHideTimerRef.current = window.setTimeout(() => {
+        setMenuButtonVisible(false)
+      }, 1800)
+    }
+
+    const handleScroll = () => {
+      const currentScrollY = Math.max(0, window.scrollY)
+      const movement = currentScrollY - lastScrollYRef.current
+
+      if (menuOpen || currentScrollY <= 20) {
+        clearHideTimer()
+        setMenuButtonVisible(true)
+      } else if (movement > 5) {
+        clearHideTimer()
+        setMenuButtonVisible(false)
+      } else if (movement < -5) {
+        setMenuButtonVisible(true)
+        scheduleHide()
+      }
+
+      lastScrollYRef.current = currentScrollY
+    }
+
+    const handleKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false)
+    }
+
+    lastScrollYRef.current = Math.max(0, window.scrollY)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      clearHideTimer()
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [menuOpen])
+
   return (
     <>
       <StartupSplash />
       <div className="app-shell">
-        <header className="topbar">
-        <NavLink className="brand" to="/" onClick={() => setMenuOpen(false)}>
-          <span className="brand__mark">
-            <img
-              src="./delta-icon-192.png"
-              alt=""
-              width="40"
-              height="40"
-              draggable="false"
-            />
-          </span>
-          <span>
-            <strong>Delta</strong>
-            <small>Company intelligence</small>
-          </span>
-        </NavLink>
+        <header className="topbar topbar--minimal">
         <button
           type="button"
-          className="mobile-menu-button"
-          onClick={() => setMenuOpen((open) => !open)}
-          aria-label="メニューを開く"
+          className={`mobile-menu-button${menuButtonVisible || menuOpen ? ' is-visible' : ''}${menuOpen ? ' is-open' : ''}`}
+          onClick={() => {
+            setMenuButtonVisible(true)
+            setMenuOpen((open) => !open)
+          }}
+          aria-label={menuOpen ? 'メニューを閉じる' : 'メニューを開く'}
+          aria-expanded={menuOpen}
+          aria-controls="primary-navigation"
         >
           {menuOpen ? <X /> : <Menu />}
         </button>
-        <nav className={menuOpen ? 'main-nav is-open' : 'main-nav'}>
+        <nav
+          id="primary-navigation"
+          className={menuOpen ? 'main-nav is-open' : 'main-nav'}
+        >
           {navigation.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
