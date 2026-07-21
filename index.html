@@ -7,6 +7,14 @@
       content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content"
     />
     <meta name="theme-color" content="#05070c" />
+    <script>
+      try {
+        document.documentElement.dataset.theme =
+          localStorage.getItem('delta-ui-theme') === 'light' ? 'light' : 'dark'
+      } catch {
+        document.documentElement.dataset.theme = 'dark'
+      }
+    </script>
     <meta name="application-name" content="Delta" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

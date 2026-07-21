@@ -28,6 +28,7 @@ import AnimatedNumber from '../components/AnimatedNumber'
 import DisclosureEventCard from '../components/DisclosureEventCard'
 import ScoreBadge from '../components/ScoreBadge'
 import StockQuoteCard from '../components/StockQuoteCard'
+import ThemeSwipeCard from '../components/ThemeSwipeCard'
 import { useApp } from '../context/AppContext'
 import { hasFinancialData, hasScorableData } from '../lib/liveData'
 import '../dashboard-charts.css'
@@ -138,39 +139,17 @@ export default function Dashboard() {
 
   return (
     <div className="page">
-      <section className="delta-home" aria-labelledby="delta-home-title">
-        <div className="delta-home__field" aria-hidden="true">
-          <span className="delta-home__orb delta-home__orb--one" />
-          <span className="delta-home__orb delta-home__orb--two" />
-          <svg viewBox="0 0 520 210" role="presentation">
-            <defs>
-              <linearGradient id="deltaHomeLine" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#3d63ff" stopOpacity="0.08" />
-                <stop offset="45%" stopColor="#62a8ff" stopOpacity="0.92" />
-                <stop offset="100%" stopColor="#8dd7ff" stopOpacity="0.28" />
-              </linearGradient>
-              <linearGradient id="deltaHomeArea" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#5797ff" stopOpacity="0.24" />
-                <stop offset="100%" stopColor="#5797ff" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-            <path className="delta-home__grid" d="M0 42H520M0 84H520M0 126H520M0 168H520M104 0V210M208 0V210M312 0V210M416 0V210" />
-            <path className="delta-home__area" d="M0 178 C54 171 78 133 126 141 S205 112 252 119 S319 57 367 75 S440 26 520 38 V210 H0 Z" />
-            <path className="delta-home__line" d="M0 178 C54 171 78 133 126 141 S205 112 252 119 S319 57 367 75 S440 26 520 38" />
-            <circle className="delta-home__point" cx="367" cy="75" r="4" />
-            <circle className="delta-home__point delta-home__point--last" cx="520" cy="38" r="5" />
-          </svg>
+      <section className="delta-home delta-home--swipe" aria-labelledby="delta-home-title">
+        <div className="delta-home__card-zone">
+          <ThemeSwipeCard />
         </div>
 
-        <div className="delta-home__copy">
+        <div className="delta-home__companion">
           <span className="delta-home__eyebrow">
-            <i /> Delta intelligence
+            <i /> Live intelligence workspace
           </span>
-          <h1 id="delta-home-title">
-            <span>Delta</span>
-            <small>企業の変化を、一つの視界に。</small>
-          </h1>
-          <p>
+          <p className="delta-home__headline">企業の変化を、一つの視界に。</p>
+          <p className="delta-home__description">
             株価、財務KPI、開示情報を横断し、次に見るべき企業と変化を静かに浮かび上がらせます。
           </p>
           <nav className="delta-home__links" aria-label="ホームのクイックアクセス">
@@ -184,32 +163,32 @@ export default function Dashboard() {
               開示を監視 <ArrowUpRight size={14} />
             </Link>
           </nav>
-        </div>
 
-        <aside className="delta-home__pulse" aria-label="現在のデータ状況">
-          <div className="delta-home__pulse-head">
-            <span><Activity size={15} /> Market state</span>
-            <small className={marketIsReady ? 'is-live' : ''}>
-              {marketIsReady ? 'CONNECTED' : 'STANDBY'}
-            </small>
-          </div>
-          <strong>{marketCoverageCount.toLocaleString('ja-JP')}</strong>
-          <span>銘柄の株価を追跡</span>
-          <dl>
-            <div>
-              <dt>Trading date</dt>
-              <dd>{marketDateLabel(marketSnapshot?.latestTradingDate)}</dd>
+          <aside className="delta-home__pulse" aria-label="現在のデータ状況">
+            <div className="delta-home__pulse-head">
+              <span><Activity size={15} /> Market state</span>
+              <small className={marketIsReady ? 'is-live' : ''}>
+                {marketIsReady ? 'CONNECTED' : 'STANDBY'}
+              </small>
             </div>
-            <div>
-              <dt>Disclosures</dt>
-              <dd>{disclosures.length.toLocaleString('ja-JP')}件</dd>
-            </div>
-            <div>
-              <dt>Watchlist</dt>
-              <dd>{watchlist.length.toLocaleString('ja-JP')}社</dd>
-            </div>
-          </dl>
-        </aside>
+            <strong>{marketCoverageCount.toLocaleString('ja-JP')}</strong>
+            <span>銘柄の株価を追跡</span>
+            <dl>
+              <div>
+                <dt>Trading date</dt>
+                <dd>{marketDateLabel(marketSnapshot?.latestTradingDate)}</dd>
+              </div>
+              <div>
+                <dt>Disclosures</dt>
+                <dd>{disclosures.length.toLocaleString('ja-JP')}件</dd>
+              </div>
+              <div>
+                <dt>Watchlist</dt>
+                <dd>{watchlist.length.toLocaleString('ja-JP')}社</dd>
+              </div>
+            </dl>
+          </aside>
+        </div>
       </section>
 
       <section

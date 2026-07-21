@@ -4,6 +4,7 @@ import { HashRouter } from 'react-router-dom'
 import '@fontsource/barlow-condensed/latin-300.css'
 import App from './App'
 import { AppProvider } from './context/AppContext'
+import { initializeDeltaTheme } from './lib/theme'
 import './styles.css'
 import './live-data.css'
 import './chart-focus.css'
@@ -13,6 +14,9 @@ import './kpi-map.css'
 import './disclosure-radar.css'
 import './motion-page-header.css'
 import './delta-theme.css'
+import './theme-switch.css'
+
+initializeDeltaTheme()
 
 class AppErrorBoundary extends Component<
   { children: ReactNode },
