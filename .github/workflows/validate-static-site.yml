@@ -55,12 +55,20 @@ jobs:
               elif path.is_file() and path.stat().st_size == 0:
                   errors.append(f'index.html references empty file: {ref}')
 
+          cleanup_markers = [
+              "CACHE_PREFIX = 'kpi-scope'",
+              'caches.keys()',
+              'caches.delete(key)',
+              'self.registration.unregister()',
+              "cache: 'no-store'",
+          ]
           for rel in ['sw-photo1.js', 'sw.js']:
               source = (root / rel).read_text(encoding='utf-8')
-              if '/data/' not in source or 'isSameOriginDataRequest' not in source:
-                  errors.append(f'{rel} does not bypass data files')
-              if "CACHE_NAME = 'kpi-scope-" not in source:
-                  errors.append(f'{rel} cache version is missing')
+              for marker in cleanup_markers:
+                  if marker not in source:
+                      errors.append(f'{rel} is missing cache cleanup marker: {marker}')
+              if 'CACHE_NAME' in source or 'caches.match(' in source:
+                  errors.append(f'{rel} still contains legacy cache-first behavior')
 
           if errors:
               print('\n'.join(errors))
