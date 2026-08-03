@@ -1,17 +1,18 @@
 import type { KpiKey } from '../types'
 
 export const allKpiKeys = [
+  'revenueGrowth',
   'operatingMargin',
   'netMargin',
   'roe',
-  'roa',
-  'roic',
-  'roicWaccSpread',
   'equityRatio',
   'operatingCfMargin',
-  'cashProfitGap',
+  'debtRatio',
   'netCash',
-  'wacc',
+  'inventoryGrowth',
+  'receivablesGrowth',
+  'per',
+  'pbr',
 ] as const satisfies readonly KpiKey[]
 
 export const jpxIndustries = [
@@ -76,22 +77,22 @@ const operatingCompanyPolicy = createPolicy(
 )
 
 const bankPolicy = createPolicy(
-  ['roe', 'roa'],
+  ['roe', 'per', 'pbr'],
   '銀行は預金・貸出を事業として扱うため、一般事業会社の利益率・負債・キャッシュ・運転資本指標を共通評価しません',
 )
 
 const securitiesPolicy = createPolicy(
-  ['roe', 'roa'],
+  ['roe', 'per', 'pbr'],
   '証券会社は市場取引と顧客資産の影響が大きいため、一般事業会社の利益率・負債・キャッシュ・運転資本指標を共通評価しません',
 )
 
 const insurancePolicy = createPolicy(
-  ['roe', 'roa'],
+  ['roe', 'per', 'pbr'],
   '保険会社は保険負債と運用資産が中心のため、一般事業会社の利益率・負債・キャッシュ・運転資本指標を共通評価しません',
 )
 
 const otherFinancialPolicy = createPolicy(
-  ['netMargin', 'roe', 'roa'],
+  ['revenueGrowth', 'netMargin', 'roe', 'per', 'pbr'],
   'その他金融業は資金調達自体が事業構造に含まれるため、負債・ネットキャッシュ・営業CF・運転資本指標を共通評価しません',
 )
 

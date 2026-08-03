@@ -87,12 +87,9 @@ export default function FilterPanel({
         >
           <option value="code-asc">証券コード順</option>
           <option value="score-desc">総合スコアが高い順</option>
+          <option value="per-asc">PERが低い順</option>
+          <option value="pbr-asc">PBRが低い順</option>
           <option value="roe-desc">ROEが高い順</option>
-          <option value="roic-desc">ROICが高い順</option>
-          <option value="roicWaccSpread-desc">ROIC-WACCが高い順</option>
-          <option value="cashProfitGap-desc">CF利益ギャップが高い順</option>
-          <option value="equityRatio-desc">自己資本比率が高い順</option>
-          <option value="wacc-asc">WACCが低い順</option>
           <option value="operatingMargin-desc">営業利益率が高い順</option>
         </select>
       </label>

@@ -20,41 +20,33 @@ const industries: Industry[] = Array.from(
 ).sort((a, b) => a.localeCompare(b, 'ja'))
 
 const kpiKeys: KpiKey[] = [
+  'revenueGrowth',
   'operatingMargin',
   'netMargin',
   'roe',
-  'roa',
-  'roic',
-  'roicWaccSpread',
   'equityRatio',
   'operatingCfMargin',
-  'cashProfitGap',
+  'debtRatio',
   'netCash',
-  'wacc',
+  'inventoryGrowth',
+  'receivablesGrowth',
+  'per',
+  'pbr',
 ]
 
 const units: Record<KpiKey, KpiMetric['unit']> = {
   revenueGrowth: '%',
-  operatingIncomeGrowth: '%',
-  epsGrowth: '%',
   operatingMargin: '%',
   netMargin: '%',
   roe: '%',
-  roa: '%',
-  roic: '%',
-  roicWaccSpread: '%',
   equityRatio: '%',
   operatingCfMargin: '%',
-  cashProfitGap: '%',
   debtRatio: '倍',
   netCash: '億円',
-  wacc: '%',
-  ebitda: '億円',
   inventoryGrowth: '%',
   receivablesGrowth: '%',
   per: '倍',
   pbr: '倍',
-  evEbitda: '倍',
 }
 
 const unavailableScores: Scores = {

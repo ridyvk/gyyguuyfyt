@@ -37,26 +37,17 @@ import type { AnalysisLevel, CompanyNote, KpiKey, ScoreKey } from '../types'
 
 const kpiLabels: Record<KpiKey, string> = {
   revenueGrowth: '売上成長率',
-  operatingIncomeGrowth: '営業利益成長率',
-  epsGrowth: 'EPS成長率',
   operatingMargin: '営業利益率',
   netMargin: '純利益率',
   roe: 'ROE',
-  roa: 'ROA',
-  roic: 'ROIC',
-  roicWaccSpread: 'ROIC-WACCスプレッド',
   equityRatio: '自己資本比率',
   operatingCfMargin: '営業CFマージン',
-  cashProfitGap: 'キャッシュ利益ギャップ',
   debtRatio: '有利子負債倍率',
   netCash: 'ネットキャッシュ',
-  wacc: 'WACC',
-  ebitda: 'EBITDA',
   inventoryGrowth: '棚卸資産増加率',
   receivablesGrowth: '売掛金増加率',
   per: 'PER',
   pbr: 'PBR',
-  evEbitda: 'EV/EBITDA',
 }
 
 const analysisLevelLabels: Record<AnalysisLevel, string> = {
@@ -83,15 +74,15 @@ const kpiGroups: {
     kicker: 'GROWTH',
     accent: '#FF9F0A',
     icon: Activity,
-    keys: [],
+    keys: ['revenueGrowth'],
   },
   {
     id: 'profitability',
-    title: '収益性・資本効率',
+    title: '収益性',
     kicker: 'PROFITABILITY',
     accent: '#007AFF',
     icon: Activity,
-    keys: ['operatingMargin', 'netMargin', 'roe', 'roa', 'roic', 'roicWaccSpread'],
+    keys: ['operatingMargin', 'netMargin', 'roe'],
   },
   {
     id: 'safety',
@@ -99,7 +90,7 @@ const kpiGroups: {
     kicker: 'SAFETY',
     accent: '#34C759',
     icon: ShieldCheck,
-    keys: ['equityRatio', 'netCash', 'wacc'],
+    keys: ['equityRatio', 'debtRatio', 'netCash'],
   },
   {
     id: 'cash',
@@ -107,7 +98,7 @@ const kpiGroups: {
     kicker: 'CASH QUALITY',
     accent: '#00A7C7',
     icon: WalletCards,
-    keys: ['operatingCfMargin', 'cashProfitGap'],
+    keys: ['operatingCfMargin', 'inventoryGrowth', 'receivablesGrowth'],
   },
   {
     id: 'valuation',
@@ -115,15 +106,17 @@ const kpiGroups: {
     kicker: 'VALUATION',
     accent: '#5856D6',
     icon: Activity,
-    keys: [],
+    keys: ['per', 'pbr'],
   },
 ]
 const visibleKpiGroups = kpiGroups.filter((group) => group.keys.length > 0)
 const kpiKeys = visibleKpiGroups.flatMap((group) => group.keys)
 const scoreKeys: ScoreKey[] = [
+  'growth',
   'profitability',
   'safety',
   'cashGeneration',
+  'valuation',
 ]
 
 const emptyNote: CompanyNote = {

@@ -4,14 +4,7 @@ import { hasScorableData } from './liveData'
 const compareMetric = (
   a: Company,
   b: Company,
-  key:
-    | 'roe'
-    | 'roic'
-    | 'roicWaccSpread'
-    | 'cashProfitGap'
-    | 'equityRatio'
-    | 'wacc'
-    | 'operatingMargin',
+  key: 'per' | 'pbr' | 'roe' | 'operatingMargin',
   direction: 'asc' | 'desc',
 ) => {
   const aMetric = a.metrics[key]
@@ -61,18 +54,12 @@ export const filterCompanies = (
       switch (filter.sort) {
         case 'code-asc':
           return a.code.localeCompare(b.code, 'ja-JP', { numeric: true })
+        case 'per-asc':
+          return compareMetric(a, b, 'per', 'asc')
+        case 'pbr-asc':
+          return compareMetric(a, b, 'pbr', 'asc')
         case 'roe-desc':
           return compareMetric(a, b, 'roe', 'desc')
-        case 'roic-desc':
-          return compareMetric(a, b, 'roic', 'desc')
-        case 'roicWaccSpread-desc':
-          return compareMetric(a, b, 'roicWaccSpread', 'desc')
-        case 'cashProfitGap-desc':
-          return compareMetric(a, b, 'cashProfitGap', 'desc')
-        case 'equityRatio-desc':
-          return compareMetric(a, b, 'equityRatio', 'desc')
-        case 'wacc-asc':
-          return compareMetric(a, b, 'wacc', 'asc')
         case 'operatingMargin-desc':
           return compareMetric(a, b, 'operatingMargin', 'desc')
         default:

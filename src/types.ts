@@ -27,26 +27,17 @@ export type KpiComparisonLabel = '前年差' | '前日差'
 
 export type KpiKey =
   | 'revenueGrowth'
-  | 'operatingIncomeGrowth'
-  | 'epsGrowth'
   | 'operatingMargin'
   | 'netMargin'
   | 'roe'
-  | 'roa'
-  | 'roic'
-  | 'roicWaccSpread'
   | 'equityRatio'
   | 'operatingCfMargin'
-  | 'cashProfitGap'
   | 'debtRatio'
   | 'netCash'
-  | 'wacc'
-  | 'ebitda'
   | 'inventoryGrowth'
   | 'receivablesGrowth'
   | 'per'
   | 'pbr'
-  | 'evEbitda'
 
 export interface KpiMetric {
   value: number
@@ -73,8 +64,6 @@ export interface FinancialYearPoint {
   operatingMargin: number
   netMargin: number
   roe: number
-  roa?: number
-  roic?: number
   operatingCfMargin: number
 }
 
@@ -477,11 +466,8 @@ export interface CompanyFilter {
   sort:
     | 'code-asc'
     | 'score-desc'
+    | 'per-asc'
+    | 'pbr-asc'
     | 'roe-desc'
-    | 'roic-desc'
-    | 'roicWaccSpread-desc'
-    | 'cashProfitGap-desc'
-    | 'equityRatio-desc'
-    | 'wacc-asc'
     | 'operatingMargin-desc'
 }

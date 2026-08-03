@@ -27,9 +27,11 @@ interface CompanyCardProps {
 }
 
 const scoreKeys: ScoreKey[] = [
+  'growth',
   'profitability',
   'safety',
   'cashGeneration',
+  'valuation',
 ]
 
 export default function CompanyCard({
@@ -146,24 +148,24 @@ export default function CompanyCard({
 
       <div className="company-card__metrics">
         <div>
-          <span>営業利益率</span>
-          <strong>{formatMetric(company.metrics.operatingMargin)}</strong>
+          <span>PER</span>
+          <strong>{formatMetric(company.metrics.per)}</strong>
+        </div>
+        <div>
+          <span>PBR</span>
+          <strong>{formatMetric(company.metrics.pbr)}</strong>
         </div>
         <div>
           <span>ROE</span>
           <strong>{formatMetric(company.metrics.roe)}</strong>
         </div>
         <div>
-          <span>ROIC-WACC</span>
-          <strong>{formatMetric(company.metrics.roicWaccSpread)}</strong>
+          <span>営業利益率</span>
+          <strong>{formatMetric(company.metrics.operatingMargin)}</strong>
         </div>
         <div>
           <span>自己資本比率</span>
           <strong>{formatMetric(company.metrics.equityRatio)}</strong>
-        </div>
-        <div>
-          <span>CF利益ギャップ</span>
-          <strong>{formatMetric(company.metrics.cashProfitGap)}</strong>
         </div>
       </div>
 

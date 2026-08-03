@@ -88,19 +88,19 @@ class GoldenIndustryCaseManifestTests(unittest.TestCase):
         policy_source = POLICY_PATH.read_text(encoding="utf-8")
 
         self.assertIn(
-            "const bankPolicy = createPolicy(\n  ['roe', 'roa']",
+            "const bankPolicy = createPolicy(\n  ['roe', 'per', 'pbr']",
             policy_source,
         )
         self.assertIn(
-            "const securitiesPolicy = createPolicy(\n  ['roe', 'roa']",
+            "const securitiesPolicy = createPolicy(\n  ['roe', 'per', 'pbr']",
             policy_source,
         )
         self.assertIn(
-            "const insurancePolicy = createPolicy(\n  ['roe', 'roa']",
+            "const insurancePolicy = createPolicy(\n  ['roe', 'per', 'pbr']",
             policy_source,
         )
         self.assertIn(
-            "const otherFinancialPolicy = createPolicy(\n  ['netMargin', 'roe', 'roa']",
+            "const otherFinancialPolicy = createPolicy(\n  ['revenueGrowth', 'netMargin', 'roe', 'per', 'pbr']",
             policy_source,
         )
 

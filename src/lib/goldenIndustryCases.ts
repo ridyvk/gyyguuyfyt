@@ -26,14 +26,14 @@ export interface GoldenIndustryCase {
 }
 
 const commonOperatingKpis = [
+  'revenueGrowth',
   'operatingMargin',
   'netMargin',
   'roe',
-  'roa',
   'equityRatio',
 ] as const satisfies readonly KpiKey[]
 
-const financialKpis = ['roe', 'roa'] as const satisfies readonly KpiKey[]
+const financialKpis = ['roe', 'per', 'pbr'] as const satisfies readonly KpiKey[]
 
 export const goldenIndustryCases = [
   {
@@ -282,7 +282,7 @@ export const goldenIndustryCases = [
     industry: 'その他金融業',
     reason: 'その他金融業で負債・ネットキャッシュを一般企業扱いしないための代表ケース',
     riskFlags: ['baseline-industry-coverage', 'other-financial-policy'],
-    minimumKpis: ['netMargin', 'roe', 'roa'],
+    minimumKpis: ['revenueGrowth', 'netMargin', 'roe', 'per', 'pbr'],
   },
   {
     code: '8801',
@@ -362,7 +362,7 @@ export const goldenIndustryCases = [
     industry: 'その他金融業',
     reason: 'その他金融の追加ケース。市場インフラ型金融として一般負債評価を避ける',
     riskFlags: ['other-financial-policy'],
-    minimumKpis: ['netMargin', 'roe', 'roa'],
+    minimumKpis: ['revenueGrowth', 'netMargin', 'roe', 'per', 'pbr'],
   },
   {
     code: '8601',

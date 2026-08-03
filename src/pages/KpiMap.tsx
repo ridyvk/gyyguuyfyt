@@ -41,6 +41,7 @@ interface MetricRule {
   max: number
   inverse?: boolean
   signOnly?: boolean
+  relativeTo?: KpiKey
 }
 
 interface FinderConfig {
@@ -78,47 +79,49 @@ const focusConfigs: Record<FinderMode, FinderConfig> = {
   balanced: {
     label: '総合力',
     kicker: 'ALL-ROUND',
-    question: '収益・資本・安全・現金がそろう企業は？',
+    question: '成長・収益・安全・現金・割安さがそろう企業は？',
     description:
-      '特定の指標だけで決めず、稼ぐ力・資本効率・財務余力・キャッシュの裏付けを均等に確認します。',
-    formula: '収益力 25% + 資本効率 30% + 財務安全性 20% + 現金品質 25%',
+      '選別済みの12指標だけを使い、成長性・収益性・財務余力・キャッシュ・割安さを横断して確認します。',
+    formula: '成長 18% + 収益 28% + 財務安全性 18% + 現金品質 18% + 割安性 18%',
     icon: Sparkles,
     rules: [
-      { key: 'operatingMargin', weight: 0.12, min: -10, max: 30 },
-      { key: 'netMargin', weight: 0.08, min: -10, max: 20 },
-      { key: 'roe', weight: 0.1, min: -10, max: 30 },
-      { key: 'roa', weight: 0.07, min: -5, max: 15 },
-      { key: 'roic', weight: 0.14, min: -5, max: 25 },
-      { key: 'roicWaccSpread', weight: 0.12, min: -12, max: 15 },
-      { key: 'wacc', weight: 0.04, min: 3, max: 14, inverse: true },
-      { key: 'equityRatio', weight: 0.13, min: 0, max: 80 },
-      { key: 'operatingCfMargin', weight: 0.14, min: -10, max: 30 },
-      { key: 'cashProfitGap', weight: 0.06, min: -12, max: 12 },
+      { key: 'revenueGrowth', weight: 0.18, min: -10, max: 25 },
+      { key: 'operatingMargin', weight: 0.16, min: -10, max: 30 },
+      { key: 'netMargin', weight: 0.05, min: -10, max: 20 },
+      { key: 'roe', weight: 0.07, min: -10, max: 30 },
+      { key: 'equityRatio', weight: 0.1, min: 0, max: 80 },
+      { key: 'debtRatio', weight: 0.08, min: 0, max: 4, inverse: true },
+      { key: 'operatingCfMargin', weight: 0.1, min: -10, max: 30 },
+      { key: 'netCash', weight: 0.04, min: 0, max: 1, signOnly: true },
+      { key: 'inventoryGrowth', relativeTo: 'revenueGrowth', weight: 0.02, min: -8, max: 18, inverse: true },
+      { key: 'receivablesGrowth', relativeTo: 'revenueGrowth', weight: 0.02, min: -8, max: 18, inverse: true },
+      { key: 'per', weight: 0.1, min: 8, max: 55, inverse: true },
+      { key: 'pbr', weight: 0.08, min: 0.6, max: 6, inverse: true },
+    ],
+    columns: [
+      { key: 'revenueGrowth', label: '売上成長率' },
+      { key: 'operatingMargin', label: '営業利益率' },
+      { key: 'per', label: 'PER' },
+    ],
+    minimumMetrics: 6,
+  },
+  capital: {
+    label: '収益効率',
+    kicker: 'EARNINGS QUALITY',
+    question: '利益率とROEがそろって強い企業は？',
+    description:
+      '営業利益率・純利益率・ROEに絞り、本業の採算性と株主資本に対する収益性を比べます。',
+    formula: '営業利益率 45% + 純利益率 20% + ROE 35%',
+    icon: Landmark,
+    rules: [
+      { key: 'operatingMargin', weight: 0.45, min: -10, max: 30 },
+      { key: 'netMargin', weight: 0.2, min: -10, max: 20 },
+      { key: 'roe', weight: 0.35, min: -10, max: 30 },
     ],
     columns: [
       { key: 'operatingMargin', label: '営業利益率' },
-      { key: 'roicWaccSpread', label: 'ROIC−WACC' },
-      { key: 'operatingCfMargin', label: '営業CF率' },
-    ],
-    minimumMetrics: 5,
-  },
-  capital: {
-    label: '資本効率',
-    kicker: 'CAPITAL EDGE',
-    question: '投じた資本以上の価値を生んでいる企業は？',
-    description:
-      'ROICが高いだけでなく、資本コストをどれだけ上回れているかまで見て順位付けします。',
-    formula: 'ROIC 45% + ROIC−WACC 35% + 低いWACC 20%',
-    icon: Landmark,
-    rules: [
-      { key: 'roic', weight: 0.45, min: -5, max: 25 },
-      { key: 'roicWaccSpread', weight: 0.35, min: -12, max: 15 },
-      { key: 'wacc', weight: 0.2, min: 3, max: 14, inverse: true },
-    ],
-    columns: [
-      { key: 'roic', label: 'ROIC' },
-      { key: 'wacc', label: 'WACC' },
-      { key: 'roicWaccSpread', label: '超過収益力' },
+      { key: 'netMargin', label: '純利益率' },
+      { key: 'roe', label: 'ROE' },
     ],
     minimumMetrics: 2,
   },
@@ -127,19 +130,18 @@ const focusConfigs: Record<FinderMode, FinderConfig> = {
     kicker: 'RESILIENCE',
     question: '逆風でも守りが崩れにくい企業は？',
     description:
-      '自己資本の厚さを中心に、資産効率・資本コスト・ネットキャッシュの正負を確認します。',
-    formula: '自己資本比率 50% + ROA 20% + 低いWACC 15% + ネットキャッシュ 15%',
+      '自己資本の厚さ、有利子負債の軽さ、ネットキャッシュの正負から財務耐性を確認します。',
+    formula: '自己資本比率 45% + 低い有利子負債倍率 35% + ネットキャッシュ 20%',
     icon: ShieldCheck,
     rules: [
-      { key: 'equityRatio', weight: 0.5, min: 0, max: 80 },
-      { key: 'roa', weight: 0.2, min: -5, max: 15 },
-      { key: 'wacc', weight: 0.15, min: 3, max: 14, inverse: true },
-      { key: 'netCash', weight: 0.15, min: 0, max: 1, signOnly: true },
+      { key: 'equityRatio', weight: 0.45, min: 0, max: 80 },
+      { key: 'debtRatio', weight: 0.35, min: 0, max: 4, inverse: true },
+      { key: 'netCash', weight: 0.2, min: 0, max: 1, signOnly: true },
     ],
     columns: [
       { key: 'equityRatio', label: '自己資本比率' },
+      { key: 'debtRatio', label: '有利子負債倍率' },
       { key: 'netCash', label: 'ネットキャッシュ' },
-      { key: 'roa', label: 'ROA' },
     ],
     minimumMetrics: 2,
   },
@@ -148,21 +150,21 @@ const focusConfigs: Record<FinderMode, FinderConfig> = {
     kicker: 'CASH QUALITY',
     question: '利益がきちんと現金で残っている企業は？',
     description:
-      '営業キャッシュフローの厚さと利益との差を重視し、帳簿上の利益だけに偏らず比べます。',
-    formula: '営業CF率 55% + CF利益差 25% + 純利益率 10% + ネットキャッシュ 10%',
+      '営業キャッシュフローの厚さに加え、在庫・売掛金が売上以上に膨らんでいないかを確認します。',
+    formula: '営業CF率 50% + 在庫管理 20% + 売掛金管理 20% + ネットキャッシュ 10%',
     icon: WalletCards,
     rules: [
-      { key: 'operatingCfMargin', weight: 0.55, min: -10, max: 30 },
-      { key: 'cashProfitGap', weight: 0.25, min: -12, max: 12 },
-      { key: 'netMargin', weight: 0.1, min: -10, max: 20 },
+      { key: 'operatingCfMargin', weight: 0.5, min: -10, max: 30 },
+      { key: 'inventoryGrowth', relativeTo: 'revenueGrowth', weight: 0.2, min: -8, max: 18, inverse: true },
+      { key: 'receivablesGrowth', relativeTo: 'revenueGrowth', weight: 0.2, min: -8, max: 18, inverse: true },
       { key: 'netCash', weight: 0.1, min: 0, max: 1, signOnly: true },
     ],
     columns: [
       { key: 'operatingCfMargin', label: '営業CF率' },
-      { key: 'cashProfitGap', label: 'CF利益差' },
-      { key: 'netCash', label: 'ネットキャッシュ' },
+      { key: 'inventoryGrowth', label: '棚卸資産増加率' },
+      { key: 'receivablesGrowth', label: '売掛金増加率' },
     ],
-    minimumMetrics: 2,
+    minimumMetrics: 3,
   },
 }
 
@@ -195,7 +197,12 @@ const calculateScore = (company: Company, config: FinderConfig) => {
   config.rules.forEach((rule) => {
     const value = finiteMetric(company, rule.key)
     if (value === undefined) return
-    weightedScore += metricScore(value, rule) * rule.weight
+    const relativeValue = rule.relativeTo
+      ? finiteMetric(company, rule.relativeTo)
+      : undefined
+    if (rule.relativeTo && relativeValue === undefined) return
+    const scoreValue = relativeValue === undefined ? value : value - relativeValue
+    weightedScore += metricScore(scoreValue, rule) * rule.weight
     availableWeight += rule.weight
     availableMetrics += 1
   })
@@ -317,9 +324,9 @@ export default function KpiMap() {
     return {
       rankable: rankable.length,
       highCoverage: rankable.filter((item) => item.coverage >= 0.8).length,
-      estimated: rankable.filter((item) => item.estimated).length,
+      selectedMetrics: new Set(config.rules.map((rule) => rule.key)).size,
     }
-  }, [allRanked])
+  }, [allRanked, config.rules])
 
   const topThree = ranked.filter((item) => item.rankable).slice(0, 3)
   const visibleRanked = ranked.slice(0, visibleCount)
@@ -402,7 +409,7 @@ export default function KpiMap() {
         <div className="kpi-finder-method__stats">
           <div><span>判定可能</span><strong><AnimatedNumber value={stats.rankable} /></strong><small>社</small></div>
           <div><span>充足度80%+</span><strong><AnimatedNumber value={stats.highCoverage} /></strong><small>社</small></div>
-          <div><span>推定を含む</span><strong><AnimatedNumber value={stats.estimated} /></strong><small>社</small></div>
+          <div><span>使用指標</span><strong><AnimatedNumber value={stats.selectedMetrics} /></strong><small>指標</small></div>
         </div>
       </section>
 

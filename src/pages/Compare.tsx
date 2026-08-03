@@ -30,22 +30,21 @@ import type { Company, KpiKey, ScoreKey } from '../types'
 const colors = ['#007AFF', '#5856D6', '#FF9F0A', '#AF52DE', '#FF375F']
 const scoreMetrics: { key: ScoreKey | 'overall'; label: string; higher: boolean }[] = [
   { key: 'overall', label: '総合スコア', higher: true },
+  { key: 'growth', label: '成長性', higher: true },
   { key: 'profitability', label: '収益性', higher: true },
   { key: 'safety', label: '安全性', higher: true },
   { key: 'cashGeneration', label: 'CF創出力', higher: true },
+  { key: 'valuation', label: '割安性', higher: true },
 ]
 const kpiMetrics: { key: KpiKey; label: string; higher: boolean }[] = [
+  { key: 'revenueGrowth', label: '売上成長率', higher: true },
   { key: 'operatingMargin', label: '営業利益率', higher: true },
-  { key: 'netMargin', label: '純利益率', higher: true },
   { key: 'roe', label: 'ROE', higher: true },
-  { key: 'roa', label: 'ROA', higher: true },
-  { key: 'roic', label: 'ROIC', higher: true },
-  { key: 'roicWaccSpread', label: 'ROIC-WACC', higher: true },
   { key: 'equityRatio', label: '自己資本比率', higher: true },
   { key: 'operatingCfMargin', label: '営業CFマージン', higher: true },
-  { key: 'cashProfitGap', label: 'CF利益ギャップ', higher: true },
-  { key: 'netCash', label: 'ネットキャッシュ', higher: true },
-  { key: 'wacc', label: 'WACC', higher: false },
+  { key: 'per', label: 'PER', higher: false },
+  { key: 'pbr', label: 'PBR', higher: false },
+  { key: 'debtRatio', label: '有利子負債倍率', higher: false },
 ]
 
 const isBest = (

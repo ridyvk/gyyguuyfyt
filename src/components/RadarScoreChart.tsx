@@ -18,9 +18,11 @@ interface RadarScoreChartProps {
 
 const colors = ['#007AFF', '#5856D6', '#FF9F0A', '#AF52DE', '#FF375F']
 const keys: ScoreKey[] = [
+  'growth',
   'profitability',
   'safety',
   'cashGeneration',
+  'valuation',
 ]
 
 export default function RadarScoreChart({

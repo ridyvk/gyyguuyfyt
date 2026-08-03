@@ -7,21 +7,12 @@ import type {
 } from '../types'
 
 export const metricFormulaLabels: Record<KpiKey, string> = {
-  operatingIncomeGrowth: '(当期営業利益 / 前期営業利益 - 1) × 100',
-  epsGrowth: '(当期EPS / 前期EPS - 1) × 100',
-  roa: '当期純利益 / 総資産 × 100',
-  roic: 'NOPAT / 投下資本 × 100',
-  roicWaccSpread: 'ROIC - WACC',
-  wacc: '株主資本コスト × 株主資本比率 + 負債コスト × (1 - 税率) × 負債比率',
-  ebitda: '営業利益 + 減価償却費',
-  evEbitda: 'EV / EBITDA',
   revenueGrowth: '(当期売上高 / 前期売上高 - 1) × 100',
   operatingMargin: '営業利益 / 売上高 × 100',
   netMargin: '親会社株主利益 / 売上高 × 100',
   roe: '開示ROE（未開示時: 親会社株主利益 / 平均自己資本 × 100）',
   equityRatio: '開示自己資本比率（未開示時: 自己資本 / 総資産 × 100）',
   operatingCfMargin: '営業キャッシュフロー / 売上高 × 100',
-  cashProfitGap: '営業CFマージン - 純利益率',
   debtRatio: '有利子負債 / 自己資本',
   netCash: '(現金及び現金同等物 - 有利子負債) / 1億',
   inventoryGrowth: '(当期棚卸資産 / 前期棚卸資産 - 1) × 100',

@@ -51,14 +51,8 @@ export const buildWarnings = (
   if (has('debtRatio') && metrics.debtRatio > 2.5) {
     warnings.push('有利子負債倍率が高い水準です')
   }
-  if (has('roic', 'wacc') && metrics.roic < metrics.wacc) {
-    warnings.push('ROICがWACCを下回っており、資本コストを超える収益力を確認したい状態です')
-  }
   if (has('per', 'pbr') && (metrics.per > 50 || metrics.pbr > 6)) {
     warnings.push('PERまたはPBRが極端に高い水準です')
-  }
-  if (has('evEbitda') && metrics.evEbitda > 18) {
-    warnings.push('EV/EBITDA倍率が高く、買収価値ベースでは期待先行の可能性があります')
   }
   if (
     has('roe', 'equityRatio') &&
@@ -89,9 +83,6 @@ export const buildStrengths = (
     strengths.push('高い営業利益率')
   }
   if (has('roe') && metrics.roe >= 14) strengths.push('資本効率が良好')
-  if (has('roic', 'wacc') && metrics.roic >= metrics.wacc + 3) {
-    strengths.push('ROICが資本コストを上回る')
-  }
   if (has('equityRatio') && metrics.equityRatio >= 55) {
     strengths.push('厚い自己資本')
   }
@@ -103,9 +94,6 @@ export const buildStrengths = (
   }
   if (has('per', 'pbr') && metrics.per <= 13 && metrics.pbr <= 1.5) {
     strengths.push('バリュエーションに割安感')
-  }
-  if (has('evEbitda') && metrics.evEbitda <= 8) {
-    strengths.push('EV/EBITDAで割安感')
   }
 
   return strengths.slice(0, 4)
@@ -151,5 +139,5 @@ export const buildAnalysisComment = (
   if (has('revenueGrowth', 'operatingMargin')) {
     return `売上成長率は${formatPercent(metrics.revenueGrowth)}、営業利益率は${formatPercent(metrics.operatingMargin)}です。主要KPIは大きな偏りなく推移しており、次回決算では成長率と利益率の持続性を確認したい状態です。`
   }
-  return '主要KPIは大きな偏りなく推移しています。次回決算では収益性・安全性・キャッシュ品質の持続性を確認したい状態です。'
+  return '主要KPIは大きな偏りなく推移しています。次回決算では成長率と利益率の持続性を確認したい状態です。'
 }
