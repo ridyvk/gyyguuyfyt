@@ -86,10 +86,6 @@ jobs:
             --edinet-days 3 \
             --retention-days 120
 
-      - name: Refresh market quotes
-        if: steps.mode.outputs.mode == 'market' || steps.mode.outputs.mode == 'all' || steps.company_master.outputs.changed == 'true'
-        run: python scripts/update_market_prices.py --max-companies 4500 --max-workers 8
-
       - name: Refresh financial filings
         if: steps.mode.outputs.mode == 'financial' || steps.mode.outputs.mode == 'all'
         run: |
@@ -104,6 +100,10 @@ jobs:
           python scripts/split_financials.py
           python scripts/audit_golden_companies.py --check
           python scripts/audit_all_companies.py --check
+
+      - name: Refresh market quotes
+        if: steps.mode.outputs.mode == 'market' || steps.mode.outputs.mode == 'all' || steps.company_master.outputs.changed == 'true'
+        run: python scripts/update_market_prices.py --max-companies 4500 --max-workers 8
 
       - name: Validate datasets
         run: |
