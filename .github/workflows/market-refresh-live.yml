@@ -54,7 +54,7 @@ jobs:
           set -euo pipefail
           git config user.name "kpi-scope-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add public/data/market.json
+          git add public/data/market.json public/data/market-status.json
           if git diff --cached --quiet; then
             echo "No market data changes."
           else
