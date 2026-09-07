@@ -101,6 +101,18 @@ class TDnetDisclosureParserTests(unittest.TestCase):
 
 
 class DisclosureComparisonTests(unittest.TestCase):
+    def test_retained_events_follow_current_company_master(self) -> None:
+        events = [
+            {"id": "keep", "code": "7203"},
+            {"id": "drop", "code": "9999"},
+        ]
+
+        retained = update_disclosures.retain_known_company_events(
+            events, {"7203": "Example"}
+        )
+
+        self.assertEqual([event["id"] for event in retained], ["keep"])
+
     def test_same_category_events_link_to_previous_disclosure(self) -> None:
         now = datetime.now(update_disclosures.JST).replace(microsecond=0)
         events = [

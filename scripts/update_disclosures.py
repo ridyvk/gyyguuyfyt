@@ -223,6 +223,17 @@ def company_master() -> dict[str, str]:
     }
 
 
+def retain_known_company_events(
+    events: Iterable[dict], companies: dict[str, str]
+) -> list[dict]:
+    """Drop retained events for securities no longer in the listed universe."""
+    return [
+        event
+        for event in events
+        if str((event or {}).get("code") or "") in companies
+    ]
+
+
 class TDnetDisclosureParser(html.parser.HTMLParser):
     """Parse all TDnet rows, including PDF-only disclosures."""
 
@@ -784,7 +795,9 @@ def refresh_disclosures(
 ) -> dict:
     companies = company_master()
     previous = load_existing_snapshot(output)
-    existing_events = previous.get("events") or []
+    existing_events = retain_known_company_events(
+        previous.get("events") or [], companies
+    )
     bootstrap_events = bootstrap_financial_events(companies)
     events = [*existing_events, *bootstrap_events]
     source_status: dict[str, dict] = {

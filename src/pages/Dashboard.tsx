@@ -1,8 +1,6 @@
 import {
-  Activity,
   AlertTriangle,
   ArrowRight,
-  ArrowUpRight,
   BellRing,
   Bookmark,
   Building2,
@@ -28,17 +26,17 @@ import AnimatedNumber from '../components/AnimatedNumber'
 import DisclosureEventCard from '../components/DisclosureEventCard'
 import ScoreBadge from '../components/ScoreBadge'
 import StockQuoteCard from '../components/StockQuoteCard'
-import ThemeSwipeCard from '../components/ThemeSwipeCard'
 import { useApp } from '../context/AppContext'
+import { listedCompanySource } from '../lib/companySource'
 import { hasFinancialData, hasScorableData } from '../lib/liveData'
 import '../dashboard-charts.css'
 
 const themePalette = [
-  { from: '#78B9FF', to: '#3D75DE' },
-  { from: '#67D1FF', to: '#348BC9' },
-  { from: '#8C9FFF', to: '#5D62D8' },
-  { from: '#A99BFF', to: '#7066D3' },
-  { from: '#62BFE7', to: '#3973B8' },
+  { from: '#78BEF4', to: '#3A8FD8' },
+  { from: '#8DDDD4', to: '#4BAEA9' },
+  { from: '#AAA8ED', to: '#7570D4' },
+  { from: '#DAB4E8', to: '#AA75C5' },
+  { from: '#F4CCA2', to: '#E4A263' },
 ]
 
 const jstDateFormatter = new Intl.DateTimeFormat('en-CA', {
@@ -123,11 +121,6 @@ export default function Dashboard() {
         Math.abs(a.stockPrice?.changePercent ?? 0),
     )
     .slice(0, 3)
-  const marketCoverageCount = companies.filter(
-    (company) => company.stockPrice,
-  ).length
-  const marketIsReady =
-    marketSnapshot?.status === 'ready' || marketSnapshot?.status === 'partial'
   const disclosurePulse = disclosures
     .filter(
       (event) => event.importance === 'critical' || event.importance === 'high',
@@ -139,55 +132,29 @@ export default function Dashboard() {
 
   return (
     <div className="page">
-      <section className="delta-home delta-home--swipe" aria-labelledby="delta-home-title">
-        <div className="delta-home__card-zone">
-          <ThemeSwipeCard />
-        </div>
-
-        <div className="delta-home__companion">
-          <span className="delta-home__eyebrow">
-            <i /> Live intelligence workspace
+      <section className="hero-panel">
+        <div>
+          <span className="page-eyebrow">
+            OVERVIEW / JPX {listedCompanySource.date.slice(0, 4)}.
+            {listedCompanySource.date.slice(4, 6)}
           </span>
-          <p className="delta-home__headline">企業の変化を、一つの視界に。</p>
-          <p className="delta-home__description">
-            株価、財務KPI、開示情報を横断し、次に見るべき企業と変化を静かに浮かび上がらせます。
+          <h1>企業の現在地を、<br />数字の輪郭からつかむ。</h1>
+          <p>
+            財務KPI、業種別の着眼点、強みと違和感をひとつの視界に。
+            株価ではなく、事業の変化を追う企業分析ワークスペースです。
           </p>
-          <nav className="delta-home__links" aria-label="ホームのクイックアクセス">
-            <Link to="/universe">
-              企業を探す <ArrowUpRight size={14} />
-            </Link>
-            <Link to="/map">
-              KPIで絞る <ArrowUpRight size={14} />
-            </Link>
-            <Link to="/radar">
-              開示を監視 <ArrowUpRight size={14} />
-            </Link>
-          </nav>
-
-          <aside className="delta-home__pulse" aria-label="現在のデータ状況">
-            <div className="delta-home__pulse-head">
-              <span><Activity size={15} /> Market state</span>
-              <small className={marketIsReady ? 'is-live' : ''}>
-                {marketIsReady ? 'CONNECTED' : 'STANDBY'}
-              </small>
-            </div>
-            <strong>{marketCoverageCount.toLocaleString('ja-JP')}</strong>
-            <span>銘柄の株価を追跡</span>
-            <dl>
-              <div>
-                <dt>Trading date</dt>
-                <dd>{marketDateLabel(marketSnapshot?.latestTradingDate)}</dd>
-              </div>
-              <div>
-                <dt>Disclosures</dt>
-                <dd>{disclosures.length.toLocaleString('ja-JP')}件</dd>
-              </div>
-              <div>
-                <dt>Watchlist</dt>
-                <dd>{watchlist.length.toLocaleString('ja-JP')}社</dd>
-              </div>
-            </dl>
-          </aside>
+        </div>
+        <div className="hero-panel__score">
+          <span>Universe 平均</span>
+          <ScoreBadge
+            score={averageScore}
+            available={analyzableCompanies.length > 0}
+          />
+          <small>
+            {statusReady
+              ? `財務KPI取得 ${coverageCompanies.toLocaleString('ja-JP')} / ${targetCompanies.toLocaleString('ja-JP')}社`
+              : '財務データ取得待ち'}
+          </small>
         </div>
       </section>
 
@@ -358,14 +325,14 @@ export default function Dashboard() {
                   </defs>
                   <CartesianGrid
                     vertical={false}
-                    stroke="rgba(132, 164, 212, 0.14)"
+                    stroke="rgba(88, 116, 136, 0.11)"
                     strokeDasharray="2 8"
                   />
                   <XAxis
                     dataKey="name"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#7E8CA2', fontSize: 10 }}
+                    tick={{ fill: '#87959F', fontSize: 10 }}
                     interval={0}
                     angle={-18}
                     textAnchor="end"
@@ -375,19 +342,19 @@ export default function Dashboard() {
                   <YAxis
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#7E8CA2', fontSize: 10 }}
+                    tick={{ fill: '#9AA5AD', fontSize: 10 }}
                     allowDecimals={false}
                     tickMargin={8}
                   />
                   <Tooltip
-                    cursor={{ fill: 'rgba(91, 159, 255, 0.08)' }}
+                    cursor={{ fill: 'rgba(91, 174, 219, 0.055)' }}
                     contentStyle={{
                       backdropFilter: 'blur(18px)',
-                      background: 'rgba(9,15,26,0.94)',
-                      color: '#EDF4FF',
-                      border: '1px solid rgba(129,174,241,0.20)',
+                      background: 'rgba(255,255,255,0.84)',
+                      color: '#25333B',
+                      border: '1px solid rgba(104,148,174,0.16)',
                       borderRadius: 13,
-                      boxShadow: '0 16px 38px rgba(0,0,0,0.34)',
+                      boxShadow: '0 14px 35px rgba(44,79,99,0.12)',
                     }}
                   />
                   <Bar
@@ -441,7 +408,7 @@ export default function Dashboard() {
                       dataKey="value"
                       startAngle={90}
                       endAngle={-270}
-                      stroke="rgba(5,10,18,0.9)"
+                      stroke="rgba(255,255,255,0.88)"
                       strokeWidth={2}
                       isAnimationActive
                       animationBegin={80}
@@ -458,11 +425,11 @@ export default function Dashboard() {
                     <Tooltip
                       contentStyle={{
                         backdropFilter: 'blur(18px)',
-                        background: 'rgba(9,15,26,0.94)',
-                        color: '#EDF4FF',
-                        border: '1px solid rgba(129,174,241,0.20)',
+                        background: 'rgba(255,255,255,0.84)',
+                        color: '#25333B',
+                        border: '1px solid rgba(104,148,174,0.16)',
                         borderRadius: 13,
-                        boxShadow: '0 16px 38px rgba(0,0,0,0.34)',
+                        boxShadow: '0 14px 35px rgba(44,79,99,0.12)',
                       }}
                     />
                   </PieChart>

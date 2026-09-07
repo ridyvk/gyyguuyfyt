@@ -343,12 +343,29 @@ export interface MarketSnapshot {
     tradingDates: string[]
     fundamentals: number
     quoteUniverse?: number
+    quoteCoverageRatio?: number
+    missingQuotes?: number
+    missingQuoteCodes?: string[]
     quoteFailures?: number
     freshQuotesFetched?: number
     fallbackQuotes?: number
     staleQuotesDropped?: number
     marketDateStaleQuotes?: number
   }
+}
+
+export interface MarketStatus {
+  schemaVersion: 1
+  generatedAt: string
+  source: 'Yahoo Finance' | 'J-Quants'
+  status: 'ready' | 'partial' | 'setup-required' | 'error'
+  latestTradingDate: string | null
+  latestQuoteTimestamp?: string | null
+  quoteUniverse: number
+  companies: number
+  quoteCoverageRatio: number
+  missingQuotes: number
+  missingQuoteCodes: string[]
 }
 
 export type DisclosureSource = 'TDnet' | 'EDINET'

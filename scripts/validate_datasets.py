@@ -17,10 +17,13 @@ ROOT = Path(__file__).resolve().parents[1]
 MASTER = ROOT / "src/data/listedCompanies.json"
 FINANCIALS = ROOT / "public/data/financials.json"
 MARKET = ROOT / "public/data/market.json"
+MARKET_STATUS = ROOT / "public/data/market-status.json"
 DISCLOSURES = ROOT / "public/data/disclosures.json"
 DISCLOSURE_MANIFEST = ROOT / "public/data/disclosures/manifest.json"
 JST = timezone(timedelta(hours=9))
 MAX_MARKET_DATA_AGE_DAYS = 7
+MIN_MARKET_QUOTE_COVERAGE_RATIO = 99.5
+MAX_MARKET_MISSING_QUOTES = 25
 
 
 def load(path: Path) -> dict:
@@ -108,12 +111,25 @@ def validate_market(codes: set[str]) -> list[str]:
                 f"{latest_trading_date}"
             )
 
+    quoted_codes = codes & set(quotes)
     missing_quote_codes = sorted(codes - set(quotes))
+    coverage_ratio = len(quoted_codes) / len(codes) * 100 if codes else 0.0
     if missing_quote_codes:
         sample = ", ".join(missing_quote_codes[:10])
-        errors.append(
-            f"market is missing {len(missing_quote_codes)} company quote(s): {sample}"
-        )
+        if (
+            coverage_ratio < MIN_MARKET_QUOTE_COVERAGE_RATIO
+            or len(missing_quote_codes) > MAX_MARKET_MISSING_QUOTES
+        ):
+            errors.append(
+                "market quote coverage is too low: "
+                f"{coverage_ratio:.4f}% with {len(missing_quote_codes)} missing "
+                f"company quote(s): {sample}"
+            )
+        if payload.get("status") != "partial":
+            errors.append(
+                "market has missing company quotes but status is not partial: "
+                f"{len(missing_quote_codes)} missing ({sample})"
+            )
 
     quote_dates: list[str] = []
     for code, quote in quotes.items():
@@ -146,9 +162,57 @@ def validate_market(codes: set[str]) -> list[str]:
         errors.append(
             f"market has {len(stale_flag_errors)} older quote(s) without stale=true: {sample}"
         )
-    stats_count = int((payload.get("stats") or {}).get("companies") or 0)
+    stats = payload.get("stats") or {}
+    stats_count = int(stats.get("companies") or 0)
     if stats_count != len(quotes):
         errors.append(f"market stats companies={stats_count} but quotes={len(quotes)}")
+    stats_universe = int(stats.get("quoteUniverse") or 0)
+    if stats_universe != len(codes):
+        errors.append(
+            f"market stats quoteUniverse={stats_universe} but master={len(codes)}"
+        )
+    stats_missing = int(stats.get("missingQuotes") or 0)
+    if stats_missing != len(missing_quote_codes):
+        errors.append(
+            f"market stats missingQuotes={stats_missing} but missing={len(missing_quote_codes)}"
+        )
+    if sorted(stats.get("missingQuoteCodes") or []) != missing_quote_codes:
+        errors.append("market stats missingQuoteCodes does not match missing quotes")
+    if "quoteCoverageRatio" in stats or missing_quote_codes:
+        try:
+            stats_coverage = float(stats.get("quoteCoverageRatio"))
+        except (TypeError, ValueError):
+            stats_coverage = -1.0
+        if abs(stats_coverage - coverage_ratio) > 0.01:
+            errors.append(
+                "market stats quoteCoverageRatio does not match quote coverage: "
+                f"{stats_coverage} != {coverage_ratio:.4f}"
+            )
+
+    if MARKET_STATUS.exists():
+        marker = load(MARKET_STATUS)
+        expected_marker = {
+            "generatedAt": payload.get("generatedAt"),
+            "source": payload.get("source"),
+            "status": payload.get("status"),
+            "latestTradingDate": payload.get("latestTradingDate"),
+            "latestQuoteTimestamp": payload.get("latestQuoteTimestamp"),
+            "quoteUniverse": len(codes),
+            "companies": len(quotes),
+            "missingQuotes": len(missing_quote_codes),
+            "missingQuoteCodes": missing_quote_codes,
+        }
+        if int(marker.get("schemaVersion") or 0) != 1:
+            errors.append("market status schemaVersion must be 1")
+        for key, expected in expected_marker.items():
+            if marker.get(key) != expected:
+                errors.append(f"market status {key} does not match market snapshot")
+        try:
+            marker_coverage = float(marker.get("quoteCoverageRatio"))
+        except (TypeError, ValueError):
+            marker_coverage = -1.0
+        if abs(marker_coverage - coverage_ratio) > 0.01:
+            errors.append("market status quoteCoverageRatio does not match market snapshot")
     return errors
 
 

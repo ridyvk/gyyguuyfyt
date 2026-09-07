@@ -1,4 +1,4 @@
-name: Build and deploy Delta
+name: Build and deploy KPI Scope
 
 # Manual build from the canonical develop source branch.
 # Data update workflows are separate:
@@ -32,6 +32,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Install data updater dependencies
+        run: python -m pip install -r requirements-update.txt
 
       - name: Finalize and shard financial data
         run: |

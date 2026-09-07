@@ -64,11 +64,22 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install Python dependencies
-        run: python -m pip install --upgrade pandas xlrd
+      - name: Install company master dependencies
+        if: steps.mode.outputs.mode == 'financial' || steps.mode.outputs.mode == 'all'
+        run: python -m pip install --upgrade -r requirements-update.txt
 
       - name: Update company master
-        run: python scripts/update_jpx_companies.py
+        id: company_master
+        if: steps.mode.outputs.mode == 'financial' || steps.mode.outputs.mode == 'all'
+        continue-on-error: true
+        shell: bash
+        run: |
+          python scripts/update_jpx_companies.py
+          if git diff --quiet -- src/data/listedCompanies.json src/lib/companySource.ts; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Refresh disclosure radar
         run: |
@@ -78,7 +89,7 @@ jobs:
             --retention-days 120
 
       - name: Refresh market quotes
-        if: steps.mode.outputs.mode == 'market' || steps.mode.outputs.mode == 'all'
+        if: steps.mode.outputs.mode == 'market' || steps.mode.outputs.mode == 'all' || steps.company_master.outputs.changed == 'true'
         run: python scripts/update_market_prices.py --max-companies 4500 --max-workers 8
 
       - name: Refresh financial filings
@@ -100,10 +111,15 @@ jobs:
         run: |
           set -euo pipefail
           python scripts/validate_datasets.py --scope disclosure
-          if [ "${{ steps.mode.outputs.mode }}" = "market" ]; then
+          if [ "${{ steps.mode.outputs.mode }}" = "market" ] || \
+             [ "${{ steps.mode.outputs.mode }}" = "all" ] || \
+             [ "${{ steps.company_master.outputs.changed }}" = "true" ]; then
             python scripts/validate_datasets.py --scope market
-          else
-            python scripts/validate_datasets.py --scope all
+          fi
+          if [ "${{ steps.mode.outputs.mode }}" = "financial" ] || \
+             [ "${{ steps.mode.outputs.mode }}" = "all" ]; then
+            python scripts/validate_datasets.py --scope master
+            python scripts/validate_datasets.py --scope financial
           fi
 
       - name: Commit refreshed data

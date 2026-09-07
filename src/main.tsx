@@ -4,7 +4,6 @@ import { HashRouter } from 'react-router-dom'
 import '@fontsource/barlow-condensed/latin-300.css'
 import App from './App'
 import { AppProvider } from './context/AppContext'
-import { initializeDeltaTheme } from './lib/theme'
 import './styles.css'
 import './live-data.css'
 import './chart-focus.css'
@@ -13,10 +12,6 @@ import './stock-display.css'
 import './kpi-map.css'
 import './disclosure-radar.css'
 import './motion-page-header.css'
-import './delta-theme.css'
-import './theme-switch.css'
-
-initializeDeltaTheme()
 
 class AppErrorBoundary extends Component<
   { children: ReactNode },
@@ -29,7 +24,7 @@ class AppErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error('Delta failed to render', error, info)
+    console.error('KPI Scope failed to render', error, info)
   }
 
   render() {
@@ -37,7 +32,7 @@ class AppErrorBoundary extends Component<
       return (
         <main className="fatal-error">
           <div>
-            <strong>Deltaを読み込めませんでした</strong>
+            <strong>KPI Scopeを読み込めませんでした</strong>
             <p>古いキャッシュを削除して再読み込みします。</p>
             <button type="button" onClick={() => window.location.reload()}>
               再読み込み
@@ -79,7 +74,7 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
     }
 
     void removeLegacyAppCache().catch((error) => {
-      console.warn('Delta legacy cache cleanup failed', error)
+      console.warn('KPI Scope legacy cache cleanup failed', error)
     })
   })
 }

@@ -16,6 +16,7 @@ import type {
   MarketFundamentals,
   MarketQuote,
   MarketSnapshot,
+  MarketStatus,
   Scores,
   UpdateStatus,
 } from '../types'
@@ -519,8 +520,10 @@ const fetchFinancialJson = async <T>(url: string): Promise<T> => {
   return response.json() as Promise<T>
 }
 
+type DataVersion = number | string
+
 const loadShardedFinancialSnapshot = async (
-  version: number,
+  version: DataVersion,
 ): Promise<FinancialSnapshot> => {
   const baseUrl = `${import.meta.env.BASE_URL}data/financials`
   const manifest = await fetchFinancialJson<FinancialShardManifest>(
@@ -575,19 +578,31 @@ const loadShardedFinancialSnapshot = async (
 }
 
 const loadLegacyFinancialSnapshot = async (
-  version: number,
+  version: DataVersion,
 ): Promise<FinancialSnapshot> =>
   fetchFinancialJson<FinancialSnapshot>(
     `${import.meta.env.BASE_URL}data/financials.json?v=${version}`,
   )
 
-export const loadFinancialSnapshot = async (): Promise<FinancialSnapshot> => {
-  const version = Date.now()
+export const loadFinancialSnapshot = async (
+  version: DataVersion = Date.now(),
+): Promise<FinancialSnapshot> => {
   try {
     return await loadShardedFinancialSnapshot(version)
   } catch {
     return loadLegacyFinancialSnapshot(version)
   }
+}
+
+export const loadFinancialVersion = async (): Promise<string | null> => {
+  const baseUrl = `${import.meta.env.BASE_URL}data/financials`
+  const manifest = await fetchFinancialJson<FinancialShardManifest>(
+    `${baseUrl}/manifest.json?v=${Date.now()}`,
+  )
+  if (manifest.schemaVersion !== 1 || !Array.isArray(manifest.shards)) {
+    throw new Error('Financial shard manifest is invalid')
+  }
+  return manifest.generatedAt
 }
 
 export const loadUpdateStatus = async (): Promise<UpdateStatus> => {
@@ -601,43 +616,82 @@ export const loadUpdateStatus = async (): Promise<UpdateStatus> => {
 
 const LIVE_MARKET_DATA_URL =
   'https://raw.githubusercontent.com/ridyvk/gyyguuyfyt/develop/public/data/market.json'
+const LIVE_MARKET_STATUS_URL =
+  'https://raw.githubusercontent.com/ridyvk/gyyguuyfyt/develop/public/data/market-status.json'
 
-export const loadMarketSnapshot = async (): Promise<MarketSnapshot> => {
-  const version = Date.now()
-  const bundledUrl = `${import.meta.env.BASE_URL}data/market.json?v=${version}`
-  const urls = import.meta.env.PROD
-    ? [`${LIVE_MARKET_DATA_URL}?v=${version}`, bundledUrl]
+const marketUrls = (filename: string, liveUrl: string, version: DataVersion) => {
+  const bundledUrl = `${import.meta.env.BASE_URL}data/${filename}?v=${encodeURIComponent(version)}`
+  return import.meta.env.PROD
+    ? [`${liveUrl}?v=${encodeURIComponent(version)}`, bundledUrl]
     : [bundledUrl]
+}
 
+const fetchFirstMarketJson = async <T>(urls: string[]): Promise<T> => {
   let lastError: unknown
   for (const url of urls) {
     try {
       const response = await fetch(url, { cache: 'no-store' })
       if (!response.ok) {
-        throw new Error(`Market snapshot could not be loaded: ${response.status}`)
+        throw new Error(`Market data could not be loaded: ${response.status}`)
       }
-      const snapshot = (await response.json()) as MarketSnapshot
-      if (
-        !snapshot ||
-        !snapshot.quotes ||
-        typeof snapshot.quotes !== 'object' ||
-        Array.isArray(snapshot.quotes)
-      ) {
-        throw new Error('Market snapshot has an invalid shape')
-      }
-      return snapshot
+      return (await response.json()) as T
     } catch (error) {
       lastError = error
     }
   }
-
   throw lastError instanceof Error
     ? lastError
-    : new Error('Market snapshot could not be loaded')
+    : new Error('Market data could not be loaded')
 }
 
-export const loadDisclosureSnapshot = async (): Promise<DisclosureSnapshot> => {
+export const loadMarketStatus = async (): Promise<MarketStatus> => {
   const version = Date.now()
+  const marker = await fetchFirstMarketJson<MarketStatus>(
+    marketUrls('market-status.json', LIVE_MARKET_STATUS_URL, version),
+  )
+  if (
+    marker.schemaVersion !== 1 ||
+    !marker.generatedAt ||
+    !Number.isFinite(marker.companies) ||
+    !Number.isFinite(marker.quoteCoverageRatio) ||
+    !Array.isArray(marker.missingQuoteCodes)
+  ) {
+    throw new Error('Market status has an invalid shape')
+  }
+  return marker
+}
+
+export const loadMarketSnapshot = async (
+  version: DataVersion = Date.now(),
+): Promise<MarketSnapshot> => {
+  const snapshot = await fetchFirstMarketJson<MarketSnapshot>(
+    marketUrls('market.json', LIVE_MARKET_DATA_URL, version),
+  )
+  if (
+    !snapshot ||
+    !snapshot.quotes ||
+    typeof snapshot.quotes !== 'object' ||
+    Array.isArray(snapshot.quotes)
+  ) {
+    throw new Error('Market snapshot has an invalid shape')
+  }
+  return snapshot
+}
+
+export const loadDisclosureVersion = async (): Promise<string> => {
+  const baseUrl = `${import.meta.env.BASE_URL}data/disclosures`
+  const manifest = await fetchFinancialJson<DisclosureShardManifest>(
+    `${baseUrl}/manifest.json?v=${Date.now()}`,
+  )
+  if (manifest.schemaVersion !== 1 || !manifest.generatedAt) {
+    throw new Error('Disclosure shard manifest is invalid')
+  }
+  return manifest.generatedAt
+}
+
+export const loadDisclosureSnapshot = async (
+  version: DataVersion = Date.now(),
+): Promise<DisclosureSnapshot> => {
   const baseUrl = `${import.meta.env.BASE_URL}data/disclosures`
   let snapshot: DisclosureSnapshot
   try {
