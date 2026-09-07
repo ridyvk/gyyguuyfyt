@@ -22,6 +22,7 @@ from pathlib import Path
 from data_quality import is_iso_date, normalize_security_code
 
 SNAPSHOT = Path(__file__).resolve().parents[1] / "public/data/market.json"
+STATUS = Path(__file__).resolve().parents[1] / "public/data/market-status.json"
 FINANCIALS = Path(__file__).resolve().parents[1] / "public/data/financials.json"
 COMPANY_MASTER = (
     Path(__file__).resolve().parents[1] / "src/data/listedCompanies.json"
@@ -33,6 +34,16 @@ INTRADAY_RANGE = "5d"
 INTRADAY_INTERVAL = "15m"
 DAILY_RANGE = "7d"
 DAILY_INTERVAL = "1d"
+
+
+def write_json(path: Path, payload: dict) -> None:
+    """Replace generated JSON atomically so readers never see a partial file."""
+    temporary = path.with_suffix(f"{path.suffix}.tmp")
+    temporary.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    temporary.replace(path)
 
 
 def number(value: object) -> float | None:
@@ -363,13 +374,17 @@ def main() -> int:
         },
         reverse=True,
     )
+    generated_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+    missing_quote_codes = sorted(set(codes) - set(merged_quotes))
+    quote_coverage_ratio = (
+        round(len(merged_quotes) / len(codes) * 100, 4) if codes else 0.0
+    )
+    status = "partial" if failures or missing_quote_codes else "ready"
     snapshot = {
         "schemaVersion": 3,
-        "generatedAt": datetime.now(timezone.utc)
-        .isoformat()
-        .replace("+00:00", "Z"),
+        "generatedAt": generated_at,
         "source": "Yahoo Finance",
-        "status": "partial" if failures else "ready",
+        "status": status,
         "message": (
             "Yahoo Financeの公開株価データとEDINET・TDnetのEPS/BPSから"
             "PER・PBRを自動計算しています。株価はリアルタイム保証ではありません。"
@@ -381,6 +396,9 @@ def main() -> int:
         "stats": {
             "quoteUniverse": len(codes),
             "companies": len(merged_quotes),
+            "quoteCoverageRatio": quote_coverage_ratio,
+            "missingQuotes": len(missing_quote_codes),
+            "missingQuoteCodes": missing_quote_codes,
             "tradingDates": latest_dates[:5],
             "fundamentals": len(fundamentals),
             "quoteFailures": len(failures),
@@ -391,10 +409,21 @@ def main() -> int:
             "maxFallbackQuoteAgeDays": MAX_FALLBACK_QUOTE_AGE_DAYS,
         },
     }
-    SNAPSHOT.write_text(
-        json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
+    market_status = {
+        "schemaVersion": 1,
+        "generatedAt": generated_at,
+        "source": snapshot["source"],
+        "status": status,
+        "latestTradingDate": latest_trading_date,
+        "latestQuoteTimestamp": snapshot["latestQuoteTimestamp"],
+        "quoteUniverse": len(codes),
+        "companies": len(merged_quotes),
+        "quoteCoverageRatio": quote_coverage_ratio,
+        "missingQuotes": len(missing_quote_codes),
+        "missingQuoteCodes": missing_quote_codes,
+    }
+    write_json(SNAPSHOT, snapshot)
+    write_json(STATUS, market_status)
     print(
         f"Saved {len(merged_quotes)} quotes and "
         f"{len(fundamentals)} valuation records."

@@ -26,9 +26,12 @@ import type {
 } from '../types'
 import {
   hasFinancialData,
+  loadDisclosureVersion,
   loadDisclosureSnapshot,
+  loadFinancialVersion,
   loadFinancialSnapshot,
   loadMarketSnapshot,
+  loadMarketStatus,
   loadUpdateStatus,
   mergeLiveCompanies,
 } from '../lib/liveData'
@@ -65,6 +68,9 @@ const marketVersion = (snapshot: MarketSnapshot | null) =>
 const disclosureVersion = (snapshot: DisclosureSnapshot | null) =>
   snapshot?.generatedAt ?? snapshot?.latestFiledAt ?? null
 
+const financialVersion = (snapshot: FinancialSnapshot | null) =>
+  snapshot?.generatedAt ?? snapshot?.dataUpdatedAt ?? null
+
 export function AppProvider({ children }: { children: ReactNode }) {
   const [companies, setCompanies] = useState<Company[]>([])
   const [watchlist, setWatchlist] = useState<string[]>([])
@@ -81,6 +87,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     useState<DisclosureSnapshot | null>(null)
   const companyUniverseRef = useRef<Company[]>([])
   const financialSnapshotRef = useRef<FinancialSnapshot | null>(null)
+  const marketSnapshotRef = useRef<MarketSnapshot | null>(null)
+  const financialVersionRef = useRef<string | null>(null)
   const marketVersionRef = useRef<string | null>(null)
   const disclosureVersionRef = useRef<string | null>(null)
 
@@ -108,6 +116,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (!active) return
         companyUniverseRef.current = companyModule.companies
         financialSnapshotRef.current = snapshot
+        marketSnapshotRef.current = marketSnapshot
+        financialVersionRef.current = financialVersion(snapshot)
         marketVersionRef.current = marketVersion(marketSnapshot)
         const loadedCompanies = mergeLiveCompanies(
           companyModule.companies,
@@ -160,17 +170,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     let active = true
     let refreshInFlight = false
+    let financialRefreshInFlight = false
     let disclosureRefreshInFlight = false
 
     const refreshMarket = async () => {
       if (refreshInFlight || companyUniverseRef.current.length === 0) return
       refreshInFlight = true
       try {
-        const nextSnapshot = await loadMarketSnapshot()
+        const marker = await loadMarketStatus()
+        if (marker.generatedAt === marketVersionRef.current) return
+        const nextSnapshot = await loadMarketSnapshot(marker.generatedAt)
         if (!active) return
         const nextVersion = marketVersion(nextSnapshot)
         if (nextVersion === marketVersionRef.current) return
         marketVersionRef.current = nextVersion
+        marketSnapshotRef.current = nextSnapshot
         setMarketSnapshot(nextSnapshot)
         setCompanies(
           mergeLiveCompanies(
@@ -186,15 +200,49 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
     }
 
+    const refreshFinancials = async () => {
+      if (
+        financialRefreshInFlight ||
+        companyUniverseRef.current.length === 0
+      ) return
+      financialRefreshInFlight = true
+      try {
+        const nextVersion = await loadFinancialVersion()
+        if (nextVersion === financialVersionRef.current) return
+        const [nextSnapshot, nextStatus] = await Promise.all([
+          loadFinancialSnapshot(nextVersion ?? Date.now()),
+          loadUpdateStatus().catch(() => null),
+        ])
+        if (!active) return
+        financialVersionRef.current = financialVersion(nextSnapshot)
+        financialSnapshotRef.current = nextSnapshot
+        setFinancialSnapshot(nextSnapshot)
+        if (nextStatus) setUpdateStatus(nextStatus)
+        setCompanies(
+          mergeLiveCompanies(
+            companyUniverseRef.current,
+            nextSnapshot,
+            marketSnapshotRef.current,
+          ),
+        )
+      } catch {
+        return
+      } finally {
+        financialRefreshInFlight = false
+      }
+    }
+
     const refreshDisclosures = async () => {
       if (disclosureRefreshInFlight) return
       disclosureRefreshInFlight = true
       try {
-        const nextSnapshot = await loadDisclosureSnapshot()
+        const markerVersion = await loadDisclosureVersion()
+        if (markerVersion === disclosureVersionRef.current) return
+        const nextSnapshot = await loadDisclosureSnapshot(markerVersion)
         if (!active) return
-        const nextVersion = disclosureVersion(nextSnapshot)
-        if (nextVersion === disclosureVersionRef.current) return
-        disclosureVersionRef.current = nextVersion
+        const loadedVersion = disclosureVersion(nextSnapshot)
+        if (loadedVersion === disclosureVersionRef.current) return
+        disclosureVersionRef.current = loadedVersion
         setDisclosureSnapshot(nextSnapshot)
       } catch {
         return
@@ -205,15 +253,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     const intervalId = window.setInterval(() => {
       void refreshMarket()
+      void refreshFinancials()
       void refreshDisclosures()
     }, MARKET_REFRESH_INTERVAL_MS)
     const handleFocus = () => {
       void refreshMarket()
+      void refreshFinancials()
       void refreshDisclosures()
     }
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         void refreshMarket()
+        void refreshFinancials()
         void refreshDisclosures()
       }
     }

@@ -797,6 +797,17 @@ class DeliveryTests(unittest.TestCase):
         self.assertNotIn("cdn.jsdelivr.net", source)
         self.assertIn('/src/main.tsx', source)
 
+    def test_kpi_scope_identity_and_original_hero_are_active(self) -> None:
+        index = (ROOT / "index.html").read_text(encoding="utf-8")
+        entry = (ROOT / "src/main.tsx").read_text(encoding="utf-8")
+        app = (ROOT / "src/App.tsx").read_text(encoding="utf-8")
+        dashboard = (ROOT / "src/pages/Dashboard.tsx").read_text(encoding="utf-8")
+        self.assertIn("<title>KPI Scope</title>", index)
+        self.assertNotIn("delta-theme.css", entry)
+        self.assertIn("<strong>KPI Scope</strong>", app)
+        self.assertIn('className="hero-panel"', dashboard)
+        self.assertIn("企業の現在地を、", dashboard)
+
     def test_only_deploy_workflow_deploys_pages(self) -> None:
         workflows = ROOT / ".github/workflows"
         deploy = (workflows / "deploy-pages.yml").read_text(encoding="utf-8")
@@ -811,7 +822,8 @@ class DeliveryTests(unittest.TestCase):
         self.assertIn("Update annual financials", deploy)
         self.assertIn("Update market prices", deploy)
         self.assertIn("Update JPX company master", financial)
-        self.assertIn("Update JPX company master", market)
+        self.assertNotIn("Update JPX company master", market)
+        self.assertIn("public/data/market-status.json", market)
         self.assertIn("ref: main", company_master)
 
 

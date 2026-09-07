@@ -25,12 +25,6 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install Python dependencies
-        run: python -m pip install --upgrade pandas xlrd
-
-      - name: Update JPX company master
-        run: python scripts/update_jpx_companies.py
-
       - name: Update market prices
         env:
           MAX_COMPANIES: ${{ inputs.max_companies || '4500' }}
@@ -40,11 +34,11 @@ jobs:
             --max-workers 8
 
       - name: Validate market dataset
-        run: python scripts/validate_datasets.py
+        run: python scripts/validate_datasets.py --scope market
 
       - name: Commit updated market data
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           branch: develop
           commit_message: "data: update market prices"
-          file_pattern: public/data/market.json public/data/update-status.json
+          file_pattern: public/data/market.json public/data/market-status.json
