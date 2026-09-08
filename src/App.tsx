@@ -6,19 +6,15 @@ import {
   GitCompareArrows,
   LayoutDashboard,
   ListFilter,
-  Menu,
   Radar,
-  ScanSearch,
-  X,
 } from 'lucide-react'
 import {
   lazy,
   Suspense,
   useLayoutEffect,
-  useState,
 } from 'react'
 import { NavLink, Route, Routes, useLocation } from 'react-router-dom'
-import StartupSplash from './components/StartupSplash'
+import MotionControl from './components/MotionControl'
 import { useApp } from './context/AppContext'
 import { listedCompanySource } from './lib/companySource'
 import { hasFinancialData } from './lib/liveData'
@@ -32,12 +28,12 @@ const KpiMap = lazy(() => import('./pages/KpiMap'))
 const DisclosureRadar = lazy(() => import('./pages/DisclosureRadar'))
 
 const navigation = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/map', label: 'KPI Finder', icon: ListFilter },
-  { to: '/universe', label: 'Universe', icon: Building2 },
-  { to: '/radar', label: 'Radar', icon: Radar },
-  { to: '/watchlist', label: 'Watchlist', icon: Bookmark },
-  { to: '/compare', label: 'Compare', icon: GitCompareArrows },
+  { to: '/', label: 'Dashboard', short: 'ホーム', icon: LayoutDashboard },
+  { to: '/map', label: 'KPI Finder', short: '指標', icon: ListFilter },
+  { to: '/universe', label: 'Universe', short: '企業', icon: Building2 },
+  { to: '/radar', label: 'Radar', short: '開示', icon: Radar },
+  { to: '/watchlist', label: 'Watchlist', short: '保存', icon: Bookmark },
+  { to: '/compare', label: 'Compare', short: '比較', icon: GitCompareArrows },
 ]
 
 export default function App() {
@@ -50,7 +46,6 @@ export default function App() {
     marketSnapshot,
     unreadDisclosureCount,
   } = useApp()
-  const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
   const financialCompanyCount = companies.filter(
     hasFinancialData,
@@ -79,42 +74,28 @@ export default function App() {
 
   return (
     <>
-      <StartupSplash />
+      <a className="skip-link" href="#main-content" onClick={(event) => {
+        event.preventDefault()
+        document.getElementById('main-content')?.focus()
+      }}>本文へ移動</a>
       <div className="app-shell">
         <header className="topbar">
-        <NavLink className="brand" to="/" onClick={() => setMenuOpen(false)}>
-          <span className="brand__mark">
-            <ScanSearch size={22} />
-          </span>
-          <span>
-            <strong>KPI Scope</strong>
-            <small>Company intelligence</small>
-          </span>
-        </NavLink>
-        <button
-          type="button"
-          className="mobile-menu-button"
-          onClick={() => setMenuOpen((open) => !open)}
-          aria-label={menuOpen ? 'メニューを閉じる' : 'メニューを開く'}
-          aria-expanded={menuOpen}
-          aria-controls="primary-navigation"
-        >
-          {menuOpen ? <X /> : <Menu />}
-        </button>
         <nav
           id="primary-navigation"
-          className={menuOpen ? 'main-nav is-open' : 'main-nav'}
+          className="main-nav"
+          aria-label="メインナビゲーション"
         >
-          {navigation.map(({ to, label, icon: Icon }) => (
+          {navigation.map(({ to, label, short, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
               end={to === '/'}
-              onClick={() => setMenuOpen(false)}
+              aria-label={label}
               className={({ isActive }) => isActive ? 'is-active' : ''}
             >
               <Icon size={17} />
-              <span>{label}</span>
+              <span className="nav-label">{label}</span>
+              <span className="nav-label--short" aria-hidden="true">{short}</span>
               {label === 'Watchlist' && (
                 <b>{storageReady ? watchlist.length : '·'}</b>
               )}
@@ -141,12 +122,13 @@ export default function App() {
               ? `株価 ${stockQuoteCount.toLocaleString('ja-JP')}社`
               : `JPX ${listedCompanySource.date.slice(0, 4)}.${listedCompanySource.date.slice(4, 6)}`}
         </div>
+        <MotionControl />
         </header>
 
-        <main className="page-frame">
+        <main id="main-content" className="page-frame" tabIndex={-1}>
         <Suspense
           fallback={
-            <div className="route-loader">
+            <div className="route-loader" role="status">
               <span />
               KPIを読み込んでいます
             </div>
@@ -169,7 +151,7 @@ export default function App() {
                 </Routes>
               </div>
           ) : (
-            <div className="route-loader">
+            <div className="route-loader" role="status">
               <span />
               上場企業データを読み込んでいます
             </div>

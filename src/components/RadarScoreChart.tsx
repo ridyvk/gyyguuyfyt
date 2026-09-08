@@ -1,3 +1,4 @@
+import { useReducedMotion } from '../lib/useReducedMotion'
 import {
   PolarAngleAxis,
   PolarGrid,
@@ -30,6 +31,7 @@ export default function RadarScoreChart({
   companies = [],
   height = 280,
 }: RadarScoreChartProps) {
+  const reducedMotion = useReducedMotion()
   const data = keys.map((key) => ({
     subject: scoreLabels[key],
     ...(scores ? { score: Math.round(scores[key]) } : {}),
@@ -74,7 +76,7 @@ export default function RadarScoreChart({
               fill="#007AFF"
               fillOpacity={0.22}
               strokeWidth={2}
-              isAnimationActive
+              isAnimationActive={!reducedMotion}
               animationBegin={100}
               animationDuration={720}
               animationEasing="ease-out"
@@ -89,7 +91,7 @@ export default function RadarScoreChart({
               fill={colors[index]}
               fillOpacity={index === 0 ? 0.13 : 0.04}
               strokeWidth={2}
-              isAnimationActive
+              isAnimationActive={!reducedMotion}
               animationBegin={100 + index * 70}
               animationDuration={720}
               animationEasing="ease-out"

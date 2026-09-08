@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useReducedMotion } from '../lib/useReducedMotion'
 
 interface AnimatedNumberProps {
   value: number
@@ -17,6 +18,7 @@ export default function AnimatedNumber({
   delay = 0,
   className,
 }: AnimatedNumberProps) {
+  const reducedMotion = useReducedMotion()
   const elementRef = useRef<HTMLSpanElement>(null)
   const currentValue = useRef(0)
   const [displayValue, setDisplayValue] = useState(0)
@@ -57,7 +59,7 @@ export default function AnimatedNumber({
 
   useEffect(() => {
     if (!active) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (reducedMotion) {
       currentValue.current = value
       setDisplayValue(value)
       return
@@ -85,11 +87,12 @@ export default function AnimatedNumber({
 
     frame = window.requestAnimationFrame(tick)
     return () => window.cancelAnimationFrame(frame)
-  }, [active, delay, duration, value])
+  }, [active, delay, duration, value, reducedMotion])
 
   return (
     <span ref={elementRef} className={className}>
-      {format(active ? displayValue : 0)}
+      <span className="sr-only">{format(value)}</span>
+      <span aria-hidden="true">{format(active ? displayValue : value)}</span>
     </span>
   )
 }

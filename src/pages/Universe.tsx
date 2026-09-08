@@ -31,6 +31,7 @@ export default function Universe() {
   } = useApp()
   const [filter, setFilter] = useState<CompanyFilter>(() => ({
     ...initialFilter,
+    query: searchParams.get('q') ?? '',
     warningsOnly: searchParams.get('warnings') === '1',
     sort:
       searchParams.get('sort') === 'code-asc'

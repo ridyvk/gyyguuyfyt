@@ -39,7 +39,7 @@
 .dashboard-disclosure-panel__head p {
   margin: 0;
   color: var(--muted-light);
-  font-size: 10px;
+  font-size: .75rem;
   line-height: 1.7;
 }
 
@@ -55,14 +55,14 @@
   flex-direction: column;
   min-width: 72px;
   color: var(--text);
-  font-size: 9px;
+  font-size: .75rem;
   font-weight: 600;
 }
 
 .dashboard-disclosure-panel__status small {
   margin-top: 2px;
   color: var(--muted);
-  font-size: 7px;
+  font-size: .75rem;
   font-weight: 400;
 }
 
@@ -101,7 +101,7 @@
 .watchlist-disclosure-inbox__head p {
   margin: 0;
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
 }
 
 .watchlist-disclosure-inbox__head > div:last-child {
@@ -115,7 +115,7 @@
   align-items: center;
   gap: 5px;
   color: #5856d6;
-  font-size: 9px;
+  font-size: .75rem;
   font-weight: 600;
 }
 
@@ -130,7 +130,7 @@
   border: 1px dashed var(--border-light);
   border-radius: 14px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
   text-align: center;
 }
 
@@ -163,7 +163,7 @@
 .company-disclosure-section__head p {
   margin: 0;
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
 }
 
 .company-disclosure-section__head > div:last-child {
@@ -177,7 +177,7 @@
   align-items: center;
   gap: 5px;
   color: #a45c00;
-  font-size: 9px;
+  font-size: .75rem;
   font-weight: 600;
 }
 
@@ -192,7 +192,7 @@
   border: 1px dashed var(--border-light);
   border-radius: 14px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
   text-align: center;
 }
 
@@ -268,12 +268,12 @@
   align-items: center;
   gap: 8px 13px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: .75rem;
 }
 
 .disclosure-hero__status strong {
   color: var(--text);
-  font-size: 11px;
+  font-size: .75rem;
 }
 
 .live-dot {
@@ -352,7 +352,7 @@
 .disclosure-hero__orb span {
   margin-top: 8px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
   letter-spacing: 0.05em;
 }
 
@@ -381,13 +381,13 @@
 }
 
 .disclosure-notice strong {
-  font-size: 11px;
+  font-size: .75rem;
   line-height: 1.6;
 }
 
 .disclosure-notice span {
   color: var(--muted-light);
-  font-size: 9px;
+  font-size: .75rem;
   line-height: 1.6;
 }
 
@@ -418,14 +418,14 @@
   right: 15px;
   bottom: 11px;
   color: var(--muted);
-  font-size: 8px;
+  font-size: .75rem;
 }
 
 .disclosure-metrics small {
   display: block;
   margin-bottom: 3px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
 }
 
 .disclosure-metrics strong {
@@ -553,7 +553,7 @@
   color: var(--muted-light);
   background: rgba(255, 255, 255, 0.6);
   cursor: pointer;
-  font-size: 9px;
+  font-size: .75rem;
   font-weight: 600;
   transition: 140ms ease;
 }
@@ -594,7 +594,7 @@
   color: var(--muted-light);
   background: transparent;
   cursor: pointer;
-  font-size: 9px;
+  font-size: .75rem;
   font-weight: 600;
 }
 
@@ -635,7 +635,7 @@
   color: var(--muted);
   background: transparent;
   cursor: pointer;
-  font-size: 9px;
+  font-size: .75rem;
   font-weight: 600;
 }
 
@@ -731,7 +731,7 @@
   min-height: 20px;
   padding: 3px 7px;
   border-radius: 7px;
-  font-size: 7px;
+  font-size: .75rem;
   font-weight: 700;
   letter-spacing: 0.025em;
   white-space: nowrap;
@@ -785,7 +785,7 @@
   gap: 4px;
   margin-left: 2px;
   color: var(--muted);
-  font-size: 8px;
+  font-size: .75rem;
 }
 
 .disclosure-card__company-line {
@@ -800,7 +800,7 @@
 
 .disclosure-card__company-line span {
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -820,7 +820,7 @@
 .disclosure-card__body > p {
   margin-bottom: 11px;
   color: var(--muted-light);
-  font-size: 10px;
+  font-size: .75rem;
   line-height: 1.75;
 }
 
@@ -838,7 +838,7 @@
   padding: 5px 7px;
   border: 1px solid transparent;
   border-radius: 8px;
-  font-size: 8px;
+  font-size: .75rem;
   font-weight: 600;
 }
 
@@ -877,7 +877,7 @@
   border-radius: 9px;
   color: var(--muted);
   background: rgba(142, 142, 147, 0.035);
-  font-size: 8px;
+  font-size: .75rem;
 }
 
 .disclosure-card__comparison strong {
@@ -888,7 +888,7 @@
 .disclosure-card__comparison b {
   margin-left: auto;
   color: #a45c00;
-  font-size: 7px;
+  font-size: .75rem;
 }
 
 .disclosure-card__actions {
@@ -906,7 +906,7 @@
   padding: 5px 7px;
   border-radius: 7px;
   color: var(--muted-light);
-  font-size: 8px;
+  font-size: .75rem;
   font-weight: 600;
 }
 
@@ -953,7 +953,7 @@
   color: #007aff;
   background: rgba(255, 255, 255, 0.7);
   cursor: pointer;
-  font-size: 10px;
+  font-size: .75rem;
   font-weight: 600;
 }
 
@@ -964,7 +964,7 @@
 
 .disclosure-load-more span {
   color: var(--muted);
-  font-size: 8px;
+  font-size: .75rem;
   font-weight: 400;
 }
 
@@ -989,7 +989,7 @@
 
 .disclosure-empty p {
   margin-bottom: 20px;
-  font-size: 10px;
+  font-size: .75rem;
 }
 
 .disclosure-sidebar {
@@ -1063,12 +1063,12 @@
 
 .attention-item > span {
   color: var(--muted);
-  font-size: 8px;
+  font-size: .75rem;
 }
 
 .attention-item strong {
   overflow: hidden;
-  font-size: 10px;
+  font-size: .75rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1077,7 +1077,7 @@
   grid-column: 1 / -1;
   overflow: hidden;
   color: var(--muted-light);
-  font-size: 8px;
+  font-size: .75rem;
   line-height: 1.5;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1090,7 +1090,7 @@
   gap: 8px;
   padding: 25px 10px;
   color: #158044;
-  font-size: 9px;
+  font-size: .75rem;
 }
 
 .category-mix {
@@ -1116,7 +1116,7 @@
   justify-content: space-between;
   width: 100%;
   gap: 12px;
-  font-size: 8px;
+  font-size: .75rem;
 }
 
 .category-mix b {
@@ -1167,12 +1167,12 @@
 }
 
 .source-status-list strong {
-  font-size: 9px;
+  font-size: .75rem;
 }
 
 .source-status-list small {
   color: var(--muted);
-  font-size: 7px;
+  font-size: .75rem;
 }
 
 .source-status-dot {
@@ -1194,7 +1194,7 @@
 .radar-method-note {
   margin: 12px 2px 0;
   color: var(--muted);
-  font-size: 7px;
+  font-size: .75rem;
   line-height: 1.75;
 }
 

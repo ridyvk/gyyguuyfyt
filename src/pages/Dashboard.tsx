@@ -1,3 +1,5 @@
+import { useReducedMotion } from '../lib/useReducedMotion'
+import { getMarketBreadth } from '../lib/marketBreadth'
 import {
   AlertTriangle,
   ArrowRight,
@@ -7,8 +9,12 @@ import {
   Gauge,
   Layers3,
   RefreshCw,
+  Search,
+  ChevronDown,
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import MarketSculpture from '../components/MarketSculpture'
 import {
   Bar,
   BarChart,
@@ -54,6 +60,9 @@ const marketDateLabel = (latestTradingDate: string | null | undefined) => {
 }
 
 export default function Dashboard() {
+  const reducedMotion = useReducedMotion()
+  const navigate = useNavigate()
+  const [query, setQuery] = useState('')
   const {
     companies,
     watchlist,
@@ -84,9 +93,9 @@ export default function Dashboard() {
   const financialStatus = financialSnapshot?.status ?? updateStatus?.status ?? 'error'
   const statusReady = financialCompanies.length > 0 && ['ready', 'partial', 'building'].includes(financialStatus)
   const coverageCompanies = financialCompanies.length
-  const targetCompanies = updateStatus?.targetCompanies ?? financialSnapshot?.stats?.targetCompanies ?? companies.length
-  const missingCompanies = updateStatus?.missingCompanies ?? financialSnapshot?.stats?.missingCompanies ?? Math.max(0, targetCompanies - coverageCompanies)
-  const coverageRatio = updateStatus?.coverageRatio ?? financialSnapshot?.stats?.coverageRatio ?? (targetCompanies ? coverageCompanies / targetCompanies * 100 : 0)
+  const targetCompanies = companies.length
+  const missingCompanies = Math.max(0, targetCompanies - coverageCompanies)
+  const coverageRatio = targetCompanies ? coverageCompanies / targetCompanies * 100 : 0
   const generatedAt = updateStatus?.generatedAt ?? financialSnapshot?.generatedAt
   const dataUpdatedAt = updateStatus?.dataUpdatedAt ?? financialSnapshot?.dataUpdatedAt
   const sourceLabel = updateStatus?.source ?? financialSnapshot?.source ?? 'EDINET+TDnet'
@@ -130,130 +139,39 @@ export default function Dashboard() {
     ? disclosurePulse
     : disclosures.slice(0, 4)
 
+  const breadth = getMarketBreadth(companies, marketSnapshot?.latestTradingDate)
+  const breadthTotal = breadth.up + breadth.down + breadth.flat
+
   return (
-    <div className="page">
-      <section className="hero-panel">
-        <div>
-          <span className="page-eyebrow">
-            OVERVIEW / JPX {listedCompanySource.date.slice(0, 4)}.
-            {listedCompanySource.date.slice(4, 6)}
-          </span>
-          <h1>企業の現在地を、<br />数字の輪郭からつかむ。</h1>
-          <p>
-            財務KPI、業種別の着眼点、強みと違和感をひとつの視界に。
-            株価ではなく、事業の変化を追う企業分析ワークスペースです。
-          </p>
-        </div>
-        <div className="hero-panel__score">
-          <span>Universe 平均</span>
-          <ScoreBadge
-            score={averageScore}
-            available={analyzableCompanies.length > 0}
-          />
-          <small>
-            {statusReady
-              ? `財務KPI取得 ${coverageCompanies.toLocaleString('ja-JP')} / ${targetCompanies.toLocaleString('ja-JP')}社`
-              : '財務データ取得待ち'}
-          </small>
-        </div>
-      </section>
-
-      <section
-        className={`data-status data-status--${financialStatus}`}
-      >
-        <RefreshCw size={18} />
-        <div>
-          <strong>
-            {statusReady
-              ? financialStatus === 'partial'
-                ? `${sourceLabel} 財務データは一部更新に失敗`
-                : financialStatus === 'building'
-                  ? `${sourceLabel} 財務データを構築中`
-                  : `${sourceLabel} 財務データを検証済み`
-              : '財務データ自動更新の初期設定待ち'}
-          </strong>
-          <span>
-            {statusReady
-              ? `${coverageCompanies.toLocaleString('ja-JP')}社を表示可能 / 対象 ${targetCompanies.toLocaleString('ja-JP')}社 / 未取得 ${missingCompanies.toLocaleString('ja-JP')}社 / カバレッジ ${coverageRatio.toFixed(2)}% / 最新開示 ${dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleString('ja-JP') : '未取得'} / 最終検証 ${generatedAt ? new Date(generatedAt).toLocaleString('ja-JP') : '未取得'}`
-              : 'EDINET・TDnetから取得できていない企業は、架空値ではなく未取得として表示します。'}
-          </span>
-        </div>
-      </section>
-
-      <section className="market-pulse">
-        <div className="market-pulse__head">
-          <div>
-            <span className="section-kicker">MARKET PULSE</span>
-            <h2>株価データ</h2>
-          </div>
-          <span>
-            {marketSnapshot?.status === 'ready' || marketSnapshot?.status === 'partial'
-              ? `${marketSnapshot.source} / ${marketDateLabel(marketSnapshot.latestTradingDate)}`
-              : '自動更新待ち'}
-          </span>
-        </div>
-        <div className="market-pulse__grid">
-          {marketPulseCompanies.length ? (
-            marketPulseCompanies.map((company) => (
-              <Link
-                to={`/company/${company.id}`}
-                className="market-pulse__item"
-                key={company.id}
-              >
-                <span>
-                  {company.code}
-                  <b>{company.name}</b>
-                </span>
-                <StockQuoteCard quote={company.stockPrice} variant="mini" />
-              </Link>
-            ))
-          ) : (
-            <div className="market-pulse__empty">
-              <strong>株価データは次回の自動更新で表示されます</strong>
-              <span>最新終値、前日比、出来高をカードで表示します。</span>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section className="dashboard-disclosure-panel">
-        <div className="dashboard-disclosure-panel__head">
-          <div>
-            <span className="section-kicker">DISCLOSURE PULSE</span>
-            <h2>重要開示を、先に見る</h2>
-            <p>
-              TDnet・EDINETの新着から、業績修正・還元・資本政策などを優先表示。
-            </p>
-          </div>
-          <div className="dashboard-disclosure-panel__status">
-            <BellRing size={17} />
-            <span>
-              {disclosureSnapshot?.status === 'ready' ? '自動監視中' : '初期データ'}
-              <small>{disclosures.length.toLocaleString('ja-JP')}件</small>
-            </span>
-            <Link className="button button--secondary" to="/radar">
-              レーダーを開く <ArrowRight size={14} />
-            </Link>
+    <div className="page page--dashboard">
+      <section className="dashboard-intro">
+        <div className="dashboard-intro__main">
+          <span className="page-eyebrow">01 / OVERVIEW <span>JPX {listedCompanySource.date.slice(0, 4)}.{listedCompanySource.date.slice(4, 6)}</span></span>
+          <h1>Dashboard<span className="title-period">.</span></h1>
+          <p>気になる企業を、深く知る。</p>
+          <form className="dashboard-search" role="search" onSubmit={(event) => {
+            event.preventDefault()
+            navigate(`/universe?q=${encodeURIComponent(query.trim())}`)
+          }}>
+            <Search size={20} aria-hidden="true" />
+            <input type="search" aria-label="企業名・証券コードで検索" placeholder="企業名・証券コードで検索" value={query} onChange={(event) => setQuery(event.target.value)} />
+            <button type="submit" aria-label="企業を検索"><ArrowRight size={19} /></button>
+          </form>
+          <div className="dashboard-shortcuts">
+            <Link to="/map">指標から探す <ArrowRight size={14} /></Link>
+            <Link to="/watchlist"><Bookmark size={14} /> 保存した企業</Link>
           </div>
         </div>
-        {dashboardDisclosureEvents.length ? (
-          <div className="dashboard-disclosure-grid">
-            {dashboardDisclosureEvents.map((event) => (
-              <DisclosureEventCard
-                compact
-                event={event}
-                read={isDisclosureRead(event.id)}
-                onRead={markDisclosureRead}
-                key={event.id}
-              />
-            ))}
+        <div className="breadth-card">
+          <div className="breadth-card__heading"><span>MARKET BALANCE</span><span>{marketSnapshot?.latestTradingDate ?? '取得待ち'}</span></div>
+          <MarketSculpture {...breadth} />
+          <div className="breadth-card__numbers">
+            <span className="breadth-up"><small>上昇</small><strong>{breadth.up.toLocaleString('ja-JP')}</strong></span>
+            <span className="breadth-down"><small>下落</small><strong>{breadth.down.toLocaleString('ja-JP')}</strong></span>
+            <span className="breadth-flat"><small>横ばい</small><strong>{breadth.flat.toLocaleString('ja-JP')}</strong></span>
           </div>
-        ) : (
-          <div className="market-pulse__empty">
-            <strong>開示レーダーは次回の自動更新で表示されます</strong>
-            <span>TDnet・EDINETの新着を分類して表示します。</span>
-          </div>
-        )}
+          <small className="breadth-card__note">前日比を取得できた {breadthTotal.toLocaleString('ja-JP')} 社</small>
+        </div>
       </section>
 
       <section className="summary-grid">
@@ -297,6 +215,102 @@ export default function Dashboard() {
           <div><small>平均スコア</small><strong><AnimatedNumber value={averageScore} /></strong></div>
           <span className="summary-card__note">分析補助指標</span>
         </article>
+      </section>
+
+      <details className={`data-status data-status--${financialStatus}`}>
+        <summary><RefreshCw size={16} /><span>データの更新状況</span><b>{financialStatus === 'partial' ? '一部未更新 · ' : ''}{coverageRatio.toFixed(1)}% 取得</b><ChevronDown size={16} /></summary>
+        <div>
+          <strong>
+            {statusReady
+              ? financialStatus === 'partial'
+                ? `${sourceLabel} 財務データは一部更新に失敗`
+                : financialStatus === 'building'
+                  ? `${sourceLabel} 財務データを構築中`
+                  : `${sourceLabel} 財務データ`
+              : '財務データ自動更新の初期設定待ち'}
+          </strong>
+          <span>
+            {statusReady
+              ? `${coverageCompanies.toLocaleString('ja-JP')}社を表示可能 / 対象 ${targetCompanies.toLocaleString('ja-JP')}社 / 未取得 ${missingCompanies.toLocaleString('ja-JP')}社 / カバレッジ ${coverageRatio.toFixed(2)}% / 最新開示 ${dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleString('ja-JP') : '未取得'} / 最終検証 ${generatedAt ? new Date(generatedAt).toLocaleString('ja-JP') : '未取得'}`
+              : 'EDINET・TDnetから取得できていない企業は、架空値ではなく未取得として表示します。'}
+          </span>
+        </div>
+      </details>
+
+      <section className="market-pulse">
+        <div className="market-pulse__head">
+          <div>
+            <span className="section-kicker">MARKET PULSE</span>
+            <h2>値動きの大きい企業</h2>
+          </div>
+          <span>
+            {marketSnapshot?.status === 'ready' || marketSnapshot?.status === 'partial'
+              ? `${marketSnapshot.source} / ${marketDateLabel(marketSnapshot.latestTradingDate)}`
+              : '自動更新待ち'}
+          </span>
+        </div>
+        <div className="market-pulse__grid">
+          {marketPulseCompanies.length ? (
+            marketPulseCompanies.map((company) => (
+              <Link
+                to={`/company/${company.id}`}
+                className="market-pulse__item"
+                key={company.id}
+              >
+                <span>
+                  {company.code}
+                  <b>{company.name}</b>
+                </span>
+                <StockQuoteCard quote={company.stockPrice} variant="mini" />
+              </Link>
+            ))
+          ) : (
+            <div className="market-pulse__empty">
+              <strong>株価データは次回の自動更新で表示されます</strong>
+              <span>最新終値、前日比、出来高をカードで表示します。</span>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="dashboard-disclosure-panel">
+        <div className="dashboard-disclosure-panel__head">
+          <div>
+            <span className="section-kicker">DISCLOSURE PULSE</span>
+            <h2>重要な開示</h2>
+            <p>
+              TDnet・EDINETの新着から、業績修正・還元・資本政策などを優先表示。
+            </p>
+          </div>
+          <div className="dashboard-disclosure-panel__status">
+            <BellRing size={17} />
+            <span>
+              {disclosureSnapshot?.status === 'ready' ? '自動監視中' : '初期データ'}
+              <small>{disclosures.length.toLocaleString('ja-JP')}件</small>
+            </span>
+            <Link className="button button--secondary" to="/radar">
+              レーダーを開く <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
+        {dashboardDisclosureEvents.length ? (
+          <div className="dashboard-disclosure-grid">
+            {dashboardDisclosureEvents.map((event) => (
+              <DisclosureEventCard
+                compact
+                event={event}
+                read={isDisclosureRead(event.id)}
+                onRead={markDisclosureRead}
+                key={event.id}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="market-pulse__empty">
+            <strong>開示レーダーは次回の自動更新で表示されます</strong>
+            <span>TDnet・EDINETの新着を分類して表示します。</span>
+          </div>
+        )}
       </section>
 
       <section className="dashboard-grid">
@@ -364,7 +378,7 @@ export default function Dashboard() {
                     radius={[10, 10, 10, 10]}
                     barSize={18}
                     style={{ filter: 'url(#industryBarShadow)' }}
-                    isAnimationActive
+                    isAnimationActive={!reducedMotion}
                     animationBegin={80}
                     animationDuration={860}
                     animationEasing="ease-out"
@@ -410,7 +424,7 @@ export default function Dashboard() {
                       endAngle={-270}
                       stroke="rgba(255,255,255,0.88)"
                       strokeWidth={2}
-                      isAnimationActive
+                      isAnimationActive={!reducedMotion}
                       animationBegin={80}
                       animationDuration={920}
                       animationEasing="ease-out"

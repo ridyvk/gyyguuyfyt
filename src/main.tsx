@@ -1,7 +1,6 @@
 import { Component, StrictMode, type ErrorInfo, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'
-import '@fontsource/barlow-condensed/latin-300.css'
 import App from './App'
 import { AppProvider } from './context/AppContext'
 import './styles.css'
@@ -11,7 +10,7 @@ import './motion.css'
 import './stock-display.css'
 import './kpi-map.css'
 import './disclosure-radar.css'
-import './motion-page-header.css'
+import './delta.css'
 
 class AppErrorBoundary extends Component<
   { children: ReactNode },
@@ -24,7 +23,7 @@ class AppErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error('KPI Scope failed to render', error, info)
+    console.error('Delta failed to render', error, info)
   }
 
   render() {
@@ -32,7 +31,7 @@ class AppErrorBoundary extends Component<
       return (
         <main className="fatal-error">
           <div>
-            <strong>KPI Scopeを読み込めませんでした</strong>
+            <strong>Deltaを読み込めませんでした</strong>
             <p>古いキャッシュを削除して再読み込みします。</p>
             <button type="button" onClick={() => window.location.reload()}>
               再読み込み

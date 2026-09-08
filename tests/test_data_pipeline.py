@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+import json
 import unittest
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -797,16 +798,15 @@ class DeliveryTests(unittest.TestCase):
         self.assertNotIn("cdn.jsdelivr.net", source)
         self.assertIn('/src/main.tsx', source)
 
-    def test_kpi_scope_identity_and_original_hero_are_active(self) -> None:
+    def test_delta_identity_preserves_existing_device_storage(self) -> None:
         index = (ROOT / "index.html").read_text(encoding="utf-8")
-        entry = (ROOT / "src/main.tsx").read_text(encoding="utf-8")
-        app = (ROOT / "src/App.tsx").read_text(encoding="utf-8")
-        dashboard = (ROOT / "src/pages/Dashboard.tsx").read_text(encoding="utf-8")
-        self.assertIn("<title>KPI Scope</title>", index)
-        self.assertNotIn("delta-theme.css", entry)
-        self.assertIn("<strong>KPI Scope</strong>", app)
-        self.assertIn('className="hero-panel"', dashboard)
-        self.assertIn("企業の現在地を、", dashboard)
+        manifest = json.loads((ROOT / "public/manifest.webmanifest").read_text(encoding="utf-8"))
+        storage = (ROOT / "src/lib/storage.ts").read_text(encoding="utf-8")
+        self.assertIn("<title>Delta</title>", index)
+        self.assertEqual(manifest["name"], "Delta")
+        self.assertEqual(manifest["id"], "/gyyguuyfyt/")
+        self.assertIn("'kpi-scope', 1", storage)
+        self.assertNotIn("user-scalable=no", index)
 
     def test_only_deploy_workflow_deploys_pages(self) -> None:
         workflows = ROOT / ".github/workflows"

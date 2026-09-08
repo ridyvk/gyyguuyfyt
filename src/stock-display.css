@@ -64,7 +64,7 @@
   align-items: center;
   gap: 10px;
   color: var(--muted);
-  font-size: 8px;
+  font-size: .75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -113,7 +113,7 @@
   border-radius: 999px;
   color: currentColor;
   background: color-mix(in srgb, currentColor 10%, transparent);
-  font-size: 10px;
+  font-size: .75rem;
   font-weight: 650;
 }
 
@@ -149,7 +149,7 @@
   justify-content: space-between;
   gap: 10px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
 }
 
 .stock-quote-card--hero {
@@ -193,7 +193,7 @@
 }
 
 .stock-quote-card--mini .stock-quote-card__meta {
-  font-size: 8px;
+  font-size: .75rem;
 }
 
 .stock-quote-card--empty {
@@ -203,7 +203,7 @@
 
 .stock-quote-card--empty small {
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
 }
 
 .market-pulse {
@@ -238,7 +238,7 @@
 
 .market-pulse__head > span {
   color: var(--muted);
-  font-size: 10px;
+  font-size: .75rem;
 }
 
 .market-pulse__grid {
@@ -260,13 +260,13 @@
   align-items: center;
   gap: 10px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
 }
 
 .market-pulse__item b {
   overflow: hidden;
   color: var(--text);
-  font-size: 11px;
+  font-size: .75rem;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -293,7 +293,7 @@
 }
 
 .market-pulse__empty span {
-  font-size: 10px;
+  font-size: .75rem;
 }
 
 @keyframes stock-card-enter {

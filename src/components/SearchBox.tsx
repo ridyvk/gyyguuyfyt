@@ -11,6 +11,8 @@ export default function SearchBox({ value, onChange, autoFocus = false }: Search
     <label className="search-box">
       <Search size={18} />
       <input
+        type="search"
+        aria-label="企業名・証券コードで検索"
         autoFocus={autoFocus}
         value={value}
         onChange={(event) => onChange(event.target.value)}
