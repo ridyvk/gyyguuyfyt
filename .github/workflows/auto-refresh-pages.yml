@@ -2,6 +2,10 @@ name: Auto refresh data and deploy
 # source-deploy: manual-market-recovery-2026-07-17
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/auto-refresh-pages.yml
   schedule:
     # Daily 03:40 JST for financial filings and quality audit.
     - cron: '40 18 * * *'
@@ -42,6 +46,9 @@ jobs:
         run: |
           set -euo pipefail
           mode="$REQUESTED_MODE"
+          if [ "${{ github.event_name }}" = "push" ]; then
+            mode="all"
+          fi
           if [ "${{ github.event_name }}" = "schedule" ]; then
             case "${{ github.event.schedule }}" in
               "40 18 * * *") mode="financial" ;;
@@ -95,7 +102,7 @@ jobs:
             exit 1
           fi
           python scripts/update_edinet_financials_batched.py --scan-days 460 --max-documents 350
-          python scripts/update_tdnet_financials_strict.py --lookback-days 45 --max-documents 700
+          python scripts/update_tdnet_financials_overlay_strict.py --lookback-days 45 --max-documents 700 --backfill-lookback-days 45 --backfill-limit 0
           python scripts/finalize_annual_dataset.py
           python scripts/split_financials.py
           python scripts/audit_golden_companies.py --check

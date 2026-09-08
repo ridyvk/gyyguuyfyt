@@ -1,7 +1,7 @@
 name: Deploy latest develop once
 
 # trigger-develop-sha: 5d118f0ab034eee2908bc34bdaab3ca0aad34ff4
-# kpi-finder-deploy: 2026-07-11
+# delta-spatial-ui-release: 2026-09-08
 on:
   push:
     branches: [main]
@@ -36,6 +36,14 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install data updater dependencies
+        run: python -m pip install -r requirements-update.txt
+
+      - name: Finalize the existing financial snapshot
+        run: |
+          python scripts/finalize_annual_dataset.py
+          python scripts/split_financials.py
+
       - name: Verify data snapshot
         run: |
           python -m unittest discover -s tests -p 'test_*.py'
@@ -53,6 +61,9 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Test UI data contracts
+        run: npm run test:ui
 
       - name: Build
         run: npm run build
