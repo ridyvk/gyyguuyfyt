@@ -235,7 +235,7 @@ export default function CompanyDetail() {
                 target="_blank"
                 rel="noreferrer"
               >
-                {company.dataSource === 'TDnet' ? '決算短信原文' : 'EDINET原文'}
+                {company.dataSource === 'TDnet' ? '決算短信原文' : '有価証券報告書 PDF'}
               </a>
             )}
           </div>

@@ -1,3 +1,4 @@
+import { disclosureDocumentUrl } from '../lib/disclosureLinks'
 import {
   ArrowUpRight,
   Building2,
@@ -166,7 +167,7 @@ export default function DisclosureEventCard({
             企業分析へ
           </Link>
           <a
-            href={event.url}
+            href={disclosureDocumentUrl(event.url)}
             target="_blank"
             rel="noreferrer"
             onClick={() => onRead?.(event.id)}

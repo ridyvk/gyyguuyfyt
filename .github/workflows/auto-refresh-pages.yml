@@ -97,7 +97,7 @@ jobs:
             exit 1
           fi
           python scripts/update_edinet_financials_batched.py --scan-days 460 --max-documents 350
-          python scripts/update_tdnet_financials_strict.py --lookback-days 45 --max-documents 700
+          python scripts/update_tdnet_financials_overlay_strict.py --lookback-days 45 --max-documents 700 --backfill-lookback-days 45 --backfill-limit 0
           python scripts/finalize_annual_dataset.py
           python scripts/split_financials.py
           python scripts/audit_golden_companies.py --check

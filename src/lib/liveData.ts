@@ -1,3 +1,4 @@
+import { disclosureDocumentUrl } from './disclosureLinks'
 import type {
   Company,
   CompanyMetrics,
@@ -463,7 +464,7 @@ const mergeRecord = (
     dataSource: record.source === 'TDnet' ? 'TDnet' : 'EDINET',
     dataUpdatedAt: record.filedAt,
     financialPeriod: record.periodEnd,
-    financialSourceUrl: record.sourceUrl,
+    financialSourceUrl: disclosureDocumentUrl(record.sourceUrl),
     liveMetricCount: displayAvailable.size,
     trustedMetricCount: scoringAvailable.size,
     stockPrice: quote,

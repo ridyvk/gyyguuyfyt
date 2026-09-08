@@ -1,3 +1,4 @@
+import { useReducedMotion } from '../lib/useReducedMotion'
 import {
   Area,
   AreaChart,
@@ -19,6 +20,7 @@ export default function MiniTrendChart({
   height = 48,
   showTooltip = false,
 }: MiniTrendChartProps) {
+  const reducedMotion = useReducedMotion()
   const validData = data.filter((value) => Number.isFinite(value))
   if (validData.length < 2) {
     return <div className="mini-trend-empty" style={{ height }}>推移なし</div>
@@ -64,7 +66,7 @@ export default function MiniTrendChart({
             strokeWidth={2}
             fill={`url(#mini-${color.replace('#', '')})`}
             dot={false}
-            isAnimationActive
+            isAnimationActive={!reducedMotion}
             animationBegin={80}
             animationDuration={620}
             animationEasing="ease-out"

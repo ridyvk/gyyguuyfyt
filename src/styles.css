@@ -162,7 +162,7 @@ p {
 .brand small {
   margin-top: 1px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
   font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -205,7 +205,7 @@ p {
   border-radius: 8px;
   color: var(--teal);
   background: rgba(0, 122, 255, 0.1);
-  font-size: 10px;
+  font-size: .75rem;
   text-align: center;
 }
 
@@ -218,7 +218,7 @@ p {
   border-radius: 10px;
   color: var(--muted-light);
   background: rgba(255, 255, 255, 0.62);
-  font-size: 11px;
+  font-size: .75rem;
   font-weight: 600;
   letter-spacing: 0.05em;
 }
@@ -242,7 +242,7 @@ p {
   gap: 11px;
   min-height: calc(100vh - 140px);
   color: var(--muted);
-  font-size: 11px;
+  font-size: .75rem;
 }
 
 .route-loader span {
@@ -275,7 +275,7 @@ p {
   padding: 24px 40px;
   border-top: 1px solid var(--border);
   color: var(--muted);
-  font-size: 11px;
+  font-size: .75rem;
 }
 
 .app-footer p {
@@ -298,7 +298,7 @@ p {
   display: block;
   margin-bottom: 8px;
   color: var(--teal);
-  font-size: 9px;
+  font-size: .75rem;
   font-weight: 500;
   letter-spacing: 0.09em;
 }
@@ -444,7 +444,7 @@ p {
 .hero-panel__score > span,
 .hero-panel__score small {
   color: var(--muted);
-  font-size: 10px;
+  font-size: .75rem;
   font-weight: 400;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -504,7 +504,7 @@ p {
   display: block;
   margin-bottom: 2px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: .75rem;
 }
 
 .summary-card strong {
@@ -523,7 +523,7 @@ p {
   align-items: center;
   gap: 4px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
   font-weight: 600;
 }
 
@@ -573,7 +573,7 @@ p {
 .section-heading p {
   margin: 7px 0 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: .75rem;
 }
 
 .chart-wrap {
@@ -611,7 +611,7 @@ p {
   align-items: center;
   gap: 8px;
   color: var(--muted-light);
-  font-size: 11px;
+  font-size: .75rem;
 }
 
 .theme-list i {
@@ -650,7 +650,7 @@ p {
 
 .ranking-card__rank {
   color: var(--teal);
-  font-size: 10px;
+  font-size: .75rem;
   font-weight: 700;
 }
 
@@ -673,7 +673,7 @@ p {
 .ranking-card small {
   margin-top: 4px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
 }
 
 .score-badge {
@@ -699,7 +699,7 @@ p {
 .score-badge small {
   margin-top: 7px;
   color: currentColor;
-  font-size: 8px;
+  font-size: .75rem;
   font-weight: 400;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -737,7 +737,7 @@ p {
   border-radius: 13px;
   color: var(--muted);
   background: var(--surface);
-  font-size: 11px;
+  font-size: .75rem;
 }
 
 .universe-stat svg {
@@ -790,7 +790,7 @@ p {
   flex-direction: column;
   gap: 7px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: .75rem;
   font-weight: 600;
 }
 
@@ -816,7 +816,7 @@ select {
   min-height: 39px;
   padding: 0 10px;
   border-radius: 9px;
-  font-size: 11px;
+  font-size: .75rem;
 }
 
 .toggle-field {
@@ -885,7 +885,7 @@ select {
   align-items: center;
   gap: 6px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: .75rem;
 }
 
 .results-toolbar__note svg {
@@ -932,7 +932,7 @@ select {
   gap: 7px;
   margin-bottom: 7px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
   font-weight: 600;
 }
 
@@ -960,7 +960,7 @@ select {
 .company-card__industry {
   margin: 4px 0 0;
   color: var(--muted);
-  font-size: 10px;
+  font-size: .75rem;
 }
 
 .tag-row {
@@ -979,7 +979,7 @@ select {
   border-radius: 7px;
   color: #aeb7ff;
   background: rgba(124, 140, 255, 0.07);
-  font-size: 9px;
+  font-size: .75rem;
   font-weight: 400;
 }
 
@@ -998,7 +998,7 @@ select {
   gap: 8px;
   margin-bottom: 7px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: .75rem;
 }
 
 .score-bar__label strong {
@@ -1035,11 +1035,11 @@ select {
   flex-direction: column;
   gap: 2px;
   margin-bottom: 5px;
-  font-size: 8px;
+  font-size: .75rem;
 }
 
 .score-bar--compact .score-bar__label strong {
-  font-size: 11px;
+  font-size: .75rem;
 }
 
 .score-bar--compact .score-bar__track {
@@ -1065,13 +1065,13 @@ select {
 .company-card__metrics span {
   min-height: 24px;
   color: var(--muted);
-  font-size: 8px;
+  font-size: .75rem;
   line-height: 1.35;
 }
 
 .company-card__metrics strong {
   overflow: hidden;
-  font-size: 11px;
+  font-size: .75rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1085,7 +1085,7 @@ select {
   display: inline-flex;
   padding: 4px 7px;
   border-radius: 7px;
-  font-size: 9px;
+  font-size: .75rem;
   font-weight: 700;
 }
 
@@ -1130,7 +1130,7 @@ select {
   color: var(--muted-light);
   background: var(--surface);
   cursor: pointer;
-  font-size: 11px;
+  font-size: .75rem;
 }
 
 .pagination button:disabled {
@@ -1140,7 +1140,7 @@ select {
 
 .pagination span {
   color: var(--muted);
-  font-size: 11px;
+  font-size: .75rem;
 }
 
 .empty-state {
@@ -1233,7 +1233,7 @@ select {
 .company-card__trend p {
   margin: 5px 0 0;
   color: var(--muted-light);
-  font-size: 10px;
+  font-size: .75rem;
   line-height: 1.65;
 }
 
@@ -1257,7 +1257,7 @@ select {
 
 .strength-list li {
   color: var(--muted-light);
-  font-size: 10px;
+  font-size: .75rem;
 }
 
 .strength-list li::before {
@@ -1284,7 +1284,7 @@ select {
   border-radius: 10px;
   color: #efb5bd;
   background: rgba(251, 113, 133, 0.055);
-  font-size: 11px;
+  font-size: .75rem;
   line-height: 1.55;
 }
 
@@ -1302,7 +1302,7 @@ select {
   padding: 0;
   border: 0;
   background: transparent;
-  font-size: 9px;
+  font-size: .75rem;
 }
 
 .warning-list--compact li svg {
@@ -1318,7 +1318,7 @@ select {
   border-radius: 10px;
   color: #9ed8cf;
   background: rgba(94, 234, 212, 0.055);
-  font-size: 11px;
+  font-size: .75rem;
 }
 
 .back-link {
@@ -1327,7 +1327,7 @@ select {
   gap: 6px;
   margin-bottom: 20px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: .75rem;
 }
 
 .back-link:hover {
@@ -1356,7 +1356,7 @@ select {
   display: flex;
   gap: 7px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: .75rem;
   font-weight: 600;
 }
 
@@ -1394,7 +1394,7 @@ select {
 .company-hero__score > small {
   max-width: 140px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
   font-weight: 600;
   text-align: center;
 }
@@ -1435,7 +1435,7 @@ select {
   padding-top: 14px;
   border-top: 1px solid var(--border);
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
   line-height: 1.6;
 }
 
@@ -1513,7 +1513,7 @@ select {
   padding: 5px 8px;
   color: var(--category-accent);
   text-align: center;
-  font-size: 10px;
+  font-size: .75rem;
   font-weight: 700;
   border: 1px solid color-mix(in srgb, var(--category-accent) 24%, transparent);
   border-radius: 999px;
@@ -1579,7 +1579,7 @@ select {
 .kpi-tile__label {
   overflow: hidden;
   color: var(--muted-light);
-  font-size: 11px;
+  font-size: .75rem;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1588,7 +1588,7 @@ select {
 .status-pill {
   padding: 3px 6px;
   border-radius: 6px;
-  font-size: 8px;
+  font-size: .75rem;
   font-weight: 700;
 }
 
@@ -1626,7 +1626,7 @@ select {
   gap: 3px;
   margin-top: 7px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
 }
 
 .kpi-tile__delta.is-up svg {
@@ -1640,7 +1640,7 @@ select {
 .kpi-tile__comment {
   margin: 4px 0 0;
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
 }
 
 .kpi-tile__badges {
@@ -1656,7 +1656,7 @@ select {
   gap: 3px;
   padding: 3px 6px;
   border-radius: 6px;
-  font-size: 8px;
+  font-size: .75rem;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -1696,7 +1696,7 @@ select {
   display: block;
   margin-bottom: 4px;
   color: var(--muted);
-  font-size: 8px;
+  font-size: .75rem;
   font-weight: 700;
 }
 
@@ -1705,7 +1705,7 @@ select {
   overflow-wrap: anywhere;
   color: var(--muted-light);
   font-family: inherit;
-  font-size: 9px;
+  font-size: .75rem;
   line-height: 1.55;
 }
 
@@ -1722,7 +1722,7 @@ select {
   padding-top: 9px;
   color: var(--teal-dark);
   cursor: pointer;
-  font-size: 9px;
+  font-size: .75rem;
   font-weight: 700;
   list-style: none;
 }
@@ -1753,7 +1753,7 @@ select {
 .kpi-evidence__body > p {
   margin: 0 0 9px;
   color: var(--muted-light);
-  font-size: 9px;
+  font-size: .75rem;
   line-height: 1.6;
 }
 
@@ -1762,7 +1762,7 @@ select {
   grid-template-columns: 58px minmax(0, 1fr);
   gap: 5px 8px;
   margin: 0 0 8px;
-  font-size: 8px;
+  font-size: .75rem;
   line-height: 1.55;
 }
 
@@ -1809,7 +1809,7 @@ select {
   align-items: center;
   gap: 9px;
   color: var(--muted-light);
-  font-size: 11px;
+  font-size: .75rem;
 }
 
 .industry-kpi-list strong {
@@ -1855,7 +1855,7 @@ select {
   border-radius: 10px;
   color: #a9d7d1;
   background: rgba(94, 234, 212, 0.045);
-  font-size: 11px;
+  font-size: .75rem;
 }
 
 .strength-list--large li::before {
@@ -1923,7 +1923,7 @@ select {
 
 .note-field span {
   color: var(--muted-light);
-  font-size: 10px;
+  font-size: .75rem;
   font-weight: 600;
 }
 
@@ -1932,7 +1932,7 @@ select {
   padding: 12px;
   resize: vertical;
   border-radius: 11px;
-  font-size: 11px;
+  font-size: .75rem;
   line-height: 1.65;
 }
 
@@ -1991,13 +1991,13 @@ select {
 }
 
 .compare-chip strong {
-  font-size: 10px;
+  font-size: .75rem;
 }
 
 .compare-chip small {
   margin-top: 2px;
   color: var(--muted);
-  font-size: 8px;
+  font-size: .75rem;
 }
 
 .compare-chip button {
@@ -2017,7 +2017,7 @@ select {
   border-style: dashed;
   color: #59657b;
   background: transparent;
-  font-size: 9px;
+  font-size: .75rem;
 }
 
 .compare-picker__add {
@@ -2063,7 +2063,7 @@ select {
 
 .comparison-card__head span {
   color: var(--muted);
-  font-size: 8px;
+  font-size: .75rem;
 }
 
 .comparison-card__head h3 {
@@ -2097,12 +2097,12 @@ select {
 .comparison-card__scores span,
 .comparison-card__kpis span {
   color: var(--muted);
-  font-size: 9px;
+  font-size: .75rem;
 }
 
 .comparison-card__scores strong,
 .comparison-card__kpis strong {
-  font-size: 11px;
+  font-size: .75rem;
 }
 
 .comparison-card__scores b,
@@ -2111,7 +2111,7 @@ select {
   border-radius: 5px;
   color: var(--teal);
   background: rgba(94, 234, 212, 0.08);
-  font-size: 7px;
+  font-size: .75rem;
   text-transform: uppercase;
 }
 
@@ -2128,7 +2128,7 @@ select {
   display: block;
   margin-bottom: 8px;
   color: var(--muted-light);
-  font-size: 9px;
+  font-size: .75rem;
   font-weight: 700;
 }
 
@@ -2687,7 +2687,7 @@ h3,
   align-items: center;
   padding: 2px 5px;
   border-radius: 5px;
-  font-size: 7px;
+  font-size: .75rem;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -2727,7 +2727,7 @@ h3,
   display: inline-flex;
   padding: 3px 6px;
   border-radius: 6px;
-  font-size: 8px;
+  font-size: .75rem;
   font-weight: 700;
   white-space: nowrap;
 }

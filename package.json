@@ -13,7 +13,8 @@
     "update:financials": "python scripts/update_edinet_financials.py",
     "update:tdnet": "python scripts/update_tdnet_financials.py",
     "update:market": "python scripts/update_market_prices.py",
-    "update:disclosures": "python scripts/update_disclosures.py"
+    "update:disclosures": "python scripts/update_disclosures.py",
+    "test:ui": "node --experimental-strip-types --test tests/ui-contracts.test.ts"
   },
   "dependencies": {
     "@fontsource/barlow-condensed": "^5.2.8",
@@ -22,12 +23,14 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.1",
-    "recharts": "^3.8.1"
+    "recharts": "^3.8.1",
+    "three": "0.180.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
+    "@types/three": "0.180.0",
     "@vitejs/plugin-react": "^6.0.2",
     "eslint": "^9.17.0",
     "eslint-plugin-react-hooks": "^5.1.0",

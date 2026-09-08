@@ -1,35 +1,35 @@
 {
-  "name": "KPI Scope",
-  "short_name": "KPI Scope",
+  "name": "Delta",
+  "short_name": "Delta",
   "description": "日本の上場企業をKPIタイルで読み解く企業分析アプリ",
   "lang": "ja",
   "id": "/gyyguuyfyt/",
   "start_url": "/gyyguuyfyt/#/",
   "scope": "/gyyguuyfyt/",
   "display": "standalone",
-  "background_color": "#F2F2F7",
-  "theme_color": "#F2F2F7",
+  "background_color": "#eef3f9",
+  "theme_color": "#eef3f9",
   "icons": [
     {
-      "src": "/gyyguuyfyt/icon-192-photo1.png",
+      "src": "/gyyguuyfyt/delta-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/gyyguuyfyt/icon-512-photo1.png",
+      "src": "/gyyguuyfyt/delta-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/gyyguuyfyt/icon-maskable-192-photo1.png",
+      "src": "/gyyguuyfyt/delta-icon-maskable-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/gyyguuyfyt/icon-maskable-512-photo1.png",
+      "src": "/gyyguuyfyt/delta-icon-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

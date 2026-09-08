@@ -753,7 +753,7 @@ def build_record(filing: dict, data: bytes) -> dict:
         "filedAt": str(filing.get("submitDateTime") or ""),
         "periodEnd": period_end,
         "source": "EDINET",
-        "sourceUrl": f"https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?{filing['docID']}",
+        "sourceUrl": f"https://disclosure2dl.edinet-fsa.go.jp/searchdocument/pdf/{filing['docID']}.pdf",
         "metrics": metrics,
         "history": history,
     }

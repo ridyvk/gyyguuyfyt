@@ -639,8 +639,8 @@ def list_edinet_events(
                     filed_at=row.get("submitDateTime") or target.isoformat(),
                     title=title,
                     url=(
-                        "https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?"
-                        f"{document_id}"
+                        "https://disclosure2dl.edinet-fsa.go.jp/searchdocument/pdf/"
+                        f"{document_id}.pdf"
                     ),
                 )
             )

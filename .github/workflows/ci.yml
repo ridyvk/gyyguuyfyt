@@ -50,5 +50,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Test UI data contracts
+        run: npm run test:ui
+
       - name: Build
         run: npm run build
