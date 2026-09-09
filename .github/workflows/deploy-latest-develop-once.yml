@@ -1,7 +1,7 @@
 name: Deploy latest develop once
 
-# trigger-develop-sha: 5d118f0ab034eee2908bc34bdaab3ca0aad34ff4
-# delta-spatial-ui-release: 2026-09-08
+# trigger-develop-sha: 6f5df6f308062552d39aae79c1044c398c4a6b0b
+# delta-clean-motion-release: 2026-09-09
 on:
   push:
     branches: [main]
