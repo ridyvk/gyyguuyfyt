@@ -11,6 +11,8 @@ from collections import Counter
 from datetime import date, datetime, timezone
 from pathlib import Path
 
+from reconcile_financial_sources import contained_source_quarantines
+
 ROOT = Path(__file__).resolve().parents[1]
 GOLDEN_CASES = ROOT / "src/lib/goldenIndustryCases.ts"
 COMPANY_MASTER = ROOT / "src/data/listedCompanies.json"
@@ -45,7 +47,7 @@ def load_json(path: Path) -> dict:
 
 def load_cases(path: Path = GOLDEN_CASES) -> list[dict]:
     source = path.read_text(encoding="utf-8")
-    return [
+    cases = [
         {
             "code": code,
             "companyName": company_name,
@@ -54,6 +56,13 @@ def load_cases(path: Path = GOLDEN_CASES) -> list[dict]:
         }
         for code, company_name, industry, risk_flags in CASE_PATTERN.findall(source)
     ]
+    fixture = ROOT / "tests/fixtures/edinet_200_company_golden.json"
+    if fixture.exists():
+        periods = {str(company["code"]): company.get("periodEnd") for company in load_json(fixture).get("companies", [])}
+        for case in cases:
+            if "low-roe-not-zero" in case["riskFlags"]:
+                case["roeRegressionPeriodEnd"] = periods.get(case["code"])
+    return cases
 
 
 def finite_metrics(record: dict) -> dict[str, float]:
@@ -136,10 +145,14 @@ def audit_case(
     if provenance_count == 0:
         issues.append({"code": "missing-provenance", "severity": "warning"})
 
-    if "low-roe-not-zero" in case["riskFlags"]:
+    if "low-roe-not-zero" in case["riskFlags"] and case.get("roeRegressionPeriodEnd", period_end_text) in (None, period_end_text):
         roe = metrics.get("roe")
-        if roe is None or roe == 0:
+        if roe is None and "roe" in contained_source_quarantines(record):
+            issues.append({"code": "roe-source-dispute", "severity": "warning"})
+        elif roe is None or roe == 0:
             issues.append({"code": "low-roe-regressed-to-zero", "severity": "critical"})
+    elif "low-roe-not-zero" in case["riskFlags"] and metrics.get("roe") is None:
+        issues.append({"code": "roe-unavailable-current-period", "severity": "warning"})
 
     severity = {issue["severity"] for issue in issues}
     status = "critical" if "critical" in severity else "warning" if issues else "ok"

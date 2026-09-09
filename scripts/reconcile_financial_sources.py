@@ -6,9 +6,59 @@ from __future__ import annotations
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime, timezone
+import math
 from typing import Any
 
 RECONCILIATION_MODEL_VERSION = 1
+
+# Derived estimates can depend on a disputed input even when their own value
+# was materialized before reconciliation. Keep them out of the public record.
+SUPPLEMENTAL_KEYS = {"roa", "roic", "roicWaccSpread", "cashProfitGap", "wacc"}
+
+
+def disputed_metrics(record: dict) -> dict:
+    return ((record.get("quarantine") or {}).get("sourceReconciliation") or {}).get("metrics") or {}
+
+
+def enforce_source_quarantine(record: dict) -> None:
+    disputed = disputed_metrics(record)
+    if not disputed:
+        return
+    for key in set(disputed) | SUPPLEMENTAL_KEYS:
+        (record.get("metrics") or {}).pop(key, None)
+        remove_history_metric(record, key)
+
+
+def contained_source_quarantines(record: dict) -> set[str]:
+    """Only count disputes with evidence and no exposed value as contained."""
+    disputed = disputed_metrics(record)
+    reconciliation = record.get("reconciliation") or {}
+    if not disputed or reconciliation.get("periodEnd") != record.get("periodEnd"):
+        return set()
+    exposed = set(record.get("metrics") or {})
+    for point in record.get("history") or []:
+        exposed.update(point)
+    if exposed & (set(disputed) | SUPPLEMENTAL_KEYS):
+        return set()
+    contained = set()
+    for key, evidence in disputed.items():
+        if (reconciliation.get("metrics") or {}).get(key, {}).get("status") != "quarantined":
+            continue
+        sources = evidence.get("sources") or reconciliation.get("sources") or {}
+        if not all((sources.get(source) or {}).get("documentId") for source in ("EDINET", "TDnet")):
+            continue
+        comparison = evidence.get("comparison") or {}
+        if any(
+            field.get("matched") is False
+            and numeric(field.get("edinet")) is not None
+            and numeric(field.get("tdnet")) is not None
+            and (evidence.get("edinet") or {}).get(name) == field["edinet"]
+            and (evidence.get("tdnet") or {}).get(name) == field["tdnet"]
+            for name, field in comparison.items()
+        ):
+            contained.add(key)
+    return contained
+
 
 TOLERANCE_POLICY: dict[str, tuple[float, float]] = {
     "revenueGrowth": (1.0, 0.05),
@@ -39,7 +89,7 @@ def utc_now() -> str:
 
 
 def numeric(value: Any) -> float | None:
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
         return None
     return float(value)
 
@@ -117,13 +167,26 @@ def reconcile_same_period(
 
     edinet_metrics = edinet_record.setdefault("metrics", {})
     tdnet_metrics = tdnet_record.get("metrics") or {}
+    previous_disputes = deepcopy(disputed_metrics(edinet_record))
+    previous_sources = deepcopy((edinet_record.get("reconciliation") or {}).get("sources") or {})
     metric_results: dict[str, dict] = {}
     disputed: dict[str, dict] = {}
     matched = quarantined = edinet_only = tdnet_only = 0
 
-    for metric_key in sorted(set(edinet_metrics) | set(tdnet_metrics)):
+    for metric_key in sorted(set(edinet_metrics) | set(tdnet_metrics) | set(previous_disputes)):
         edinet_metric = edinet_metrics.get(metric_key)
         tdnet_metric = tdnet_metrics.get(metric_key)
+        previous_dispute = previous_disputes.get(metric_key)
+        if previous_dispute and not isinstance(edinet_metric, dict):
+            # Repeated polling must compare with the isolated EDINET value,
+            # rather than misclassify TDnet as the sole available source.
+            edinet_metric = previous_dispute.get("edinet")
+            if not isinstance(tdnet_metric, dict):
+                disputed[metric_key] = previous_dispute
+                disputed[metric_key].setdefault("sources", previous_sources)
+                metric_results[metric_key] = {"status": "quarantined", "selectedSource": None}
+                quarantined += 1
+                continue
         if not isinstance(edinet_metric, dict):
             if isinstance(tdnet_metric, dict):
                 edinet_metrics[metric_key] = deepcopy(tdnet_metric)
@@ -149,6 +212,7 @@ def reconcile_same_period(
             )
             disputed[metric_key] = {
                 "reason": "edinet-tdnet-value-mismatch",
+                "sources": {"EDINET": source_descriptor(edinet_record), "TDnet": source_descriptor(tdnet_record)},
                 "tolerance": {
                     "absolute": absolute,
                     "relative": relative,
@@ -168,6 +232,7 @@ def reconcile_same_period(
             continue
 
         selected_source = "TDnet" if metric_key == "roe" else "EDINET"
+        edinet_metrics[metric_key] = deepcopy(edinet_metric)
         if selected_source == "TDnet":
             edinet_metrics[metric_key] = deepcopy(tdnet_metric)
             copy_tdnet_history_metric(edinet_record, tdnet_record, metric_key)
@@ -215,6 +280,8 @@ def reconcile_same_period(
         quality["roeSource"] = "TDnet通期決算短信XBRL"
         quality["roeSourceUrl"] = tdnet_record.get("sourceUrl")
         quality["roeDocumentId"] = tdnet_record.get("documentId")
+
+    enforce_source_quarantine(edinet_record)
 
     return ReconciliationSummary(
         compared=matched + quarantined,

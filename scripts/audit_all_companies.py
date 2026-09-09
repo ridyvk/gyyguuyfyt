@@ -11,6 +11,8 @@ from collections import Counter, defaultdict
 from datetime import date, datetime, timezone
 from pathlib import Path
 
+from reconcile_financial_sources import contained_source_quarantines, reconciliation_totals
+
 ROOT = Path(__file__).resolve().parents[1]
 COMPANY_MASTER = ROOT / "src" / "data" / "listedCompanies.json"
 FINANCIALS = ROOT / "public" / "data" / "financials.json"
@@ -23,6 +25,7 @@ STALE_PERIOD_DAYS = 800
 PROVENANCE_FIELDS = ("tag", "contextRef", "unitRef", "consolidation")
 RATE_TOLERANCE_POINTS = 0.25
 PIPELINE_RATE_TOLERANCE_POINTS = 0.5
+MAX_CONTAINED_SOURCE_COMPANY_RATE = 1.0
 KPI_KEYS = (
     "operatingMargin",
     "netMargin",
@@ -479,7 +482,7 @@ def regression_violations(
         int(previous_report.get("schemaVersion") or 0) != SCHEMA_VERSION
         or not previous
     ):
-        return []
+        previous = {}
 
     cohort_changed = (
         int(summary.get("companies") or 0)
@@ -516,6 +519,14 @@ def regression_violations(
             continue
         value = float(summary.get(field) or 0)
         baseline = float(previous.get(field) or 0)
+        # An evidenced, contained dispute is still shown as "review" in the
+        # report, but must not freeze unrelated companies' annual updates.
+        if field == "review":
+            value -= float(summary.get("containedSourceReviewCompanies") or 0)
+            baseline -= float(previous.get("containedSourceReviewCompanies") or 0)
+        if field == "sourceQuarantinedMetrics":
+            value -= float(summary.get("containedSourceQuarantinedMetrics") or 0)
+            baseline -= float(previous.get("containedSourceQuarantinedMetrics") or 0)
         failed = (
             value > baseline + tolerance
             if comparison == "max"
@@ -532,19 +543,29 @@ def regression_violations(
                 }
             )
 
-    if int(summary.get("sourceQuarantinedMetrics") or 0) > 0 and not any(
+    uncontained = max(0, int(summary.get("sourceQuarantinedMetrics") or 0) - int(summary.get("containedSourceQuarantinedMetrics") or 0))
+    if uncontained > 0 and not any(
         violation["field"] == "sourceQuarantinedMetrics"
         for violation in violations
     ):
         violations.append(
             {
                 "field": "sourceQuarantinedMetrics",
-                "value": int(summary["sourceQuarantinedMetrics"]),
+                "value": uncontained,
                 "baseline": 0,
                 "comparison": "equal",
                 "tolerance": 0,
             }
         )
+    contained_rate = float(summary.get("containedSourceCompanyRate") or 0)
+    if contained_rate > MAX_CONTAINED_SOURCE_COMPANY_RATE:
+        violations.append({
+            "field": "containedSourceCompanyRate",
+            "value": contained_rate,
+            "baseline": MAX_CONTAINED_SOURCE_COMPANY_RATE,
+            "comparison": "max",
+            "tolerance": 0,
+        })
     return violations
 
 
@@ -604,6 +625,17 @@ def build_report(
         company["sourceBackedMetricCount"] for company in audited
     )
     trusted_metrics = sum(company["trustedMetricCount"] for company in audited)
+    contained_by_code = {
+        code: contained_source_quarantines(record)
+        for code, record in records.items()
+    }
+    source_review_issues = {"source-reconciliation-quarantined", "source-mismatch-quarantined"}
+    contained_reviews = sum(
+        1 for company in audited
+        if company["status"] == "review"
+        and contained_by_code.get(company["code"])
+        and all(issue["code"] in source_review_issues for issue in company["issues"] if issue["severity"] == "review")
+    )
     stats = snapshot.get("stats") or {}
     edinet_batch_failures = int(stats.get("edinetBatchFailures") or 0)
     edinet_no_metric_documents = int(stats.get("edinetNoMetricDocuments") or 0)
@@ -639,8 +671,11 @@ def build_report(
             stats.get("metricRangeQuarantined") or 0
         ),
         "sourceQuarantinedMetrics": int(
-            stats.get("sourceQuarantinedMetrics") or 0
+            reconciliation_totals(records)["sourceQuarantinedMetrics"]
         ),
+        "containedSourceQuarantinedMetrics": sum(map(len, contained_by_code.values())),
+        "containedSourceReviewCompanies": contained_reviews,
+        "containedSourceCompanyRate": percentage(sum(bool(keys) for keys in contained_by_code.values()), total),
         "edinetBatchSize": edinet_batch_size,
         "edinetBatchFailures": edinet_batch_failures,
         "edinetBatchFailureRate": percentage(
@@ -731,20 +766,22 @@ def build_report(
             "stalePeriodDays": STALE_PERIOD_DAYS,
             "minimumEdinetDataModelVersion": MIN_EDINET_DATA_MODEL,
             "regressionChecks": [
-                "missing and review must not increase",
+                "missing and uncontained review must not increase",
                 "coverage and trusted metric ratio must not decrease",
                 "missing provenance and old model rates must not increase",
-                "metric and source quarantine counts must not increase",
+                "metric range and uncontained source quarantine counts must not increase",
                 "pipeline failure rates must not increase",
                 "no-metric document rates are reported for changing cohorts",
-                "any source mismatch quarantine requires review",
+                "source disputes remain visible as review; only evidenced, absent values may be published",
+                "source disputes affecting more than 1% of companies block publication",
             ],
             "schemaNote": (
                 "Version 2 resets the baseline after the financial snapshot "
                 "moved to generated fallback records without sourceFacts. "
                 "Missing sourceFacts remain warning issues and UI confidence "
-                "is downgraded, while hard range and source mismatches still "
-                "block the gate."
+                "is downgraded. Hard range errors and uncontained source "
+                "mismatches still block the gate; bounded, evidenced disputes "
+                "are published as partial data with the affected metrics absent."
             ),
             "rateTolerancePoints": RATE_TOLERANCE_POINTS,
             "pipelineRateTolerancePoints": PIPELINE_RATE_TOLERANCE_POINTS,
