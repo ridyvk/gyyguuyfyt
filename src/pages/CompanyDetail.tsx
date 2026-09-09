@@ -284,7 +284,7 @@ export default function CompanyDetail() {
       <section className="company-disclosure-section">
         <div className="company-disclosure-section__head">
           <div>
-            <span className="section-kicker">DISCLOSURE TIMELINE</span>
+
             <h2>この企業の最新開示</h2>
             <p>TDnet・EDINETの提出を時系列で確認できます。</p>
           </div>
@@ -318,7 +318,7 @@ export default function CompanyDetail() {
 
       <section className="detail-overview-grid">
         <article className="panel">
-          <div className="panel__heading"><div><span className="section-kicker">SCORE SHAPE</span><h2>3分類スコア</h2></div></div>
+          <div className="panel__heading"><div><h2>3分類スコア</h2></div></div>
           {scorable ? (
             <RadarScoreChart scores={company.scores} height={300} />
           ) : (
@@ -330,7 +330,7 @@ export default function CompanyDetail() {
           )}
         </article>
         <article className="panel score-list-panel">
-          <div className="panel__heading"><div><span className="section-kicker">SCORE BREAKDOWN</span><h2>評価内訳</h2></div></div>
+          <div className="panel__heading"><div><h2>評価内訳</h2></div></div>
           <div className="detail-score-list">
             {scoreKeys.map((key) => (
               <ScoreBar
@@ -346,7 +346,7 @@ export default function CompanyDetail() {
       </section>
 
       <section className="section-block">
-        <div className="section-heading"><div><span className="section-kicker">KEY METRICS</span><h2>KPIタイル</h2></div><p>数値・前年差・状態・信頼度・計算式・元データ</p></div>
+        <div className="section-heading"><div><h2>KPIタイル</h2></div><p>数値・前年差・状態・信頼度・計算式・元データ</p></div>
         <div className="kpi-category-grid">
           {visibleKpiGroups.map((group) => {
             const Icon = group.icon
@@ -364,7 +364,6 @@ export default function CompanyDetail() {
                 <div className="kpi-category__head">
                   <span className="kpi-category__icon"><Icon size={18} /></span>
                   <div>
-                    <span className="section-kicker">{group.kicker}</span>
                     <h3>{group.title}</h3>
                   </div>
                   <strong>{availableCount}/{group.keys.length}</strong>
@@ -386,7 +385,7 @@ export default function CompanyDetail() {
 
       <section className="detail-insight-grid">
         <article className="panel panel--wide">
-          <div className="panel__heading"><div><span className="section-kicker">3 YEAR TREND</span><h2>業績推移</h2></div></div>
+          <div className="panel__heading"><div><h2>業績推移</h2></div></div>
           <div className="chart-wrap chart-wrap--line">
             {company.history.length === 0 ? (
               <div className="chart-empty">3年分の比較可能データがありません</div>
@@ -410,7 +409,7 @@ export default function CompanyDetail() {
           </div>
         </article>
         <article className="panel">
-          <div className="panel__heading"><div><span className="section-kicker">INDUSTRY KPIs</span><h2>{company.industry}の着眼点</h2></div></div>
+          <div className="panel__heading"><div><h2>{company.industry}の着眼点</h2></div></div>
           <div className="industry-kpi-list">
             {company.industryKpis.length ? (
               company.industryKpis.map((kpi) => {
@@ -447,7 +446,7 @@ export default function CompanyDetail() {
 
       <section className="analysis-grid">
         <article className="panel">
-          <div className="panel__heading"><div><span className="section-kicker">STRENGTHS</span><h2>強み</h2></div></div>
+          <div className="panel__heading"><div><h2>強み</h2></div></div>
           <ul className="strength-list strength-list--large">
             {company.strengths.length ? (
               company.strengths.map((strength) => <li key={strength}><Check size={16} />{strength}</li>)
@@ -463,7 +462,7 @@ export default function CompanyDetail() {
           </ul>
         </article>
         <article className="panel">
-          <div className="panel__heading"><div><span className="section-kicker">WATCH SIGNALS</span><h2>注意点</h2></div></div>
+          <div className="panel__heading"><div><h2>注意点</h2></div></div>
           <WarningList
             warnings={company.warnings}
             unavailable={analysisLevel === 'unavailable'}
@@ -474,7 +473,7 @@ export default function CompanyDetail() {
         <article className="panel analysis-comment">
           <span className="analysis-comment__icon"><Lightbulb /></span>
           <div>
-            <span className="section-kicker">AUTO ANALYSIS</span>
+
             <div className="analysis-comment__heading">
               <h2>自動分析コメント</h2>
               <small className={`analysis-level analysis-level--${analysisLevel}`}>
@@ -488,7 +487,7 @@ export default function CompanyDetail() {
 
       <section className="section-block notes-section">
         <div className="section-heading">
-          <div><span className="section-kicker">RESEARCH NOTES</span><h2>分析メモ</h2></div>
+          <div><h2>分析メモ</h2></div>
           <button type="button" className={`button ${saved ? 'button--active' : 'button--primary'}`} onClick={handleSave}>
             {saved ? <Check size={16} /> : <Save size={16} />}
             {saved ? '保存しました' : 'メモを保存'}

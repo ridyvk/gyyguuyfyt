@@ -56,7 +56,7 @@ export function createMarketScene(
     const arc = (value / total) * Math.PI * 2
     const material = new MeshPhysicalMaterial({
       color, metalness: 0.16, roughness: 0.18, clearcoat: 1,
-      clearcoatRoughness: 0.07, transmission: 0.06, thickness: 0.7,
+      clearcoatRoughness: 0.07, transmission: 0, thickness: 0.7,
       ior: 1.45, envMapIntensity: 1.8,
     })
     materials.push(material)

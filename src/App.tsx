@@ -12,9 +12,11 @@ import {
   lazy,
   Suspense,
   useLayoutEffect,
+  type CSSProperties,
 } from 'react'
 import { NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import MotionControl from './components/MotionControl'
+import PageMotion from './components/PageMotion'
 import { useApp } from './context/AppContext'
 import { listedCompanySource } from './lib/companySource'
 import { hasFinancialData } from './lib/liveData'
@@ -47,6 +49,7 @@ export default function App() {
     unreadDisclosureCount,
   } = useApp()
   const location = useLocation()
+  const navigationIndex = navigation.findIndex((item) => item.to === location.pathname)
   const financialCompanyCount = companies.filter(
     hasFinancialData,
   ).length
@@ -84,17 +87,20 @@ export default function App() {
           id="primary-navigation"
           className="main-nav"
           aria-label="メインナビゲーション"
+          style={{ '--active-tab': Math.max(0, navigationIndex) } as CSSProperties}
+          data-active={navigationIndex >= 0}
         >
-          {navigation.map(({ to, label, short, icon: Icon }) => (
+          {navigation.map(({ to, label, short, icon: Icon }, index) => (
             <NavLink
               key={to}
               to={to}
+              state={{ deltaDirection: index < navigationIndex ? -1 : 1 }}
               end={to === '/'}
               aria-label={label}
               className={({ isActive }) => isActive ? 'is-active' : ''}
             >
               <Icon size={17} />
-              <span className="nav-label">{label}</span>
+              <span className="nav-label">{short}</span>
               <span className="nav-label--short" aria-hidden="true">{short}</span>
               {label === 'Watchlist' && (
                 <b>{storageReady ? watchlist.length : '·'}</b>
@@ -135,9 +141,8 @@ export default function App() {
           }
           >
             {storageReady ? (
-              <div
+              <PageMotion
                 key={`${location.pathname}${location.search}`}
-                className="route-transition"
               >
                 <Routes location={location}>
                   <Route path="/" element={<Dashboard />} />
@@ -149,7 +154,7 @@ export default function App() {
                   <Route path="/compare" element={<Compare />} />
                   <Route path="*" element={<Universe />} />
                 </Routes>
-              </div>
+              </PageMotion>
           ) : (
             <div className="route-loader" role="status">
               <span />
