@@ -324,6 +324,11 @@ def main() -> int:
                     reconciled_companies += 1
                     matched_metrics += reconciliation.matched
                     quarantined_metrics += reconciliation.quarantined
+                    if reconciliation.quarantined:
+                        print("Source mismatch: " + json.dumps({
+                            "code": record["code"],
+                            "reconciliation": existing["reconciliation"],
+                        }, ensure_ascii=False))
                     if (
                         (existing.get("quality") or {}).get("roeDocumentId")
                         == record.get("documentId")

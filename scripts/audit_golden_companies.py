@@ -264,6 +264,9 @@ def main() -> int:
     )
     if report["violations"]:
         print(json.dumps(report["violations"], ensure_ascii=False))
+        for company in report["companies"]:
+            if company["status"] == "critical":
+                print("Critical company: " + json.dumps(company, ensure_ascii=False))
         return 1 if args.check else 0
     return 0
 
