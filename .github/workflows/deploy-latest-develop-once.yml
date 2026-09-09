@@ -1,7 +1,7 @@
 name: Deploy latest develop once
 
-# trigger-develop-sha: 6f5df6f308062552d39aae79c1044c398c4a6b0b
-# delta-clean-motion-release: 2026-09-09
+# trigger-develop-sha: db33591661e3a9770c81af306d01324fa97af8f8
+# delta-soft-editorial-release: 2026-09-10
 on:
   push:
     branches: [main]
