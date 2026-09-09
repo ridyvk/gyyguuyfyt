@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-09T05:18:35.010746Z",
+  "generatedAt": "2026-09-09T09:35:21.517793Z",
   "source": "Yahoo Finance",
   "status": "partial",
   "latestTradingDate": "2026-09-09",
-  "latestQuoteTimestamp": "2026-09-09T14:03:33+09:00",
+  "latestQuoteTimestamp": "2026-09-09T15:30:01+09:00",
   "quoteUniverse": 3709,
   "companies": 3708,
   "quoteCoverageRatio": 99.973,
