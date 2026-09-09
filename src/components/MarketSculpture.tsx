@@ -13,12 +13,17 @@ export default function MarketSculpture({ up, down, flat }: BreadthCounts) {
     const element = host.current
     if (!element || !total) return
     if (!('IntersectionObserver' in window) || !('ResizeObserver' in window)) return
+    const client = navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string }; deviceMemory?: number }
+    if (client.connection?.saveData || ['slow-2g', '2g'].includes(client.connection?.effectiveType ?? '') || (client.deviceMemory ?? 4) <= 2) return
     let cancelled = false
     let dispose: (() => void) | undefined
     let started = false
+    let onscreen = false
+    let idle = 0
+    let timer = 0
     setReady(false)
     const start = async () => {
-      if (started) return
+      if (started || !onscreen || document.documentElement.dataset.motion === 'reduce' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
       started = true
       try {
         const { createMarketScene } = await import('../lib/marketScene')
@@ -30,16 +35,26 @@ export default function MarketSculpture({ up, down, flat }: BreadthCounts) {
         // A blocked download or unsupported GPU keeps the complete 2D chart.
       }
     }
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        observer.disconnect()
-        void start()
+    const schedule = () => {
+      if (!onscreen || started || idle || timer) return
+      if (typeof window.requestIdleCallback === 'function') {
+        idle = window.requestIdleCallback(() => { idle = 0; void start() }, { timeout: 1600 })
+      } else {
+        timer = window.setTimeout(() => { timer = 0; void start() }, 350)
       }
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      onscreen = entry.isIntersecting
+      if (onscreen) schedule()
     }, { rootMargin: '80px' })
     observer.observe(element)
+    window.addEventListener('delta-motion-change', schedule)
     return () => {
       cancelled = true
       observer.disconnect()
+      window.removeEventListener('delta-motion-change', schedule)
+      if (idle) window.cancelIdleCallback(idle)
+      window.clearTimeout(timer)
       dispose?.()
     }
   }, [up, down, flat, total])

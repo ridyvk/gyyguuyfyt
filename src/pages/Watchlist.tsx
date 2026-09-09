@@ -50,7 +50,7 @@ export default function Watchlist() {
           <section className="watchlist-disclosure-inbox">
             <div className="watchlist-disclosure-inbox__head">
               <div>
-                <span className="section-kicker">WATCHLIST ALERTS</span>
+
                 <h2>監視企業の開示</h2>
                 <p>重要度を優先し、最新の開示をまとめています。</p>
               </div>

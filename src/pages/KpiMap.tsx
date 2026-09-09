@@ -503,7 +503,7 @@ export default function KpiMap() {
         <section className="kpi-finder-podium" aria-label={`${config.label}の上位3社`}>
           <div className="kpi-finder-section-head">
             <div>
-              <span className="section-kicker">TOP PICKS</span>
+
               <h2>{config.label}の上位3社</h2>
               <p>まず見るならこの3社。指標値を確認してから比較へ追加できます。</p>
             </div>
@@ -570,7 +570,7 @@ export default function KpiMap() {
       <section className="kpi-finder-ranking" aria-label={`${config.label}の順位表`}>
         <div className="kpi-finder-section-head">
           <div>
-            <span className="section-kicker">RANKING WITH EVIDENCE</span>
+
             <h2>根拠つき順位表</h2>
             <p>{ranked.length.toLocaleString('ja-JP')}社が現在の条件に一致</p>
           </div>

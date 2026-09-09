@@ -153,7 +153,7 @@ export default function Compare() {
         <>
           <section className="compare-chart-grid">
             <article className="panel">
-              <div className="panel__heading"><div><span className="section-kicker">SCORE BARS</span><h2>スコア比較</h2></div><BarChart3 size={20} /></div>
+              <div className="panel__heading"><div><h2>スコア比較</h2></div><BarChart3 size={20} /></div>
               <div className="chart-wrap chart-wrap--compare">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
@@ -184,7 +184,7 @@ export default function Compare() {
               </div>
             </article>
             <article className="panel">
-              <div className="panel__heading"><div><span className="section-kicker">SHAPE</span><h2>レーダー比較</h2></div></div>
+              <div className="panel__heading"><div><h2>レーダー比較</h2></div></div>
               {chartCompanies.length ? (
                 <RadarScoreChart companies={chartCompanies} height={360} />
               ) : (
@@ -194,7 +194,7 @@ export default function Compare() {
           </section>
 
           <section className="section-block">
-            <div className="section-heading"><div><span className="section-kicker">COMPARISON CARDS</span><h2>KPI比較カード</h2></div><p>Bestは比較中の企業内で判定</p></div>
+            <div className="section-heading"><div><h2>KPI比較カード</h2></div><p>Bestは比較中の企業内で判定</p></div>
             <div className="comparison-cards">
               {comparedCompanies.map((company, companyIndex) => (
                 <article className="comparison-card" key={company.id}>

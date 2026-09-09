@@ -353,7 +353,7 @@ export default function DisclosureRadar() {
 
           <div className="disclosure-results-head">
             <div>
-              <span className="section-kicker">LIVE FEED</span>
+
               <h2>{filtered.length.toLocaleString('ja-JP')}件の開示</h2>
             </div>
             <div>
@@ -408,7 +408,7 @@ export default function DisclosureRadar() {
         <aside className="disclosure-sidebar">
           <section className="radar-side-card radar-side-card--attention">
             <div className="radar-side-card__head">
-              <div><span className="section-kicker">ATTENTION</span><h2>優先確認</h2></div>
+              <div><h2>優先確認</h2></div>
               <BellRing size={18} />
             </div>
             {unreadImportant.slice(0, 5).map((event) => (
@@ -430,7 +430,7 @@ export default function DisclosureRadar() {
 
           <section className="radar-side-card">
             <div className="radar-side-card__head">
-              <div><span className="section-kicker">CATEGORY MIX</span><h2>開示構成</h2></div>
+              <div><h2>開示構成</h2></div>
             </div>
             <div className="category-mix">
               {categoryMix.map((item) => (
@@ -451,7 +451,7 @@ export default function DisclosureRadar() {
 
           <section className="radar-side-card">
             <div className="radar-side-card__head">
-              <div><span className="section-kicker">DATA SOURCES</span><h2>取得状態</h2></div>
+              <div><h2>取得状態</h2></div>
             </div>
             <div className="source-status-list">
               {(['TDnet', 'EDINET'] as DisclosureSource[]).map((item) => {
