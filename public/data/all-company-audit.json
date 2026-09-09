@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-09T11:41:48.251114Z",
-  "financialSnapshotGeneratedAt": "2026-09-09T11:41:46.767924Z",
+  "generatedAt": "2026-09-09T21:17:44.084825Z",
+  "financialSnapshotGeneratedAt": "2026-09-09T21:17:42.552544Z",
   "policy": {
     "stalePeriodDays": 800,
     "minimumEdinetDataModelVersion": 9,
@@ -27,12 +27,12 @@
     "warning": 3556,
     "review": 7,
     "missing": 137,
-    "totalMetricCount": 39609,
-    "sourceBackedMetricCount": 25436,
-    "trustedMetricCount": 2080,
-    "trustedMetricRatio": 8.18,
-    "missingProvenanceRate": 89.7,
-    "oldEdinetModelRate": 98.61,
+    "totalMetricCount": 39708,
+    "sourceBackedMetricCount": 25493,
+    "trustedMetricCount": 2478,
+    "trustedMetricRatio": 9.72,
+    "missingProvenanceRate": 88.52,
+    "oldEdinetModelRate": 97.26,
     "metricRangeQuarantined": 2,
     "sourceQuarantinedMetrics": 15,
     "containedSourceQuarantinedMetrics": 15,
@@ -41,28 +41,28 @@
     "edinetBatchSize": 50,
     "edinetBatchFailures": 0,
     "edinetBatchFailureRate": 0.0,
-    "edinetNoMetricDocuments": 5,
-    "edinetNoMetricRate": 10.0,
+    "edinetNoMetricDocuments": 4,
+    "edinetNoMetricRate": 8.0,
     "tdnetDocumentsAttempted": 180,
     "tdnetStrictFailures": 0,
     "tdnetStrictFailureRate": 0.0,
     "tdnetNoMetricDocuments": 44,
     "tdnetNoMetricRate": 24.44,
     "pipelineFailureCount": 0,
-    "unusableDocumentCount": 49,
+    "unusableDocumentCount": 48,
     "issueCounts": {
       "history-trend-quarantined": 7,
       "metric-range-quarantined": 2,
       "missing-financial-record": 137,
-      "missing-provenance": 3196,
-      "old-edinet-model": 3346,
-      "partial-provenance": 366,
+      "missing-provenance": 3154,
+      "old-edinet-model": 3301,
+      "partial-provenance": 408,
       "source-mismatch-quarantined": 5,
       "source-reconciliation-quarantined": 5
     },
     "sourceCounts": {
-      "EDINET": 3393,
-      "TDnet": 170,
+      "EDINET": 3394,
+      "TDnet": 169,
       "unavailable": 137
     }
   },
@@ -112,24 +112,24 @@
       "kind": "supplemental-derived"
     },
     "roic": {
-      "available": 2898,
-      "missing": 633,
+      "available": 2900,
+      "missing": 631,
       "notApplicable": 169,
-      "availabilityRatio": 82.07,
+      "availabilityRatio": 82.13,
       "missingReasons": {
         "missing-financial-record": 135,
-        "missing-supplemental-input": 498
+        "missing-supplemental-input": 496
       },
       "kind": "supplemental-derived"
     },
     "roicWaccSpread": {
-      "available": 2898,
-      "missing": 633,
+      "available": 2900,
+      "missing": 631,
       "notApplicable": 169,
-      "availabilityRatio": 82.07,
+      "availabilityRatio": 82.13,
       "missingReasons": {
         "missing-financial-record": 135,
-        "missing-supplemental-input": 498
+        "missing-supplemental-input": 496
       },
       "kind": "supplemental-derived"
     },
@@ -145,35 +145,35 @@
       "kind": "source-extracted"
     },
     "operatingCfMargin": {
-      "available": 3006,
-      "missing": 525,
+      "available": 3012,
+      "missing": 519,
       "notApplicable": 169,
-      "availabilityRatio": 85.13,
+      "availabilityRatio": 85.3,
       "missingReasons": {
         "missing-financial-record": 135,
-        "source-fact-unavailable": 390
+        "source-fact-unavailable": 384
       },
       "kind": "source-extracted"
     },
     "cashProfitGap": {
-      "available": 2981,
-      "missing": 550,
+      "available": 2987,
+      "missing": 544,
       "notApplicable": 169,
-      "availabilityRatio": 84.42,
+      "availabilityRatio": 84.59,
       "missingReasons": {
         "missing-financial-record": 135,
-        "missing-supplemental-input": 415
+        "missing-supplemental-input": 409
       },
       "kind": "supplemental-derived"
     },
     "netCash": {
-      "available": 3003,
-      "missing": 528,
+      "available": 2998,
+      "missing": 533,
       "notApplicable": 169,
-      "availabilityRatio": 85.05,
+      "availabilityRatio": 84.91,
       "missingReasons": {
         "missing-financial-record": 135,
-        "source-fact-unavailable": 393
+        "source-fact-unavailable": 398
       },
       "kind": "source-extracted"
     },
@@ -548,17 +548,13 @@
       "periodAgeDays": 162,
       "metricCount": 16,
       "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 4,
-      "trustedMetricCount": 4,
-      "dataModelVersion": null,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
       "provenanceModelVersion": 1,
       "issues": [
         {
           "code": "partial-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
           "severity": "warning"
         }
       ]
@@ -904,19 +900,15 @@
       "documentId": "S100X68L",
       "periodEnd": "2025-08-31",
       "periodAgeDays": 374,
-      "metricCount": 15,
-      "sourceBackedMetricCount": 9,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 16,
+      "sourceBackedMetricCount": 10,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -983,17 +975,13 @@
       "periodAgeDays": 193,
       "metricCount": 15,
       "sourceBackedMetricCount": 9,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "provenanceMetricCount": 9,
+      "trustedMetricCount": 9,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -1005,22 +993,18 @@
       "industry": "建設業",
       "status": "warning",
       "source": "EDINET",
-      "documentId": "S100WL4I",
-      "periodEnd": "2025-05-31",
-      "periodAgeDays": 466,
+      "documentId": "S100YYFR",
+      "periodEnd": "2026-05-31",
+      "periodAgeDays": 101,
       "metricCount": 15,
       "sourceBackedMetricCount": 9,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "provenanceMetricCount": 9,
+      "trustedMetricCount": 9,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -1136,22 +1120,18 @@
       "industry": "建設業",
       "status": "warning",
       "source": "EDINET",
-      "documentId": "S100WLC9",
-      "periodEnd": "2025-05-31",
-      "periodAgeDays": 466,
+      "documentId": "S100YXXB",
+      "periodEnd": "2026-05-31",
+      "periodAgeDays": 101,
       "metricCount": 14,
       "sourceBackedMetricCount": 8,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "provenanceMetricCount": 8,
+      "trustedMetricCount": 8,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -1191,17 +1171,13 @@
       "periodAgeDays": 221,
       "metricCount": 15,
       "sourceBackedMetricCount": 9,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "provenanceMetricCount": 9,
+      "trustedMetricCount": 9,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -1245,17 +1221,13 @@
       "periodAgeDays": 252,
       "metricCount": 16,
       "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -1295,17 +1267,13 @@
       "periodAgeDays": 344,
       "metricCount": 14,
       "sourceBackedMetricCount": 8,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "provenanceMetricCount": 8,
+      "trustedMetricCount": 8,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -1403,17 +1371,13 @@
       "periodAgeDays": 344,
       "metricCount": 16,
       "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -1709,17 +1673,13 @@
       "periodAgeDays": 162,
       "metricCount": 16,
       "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 4,
-      "trustedMetricCount": 4,
-      "dataModelVersion": null,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
       "provenanceModelVersion": 1,
       "issues": [
         {
           "code": "partial-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
           "severity": "warning"
         }
       ]
@@ -1803,19 +1763,15 @@
       "documentId": "S100X6SQ",
       "periodEnd": "2025-08-31",
       "periodAgeDays": 374,
-      "metricCount": 15,
-      "sourceBackedMetricCount": 9,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 16,
+      "sourceBackedMetricCount": 10,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -1961,19 +1917,15 @@
       "documentId": "S100XBKO",
       "periodEnd": "2025-09-30",
       "periodAgeDays": 344,
-      "metricCount": 14,
-      "sourceBackedMetricCount": 8,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 15,
+      "sourceBackedMetricCount": 9,
+      "provenanceMetricCount": 9,
+      "trustedMetricCount": 9,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -2121,17 +2073,13 @@
       "periodAgeDays": 252,
       "metricCount": 16,
       "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -2175,17 +2123,13 @@
       "periodAgeDays": 162,
       "metricCount": 14,
       "sourceBackedMetricCount": 8,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "provenanceMetricCount": 8,
+      "trustedMetricCount": 8,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -2256,17 +2200,13 @@
       "periodAgeDays": 252,
       "metricCount": 16,
       "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -2429,19 +2369,19 @@
       "market": "プライム",
       "industry": "建設業",
       "status": "warning",
-      "source": "TDnet",
-      "documentId": "081220260612569613",
+      "source": "EDINET",
+      "documentId": "S100YS6C",
       "periodEnd": "2026-04-30",
       "periodAgeDays": 132,
-      "metricCount": 13,
-      "sourceBackedMetricCount": 7,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 14,
+      "sourceBackedMetricCount": 8,
+      "provenanceMetricCount": 8,
+      "trustedMetricCount": 8,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -2564,19 +2504,15 @@
       "documentId": "S100XC79",
       "periodEnd": "2025-09-30",
       "periodAgeDays": 344,
-      "metricCount": 14,
-      "sourceBackedMetricCount": 9,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 15,
+      "sourceBackedMetricCount": 10,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -2697,17 +2633,13 @@
       "periodAgeDays": 344,
       "metricCount": 14,
       "sourceBackedMetricCount": 8,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "provenanceMetricCount": 8,
+      "trustedMetricCount": 8,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -2724,17 +2656,13 @@
       "periodAgeDays": 162,
       "metricCount": 14,
       "sourceBackedMetricCount": 8,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "provenanceMetricCount": 8,
+      "trustedMetricCount": 8,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -3279,19 +3207,15 @@
       "documentId": "S100WWZA",
       "periodEnd": "2025-07-31",
       "periodAgeDays": 405,
-      "metricCount": 15,
-      "sourceBackedMetricCount": 9,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 16,
+      "sourceBackedMetricCount": 10,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -62998,19 +62922,15 @@
       "documentId": "S100YFRH",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 162,
-      "metricCount": 9,
-      "sourceBackedMetricCount": 6,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 14,
+      "sourceBackedMetricCount": 10,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -63403,19 +63323,15 @@
       "documentId": "S100YLRR",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 162,
-      "metricCount": 9,
-      "sourceBackedMetricCount": 6,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 16,
+      "sourceBackedMetricCount": 10,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -63511,19 +63427,15 @@
       "documentId": "S100YHX8",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 162,
-      "metricCount": 9,
-      "sourceBackedMetricCount": 6,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 16,
+      "sourceBackedMetricCount": 10,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -66557,19 +66469,15 @@
       "documentId": "S100W9QB",
       "periodEnd": "2025-03-31",
       "periodAgeDays": 527,
-      "metricCount": 14,
-      "sourceBackedMetricCount": 9,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 15,
+      "sourceBackedMetricCount": 10,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -67176,17 +67084,13 @@
       "periodAgeDays": 283,
       "metricCount": 16,
       "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 4,
-      "trustedMetricCount": 4,
-      "dataModelVersion": null,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
       "provenanceModelVersion": 1,
       "issues": [
         {
           "code": "partial-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
           "severity": "warning"
         }
       ]
@@ -67365,17 +67269,13 @@
       "periodAgeDays": 252,
       "metricCount": 13,
       "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -67546,19 +67446,15 @@
       "documentId": "S100YJEX",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 162,
-      "metricCount": 8,
-      "sourceBackedMetricCount": 5,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 13,
+      "sourceBackedMetricCount": 7,
+      "provenanceMetricCount": 7,
+      "trustedMetricCount": 7,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -69877,19 +69773,15 @@
       "documentId": "S100YLAF",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 162,
-      "metricCount": 8,
-      "sourceBackedMetricCount": 6,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 14,
+      "sourceBackedMetricCount": 10,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -70039,19 +69931,15 @@
       "documentId": "S100YIWC",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 162,
-      "metricCount": 9,
-      "sourceBackedMetricCount": 6,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 16,
+      "sourceBackedMetricCount": 10,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -70789,17 +70677,13 @@
       "periodAgeDays": 193,
       "metricCount": 10,
       "sourceBackedMetricCount": 7,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "provenanceMetricCount": 7,
+      "trustedMetricCount": 7,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -71361,19 +71245,15 @@
       "documentId": "S100YM27",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 162,
-      "metricCount": 8,
-      "sourceBackedMetricCount": 5,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 13,
+      "sourceBackedMetricCount": 7,
+      "provenanceMetricCount": 7,
+      "trustedMetricCount": 7,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -72938,19 +72818,15 @@
       "documentId": "S100X67D",
       "periodEnd": "2025-08-31",
       "periodAgeDays": 374,
-      "metricCount": 15,
-      "sourceBackedMetricCount": 9,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 16,
+      "sourceBackedMetricCount": 10,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -74322,19 +74198,15 @@
       "documentId": "S100YG3O",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 162,
-      "metricCount": 9,
-      "sourceBackedMetricCount": 6,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 13,
+      "sourceBackedMetricCount": 7,
+      "provenanceMetricCount": 7,
+      "trustedMetricCount": 7,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -75556,19 +75428,15 @@
       "documentId": "S100YK6H",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 162,
-      "metricCount": 8,
-      "sourceBackedMetricCount": 6,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 15,
+      "sourceBackedMetricCount": 10,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -76246,19 +76114,15 @@
       "documentId": "S100YIAC",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 162,
-      "metricCount": 7,
-      "sourceBackedMetricCount": 5,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 11,
+      "sourceBackedMetricCount": 7,
+      "provenanceMetricCount": 7,
+      "trustedMetricCount": 7,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -77701,19 +77565,15 @@
       "documentId": "S100YLKC",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 162,
-      "metricCount": 9,
-      "sourceBackedMetricCount": 6,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 15,
+      "sourceBackedMetricCount": 10,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -78291,19 +78151,15 @@
       "documentId": "S100XS06",
       "periodEnd": "2025-12-31",
       "periodAgeDays": 252,
-      "metricCount": 10,
-      "sourceBackedMetricCount": 5,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 13,
+      "sourceBackedMetricCount": 7,
+      "provenanceMetricCount": 7,
+      "trustedMetricCount": 7,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -79211,17 +79067,13 @@
       "periodAgeDays": 193,
       "metricCount": 16,
       "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -81621,17 +81473,13 @@
       "periodAgeDays": 374,
       "metricCount": 16,
       "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -82506,17 +82354,13 @@
       "periodAgeDays": 193,
       "metricCount": 14,
       "sourceBackedMetricCount": 8,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "provenanceMetricCount": 8,
+      "trustedMetricCount": 8,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -82716,17 +82560,13 @@
       "periodAgeDays": 201,
       "metricCount": 15,
       "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 4,
-      "trustedMetricCount": 4,
-      "dataModelVersion": null,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
       "provenanceModelVersion": 1,
       "issues": [
         {
           "code": "partial-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
           "severity": "warning"
         }
       ]
@@ -87569,19 +87409,15 @@
       "documentId": "S100YI2H",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 162,
-      "metricCount": 9,
-      "sourceBackedMetricCount": 6,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 14,
+      "sourceBackedMetricCount": 8,
+      "provenanceMetricCount": 8,
+      "trustedMetricCount": 8,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -89314,19 +89150,15 @@
       "documentId": "S100XTG8",
       "periodEnd": "2025-12-31",
       "periodAgeDays": 252,
-      "metricCount": 10,
-      "sourceBackedMetricCount": 5,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 13,
+      "sourceBackedMetricCount": 7,
+      "provenanceMetricCount": 7,
+      "trustedMetricCount": 7,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -96950,19 +96782,15 @@
       "documentId": "S100YIMF",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 162,
-      "metricCount": 7,
-      "sourceBackedMetricCount": 5,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 13,
+      "sourceBackedMetricCount": 7,
+      "provenanceMetricCount": 7,
+      "trustedMetricCount": 7,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -97031,19 +96859,15 @@
       "documentId": "S100YM2W",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 162,
-      "metricCount": 9,
-      "sourceBackedMetricCount": 6,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 13,
+      "sourceBackedMetricCount": 8,
+      "provenanceMetricCount": 8,
+      "trustedMetricCount": 8,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]
@@ -97835,19 +97659,15 @@
       "documentId": "S100YGD5",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 162,
-      "metricCount": 9,
-      "sourceBackedMetricCount": 6,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
+      "metricCount": 16,
+      "sourceBackedMetricCount": 10,
+      "provenanceMetricCount": 10,
+      "trustedMetricCount": 10,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
       "issues": [
         {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
+          "code": "partial-provenance",
           "severity": "warning"
         }
       ]

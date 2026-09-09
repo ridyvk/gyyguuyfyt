@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-09T11:41:47.941836Z",
-  "financialSnapshotGeneratedAt": "2026-09-09T11:41:46.767924Z",
+  "generatedAt": "2026-09-09T21:17:43.772079Z",
+  "financialSnapshotGeneratedAt": "2026-09-09T21:17:42.552544Z",
   "baseline": {
     "maxMissingRecords": 4,
     "maxRoeQuarantined": 23,
@@ -881,9 +881,9 @@
       "periodEnd": "2025-11-30",
       "periodAgeDays": 283,
       "metricCount": 16,
-      "provenanceMetricCount": 4,
+      "provenanceMetricCount": 10,
       "roe": 0.1,
-      "dataModelVersion": null,
+      "dataModelVersion": 9,
       "provenanceModelVersion": 1,
       "issues": [],
       "status": "ok"
@@ -899,9 +899,9 @@
       "periodEnd": "2026-02-20",
       "periodAgeDays": 201,
       "metricCount": 15,
-      "provenanceMetricCount": 4,
+      "provenanceMetricCount": 10,
       "roe": 0.4,
-      "dataModelVersion": null,
+      "dataModelVersion": 9,
       "provenanceModelVersion": 1,
       "issues": [],
       "status": "ok"
