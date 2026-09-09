@@ -48,6 +48,9 @@ const importanceLabels = {
   low: '通常',
 }
 
+const calendarMonth = new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', month: 'numeric' })
+const calendarDay = new Intl.DateTimeFormat('en', { timeZone: 'Asia/Tokyo', day: 'numeric' })
+
 const signalIcon = (signal: DisclosureSignal) => {
   if (signal.direction === 'positive') return TrendingUp
   if (signal.direction === 'negative') return TrendingDown
@@ -98,11 +101,17 @@ export default function DisclosureEventCard({
   onRead,
 }: DisclosureEventCardProps) {
   const CategoryIcon = categoryIcons[event.category]
+  const filedDate = new Date(event.filedAt)
+  const calendar = !compact || Number.isNaN(filedDate.getTime()) ? null : {
+    month: calendarMonth.format(filedDate),
+    day: calendarDay.format(filedDate),
+  }
 
   return (
     <article
-      className={`disclosure-card disclosure-card--${event.importance}${read ? ' is-read' : ' is-unread'}${compact ? ' disclosure-card--compact' : ''}`}
+      className={`disclosure-card disclosure-card--${event.importance}${read ? ' is-read' : ' is-unread'}${compact ? ' disclosure-card--compact' : ''}${calendar ? ' has-calendar' : ''}`}
     >
+      {compact && calendar && <time className="disclosure-card__calendar" dateTime={event.filedAt} aria-hidden="true"><span>{calendar.month}</span><strong>{calendar.day}</strong></time>}
       <div className="disclosure-card__rail" aria-hidden="true">
         <span><CategoryIcon size={16} /></span>
       </div>

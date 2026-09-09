@@ -1,7 +1,7 @@
 import {
   ACESFilmicToneMapping, AmbientLight, DirectionalLight, Group,
   Mesh, MeshPhysicalMaterial, PerspectiveCamera, PMREMGenerator,
-  Scene, TorusGeometry, WebGLRenderer,
+  Scene, SphereGeometry, TorusGeometry, WebGLRenderer, type BufferGeometry,
 } from 'three'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import type { BreadthCounts } from './marketBreadth'
@@ -20,7 +20,7 @@ export function createMarketScene(
 
   const scene = new Scene()
   const camera = new PerspectiveCamera(35, 1, 0.1, 30)
-  camera.position.set(0, 0, 5.9)
+  camera.position.set(0, 0, 5.1)
   const studio = new RoomEnvironment()
   const pmrem = new PMREMGenerator(renderer)
   let environment
@@ -41,27 +41,32 @@ export function createMarketScene(
   const key = new DirectionalLight(0xffffff, 3.8)
   key.position.set(-3, 5, 6)
   scene.add(key)
-  const rim = new DirectionalLight(0x9abfff, 2)
+  const rim = new DirectionalLight(0xdce8df, 1.5)
   rim.position.set(3, -1, -2)
   scene.add(rim)
 
   const sculpture = new Group()
   scene.add(sculpture)
   const total = counts.up + counts.down + counts.flat
-  const geometries: TorusGeometry[] = []
+  const geometries: BufferGeometry[] = []
   const materials: MeshPhysicalMaterial[] = []
+  const coreGeometry = new SphereGeometry(.88, 40, 28)
+  const coreMaterial = new MeshPhysicalMaterial({ color: '#f1f4ef', roughness: .48, metalness: .025, clearcoat: .4, envMapIntensity: .8 })
+  geometries.push(coreGeometry)
+  materials.push(coreMaterial)
+  sculpture.add(new Mesh(coreGeometry, coreMaterial))
   let angle = 0
-  for (const [value, color] of [[counts.up, '#26847c'], [counts.down, '#c27687'], [counts.flat, '#a6b7cf']] as const) {
+  for (const [value, color] of [[counts.up, '#9dbcaa'], [counts.down, '#d7b4a6'], [counts.flat, '#c2cdc5']] as const) {
     if (!value) continue
     const arc = (value / total) * Math.PI * 2
     const material = new MeshPhysicalMaterial({
-      color, metalness: 0.16, roughness: 0.18, clearcoat: 1,
-      clearcoatRoughness: 0.07, transmission: 0, thickness: 0.7,
-      ior: 1.45, envMapIntensity: 1.8,
+      color, metalness: .03, roughness: .4, clearcoat: .7,
+      clearcoatRoughness: .2, transmission: 0,
+      ior: 1.4, envMapIntensity: 1,
     })
     materials.push(material)
     // Every arc is proportional to a real count; no decorative price history.
-    const geometry = new TorusGeometry(0.93, 0.245, 20, Math.max(6, Math.ceil(arc * 24)), arc)
+    const geometry = new TorusGeometry(1.12, .06, 12, Math.max(6, Math.ceil(arc * 24)), arc)
     geometries.push(geometry)
     const segment = new Mesh(geometry, material)
     segment.rotation.z = angle

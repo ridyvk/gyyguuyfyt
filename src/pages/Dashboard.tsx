@@ -120,6 +120,23 @@ export default function Dashboard() {
   return (
     <div className="page page--dashboard">
       <MotionPageHeader title="Dashboard" variant="dashboard" />
+
+      <section className="dashboard-overview" aria-label="マーケットの値動き">
+        <div className="breadth-card">
+          <div className="breadth-card__copy">
+            <div className="breadth-card__heading"><span>日本株</span><time>{marketSnapshot?.latestTradingDate ?? '取得待ち'}</time></div>
+            <h2>市場の<br />値動き</h2>
+            <p>比較可能 {breadthTotal.toLocaleString('ja-JP')} 社</p>
+          </div>
+          <MarketSculpture {...breadth} />
+          <div className="breadth-card__numbers">
+            <span className="breadth-up"><small>上昇</small><strong>{breadth.up.toLocaleString('ja-JP')}</strong></span>
+            <span className="breadth-down"><small>下落</small><strong>{breadth.down.toLocaleString('ja-JP')}</strong></span>
+            <span className="breadth-flat"><small>横ばい</small><strong>{breadth.flat.toLocaleString('ja-JP')}</strong></span>
+          </div>
+        </div>
+      </section>
+
       <div className="dashboard-entry">
         <form className="dashboard-search" role="search" onSubmit={(event) => {
           event.preventDefault()
@@ -132,32 +149,19 @@ export default function Dashboard() {
         <Link className="dashboard-finder-link" to="/map" aria-label="指標から企業を探す"><Gauge size={18} /><span>指標で探す</span></Link>
       </div>
 
-      <section className="dashboard-overview" aria-label="マーケットと保存状況">
-        <div className="breadth-card">
-          <div className="breadth-card__heading"><span>値動き</span><time>{marketSnapshot?.latestTradingDate ?? '取得待ち'}</time></div>
-          <MarketSculpture {...breadth} />
-          <div className="breadth-card__numbers">
-            <span className="breadth-up"><small>上昇</small><strong>{breadth.up.toLocaleString('ja-JP')}</strong></span>
-            <span className="breadth-down"><small>下落</small><strong>{breadth.down.toLocaleString('ja-JP')}</strong></span>
-            <span className="breadth-flat"><small>横ばい</small><strong>{breadth.flat.toLocaleString('ja-JP')}</strong></span>
-          </div>
-          <small className="breadth-card__note">比較可能 {breadthTotal.toLocaleString('ja-JP')} 社</small>
-        </div>
+      <section className="dashboard-summary" aria-label="企業と保存状況">
         <div className="summary-grid">
           <Link className="summary-card summary-card--link" to="/universe?sort=code-asc" aria-label="全企業を証券コード順で見る">
             <span className="summary-card__icon"><Building2 /></span>
             <div><small>企業数</small><strong><AnimatedNumber value={companies.length} /></strong></div>
-            <ArrowRight className="summary-card__arrow" size={15} />
           </Link>
           <Link className="summary-card summary-card--link" to="/watchlist" aria-label="保存した企業を見る">
             <span className="summary-card__icon summary-card__icon--blue"><Bookmark /></span>
-            <div><small>保存した企業</small><strong><AnimatedNumber value={watchlist.length} /></strong></div>
-            <ArrowRight className="summary-card__arrow" size={15} />
+            <div><small>保存</small><strong><AnimatedNumber value={watchlist.length} /></strong></div>
           </Link>
           <Link className="summary-card summary-card--link" to="/universe?warnings=1&sort=code-asc" aria-label="注意フラグ企業を見る">
             <span className="summary-card__icon summary-card__icon--red"><AlertTriangle /></span>
-            <div><small>注意フラグ</small><strong><AnimatedNumber value={warningCount} /></strong></div>
-            <ArrowRight className="summary-card__arrow" size={15} />
+            <div><small>注意企業</small><strong><AnimatedNumber value={warningCount} /></strong></div>
           </Link>
           <article className="summary-card">
             <span className="summary-card__icon summary-card__icon--yellow"><Gauge /></span>
@@ -223,6 +227,12 @@ export default function Dashboard() {
         </div>
       </section>
 
+      <ChartReveal className="dashboard-charts-reveal">
+        <Suspense fallback={<div className="chart-loading" role="status">グラフを読み込み中</div>}>
+          <DashboardCharts industryData={industryData} themeData={themeData} />
+        </Suspense>
+      </ChartReveal>
+
       <section className="dashboard-disclosure-panel">
         <div className="dashboard-disclosure-panel__head">
           <div>
@@ -277,11 +287,7 @@ export default function Dashboard() {
           </div>
         </article>
       </section>
-      <ChartReveal className="dashboard-charts-reveal">
-        <Suspense fallback={<div className="chart-loading" role="status">グラフを読み込み中</div>}>
-          <DashboardCharts industryData={industryData} themeData={themeData} />
-        </Suspense>
-      </ChartReveal>
+
     </div>
   )
 }

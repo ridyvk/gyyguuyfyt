@@ -3,8 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useReducedMotion } from '../lib/useReducedMotion'
 import { swipeDestination } from '../lib/swipeNavigation'
 
-const revealTargets = '.page > section, .page > article, .page > details, .delta-page-header, .summary-card, .market-pulse__item, .disclosure-card'
-const gestureExclusions = 'a, button, input, textarea, select, summary, [contenteditable], [data-no-swipe], table, .chart-wrap, .market-pulse__grid, .market-sculpture, .theme-chart'
+const revealTargets = '.delta-page-header, .dashboard-entry, .breadth-card, .summary-card, .panel, .market-pulse__item, .disclosure-card, .ranking-card, .filter-panel, .disclosure-metrics > article, .kpi-finder-row, .page > details'
+const gestureExclusions = 'a, button, input, textarea, select, summary, [contenteditable], [data-no-swipe], table, .chart-wrap, .market-pulse__grid, .dashboard-disclosure-grid, .market-sculpture, .theme-chart'
 
 export default function PageMotion({ children }: { children: ReactNode }) {
   const root = useRef<HTMLDivElement>(null)
@@ -19,31 +19,56 @@ export default function PageMotion({ children }: { children: ReactNode }) {
     if (!element || reduced || !('IntersectionObserver' in window) || !Element.prototype.animate) return
     const running = animations.current
     const seen = new WeakSet<Element>()
+    const pending = new Set<Element>()
     let frame = 0
     const observer = new IntersectionObserver((entries) => {
       let order = 0
       for (const entry of entries) {
         if (!entry.isIntersecting) continue
         observer.unobserve(entry.target)
+        entry.target.removeAttribute('data-delta-reveal')
+        pending.delete(entry.target)
         if (entry.target.contains(document.activeElement)) continue
-        const compact = entry.target.matches('.summary-card, .market-pulse__item')
+        const compact = entry.target.matches('.summary-card, .market-pulse__item, .ranking-card')
         const animation = entry.target.animate([
-          { opacity: .25, transform: compact ? 'translateY(10px) scale(.965)' : 'translateY(18px)' },
+          { opacity: 0, transform: compact ? 'translateY(15px) scale(.985)' : 'translateY(24px)' },
           { opacity: 1, transform: 'translateY(0) scale(1)' },
-        ], { duration: compact ? 520 : 640, delay: Math.min(order++ * 45, 135), easing: 'cubic-bezier(.2,.75,.2,1)' })
+        ], { duration: compact ? 720 : 850, delay: Math.min(order++ * 65, 195), easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' })
         running.add(animation)
         void animation.finished.catch(() => {}).finally(() => running.delete(animation))
       }
     }, { threshold: 0, rootMargin: '0px 0px -5% 0px' })
     const discover = () => {
       frame = 0
+      for (const node of pending) {
+        if (node.isConnected) continue
+        observer.unobserve(node)
+        node.removeAttribute('data-delta-reveal')
+        pending.delete(node)
+      }
       element.querySelectorAll(revealTargets).forEach((node) => {
         if (seen.has(node)) return
         seen.add(node)
+        if (node.contains(document.activeElement)) return
+        node.setAttribute('data-delta-reveal', 'pending')
+        pending.add(node)
         observer.observe(node)
       })
     }
+    const revealFocus = () => {
+      for (const animation of running) {
+        const target = (animation.effect as KeyframeEffect | null)?.target
+        if (target?.contains(document.activeElement)) animation.cancel()
+      }
+      for (const node of pending) {
+        if (!node.contains(document.activeElement)) continue
+        node.removeAttribute('data-delta-reveal')
+        pending.delete(node)
+        observer.unobserve(node)
+      }
+    }
     discover()
+    element.addEventListener('focusin', revealFocus)
     const mutations = new MutationObserver(() => {
       if (!frame) frame = requestAnimationFrame(discover)
     })
@@ -51,6 +76,9 @@ export default function PageMotion({ children }: { children: ReactNode }) {
     return () => {
       observer.disconnect()
       mutations.disconnect()
+      element.removeEventListener('focusin', revealFocus)
+      pending.forEach((node) => node.removeAttribute('data-delta-reveal'))
+      pending.clear()
       cancelAnimationFrame(frame)
       running.forEach((animation) => animation.cancel())
       running.clear()

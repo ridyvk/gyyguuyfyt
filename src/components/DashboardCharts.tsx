@@ -16,11 +16,11 @@ import {
 } from 'recharts'
 
 const themePalette = [
-  { from: '#78BEF4', to: '#3A8FD8' },
-  { from: '#8DDDD4', to: '#4BAEA9' },
-  { from: '#AAA8ED', to: '#7570D4' },
-  { from: '#DAB4E8', to: '#AA75C5' },
-  { from: '#F4CCA2', to: '#E4A263' },
+  { from: '#8fae9d', to: '#66907a' },
+  { from: '#a5bed0', to: '#7b9fb8' },
+  { from: '#baafd1', to: '#998ab3' },
+  { from: '#d9baa8', to: '#bd9480' },
+  { from: '#dfce9b', to: '#bda86a' },
 ]
 
 
@@ -38,40 +38,41 @@ function DashboardCharts({ industryData, themeData }: Props) {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={industryData}
-                  margin={{ left: -16, right: 8, top: 14, bottom: 0 }}
+                  layout="vertical"
+                  margin={{ left: 0, right: 16, top: 5, bottom: 0 }}
                   accessibilityLayer={false}
                 >
                   <defs>
-                    <linearGradient id="industryBarGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#4BA7E7" stopOpacity={0.92} />
-                      <stop offset="62%" stopColor="#7FC9EA" stopOpacity={0.68} />
-                      <stop offset="100%" stopColor="#B8E6EE" stopOpacity={0.38} />
+                    <linearGradient id="industryBarGradient" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#76a28a" stopOpacity={0.92} />
+                      <stop offset="62%" stopColor="#aac8b5" stopOpacity={0.68} />
+                      <stop offset="100%" stopColor="#e0eade" stopOpacity={0.38} />
                     </linearGradient>
                     <filter id="industryBarShadow" x="-40%" y="-20%" width="180%" height="150%">
-                      <feDropShadow dx="0" dy="5" stdDeviation="5" floodColor="#4BA7E7" floodOpacity="0.14" />
+                      <feDropShadow dx="0" dy="5" stdDeviation="5" floodColor="#76a28a" floodOpacity="0.14" />
                     </filter>
                   </defs>
                   <CartesianGrid
-                    vertical={false}
+                    horizontal={false}
                     stroke="rgba(88, 116, 136, 0.11)"
                     strokeDasharray="2 8"
                   />
                   <XAxis
-                    dataKey="name"
+                    type="number"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#87959F', fontSize: 10 }}
-                    interval={0}
-                    angle={-18}
-                    textAnchor="end"
-                    height={58}
+                    tick={{ fill: '#6c7d70', fontSize: 12 }}
+                    allowDecimals={false}
                     tickMargin={9}
                   />
                   <YAxis
+                    type="category"
+                    dataKey="name"
+                    width={110}
+                    interval={0}
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#9AA5AD', fontSize: 10 }}
-                    allowDecimals={false}
+                    tick={{ fill: '#627367', fontSize: 12 }}
                     tickMargin={8}
                   />
                   <Tooltip
@@ -89,8 +90,8 @@ function DashboardCharts({ industryData, themeData }: Props) {
                     dataKey="value"
                     name="企業数"
                     fill="url(#industryBarGradient)"
-                    radius={[10, 10, 10, 10]}
-                    barSize={18}
+                    radius={[5, 5, 5, 5]}
+                    barSize={14}
                     style={{ filter: 'url(#industryBarShadow)' }}
                     isAnimationActive={!reducedMotion}
                     animationBegin={80}
@@ -110,7 +111,7 @@ function DashboardCharts({ industryData, themeData }: Props) {
           <div className="theme-chart">
             <div className="theme-chart__donut">
               <ChartReveal className="chart-reveal--pie">
-                <ResponsiveContainer width="100%" height={210}>
+                <ResponsiveContainer width="100%" height={190}>
                   <PieChart accessibilityLayer={false}>
                     <defs>
                       {themePalette.map((color, index) => (
@@ -129,9 +130,9 @@ function DashboardCharts({ industryData, themeData }: Props) {
                     </defs>
                     <Pie
                       data={themeData.slice(0, 5)}
-                      innerRadius={66}
-                      outerRadius={87}
-                      paddingAngle={5}
+                      innerRadius={60}
+                      outerRadius={76}
+                      paddingAngle={4}
                       cornerRadius={7}
                       dataKey="value"
                       startAngle={90}
