@@ -16,7 +16,7 @@ from data_quality import (
     quarantine_misaligned_metric_trends,
     validate_financial_record,
 )
-from reconcile_financial_sources import reconciliation_totals
+from reconcile_financial_sources import disputed_metrics, enforce_source_quarantine, reconciliation_totals
 
 ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT = ROOT / "public/data/financials.json"
@@ -107,6 +107,8 @@ def apply_golden_anchors(records: dict[str, dict]) -> tuple[int, int]:
             continue
         applied_here = 0
         for metric_key, anchor in (golden.get("anchors") or {}).items():
+            if metric_key in disputed_metrics(record):
+                continue
             if not isinstance(anchor, dict) or "value" not in anchor:
                 continue
             metric = metrics.setdefault(str(metric_key), {})
@@ -577,6 +579,7 @@ def main() -> int:
                 str(company.get("industry") or ""),
             )
         )
+        enforce_source_quarantine(record)
     metric_range_quarantined = sum(
         len(
             (
@@ -645,6 +648,10 @@ def main() -> int:
         if is_building
         else "EDINET年次ベースライン＋TDnet通期決算短信オーバーレイで更新済み。"
     )
+    if source_quarantined:
+        progress_message += (
+            f"開示元が一致しない{source_quarantined}指標と関連する推定指標は確認待ちです。"
+        )
 
     stats.update(
         {
