@@ -296,7 +296,7 @@ details.data-status { display: block; margin: 0 0 27px; padding: 0; border: 0; b
   .dashboard-search button { width: 37px; height: 37px; }
   .dashboard-finder-link { padding: 0 13px; gap: 6px; }
   .dashboard-finder-link span { font-size: .8125rem; }
-  .summary-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .summary-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 4.1rem), 1fr)); gap: 8px; }
   .summary-card { display: flex; flex-direction: column-reverse; align-items: flex-start; min-height: 112px; padding: 12px 10px 10px; gap: 9px; border-radius: 14px; }
   .summary-card small { min-height: 18px; font-size: .75rem; }
   .summary-card strong { font-size: 1.3rem; margin-top: 6px; }
@@ -340,7 +340,7 @@ details.data-status { display: block; margin: 0 0 27px; padding: 0; border: 0; b
   .main-nav .nav-label { display: none; }
   .main-nav .nav-label--short { display: inline; font-size: .75rem; }
   .main-nav b, .main-nav a.is-active b { position: absolute; top: 0; right: 0; padding: 1px 4px; color: #5d775c; background: #e5eddf; font-size: .75rem; }
-  .app-footer { width: calc(100% - 40px); margin-bottom: calc(90px + env(safe-area-inset-bottom)); gap: 10px; }
+  .app-footer { width: calc(100% - 40px); margin-bottom: calc(6rem + env(safe-area-inset-bottom)); gap: 10px; }
 }
 @media (max-width: 370px) {
   .page { width: calc(100% - 32px); }
