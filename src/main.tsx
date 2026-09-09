@@ -10,7 +10,6 @@ import './motion.css'
 import './stock-display.css'
 import './kpi-map.css'
 import './disclosure-radar.css'
-import '@fontsource/barlow-condensed/latin-500.css'
 import './delta.css'
 
 class AppErrorBoundary extends Component<

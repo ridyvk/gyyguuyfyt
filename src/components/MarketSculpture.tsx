@@ -63,8 +63,8 @@ export default function MarketSculpture({ up, down, flat }: BreadthCounts) {
     <div className={`market-sculpture${ready ? ' is-ready' : ''}`} aria-hidden="true">
       <div className="market-sculpture__fallback" style={{
         background: total
-          ? `conic-gradient(#26847c 0deg ${upAngle}deg, #c27687 ${upAngle}deg ${downAngle}deg, #a6b7cf ${downAngle}deg 360deg)`
-          : '#cdd8e5',
+          ? `conic-gradient(#86ad95 0deg ${upAngle}deg, #c99c8c ${upAngle}deg ${downAngle}deg, #bcc9be ${downAngle}deg 360deg)`
+          : '#dce3db',
       }} />
       <div ref={host} className="market-sculpture__canvas" />
     </div>
