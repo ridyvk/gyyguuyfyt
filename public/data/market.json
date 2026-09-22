@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-09-21T11:07:46.563086Z",
+  "generatedAt": "2026-09-22T04:38:38.961268Z",
   "source": "Yahoo Finance",
   "status": "ready",
   "message": "Yahoo Financeの公開株価データとEDINET・TDnetのEPS/BPSからPER・PBRを自動計算しています。株価はリアルタイム保証ではありません。",
@@ -58039,10 +58039,10 @@
       "financialDocumentType": "AnnualSecuritiesReport"
     },
     "6150": {
-      "eps": 319.43,
-      "bps": 5673.45,
-      "disclosedDate": "2025-05-31",
-      "disclosedAt": "2025-08-29 11:15",
+      "eps": 324.31,
+      "bps": 5943.0,
+      "disclosedDate": "2026-05-31",
+      "disclosedAt": "2026-08-28 14:33",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
@@ -58158,10 +58158,10 @@
       "financialDocumentType": "AnnualSecuritiesReport"
     },
     "6083": {
-      "eps": 169.33,
-      "bps": 834.23,
-      "disclosedDate": "2025-05-31",
-      "disclosedAt": "2025-08-27 15:42",
+      "eps": 139.41,
+      "bps": 378.56,
+      "disclosedDate": "2026-05-31",
+      "disclosedAt": "2026-08-26 16:21",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
