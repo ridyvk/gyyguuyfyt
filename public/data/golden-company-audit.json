@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-06T00:47:55.127510Z",
-  "financialSnapshotGeneratedAt": "2026-10-06T00:47:49.360133Z",
+  "generatedAt": "2026-10-06T23:12:20.267271Z",
+  "financialSnapshotGeneratedAt": "2026-10-06T23:12:15.429868Z",
   "baseline": {
     "maxMissingRecords": 4,
     "maxRoeQuarantined": 23,
@@ -13,17 +13,14 @@
   },
   "summary": {
     "companies": 48,
-    "healthy": 39,
-    "warning": 9,
+    "healthy": 48,
+    "warning": 0,
     "critical": 0,
     "missingRecords": 0,
     "roeQuarantined": 0,
-    "withoutProvenance": 9,
-    "oldEdinetModels": 9,
-    "issueCounts": {
-      "missing-provenance": 9,
-      "old-edinet-model": 9
-    }
+    "withoutProvenance": 0,
+    "oldEdinetModels": 0,
+    "issueCounts": {}
   },
   "violations": [],
   "companies": [
@@ -37,22 +34,13 @@
       "source": "EDINET",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 189,
-      "metricCount": 9,
-      "provenanceMetricCount": 0,
-      "roe": 8.28,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "old-edinet-model",
-          "severity": "warning"
-        },
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "metricCount": 16,
+      "provenanceMetricCount": 10,
+      "roe": 9.5,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "1605",
@@ -120,22 +108,13 @@
       "source": "EDINET",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 189,
-      "metricCount": 9,
-      "provenanceMetricCount": 0,
-      "roe": 14.62,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "old-edinet-model",
-          "severity": "warning"
-        },
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "metricCount": 13,
+      "provenanceMetricCount": 7,
+      "roe": 4.53,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "3861",
@@ -167,22 +146,13 @@
       "source": "EDINET",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 189,
-      "metricCount": 9,
-      "provenanceMetricCount": 0,
-      "roe": 7.62,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "old-edinet-model",
-          "severity": "warning"
-        },
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "metricCount": 13,
+      "provenanceMetricCount": 7,
+      "roe": 6.38,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "4502",
@@ -347,22 +317,13 @@
       "source": "EDINET",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 189,
-      "metricCount": 9,
-      "provenanceMetricCount": 0,
-      "roe": 19.85,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "old-edinet-model",
-          "severity": "warning"
-        },
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "metricCount": 8,
+      "provenanceMetricCount": 5,
+      "roe": 12.93,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "7203",
@@ -489,22 +450,13 @@
       "source": "EDINET",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 189,
-      "metricCount": 9,
-      "provenanceMetricCount": 0,
-      "roe": 12.73,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "old-edinet-model",
-          "severity": "warning"
-        },
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "metricCount": 13,
+      "provenanceMetricCount": 7,
+      "roe": 12.15,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "9301",
@@ -611,22 +563,13 @@
       "source": "EDINET",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 189,
-      "metricCount": 6,
-      "provenanceMetricCount": 0,
-      "roe": 5.36,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "old-edinet-model",
-          "severity": "warning"
-        },
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "metricCount": 4,
+      "provenanceMetricCount": 2,
+      "roe": 10.09,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "8750",
@@ -658,22 +601,13 @@
       "source": "EDINET",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 189,
-      "metricCount": 9,
-      "provenanceMetricCount": 0,
-      "roe": 34.11,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "old-edinet-model",
-          "severity": "warning"
-        },
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "metricCount": 4,
+      "provenanceMetricCount": 2,
+      "roe": 10.4,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "8801",
@@ -914,22 +848,13 @@
       "source": "EDINET",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 189,
-      "metricCount": 9,
-      "provenanceMetricCount": 0,
-      "roe": 21.88,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "old-edinet-model",
-          "severity": "warning"
-        },
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "metricCount": 5,
+      "provenanceMetricCount": 3,
+      "roe": 34.28,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "6758",
@@ -960,22 +885,13 @@
       "source": "EDINET",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 189,
-      "metricCount": 9,
-      "provenanceMetricCount": 0,
-      "roe": -10.05,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "old-edinet-model",
-          "severity": "warning"
-        },
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        }
-      ],
-      "status": "warning"
+      "metricCount": 14,
+      "provenanceMetricCount": 10,
+      "roe": -10.9,
+      "dataModelVersion": 9,
+      "provenanceModelVersion": 1,
+      "issues": [],
+      "status": "ok"
     },
     {
       "code": "4661",
