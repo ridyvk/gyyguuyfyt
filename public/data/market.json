@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-10-09T13:05:27.153630Z",
+  "generatedAt": "2026-10-09T13:23:30.928134Z",
   "source": "Yahoo Finance",
   "status": "ready",
   "message": "Yahoo Financeの公開株価データとEDINET・TDnetのEPS/BPSからPER・PBRを自動計算しています。株価はリアルタイム保証ではありません。",
@@ -24165,7 +24165,7 @@
       "date": "2026-10-09",
       "timestamp": "2026-10-09T14:49:34+09:00",
       "close": 885.0,
-      "volume": 2200.0,
+      "volume": 3100.0,
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "quoteInterval": "15m",
