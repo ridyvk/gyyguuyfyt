@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-10-09T14:37:07.257683Z",
+  "generatedAt": "2026-10-12T05:44:40.482072Z",
   "source": "Yahoo Finance",
   "status": "ready",
   "message": "Yahoo Financeの公開株価データとEDINET・TDnetのEPS/BPSからPER・PBRを自動計算しています。株価はリアルタイム保証ではありません。",
@@ -27116,7 +27116,7 @@
       "date": "2026-10-09",
       "timestamp": "2026-10-09T14:02:32+09:00",
       "close": 1508.0,
-      "volume": 1700.0,
+      "volume": 1800.0,
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "quoteInterval": "15m",
@@ -30483,7 +30483,7 @@
       "date": "2026-10-09",
       "timestamp": "2026-10-09T13:01:55+09:00",
       "close": 912.0,
-      "volume": 200.0,
+      "volume": 300.0,
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "quoteInterval": "15m",
@@ -56879,7 +56879,6 @@
     },
     "3323": {
       "eps": 2.43,
-      "bps": 50.59,
       "disclosedDate": "2025-09-30",
       "disclosedAt": "2025-12-25 13:54",
       "financialSource": "EDINET",
@@ -56903,7 +56902,6 @@
     },
     "3691": {
       "eps": -16.73,
-      "bps": 145.7,
       "disclosedDate": "2025-09-30",
       "disclosedAt": "2025-12-24 16:48",
       "financialSource": "EDINET",
@@ -57244,7 +57242,6 @@
     },
     "3993": {
       "eps": 86.47,
-      "bps": 982.56,
       "disclosedDate": "2025-09-30",
       "disclosedAt": "2025-12-22 12:18",
       "financialSource": "EDINET",
@@ -57809,7 +57806,6 @@
     },
     "4051": {
       "eps": 197.49,
-      "bps": 665.3,
       "disclosedDate": "2025-09-30",
       "disclosedAt": "2025-12-12 15:40",
       "financialSource": "EDINET",
@@ -57887,14 +57883,6 @@
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
-    "2157": {
-      "eps": 64.01,
-      "bps": 425.81,
-      "disclosedDate": "2025-08-31",
-      "disclosedAt": "2025-11-28 13:21",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
     "9241": {
       "eps": 33.85,
       "bps": 326.99,
@@ -57905,14 +57893,12 @@
     },
     "9252": {
       "eps": 252.16,
-      "bps": 1192.12,
       "disclosedDate": "2025-08-31",
       "disclosedAt": "2025-11-28 10:39",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
     "2901": {
-      "eps": 25.44,
       "bps": 150.0,
       "disclosedDate": "2025-08-31",
       "disclosedAt": "2025-11-28 09:20",
@@ -57920,7 +57906,6 @@
       "financialDocumentType": "AnnualSecuritiesReport"
     },
     "8783": {
-      "eps": -337.58,
       "bps": 148.0,
       "disclosedDate": "2025-08-31",
       "disclosedAt": "2025-11-27 16:34",
@@ -57932,14 +57917,6 @@
       "bps": 973.71,
       "disclosedDate": "2025-08-31",
       "disclosedAt": "2025-11-27 16:26",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
-    "3046": {
-      "eps": 356.89,
-      "bps": 1359.91,
-      "disclosedDate": "2025-08-31",
-      "disclosedAt": "2025-11-27 16:00",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
@@ -57980,14 +57957,6 @@
       "bps": 151.77,
       "disclosedDate": "2025-08-31",
       "disclosedAt": "2025-11-27 12:04",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
-    "6668": {
-      "eps": 234.4,
-      "bps": 1538.55,
-      "disclosedDate": "2025-08-31",
-      "disclosedAt": "2025-11-26 16:54",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
@@ -58142,14 +58111,6 @@
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
-    "4440": {
-      "eps": 106.49,
-      "bps": 708.46,
-      "disclosedDate": "2025-08-31",
-      "disclosedAt": "2025-11-26 11:06",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
     "9418": {
       "eps": 101.99,
       "bps": 540.94,
@@ -58166,22 +58127,6 @@
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
-    "6289": {
-      "eps": 55.74,
-      "bps": 1523.25,
-      "disclosedDate": "2025-08-31",
-      "disclosedAt": "2025-11-26 10:00",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
-    "4760": {
-      "eps": 158.8,
-      "bps": 1894.31,
-      "disclosedDate": "2025-08-31",
-      "disclosedAt": "2025-11-26 09:29",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
     "7219": {
       "eps": 255.45,
       "bps": 7527.68,
@@ -58195,14 +58140,6 @@
       "bps": 78.79,
       "disclosedDate": "2025-08-31",
       "disclosedAt": "2025-11-25 17:04",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
-    "9270": {
-      "eps": 52.0,
-      "bps": 559.82,
-      "disclosedDate": "2025-08-31",
-      "disclosedAt": "2025-11-25 16:35",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
@@ -58269,14 +58206,6 @@
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
-    "2735": {
-      "eps": 66.0,
-      "bps": 983.37,
-      "disclosedDate": "2025-08-31",
-      "disclosedAt": "2025-11-25 12:55",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
     "9979": {
       "eps": 55.88,
       "bps": 537.83,
@@ -58301,27 +58230,11 @@
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
-    "6264": {
-      "eps": 107.11,
-      "bps": 643.76,
-      "disclosedDate": "2025-08-31",
-      "disclosedAt": "2025-11-25 09:00",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
     "3697": {
       "eps": 33.93,
       "bps": 154.2,
       "disclosedDate": "2025-08-31",
       "disclosedAt": "2025-11-21 16:52",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
-    "3815": {
-      "eps": -50.21,
-      "bps": 67.52,
-      "disclosedDate": "2025-08-31",
-      "disclosedAt": "2025-11-21 16:04",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
@@ -58357,14 +58270,6 @@
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
-    "8127": {
-      "eps": 6.97,
-      "bps": 845.76,
-      "disclosedDate": "2025-08-31",
-      "disclosedAt": "2025-11-20 15:31",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
     "4176": {
       "eps": 13.07,
       "bps": 89.1,
@@ -58397,14 +58302,6 @@
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
-    "3048": {
-      "eps": 102.08,
-      "bps": 983.01,
-      "disclosedDate": "2025-08-31",
-      "disclosedAt": "2025-11-19 13:09",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
     "8254": {
       "eps": 22.26,
       "bps": 10.19,
@@ -58427,6 +58324,14 @@
       "disclosedAt": "2026-09-14T16:50:00+09:00",
       "financialSource": "TDnet",
       "financialDocumentType": "FullYearEarnings"
+    },
+    "8057": {
+      "eps": 253.23,
+      "bps": 1737.66,
+      "disclosedDate": "2026-07-20",
+      "disclosedAt": "2026-10-09 15:40",
+      "financialSource": "EDINET",
+      "financialDocumentType": "AnnualSecuritiesReport"
     },
     "7375": {
       "eps": 76.31,
@@ -72816,6 +72721,78 @@
       "disclosedAt": "2026-01-28 16:03",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
+    },
+    "4751": {
+      "eps": 62.52,
+      "bps": 355.17,
+      "disclosedDate": "2025-09-30",
+      "disclosedAt": "2025-12-24 16:11",
+      "financialSource": "EDINET",
+      "financialDocumentType": "AnnualSecuritiesReport"
+    },
+    "3726": {
+      "eps": -23.64,
+      "bps": 146.86,
+      "disclosedDate": "2025-09-30",
+      "disclosedAt": "2025-12-22 16:55",
+      "financialSource": "EDINET",
+      "financialDocumentType": "AnnualSecuritiesReport"
+    },
+    "3288": {
+      "eps": 875.2,
+      "bps": 4777.42,
+      "disclosedDate": "2025-09-30",
+      "disclosedAt": "2025-12-22 15:31",
+      "financialSource": "EDINET",
+      "financialDocumentType": "AnnualSecuritiesReport"
+    },
+    "9553": {
+      "eps": 7.1,
+      "bps": 127.9,
+      "disclosedDate": "2025-09-30",
+      "disclosedAt": "2025-12-19 15:39",
+      "financialSource": "EDINET",
+      "financialDocumentType": "AnnualSecuritiesReport"
+    },
+    "9470": {
+      "eps": 86.02,
+      "bps": 1241.65,
+      "disclosedDate": "2025-09-30",
+      "disclosedAt": "2025-12-18 16:35",
+      "financialSource": "EDINET",
+      "financialDocumentType": "AnnualSecuritiesReport"
+    },
+    "6965": {
+      "eps": 47.32,
+      "bps": 1076.18,
+      "disclosedDate": "2025-09-30",
+      "disclosedAt": "2025-12-18 09:18",
+      "financialSource": "EDINET",
+      "financialDocumentType": "AnnualSecuritiesReport"
+    },
+    "4165": {
+      "eps": 26.99,
+      "bps": 116.07,
+      "disclosedDate": "2025-09-30",
+      "disclosedAt": "2025-12-17 10:49",
+      "financialSource": "EDINET",
+      "financialDocumentType": "AnnualSecuritiesReport"
+    },
+    "6522": {
+      "eps": -24.42,
+      "bps": 221.69,
+      "disclosedDate": "2025-08-31",
+      "disclosedAt": "2025-11-27 15:30",
+      "financialSource": "EDINET",
+      "financialDocumentType": "AnnualSecuritiesReport"
+    },
+    "244A": {
+      "eps": 183.91,
+      "bps": 1012.84,
+      "disclosedDate": "2025-08-31",
+      "disclosedAt": "2025-11-26 15:00",
+      "financialSource": "EDINET",
+      "financialDocumentType": "AnnualSecuritiesReport"
     }
   },
   "stats": {
@@ -72831,7 +72808,7 @@
       "2026-10-06",
       "2026-10-05"
     ],
-    "fundamentals": 3132,
+    "fundamentals": 3130,
     "quoteFailures": 0,
     "freshQuotesFetched": 3695,
     "fallbackQuotes": 0,
