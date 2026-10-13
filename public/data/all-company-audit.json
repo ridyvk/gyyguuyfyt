@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-13T01:05:11.398108Z",
-  "financialSnapshotGeneratedAt": "2026-10-13T01:05:03.639189Z",
+  "generatedAt": "2026-10-13T23:19:00.880392Z",
+  "financialSnapshotGeneratedAt": "2026-10-13T23:18:52.085433Z",
   "policy": {
     "stalePeriodDays": 800,
     "minimumEdinetDataModelVersion": 9,
@@ -24,111 +24,111 @@
     "recordsAvailable": 3621,
     "coverageRatio": 98.0,
     "ok": 0,
-    "warning": 3613,
-    "review": 8,
+    "warning": 3612,
+    "review": 9,
     "missing": 74,
-    "totalMetricCount": 48966,
-    "sourceBackedMetricCount": 30596,
-    "trustedMetricCount": 28099,
+    "totalMetricCount": 48948,
+    "sourceBackedMetricCount": 30585,
+    "trustedMetricCount": 28088,
     "trustedMetricRatio": 91.84,
     "missingProvenanceRate": 11.57,
-    "oldEdinetModelRate": 11.49,
+    "oldEdinetModelRate": 11.51,
     "metricRangeQuarantined": 0,
-    "sourceQuarantinedMetrics": 14,
-    "containedSourceQuarantinedMetrics": 14,
-    "containedSourceReviewCompanies": 8,
-    "containedSourceCompanyRate": 0.22,
+    "sourceQuarantinedMetrics": 16,
+    "containedSourceQuarantinedMetrics": 16,
+    "containedSourceReviewCompanies": 9,
+    "containedSourceCompanyRate": 0.24,
     "edinetBatchSize": 54,
     "edinetBatchFailures": 0,
     "edinetBatchFailureRate": 0.0,
     "edinetNoMetricDocuments": 54,
     "edinetNoMetricRate": 100.0,
-    "tdnetDocumentsAttempted": 94,
+    "tdnetDocumentsAttempted": 102,
     "tdnetStrictFailures": 0,
     "tdnetStrictFailureRate": 0.0,
-    "tdnetNoMetricDocuments": 15,
-    "tdnetNoMetricRate": 15.96,
+    "tdnetNoMetricDocuments": 17,
+    "tdnetNoMetricRate": 16.67,
     "pipelineFailureCount": 0,
-    "unusableDocumentCount": 69,
+    "unusableDocumentCount": 71,
     "issueCounts": {
       "history-trend-quarantined": 5,
       "missing-financial-record": 74,
       "missing-provenance": 419,
       "old-edinet-model": 406,
       "partial-provenance": 3200,
-      "source-mismatch-quarantined": 8,
-      "source-reconciliation-quarantined": 8
+      "source-mismatch-quarantined": 9,
+      "source-reconciliation-quarantined": 9
     },
     "sourceCounts": {
-      "EDINET": 3534,
-      "TDnet": 87,
+      "EDINET": 3526,
+      "TDnet": 95,
       "unavailable": 74
     }
   },
   "metricCoverage": {
     "operatingMargin": {
-      "available": 3328,
-      "missing": 198,
+      "available": 3327,
+      "missing": 199,
       "notApplicable": 169,
-      "availabilityRatio": 94.38,
+      "availabilityRatio": 94.36,
       "missingReasons": {
         "missing-financial-record": 73,
-        "source-fact-unavailable": 125
+        "source-fact-unavailable": 126
       },
       "kind": "source-extracted"
     },
     "netMargin": {
-      "available": 3356,
-      "missing": 209,
+      "available": 3354,
+      "missing": 211,
       "notApplicable": 130,
-      "availabilityRatio": 94.14,
+      "availabilityRatio": 94.08,
       "missingReasons": {
         "missing-financial-record": 74,
-        "source-fact-unavailable": 135
+        "source-fact-unavailable": 137
       },
       "kind": "source-extracted"
     },
     "roe": {
-      "available": 3578,
-      "missing": 117,
+      "available": 3577,
+      "missing": 118,
       "notApplicable": 0,
-      "availabilityRatio": 96.83,
+      "availabilityRatio": 96.81,
       "missingReasons": {
         "missing-financial-record": 74,
-        "source-fact-unavailable": 43
+        "source-fact-unavailable": 44
       },
       "kind": "source-extracted"
     },
     "roa": {
-      "available": 3565,
-      "missing": 130,
+      "available": 3564,
+      "missing": 131,
       "notApplicable": 0,
-      "availabilityRatio": 96.48,
+      "availabilityRatio": 96.45,
       "missingReasons": {
         "missing-financial-record": 74,
-        "missing-supplemental-input": 56
+        "missing-supplemental-input": 57
       },
       "kind": "supplemental-derived"
     },
     "roic": {
-      "available": 2939,
-      "missing": 587,
+      "available": 2938,
+      "missing": 588,
       "notApplicable": 169,
-      "availabilityRatio": 83.35,
+      "availabilityRatio": 83.32,
       "missingReasons": {
         "missing-financial-record": 73,
-        "missing-supplemental-input": 514
+        "missing-supplemental-input": 515
       },
       "kind": "supplemental-derived"
     },
     "roicWaccSpread": {
-      "available": 2939,
-      "missing": 587,
+      "available": 2938,
+      "missing": 588,
       "notApplicable": 169,
-      "availabilityRatio": 83.35,
+      "availabilityRatio": 83.32,
       "missingReasons": {
         "missing-financial-record": 73,
-        "missing-supplemental-input": 514
+        "missing-supplemental-input": 515
       },
       "kind": "supplemental-derived"
     },
@@ -144,46 +144,46 @@
       "kind": "source-extracted"
     },
     "operatingCfMargin": {
-      "available": 3312,
-      "missing": 214,
+      "available": 3308,
+      "missing": 218,
       "notApplicable": 169,
-      "availabilityRatio": 93.93,
+      "availabilityRatio": 93.82,
       "missingReasons": {
         "missing-financial-record": 73,
-        "source-fact-unavailable": 141
+        "source-fact-unavailable": 145
       },
       "kind": "source-extracted"
     },
     "cashProfitGap": {
-      "available": 3287,
-      "missing": 239,
+      "available": 3282,
+      "missing": 244,
       "notApplicable": 169,
-      "availabilityRatio": 93.22,
+      "availabilityRatio": 93.08,
       "missingReasons": {
         "missing-financial-record": 73,
-        "missing-supplemental-input": 166
+        "missing-supplemental-input": 171
       },
       "kind": "supplemental-derived"
     },
     "netCash": {
-      "available": 2757,
-      "missing": 769,
+      "available": 2756,
+      "missing": 770,
       "notApplicable": 169,
-      "availabilityRatio": 78.19,
+      "availabilityRatio": 78.16,
       "missingReasons": {
         "missing-financial-record": 73,
-        "source-fact-unavailable": 696
+        "source-fact-unavailable": 697
       },
       "kind": "source-extracted"
     },
     "wacc": {
-      "available": 3446,
-      "missing": 80,
+      "available": 3445,
+      "missing": 81,
       "notApplicable": 169,
-      "availabilityRatio": 97.73,
+      "availabilityRatio": 97.7,
       "missingReasons": {
         "missing-financial-record": 73,
-        "missing-supplemental-input": 7
+        "missing-supplemental-input": 8
       },
       "kind": "supplemental-derived"
     }
@@ -288,8 +288,8 @@
     "小売業": {
       "companies": 322,
       "ok": 0,
-      "warning": 317,
-      "review": 1,
+      "warning": 316,
+      "review": 2,
       "missing": 4,
       "coverageRatio": 98.76
     },
@@ -10447,15 +10447,15 @@
       "market": "スタンダード",
       "industry": "小売業",
       "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100X6QO",
-      "periodEnd": "2025-08-31",
-      "periodAgeDays": 408,
+      "source": "TDnet",
+      "documentId": "081220261013549732",
+      "periodEnd": "2026-08-31",
+      "periodAgeDays": 43,
       "metricCount": 16,
       "sourceBackedMetricCount": 10,
       "provenanceMetricCount": 10,
       "trustedMetricCount": 10,
-      "dataModelVersion": 9,
+      "dataModelVersion": null,
       "provenanceModelVersion": 1,
       "issues": [
         {
@@ -20550,15 +20550,15 @@
       "market": "スタンダード",
       "industry": "情報・通信業",
       "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100X6VP",
-      "periodEnd": "2025-08-31",
-      "periodAgeDays": 408,
-      "metricCount": 13,
-      "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 10,
-      "trustedMetricCount": 10,
-      "dataModelVersion": 9,
+      "source": "TDnet",
+      "documentId": "081220261013549727",
+      "periodEnd": "2026-08-31",
+      "periodAgeDays": 43,
+      "metricCount": 8,
+      "sourceBackedMetricCount": 6,
+      "provenanceMetricCount": 6,
+      "trustedMetricCount": 6,
+      "dataModelVersion": null,
       "provenanceModelVersion": 1,
       "issues": [
         {
@@ -27370,15 +27370,15 @@
       "market": "グロース",
       "industry": "情報・通信業",
       "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100X5W6",
-      "periodEnd": "2025-08-31",
-      "periodAgeDays": 408,
-      "metricCount": 15,
-      "sourceBackedMetricCount": 9,
-      "provenanceMetricCount": 9,
-      "trustedMetricCount": 9,
-      "dataModelVersion": 9,
+      "source": "TDnet",
+      "documentId": "081220261013549864",
+      "periodEnd": "2026-08-31",
+      "periodAgeDays": 43,
+      "metricCount": 13,
+      "sourceBackedMetricCount": 8,
+      "provenanceMetricCount": 8,
+      "trustedMetricCount": 8,
+      "dataModelVersion": null,
       "provenanceModelVersion": 1,
       "issues": [
         {
@@ -47554,15 +47554,15 @@
       "market": "スタンダード",
       "industry": "機械",
       "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100X5M8",
-      "periodEnd": "2025-08-31",
-      "periodAgeDays": 408,
-      "metricCount": 16,
-      "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 10,
-      "trustedMetricCount": 10,
-      "dataModelVersion": 9,
+      "source": "TDnet",
+      "documentId": "081220261013549759",
+      "periodEnd": "2026-08-31",
+      "periodAgeDays": 43,
+      "metricCount": 14,
+      "sourceBackedMetricCount": 8,
+      "provenanceMetricCount": 8,
+      "trustedMetricCount": 8,
+      "dataModelVersion": null,
       "provenanceModelVersion": 1,
       "issues": [
         {
@@ -59525,15 +59525,15 @@
       "market": "プライム",
       "industry": "サービス業",
       "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100X61U",
-      "periodEnd": "2025-08-31",
-      "periodAgeDays": 408,
-      "metricCount": 16,
-      "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 10,
-      "trustedMetricCount": 10,
-      "dataModelVersion": 9,
+      "source": "TDnet",
+      "documentId": "081220261012549121",
+      "periodEnd": "2026-08-31",
+      "periodAgeDays": 43,
+      "metricCount": 14,
+      "sourceBackedMetricCount": 9,
+      "provenanceMetricCount": 9,
+      "trustedMetricCount": 9,
+      "dataModelVersion": null,
       "provenanceModelVersion": 1,
       "issues": [
         {
@@ -61063,15 +61063,15 @@
       "market": "スタンダード",
       "industry": "輸送用機器",
       "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100X6JZ",
-      "periodEnd": "2025-08-31",
-      "periodAgeDays": 408,
+      "source": "TDnet",
+      "documentId": "081220261008548219",
+      "periodEnd": "2026-08-31",
+      "periodAgeDays": 43,
       "metricCount": 16,
       "sourceBackedMetricCount": 10,
       "provenanceMetricCount": 10,
       "trustedMetricCount": 10,
-      "dataModelVersion": 9,
+      "dataModelVersion": null,
       "provenanceModelVersion": 1,
       "issues": [
         {
@@ -65517,15 +65517,15 @@
       "market": "プライム",
       "industry": "卸売業",
       "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100X5L9",
-      "periodEnd": "2025-08-31",
-      "periodAgeDays": 408,
-      "metricCount": 14,
-      "sourceBackedMetricCount": 8,
-      "provenanceMetricCount": 8,
-      "trustedMetricCount": 8,
-      "dataModelVersion": 9,
+      "source": "TDnet",
+      "documentId": "081220261013549189",
+      "periodEnd": "2026-08-31",
+      "periodAgeDays": 43,
+      "metricCount": 12,
+      "sourceBackedMetricCount": 7,
+      "provenanceMetricCount": 7,
+      "trustedMetricCount": 7,
+      "dataModelVersion": null,
       "provenanceModelVersion": 1,
       "issues": [
         {
@@ -76841,15 +76841,15 @@
       "market": "スタンダード",
       "industry": "不動産業",
       "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100X6R9",
-      "periodEnd": "2025-08-31",
-      "periodAgeDays": 408,
+      "source": "TDnet",
+      "documentId": "081220261006546514",
+      "periodEnd": "2026-08-31",
+      "periodAgeDays": 43,
       "metricCount": 14,
       "sourceBackedMetricCount": 8,
       "provenanceMetricCount": 8,
       "trustedMetricCount": 8,
-      "dataModelVersion": 9,
+      "dataModelVersion": null,
       "provenanceModelVersion": 1,
       "issues": [
         {
@@ -85429,21 +85429,29 @@
       "companyName": "アークランズ",
       "market": "プライム",
       "industry": "小売業",
-      "status": "warning",
+      "status": "review",
       "source": "EDINET",
       "documentId": "S100Y5KN",
       "periodEnd": "2026-02-28",
       "periodAgeDays": 227,
-      "metricCount": 16,
-      "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 10,
-      "trustedMetricCount": 10,
+      "metricCount": 11,
+      "sourceBackedMetricCount": 8,
+      "provenanceMetricCount": 8,
+      "trustedMetricCount": 8,
       "dataModelVersion": 9,
       "provenanceModelVersion": 1,
       "issues": [
         {
           "code": "partial-provenance",
           "severity": "warning"
+        },
+        {
+          "code": "source-reconciliation-quarantined",
+          "severity": "review"
+        },
+        {
+          "code": "source-mismatch-quarantined",
+          "severity": "review"
         }
       ]
     },
