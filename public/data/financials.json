@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-10-23T21:50:56.865054Z",
+  "generatedAt": "2026-10-24T21:22:32.198725Z",
   "source": "EDINET+TDnet",
   "status": "partial",
   "message": "EDINET年次ベースライン＋TDnet通期決算短信オーバーレイで更新済み。開示元が一致しない16指標と関連する推定指標は確認待ちです。EDINET有価証券報告書ベースの年次データを基礎DBにし、TDnetの通期決算短信で直近分のみ上書きしています。四半期・中間短信は統合していません。対象3,695社のうち財務KPI取得済みは3,622社です。",
@@ -284530,7 +284530,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-23T21:50:46.893201Z",
+        "checkedAt": "2026-10-24T21:22:18.104261Z",
         "periodEnd": "2026-02-28",
         "status": "quarantined",
         "sources": {
@@ -284731,7 +284731,7 @@
       },
       "quarantine": {
         "sourceReconciliation": {
-          "checkedAt": "2026-10-23T21:50:46.893201Z",
+          "checkedAt": "2026-10-24T21:22:18.104261Z",
           "periodEnd": "2026-02-28",
           "metrics": {
             "netMargin": {
@@ -478013,7 +478013,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-23T21:50:51.426500Z",
+        "checkedAt": "2026-10-24T21:22:26.646362Z",
         "periodEnd": "2025-12-31",
         "status": "matched",
         "sources": {
@@ -835275,7 +835275,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-23T21:50:26.809815Z",
+        "checkedAt": "2026-10-24T21:21:54.093714Z",
         "periodEnd": "2026-07-31",
         "status": "matched",
         "sources": {
@@ -835302,6 +835302,14 @@
                 "matched": true
               }
             },
+            "selectedSource": "EDINET"
+          },
+          "ebitda": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
+          "epsGrowth": {
+            "status": "edinet-only",
             "selectedSource": "EDINET"
           },
           "equityRatio": {
@@ -835358,6 +835366,10 @@
             "status": "edinet-only",
             "selectedSource": "EDINET"
           },
+          "operatingIncomeGrowth": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
           "operatingMargin": {
             "status": "matched",
             "fields": {
@@ -835404,7 +835416,19 @@
             },
             "selectedSource": "EDINET"
           },
+          "roa": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
           "roe": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
+          "roic": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
+          "wacc": {
             "status": "edinet-only",
             "selectedSource": "EDINET"
           }
@@ -839997,7 +840021,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-23T21:50:54.434638Z",
+        "checkedAt": "2026-10-24T21:22:29.789706Z",
         "periodEnd": "2026-07-31",
         "status": "quarantined",
         "sources": {
@@ -840024,6 +840048,14 @@
                 "matched": true
               }
             },
+            "selectedSource": "EDINET"
+          },
+          "ebitda": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
+          "epsGrowth": {
+            "status": "edinet-only",
             "selectedSource": "EDINET"
           },
           "equityRatio": {
@@ -840112,6 +840144,10 @@
             },
             "selectedSource": "EDINET"
           },
+          "operatingIncomeGrowth": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
           "operatingMargin": {
             "status": "matched",
             "fields": {
@@ -840162,16 +840198,16 @@
             "status": "matched",
             "fields": {
               "value": {
-                "edinet": 16.09,
+                "edinet": 16.46,
                 "tdnet": 16.46,
-                "difference": 0.37,
+                "difference": 0.0,
                 "allowedDifference": 0.823,
                 "matched": true
               },
               "previousValue": {
-                "edinet": 3.19,
+                "edinet": 3.21,
                 "tdnet": 3.21,
-                "difference": 0.02,
+                "difference": 0.0,
                 "allowedDifference": 0.75,
                 "matched": true
               }
@@ -840185,7 +840221,7 @@
       },
       "quarantine": {
         "sourceReconciliation": {
-          "checkedAt": "2026-10-23T21:50:54.434638Z",
+          "checkedAt": "2026-10-24T21:22:29.789706Z",
           "periodEnd": "2026-07-31",
           "metrics": {
             "equityRatio": {
@@ -876805,7 +876841,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-23T21:50:53.872773Z",
+        "checkedAt": "2026-10-24T21:22:29.222872Z",
         "periodEnd": "2026-06-30",
         "status": "quarantined",
         "sources": {
@@ -876929,7 +876965,7 @@
       },
       "quarantine": {
         "sourceReconciliation": {
-          "checkedAt": "2026-10-23T21:50:53.872773Z",
+          "checkedAt": "2026-10-24T21:22:29.222872Z",
           "periodEnd": "2026-06-30",
           "metrics": {
             "equityRatio": {
@@ -878611,7 +878647,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-23T21:50:52.039619Z",
+        "checkedAt": "2026-10-24T21:22:27.205053Z",
         "periodEnd": "2026-06-30",
         "status": "matched",
         "sources": {
@@ -908749,7 +908785,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-23T21:50:54.144140Z",
+        "checkedAt": "2026-10-24T21:22:29.515471Z",
         "periodEnd": "2026-06-30",
         "status": "quarantined",
         "sources": {
@@ -908917,7 +908953,7 @@
       },
       "quarantine": {
         "sourceReconciliation": {
-          "checkedAt": "2026-10-23T21:50:54.144140Z",
+          "checkedAt": "2026-10-24T21:22:29.515471Z",
           "periodEnd": "2026-06-30",
           "metrics": {
             "equityRatio": {
@@ -2064647,9 +2064683,9 @@
     "tdnetDocumentsUpdated": 93,
     "tdnetOnly": true,
     "nonTdnetRecordsDropped": 2946,
-    "tdnetRowsScanned": 797,
-    "tdnetEarningsRows": 565,
-    "tdnetQuarterlyRowsSkipped": 422,
+    "tdnetRowsScanned": 786,
+    "tdnetEarningsRows": 564,
+    "tdnetQuarterlyRowsSkipped": 421,
     "tdnetFullYearFilings": 141,
     "tdnetStrictFailures": 0,
     "nonStrictExistingRecordsDropped": 278,
@@ -2064658,18 +2064694,18 @@
     "edinetCompanies": 3490,
     "tdnetCompanies": 132,
     "edinetDocumentsScanned": 102506,
-    "edinetPendingBeforeBatch": 61,
-    "edinetBatchSize": 61,
-    "edinetDocumentsUpdated": 7,
+    "edinetPendingBeforeBatch": 54,
+    "edinetBatchSize": 54,
+    "edinetDocumentsUpdated": 0,
     "edinetBatchFailures": 0,
-    "edinetBatchGeneratedAt": "2026-10-23T21:50:01.442951Z",
+    "edinetBatchGeneratedAt": "2026-10-24T21:21:29.348544Z",
     "nonAnnualExistingRecordsDropped": 0,
     "annualOnly": true,
     "nonAnnualRecordsDropped": 0,
     "edinetEstimatedRemaining": 0,
     "targetCompanies": 3695,
-    "edinetDocumentsProcessedThisBatch": 61,
-    "edinetDocumentsAlreadyProcessed": 3613,
+    "edinetDocumentsProcessedThisBatch": 54,
+    "edinetDocumentsAlreadyProcessed": 3620,
     "edinetTdnetBaselineMarked": 0,
     "edinetNoMetricDocuments": 54,
     "edinetProcessedDocumentIds": [
@@ -2068408,16 +2068444,16 @@
     "sourceQuarantinedMetrics": 16,
     "dataUpdatedAt": "2026-10-23 16:46",
     "latestPeriodEnd": "2026-08-31",
-    "lastCheckedAt": "2026-10-23T21:50:56.865054Z",
+    "lastCheckedAt": "2026-10-24T21:22:32.198725Z",
     "supplementalMetricsModelVersion": 1,
-    "supplementalMetricsAdded": 391,
+    "supplementalMetricsAdded": 358,
     "supplementalMetricsAddedByKey": {
-      "ebitda": 43,
-      "epsGrowth": 54,
-      "operatingIncomeGrowth": 52,
-      "roa": 77,
-      "roic": 57,
-      "wacc": 108
+      "ebitda": 37,
+      "epsGrowth": 48,
+      "operatingIncomeGrowth": 46,
+      "roa": 72,
+      "roic": 53,
+      "wacc": 102
     },
     "invalidExistingRecordsDropped": 0,
     "edinetDocumentsUnchanged": 0,
