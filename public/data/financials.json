@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-10-24T21:22:32.198725Z",
+  "generatedAt": "2026-10-25T21:21:45.688503Z",
   "source": "EDINET+TDnet",
   "status": "partial",
   "message": "EDINET年次ベースライン＋TDnet通期決算短信オーバーレイで更新済み。開示元が一致しない16指標と関連する推定指標は確認待ちです。EDINET有価証券報告書ベースの年次データを基礎DBにし、TDnetの通期決算短信で直近分のみ上書きしています。四半期・中間短信は統合していません。対象3,695社のうち財務KPI取得済みは3,622社です。",
@@ -284530,7 +284530,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-24T21:22:18.104261Z",
+        "checkedAt": "2026-10-25T21:21:32.171278Z",
         "periodEnd": "2026-02-28",
         "status": "quarantined",
         "sources": {
@@ -284731,7 +284731,7 @@
       },
       "quarantine": {
         "sourceReconciliation": {
-          "checkedAt": "2026-10-24T21:22:18.104261Z",
+          "checkedAt": "2026-10-25T21:21:32.171278Z",
           "periodEnd": "2026-02-28",
           "metrics": {
             "netMargin": {
@@ -478013,7 +478013,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-24T21:22:26.646362Z",
+        "checkedAt": "2026-10-25T21:21:40.229581Z",
         "periodEnd": "2025-12-31",
         "status": "matched",
         "sources": {
@@ -835275,7 +835275,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-24T21:21:54.093714Z",
+        "checkedAt": "2026-10-25T21:21:09.782253Z",
         "periodEnd": "2026-07-31",
         "status": "matched",
         "sources": {
@@ -840021,7 +840021,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-24T21:22:29.789706Z",
+        "checkedAt": "2026-10-25T21:21:43.275162Z",
         "periodEnd": "2026-07-31",
         "status": "quarantined",
         "sources": {
@@ -840221,7 +840221,7 @@
       },
       "quarantine": {
         "sourceReconciliation": {
-          "checkedAt": "2026-10-24T21:22:29.789706Z",
+          "checkedAt": "2026-10-25T21:21:43.275162Z",
           "periodEnd": "2026-07-31",
           "metrics": {
             "equityRatio": {
@@ -876841,7 +876841,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-24T21:22:29.222872Z",
+        "checkedAt": "2026-10-25T21:21:42.728356Z",
         "periodEnd": "2026-06-30",
         "status": "quarantined",
         "sources": {
@@ -876965,7 +876965,7 @@
       },
       "quarantine": {
         "sourceReconciliation": {
-          "checkedAt": "2026-10-24T21:22:29.222872Z",
+          "checkedAt": "2026-10-25T21:21:42.728356Z",
           "periodEnd": "2026-06-30",
           "metrics": {
             "equityRatio": {
@@ -878647,7 +878647,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-24T21:22:27.205053Z",
+        "checkedAt": "2026-10-25T21:21:40.783769Z",
         "periodEnd": "2026-06-30",
         "status": "matched",
         "sources": {
@@ -908785,7 +908785,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-24T21:22:29.515471Z",
+        "checkedAt": "2026-10-25T21:21:42.971259Z",
         "periodEnd": "2026-06-30",
         "status": "quarantined",
         "sources": {
@@ -908953,7 +908953,7 @@
       },
       "quarantine": {
         "sourceReconciliation": {
-          "checkedAt": "2026-10-24T21:22:29.515471Z",
+          "checkedAt": "2026-10-25T21:21:42.971259Z",
           "periodEnd": "2026-06-30",
           "metrics": {
             "equityRatio": {
@@ -2064683,22 +2064683,22 @@
     "tdnetDocumentsUpdated": 93,
     "tdnetOnly": true,
     "nonTdnetRecordsDropped": 2946,
-    "tdnetRowsScanned": 786,
-    "tdnetEarningsRows": 564,
+    "tdnetRowsScanned": 775,
+    "tdnetEarningsRows": 563,
     "tdnetQuarterlyRowsSkipped": 421,
-    "tdnetFullYearFilings": 141,
+    "tdnetFullYearFilings": 140,
     "tdnetStrictFailures": 0,
     "nonStrictExistingRecordsDropped": 278,
     "acceptedDocumentType": "FullYearEarnings",
     "nonStrictRecordsDropped": 0,
     "edinetCompanies": 3490,
     "tdnetCompanies": 132,
-    "edinetDocumentsScanned": 102506,
+    "edinetDocumentsScanned": 102309,
     "edinetPendingBeforeBatch": 54,
     "edinetBatchSize": 54,
     "edinetDocumentsUpdated": 0,
     "edinetBatchFailures": 0,
-    "edinetBatchGeneratedAt": "2026-10-24T21:21:29.348544Z",
+    "edinetBatchGeneratedAt": "2026-10-25T21:20:48.127979Z",
     "nonAnnualExistingRecordsDropped": 0,
     "annualOnly": true,
     "nonAnnualRecordsDropped": 0,
@@ -2068444,7 +2068444,7 @@
     "sourceQuarantinedMetrics": 16,
     "dataUpdatedAt": "2026-10-23 16:46",
     "latestPeriodEnd": "2026-08-31",
-    "lastCheckedAt": "2026-10-24T21:22:32.198725Z",
+    "lastCheckedAt": "2026-10-25T21:21:45.688503Z",
     "supplementalMetricsModelVersion": 1,
     "supplementalMetricsAdded": 358,
     "supplementalMetricsAddedByKey": {
