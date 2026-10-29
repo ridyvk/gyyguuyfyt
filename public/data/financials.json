@@ -1,9 +1,9 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-10-28T22:58:02.056297Z",
+  "generatedAt": "2026-10-29T23:06:25.536546Z",
   "source": "EDINET+TDnet",
   "status": "partial",
-  "message": "EDINET年次ベースライン＋TDnet通期決算短信オーバーレイで更新済み。開示元が一致しない17指標と関連する推定指標は確認待ちです。EDINET有価証券報告書ベースの年次データを基礎DBにし、TDnetの通期決算短信で直近分のみ上書きしています。四半期・中間短信は統合していません。対象3,695社のうち財務KPI取得済みは3,622社です。",
+  "message": "EDINET年次ベースライン＋TDnet通期決算短信オーバーレイで更新済み。開示元が一致しない18指標と関連する推定指標は確認待ちです。EDINET有価証券報告書ベースの年次データを基礎DBにし、TDnetの通期決算短信で直近分のみ上書きしています。四半期・中間短信は統合していません。対象3,695社のうち財務KPI取得済みは3,622社です。",
   "records": {
     "4021": {
       "code": "4021",
@@ -98112,73 +98112,6 @@
             4.96
           ]
         },
-        "roe": {
-          "value": 7.67,
-          "previousValue": 8.47,
-          "provenance": {
-            "formula": "disclosedRoe * 100; fallback profit / average equity * 100",
-            "sourceFacts": [
-              {
-                "role": "disclosedRoe.current",
-                "tag": "RateOfReturnOnEquitySummaryOfBusinessResults",
-                "contextRef": "CurrentYearDuration",
-                "periodEnd": "2026-03-31",
-                "periodType": "duration",
-                "unitRef": "pure",
-                "consolidation": "consolidated",
-                "periodStart": "2025-04-01"
-              },
-              {
-                "role": "disclosedRoe.previous",
-                "tag": "RateOfReturnOnEquitySummaryOfBusinessResults",
-                "contextRef": "Prior1YearDuration",
-                "periodEnd": "2025-03-31",
-                "periodType": "duration",
-                "unitRef": "pure",
-                "consolidation": "consolidated",
-                "periodStart": "2024-04-01"
-              },
-              {
-                "role": "profit.current",
-                "tag": "ProfitLossAttributableToOwnersOfParent",
-                "contextRef": "CurrentYearDuration",
-                "periodEnd": "2026-03-31",
-                "periodType": "duration",
-                "unitRef": "JPY",
-                "consolidation": "consolidated",
-                "periodStart": "2025-04-01"
-              },
-              {
-                "role": "profit.previous",
-                "tag": "ProfitLossAttributableToOwnersOfParent",
-                "contextRef": "Prior1YearDuration",
-                "periodEnd": "2025-03-31",
-                "periodType": "duration",
-                "unitRef": "JPY",
-                "consolidation": "consolidated",
-                "periodStart": "2024-04-01"
-              },
-              {
-                "role": "equity.current",
-                "tag": "ShareholdersEquity",
-                "contextRef": "CurrentYearInstant",
-                "periodEnd": "2026-03-31",
-                "periodType": "instant",
-                "unitRef": "JPY",
-                "consolidation": "consolidated"
-              },
-              {
-                "role": "equity.previous",
-                "tag": "ShareholdersEquity",
-                "contextRef": "Prior1YearInstant",
-                "periodEnd": "2025-03-31",
-                "periodType": "instant",
-                "unitRef": "JPY",
-                "consolidation": "consolidated"
-              }
-            ]
-          }
-        },
         "equityRatio": {
           "value": 47.69,
           "previousValue": 49.83,
@@ -98507,16 +98440,6 @@
             ]
           }
         },
-        "roa": {
-          "value": 3.6578,
-          "confidence": "B",
-          "confidenceReason": "ROEと自己資本比率から ROA = ROE × 自己資本比率 で補完しています。",
-          "previousValue": 4.2206,
-          "trend": [
-            4.2206,
-            3.6578
-          ]
-        },
         "operatingIncomeGrowth": {
           "value": 7.6934,
           "confidence": "B",
@@ -98526,16 +98449,6 @@
           "value": -3.0136,
           "confidence": "C",
           "confidenceReason": "株式数の変化を反映できないため、純利益成長率をEPS成長率の近似として表示しています。"
-        },
-        "roic": {
-          "value": 7.6975,
-          "confidence": "C",
-          "confidenceReason": "NOPATと投下資本を直接取得できない会社では、ROE・利益率・D/Eから簡易推定しています。"
-        },
-        "wacc": {
-          "value": 6.3464,
-          "confidence": "C",
-          "confidenceReason": "市場ベータや実効税率を直接取得できないため、財務レバレッジから簡易推定したWACCです。"
         },
         "ebitda": {
           "value": 66.306,
@@ -98554,7 +98467,6 @@
           "revenue": 611,
           "operatingMargin": 7.53,
           "netMargin": 5.4,
-          "roe": 8.47,
           "operatingCfMargin": 7.92
         },
         {
@@ -98562,7 +98474,6 @@
           "revenue": 645,
           "operatingMargin": 7.68,
           "netMargin": 4.96,
-          "roe": 7.67,
           "operatingCfMargin": 5.69
         }
       ],
@@ -98586,7 +98497,380 @@
         "provenanceModelVersion": 1,
         "totalCompanyContextsOnly": true,
         "goldenAnchorApplied": true,
-        "supplementalMetricsModelVersion": 1
+        "supplementalMetricsModelVersion": 1,
+        "reconciliationModelVersion": 1,
+        "reconciliationStatus": "quarantined",
+        "reconciliationDocumentId": "081220261028558347",
+        "reconciliationSourceUrl": "https://www.release.tdnet.info/inbs/140120261028558347.pdf"
+      },
+      "reconciliation": {
+        "modelVersion": 1,
+        "checkedAt": "2026-10-29T23:05:41.843019Z",
+        "periodEnd": "2026-03-31",
+        "status": "quarantined",
+        "sources": {
+          "EDINET": {
+            "documentId": "S100YCXZ",
+            "filedAt": "2026-06-17 13:43",
+            "sourceUrl": "https://disclosure2dl.edinet-fsa.go.jp/searchdocument/pdf/S100YCXZ.pdf"
+          },
+          "TDnet": {
+            "documentId": "081220261028558347",
+            "filedAt": "2026-10-29T11:00:00+09:00",
+            "sourceUrl": "https://www.release.tdnet.info/inbs/140120261028558347.pdf"
+          }
+        },
+        "metrics": {
+          "debtRatio": {
+            "status": "matched",
+            "fields": {
+              "value": {
+                "edinet": 0.08,
+                "tdnet": 0.08,
+                "difference": 0.0,
+                "allowedDifference": 0.05,
+                "matched": true
+              }
+            },
+            "selectedSource": "EDINET"
+          },
+          "ebitda": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
+          "epsGrowth": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
+          "equityRatio": {
+            "status": "matched",
+            "fields": {
+              "value": {
+                "edinet": 47.69,
+                "tdnet": 47.91,
+                "difference": 0.22,
+                "allowedDifference": 0.9582,
+                "matched": true
+              },
+              "previousValue": {
+                "edinet": 49.83,
+                "tdnet": 50.07,
+                "difference": 0.24,
+                "allowedDifference": 1.0014,
+                "matched": true
+              }
+            },
+            "selectedSource": "EDINET"
+          },
+          "inventoryGrowth": {
+            "status": "matched",
+            "fields": {
+              "value": {
+                "edinet": 5.63,
+                "tdnet": 5.63,
+                "difference": 0.0,
+                "allowedDifference": 2.0,
+                "matched": true
+              }
+            },
+            "selectedSource": "EDINET"
+          },
+          "netCash": {
+            "status": "matched",
+            "fields": {
+              "value": {
+                "edinet": 87.02,
+                "tdnet": 87.02,
+                "difference": 0.0,
+                "allowedDifference": 2.0,
+                "matched": true
+              }
+            },
+            "selectedSource": "EDINET"
+          },
+          "netMargin": {
+            "status": "matched",
+            "fields": {
+              "value": {
+                "edinet": 4.96,
+                "tdnet": 4.94,
+                "difference": 0.02,
+                "allowedDifference": 0.5,
+                "matched": true
+              },
+              "previousValue": {
+                "edinet": 5.4,
+                "tdnet": 5.41,
+                "difference": 0.01,
+                "allowedDifference": 0.5,
+                "matched": true
+              }
+            },
+            "selectedSource": "EDINET"
+          },
+          "operatingCfMargin": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
+          "operatingIncomeGrowth": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
+          "operatingMargin": {
+            "status": "matched",
+            "fields": {
+              "value": {
+                "edinet": 7.68,
+                "tdnet": 7.65,
+                "difference": 0.03,
+                "allowedDifference": 0.5,
+                "matched": true
+              },
+              "previousValue": {
+                "edinet": 7.53,
+                "tdnet": 7.38,
+                "difference": 0.15,
+                "allowedDifference": 0.5,
+                "matched": true
+              }
+            },
+            "selectedSource": "EDINET"
+          },
+          "receivablesGrowth": {
+            "status": "matched",
+            "fields": {
+              "value": {
+                "edinet": 11.43,
+                "tdnet": 11.43,
+                "difference": 0.0,
+                "allowedDifference": 2.0,
+                "matched": true
+              }
+            },
+            "selectedSource": "EDINET"
+          },
+          "revenueGrowth": {
+            "status": "matched",
+            "fields": {
+              "value": {
+                "edinet": 5.59,
+                "tdnet": 5.58,
+                "difference": 0.01,
+                "allowedDifference": 1.0,
+                "matched": true
+              }
+            },
+            "selectedSource": "EDINET"
+          },
+          "roa": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
+          "roe": {
+            "status": "quarantined",
+            "fields": {
+              "value": {
+                "edinet": 7.67,
+                "tdnet": 9.66,
+                "difference": 1.99,
+                "allowedDifference": 0.75,
+                "matched": false
+              },
+              "previousValue": {
+                "edinet": 8.47,
+                "tdnet": 10.3,
+                "difference": 1.83,
+                "allowedDifference": 0.75,
+                "matched": false
+              }
+            },
+            "selectedSource": null
+          },
+          "roic": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
+          "wacc": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          }
+        },
+        "quarantinedMetrics": [
+          "roe"
+        ]
+      },
+      "quarantine": {
+        "sourceReconciliation": {
+          "checkedAt": "2026-10-29T23:05:41.843019Z",
+          "periodEnd": "2026-03-31",
+          "metrics": {
+            "roe": {
+              "reason": "edinet-tdnet-value-mismatch",
+              "sources": {
+                "EDINET": {
+                  "documentId": "S100YCXZ",
+                  "filedAt": "2026-06-17 13:43",
+                  "sourceUrl": "https://disclosure2dl.edinet-fsa.go.jp/searchdocument/pdf/S100YCXZ.pdf"
+                },
+                "TDnet": {
+                  "documentId": "081220261028558347",
+                  "filedAt": "2026-10-29T11:00:00+09:00",
+                  "sourceUrl": "https://www.release.tdnet.info/inbs/140120261028558347.pdf"
+                }
+              },
+              "tolerance": {
+                "absolute": 0.75,
+                "relative": 0.05
+              },
+              "comparison": {
+                "value": {
+                  "edinet": 7.67,
+                  "tdnet": 9.66,
+                  "difference": 1.99,
+                  "allowedDifference": 0.75,
+                  "matched": false
+                },
+                "previousValue": {
+                  "edinet": 8.47,
+                  "tdnet": 10.3,
+                  "difference": 1.83,
+                  "allowedDifference": 0.75,
+                  "matched": false
+                }
+              },
+              "edinet": {
+                "value": 7.67,
+                "previousValue": 8.47,
+                "provenance": {
+                  "formula": "disclosedRoe * 100; fallback profit / average equity * 100",
+                  "sourceFacts": [
+                    {
+                      "role": "disclosedRoe.current",
+                      "tag": "RateOfReturnOnEquitySummaryOfBusinessResults",
+                      "contextRef": "CurrentYearDuration",
+                      "periodEnd": "2026-03-31",
+                      "periodType": "duration",
+                      "unitRef": "pure",
+                      "consolidation": "consolidated",
+                      "periodStart": "2025-04-01"
+                    },
+                    {
+                      "role": "disclosedRoe.previous",
+                      "tag": "RateOfReturnOnEquitySummaryOfBusinessResults",
+                      "contextRef": "Prior1YearDuration",
+                      "periodEnd": "2025-03-31",
+                      "periodType": "duration",
+                      "unitRef": "pure",
+                      "consolidation": "consolidated",
+                      "periodStart": "2024-04-01"
+                    },
+                    {
+                      "role": "profit.current",
+                      "tag": "ProfitLossAttributableToOwnersOfParent",
+                      "contextRef": "CurrentYearDuration",
+                      "periodEnd": "2026-03-31",
+                      "periodType": "duration",
+                      "unitRef": "JPY",
+                      "consolidation": "consolidated",
+                      "periodStart": "2025-04-01"
+                    },
+                    {
+                      "role": "profit.previous",
+                      "tag": "ProfitLossAttributableToOwnersOfParent",
+                      "contextRef": "Prior1YearDuration",
+                      "periodEnd": "2025-03-31",
+                      "periodType": "duration",
+                      "unitRef": "JPY",
+                      "consolidation": "consolidated",
+                      "periodStart": "2024-04-01"
+                    },
+                    {
+                      "role": "equity.current",
+                      "tag": "ShareholdersEquity",
+                      "contextRef": "CurrentYearInstant",
+                      "periodEnd": "2026-03-31",
+                      "periodType": "instant",
+                      "unitRef": "JPY",
+                      "consolidation": "consolidated"
+                    },
+                    {
+                      "role": "equity.previous",
+                      "tag": "ShareholdersEquity",
+                      "contextRef": "Prior1YearInstant",
+                      "periodEnd": "2025-03-31",
+                      "periodType": "instant",
+                      "unitRef": "JPY",
+                      "consolidation": "consolidated"
+                    }
+                  ]
+                }
+              },
+              "tdnet": {
+                "value": 9.66,
+                "previousValue": 10.3,
+                "provenance": {
+                  "formula": "disclosedRoe; fallback profit / average equity * 100",
+                  "sourceFacts": [
+                    {
+                      "concept": "ProfitLossAttributableToOwnersOfParent",
+                      "tag": "jppfs_cor:ProfitLossAttributableToOwnersOfParent",
+                      "contextRef": "CurrentYearDuration",
+                      "periodStart": "2025-04-01",
+                      "periodEnd": "2026-03-31",
+                      "periodType": "duration",
+                      "unitRef": "JPY",
+                      "consolidation": "consolidated",
+                      "dimensions": [],
+                      "rawValue": 3196000000.0,
+                      "scale": "6",
+                      "role": "profit.current"
+                    },
+                    {
+                      "concept": "ProfitLossAttributableToOwnersOfParent",
+                      "tag": "jppfs_cor:ProfitLossAttributableToOwnersOfParent",
+                      "contextRef": "Prior1YearDuration",
+                      "periodStart": "2024-04-01",
+                      "periodEnd": "2025-03-31",
+                      "periodType": "duration",
+                      "unitRef": "JPY",
+                      "consolidation": "consolidated",
+                      "dimensions": [],
+                      "rawValue": 3310000000.0,
+                      "scale": "6",
+                      "role": "profit.previous"
+                    },
+                    {
+                      "concept": "ShareholdersEquity",
+                      "tag": "jppfs_cor:ShareholdersEquity",
+                      "contextRef": "CurrentYearInstant",
+                      "periodEnd": "2026-03-31",
+                      "periodType": "instant",
+                      "unitRef": "JPY",
+                      "consolidation": "consolidated",
+                      "dimensions": [],
+                      "rawValue": 34002000000.0,
+                      "scale": "6",
+                      "role": "equity.current"
+                    },
+                    {
+                      "concept": "ShareholdersEquity",
+                      "tag": "jppfs_cor:ShareholdersEquity",
+                      "contextRef": "Prior1YearInstant",
+                      "periodEnd": "2025-03-31",
+                      "periodType": "instant",
+                      "unitRef": "JPY",
+                      "consolidation": "consolidated",
+                      "dimensions": [],
+                      "rawValue": 32150000000.0,
+                      "scale": "6",
+                      "role": "equity.previous"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
       }
     },
     "9090": {
@@ -284530,7 +284814,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-28T22:57:50.543416Z",
+        "checkedAt": "2026-10-29T23:06:11.985462Z",
         "periodEnd": "2026-02-28",
         "status": "quarantined",
         "sources": {
@@ -284731,7 +285015,7 @@
       },
       "quarantine": {
         "sourceReconciliation": {
-          "checkedAt": "2026-10-28T22:57:50.543416Z",
+          "checkedAt": "2026-10-29T23:06:11.985462Z",
           "periodEnd": "2026-02-28",
           "metrics": {
             "netMargin": {
@@ -478013,7 +478297,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-28T22:57:58.383990Z",
+        "checkedAt": "2026-10-29T23:06:20.854864Z",
         "periodEnd": "2025-12-31",
         "status": "matched",
         "sources": {
@@ -735802,22 +736086,40 @@
     },
     "7148": {
       "code": "7148",
-      "companyName": "株式会社ＦＰＧ",
-      "documentId": "S100XBXT",
-      "filedAt": "2025-12-19 17:01",
-      "periodEnd": "2025-09-30",
-      "source": "EDINET",
-      "sourceUrl": "https://disclosure2dl.edinet-fsa.go.jp/searchdocument/pdf/S100XBXT.pdf",
+      "companyName": "ＦＰＧ",
+      "documentId": "081220261028558109",
+      "documentType": "FullYearEarnings",
+      "filedAt": "2026-10-29T16:30:00+09:00",
+      "periodEnd": "2026-09-30",
+      "periodType": "annual",
+      "source": "TDnet",
+      "sourceDetail": "TDnet決算短信XBRL・通期のみ",
+      "sourceUrl": "https://www.release.tdnet.info/inbs/140120261028558109.pdf",
+      "title": "2026年9月期 決算短信〔日本基準〕（連結）",
       "metrics": {
         "revenueGrowth": {
-          "value": 20.4,
+          "value": -36.95,
           "provenance": {
             "formula": "(revenue.current / revenue.previous - 1) * 100",
             "sourceFacts": [
               {
                 "concept": "NetSales",
-                "tag": "NetSales",
+                "tag": "jppfs_cor:NetSales",
                 "contextRef": "CurrentYearDuration",
+                "periodStart": "2025-10-01",
+                "periodEnd": "2026-09-30",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 81810000000.0,
+                "scale": "6",
+                "role": "revenue.current"
+              },
+              {
+                "concept": "NetSales",
+                "tag": "jppfs_cor:NetSales",
+                "contextRef": "Prior1YearDuration",
                 "periodStart": "2024-10-01",
                 "periodEnd": "2025-09-30",
                 "periodType": "duration",
@@ -735825,36 +736127,36 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 129764000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
-                "role": "revenue.current"
-              },
-              {
-                "concept": "NetSales",
-                "tag": "NetSales",
-                "contextRef": "Prior1YearDuration",
-                "periodStart": "2023-10-01",
-                "periodEnd": "2024-09-30",
-                "periodType": "duration",
-                "unitRef": "JPY",
-                "consolidation": "consolidated",
-                "dimensions": [],
-                "rawValue": 107781000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "scale": "6",
                 "role": "revenue.previous"
               }
             ]
           }
         },
         "operatingMargin": {
-          "value": 19.59,
-          "previousValue": 26.57,
+          "value": 30.23,
+          "previousValue": 19.59,
           "provenance": {
             "formula": "operatingIncome / revenue * 100",
             "sourceFacts": [
               {
                 "concept": "OperatingIncome",
-                "tag": "OperatingIncome",
+                "tag": "jppfs_cor:OperatingIncome",
                 "contextRef": "CurrentYearDuration",
+                "periodStart": "2025-10-01",
+                "periodEnd": "2026-09-30",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 24735000000.0,
+                "scale": "6",
+                "role": "operatingIncome.current"
+              },
+              {
+                "concept": "OperatingIncome",
+                "tag": "jppfs_cor:OperatingIncome",
+                "contextRef": "Prior1YearDuration",
                 "periodStart": "2024-10-01",
                 "periodEnd": "2025-09-30",
                 "periodType": "duration",
@@ -735862,27 +736164,27 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 25417000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
-                "role": "operatingIncome.current"
-              },
-              {
-                "concept": "OperatingIncome",
-                "tag": "OperatingIncome",
-                "contextRef": "Prior1YearDuration",
-                "periodStart": "2023-10-01",
-                "periodEnd": "2024-09-30",
-                "periodType": "duration",
-                "unitRef": "JPY",
-                "consolidation": "consolidated",
-                "dimensions": [],
-                "rawValue": 28633000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "scale": "6",
                 "role": "operatingIncome.previous"
               },
               {
                 "concept": "NetSales",
-                "tag": "NetSales",
+                "tag": "jppfs_cor:NetSales",
                 "contextRef": "CurrentYearDuration",
+                "periodStart": "2025-10-01",
+                "periodEnd": "2026-09-30",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 81810000000.0,
+                "scale": "6",
+                "role": "revenue.current"
+              },
+              {
+                "concept": "NetSales",
+                "tag": "jppfs_cor:NetSales",
+                "contextRef": "Prior1YearDuration",
                 "periodStart": "2024-10-01",
                 "periodEnd": "2025-09-30",
                 "periodType": "duration",
@@ -735890,40 +736192,40 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 129764000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
-                "role": "revenue.current"
-              },
-              {
-                "concept": "NetSales",
-                "tag": "NetSales",
-                "contextRef": "Prior1YearDuration",
-                "periodStart": "2023-10-01",
-                "periodEnd": "2024-09-30",
-                "periodType": "duration",
-                "unitRef": "JPY",
-                "consolidation": "consolidated",
-                "dimensions": [],
-                "rawValue": 107781000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "scale": "6",
                 "role": "revenue.previous"
               }
             ]
           },
           "trend": [
-            26.57,
-            19.59
+            19.59,
+            30.23
           ]
         },
         "netMargin": {
-          "value": 13.99,
-          "previousValue": 18.98,
+          "value": 20.73,
+          "previousValue": 13.99,
           "provenance": {
             "formula": "profit / revenue * 100",
             "sourceFacts": [
               {
                 "concept": "ProfitLossAttributableToOwnersOfParent",
-                "tag": "ProfitLossAttributableToOwnersOfParent",
+                "tag": "jppfs_cor:ProfitLossAttributableToOwnersOfParent",
                 "contextRef": "CurrentYearDuration",
+                "periodStart": "2025-10-01",
+                "periodEnd": "2026-09-30",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 16957000000.0,
+                "scale": "6",
+                "role": "profit.current"
+              },
+              {
+                "concept": "ProfitLossAttributableToOwnersOfParent",
+                "tag": "jppfs_cor:ProfitLossAttributableToOwnersOfParent",
+                "contextRef": "Prior1YearDuration",
                 "periodStart": "2024-10-01",
                 "periodEnd": "2025-09-30",
                 "periodType": "duration",
@@ -735931,27 +736233,27 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 18156000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
-                "role": "profit.current"
-              },
-              {
-                "concept": "ProfitLossAttributableToOwnersOfParent",
-                "tag": "ProfitLossAttributableToOwnersOfParent",
-                "contextRef": "Prior1YearDuration",
-                "periodStart": "2023-10-01",
-                "periodEnd": "2024-09-30",
-                "periodType": "duration",
-                "unitRef": "JPY",
-                "consolidation": "consolidated",
-                "dimensions": [],
-                "rawValue": 20457000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "scale": "6",
                 "role": "profit.previous"
               },
               {
                 "concept": "NetSales",
-                "tag": "NetSales",
+                "tag": "jppfs_cor:NetSales",
                 "contextRef": "CurrentYearDuration",
+                "periodStart": "2025-10-01",
+                "periodEnd": "2026-09-30",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 81810000000.0,
+                "scale": "6",
+                "role": "revenue.current"
+              },
+              {
+                "concept": "NetSales",
+                "tag": "jppfs_cor:NetSales",
+                "contextRef": "Prior1YearDuration",
                 "periodStart": "2024-10-01",
                 "periodEnd": "2025-09-30",
                 "periodType": "duration",
@@ -735959,68 +736261,40 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 129764000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
-                "role": "revenue.current"
-              },
-              {
-                "concept": "NetSales",
-                "tag": "NetSales",
-                "contextRef": "Prior1YearDuration",
-                "periodStart": "2023-10-01",
-                "periodEnd": "2024-09-30",
-                "periodType": "duration",
-                "unitRef": "JPY",
-                "consolidation": "consolidated",
-                "dimensions": [],
-                "rawValue": 107781000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "scale": "6",
                 "role": "revenue.previous"
               }
             ]
           },
           "trend": [
-            18.98,
-            13.99
+            13.99,
+            20.73
           ]
         },
         "roe": {
-          "value": 32.9,
-          "previousValue": 42.0,
+          "value": 27.98,
+          "previousValue": 32.98,
           "provenance": {
-            "formula": "disclosedRoe * 100; fallback profit / average equity * 100",
+            "formula": "disclosedRoe; fallback profit / average equity * 100",
             "sourceFacts": [
               {
-                "concept": "RateOfReturnOnEquitySummaryOfBusinessResults",
-                "tag": "RateOfReturnOnEquitySummaryOfBusinessResults",
+                "concept": "ProfitLossAttributableToOwnersOfParent",
+                "tag": "jppfs_cor:ProfitLossAttributableToOwnersOfParent",
                 "contextRef": "CurrentYearDuration",
-                "periodStart": "2024-10-01",
-                "periodEnd": "2025-09-30",
+                "periodStart": "2025-10-01",
+                "periodEnd": "2026-09-30",
                 "periodType": "duration",
-                "unitRef": "pure",
+                "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
-                "rawValue": 0.329,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jpcrp/2024-11-01/jpcrp_cor",
-                "role": "disclosedRoe.current"
-              },
-              {
-                "concept": "RateOfReturnOnEquitySummaryOfBusinessResults",
-                "tag": "RateOfReturnOnEquitySummaryOfBusinessResults",
-                "contextRef": "Prior1YearDuration",
-                "periodStart": "2023-10-01",
-                "periodEnd": "2024-09-30",
-                "periodType": "duration",
-                "unitRef": "pure",
-                "consolidation": "consolidated",
-                "dimensions": [],
-                "rawValue": 0.42,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jpcrp/2024-11-01/jpcrp_cor",
-                "role": "disclosedRoe.previous"
+                "rawValue": 16957000000.0,
+                "scale": "6",
+                "role": "profit.current"
               },
               {
                 "concept": "ProfitLossAttributableToOwnersOfParent",
-                "tag": "ProfitLossAttributableToOwnersOfParent",
-                "contextRef": "CurrentYearDuration",
+                "tag": "jppfs_cor:ProfitLossAttributableToOwnersOfParent",
+                "contextRef": "Prior1YearDuration",
                 "periodStart": "2024-10-01",
                 "periodEnd": "2025-09-30",
                 "periodType": "duration",
@@ -736028,153 +736302,127 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 18156000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
-                "role": "profit.current"
-              },
-              {
-                "concept": "ProfitLossAttributableToOwnersOfParent",
-                "tag": "ProfitLossAttributableToOwnersOfParent",
-                "contextRef": "Prior1YearDuration",
-                "periodStart": "2023-10-01",
-                "periodEnd": "2024-09-30",
-                "periodType": "duration",
-                "unitRef": "JPY",
-                "consolidation": "consolidated",
-                "dimensions": [],
-                "rawValue": 20457000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "scale": "6",
                 "role": "profit.previous"
               },
               {
                 "concept": "ShareholdersEquity",
-                "tag": "ShareholdersEquity",
+                "tag": "jppfs_cor:ShareholdersEquity",
                 "contextRef": "CurrentYearInstant",
+                "periodEnd": "2026-09-30",
+                "periodType": "instant",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 64400000000.0,
+                "scale": "6",
+                "role": "equity.current"
+              },
+              {
+                "concept": "ShareholdersEquity",
+                "tag": "jppfs_cor:ShareholdersEquity",
+                "contextRef": "Prior1YearInstant",
                 "periodEnd": "2025-09-30",
                 "periodType": "instant",
                 "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 56789000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
-                "role": "equity.current"
-              },
-              {
-                "concept": "ShareholdersEquity",
-                "tag": "ShareholdersEquity",
-                "contextRef": "Prior1YearInstant",
-                "periodEnd": "2024-09-30",
-                "periodType": "instant",
-                "unitRef": "JPY",
-                "consolidation": "consolidated",
-                "dimensions": [],
-                "rawValue": 53047000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "scale": "6",
                 "role": "equity.previous"
               }
             ]
           },
           "trend": [
-            42.0,
-            32.9
+            32.98,
+            27.98
           ]
         },
         "equityRatio": {
-          "value": 45.0,
-          "previousValue": 23.1,
+          "value": 44.35,
+          "previousValue": 44.77,
           "provenance": {
-            "formula": "disclosedEquityRatio * 100; fallback equity / assets * 100",
+            "formula": "equity / assets * 100",
             "sourceFacts": [
               {
-                "concept": "EquityToAssetRatioSummaryOfBusinessResults",
-                "tag": "EquityToAssetRatioSummaryOfBusinessResults",
+                "concept": "ShareholdersEquity",
+                "tag": "jppfs_cor:ShareholdersEquity",
                 "contextRef": "CurrentYearInstant",
-                "periodEnd": "2025-09-30",
+                "periodEnd": "2026-09-30",
                 "periodType": "instant",
-                "unitRef": "pure",
+                "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
-                "rawValue": 0.45,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jpcrp/2024-11-01/jpcrp_cor",
-                "role": "disclosedEquityRatio.current"
-              },
-              {
-                "concept": "EquityToAssetRatioSummaryOfBusinessResults",
-                "tag": "EquityToAssetRatioSummaryOfBusinessResults",
-                "contextRef": "Prior1YearInstant",
-                "periodEnd": "2024-09-30",
-                "periodType": "instant",
-                "unitRef": "pure",
-                "consolidation": "consolidated",
-                "dimensions": [],
-                "rawValue": 0.231,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jpcrp/2024-11-01/jpcrp_cor",
-                "role": "disclosedEquityRatio.previous"
+                "rawValue": 64400000000.0,
+                "scale": "6",
+                "role": "equity.current"
               },
               {
                 "concept": "ShareholdersEquity",
-                "tag": "ShareholdersEquity",
-                "contextRef": "CurrentYearInstant",
+                "tag": "jppfs_cor:ShareholdersEquity",
+                "contextRef": "Prior1YearInstant",
                 "periodEnd": "2025-09-30",
                 "periodType": "instant",
                 "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 56789000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
-                "role": "equity.current"
-              },
-              {
-                "concept": "ShareholdersEquity",
-                "tag": "ShareholdersEquity",
-                "contextRef": "Prior1YearInstant",
-                "periodEnd": "2024-09-30",
-                "periodType": "instant",
-                "unitRef": "JPY",
-                "consolidation": "consolidated",
-                "dimensions": [],
-                "rawValue": 53047000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "scale": "6",
                 "role": "equity.previous"
               },
               {
                 "concept": "Assets",
-                "tag": "Assets",
+                "tag": "jppfs_cor:Assets",
                 "contextRef": "CurrentYearInstant",
+                "periodEnd": "2026-09-30",
+                "periodType": "instant",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 145195000000.0,
+                "scale": "6",
+                "role": "assets.current"
+              },
+              {
+                "concept": "Assets",
+                "tag": "jppfs_cor:Assets",
+                "contextRef": "Prior1YearInstant",
                 "periodEnd": "2025-09-30",
                 "periodType": "instant",
                 "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 126857000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
-                "role": "assets.current"
-              },
-              {
-                "concept": "Assets",
-                "tag": "Assets",
-                "contextRef": "Prior1YearInstant",
-                "periodEnd": "2024-09-30",
-                "periodType": "instant",
-                "unitRef": "JPY",
-                "consolidation": "consolidated",
-                "dimensions": [],
-                "rawValue": 230619000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "scale": "6",
                 "role": "assets.previous"
               }
             ]
           }
         },
         "operatingCfMargin": {
-          "value": 83.42,
-          "previousValue": -27.15,
+          "value": 14.15,
+          "previousValue": 83.42,
           "provenance": {
             "formula": "operatingCf / revenue * 100",
             "sourceFacts": [
               {
                 "concept": "NetCashProvidedByUsedInOperatingActivities",
-                "tag": "NetCashProvidedByUsedInOperatingActivities",
+                "tag": "jppfs_cor:NetCashProvidedByUsedInOperatingActivities",
                 "contextRef": "CurrentYearDuration",
+                "periodStart": "2025-10-01",
+                "periodEnd": "2026-09-30",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 11576000000.0,
+                "scale": "6",
+                "role": "operatingCf.current"
+              },
+              {
+                "concept": "NetCashProvidedByUsedInOperatingActivities",
+                "tag": "jppfs_cor:NetCashProvidedByUsedInOperatingActivities",
+                "contextRef": "Prior1YearDuration",
                 "periodStart": "2024-10-01",
                 "periodEnd": "2025-09-30",
                 "periodType": "duration",
@@ -736182,27 +736430,27 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 108246000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
-                "role": "operatingCf.current"
-              },
-              {
-                "concept": "NetCashProvidedByUsedInOperatingActivities",
-                "tag": "NetCashProvidedByUsedInOperatingActivities",
-                "contextRef": "Prior1YearDuration",
-                "periodStart": "2023-10-01",
-                "periodEnd": "2024-09-30",
-                "periodType": "duration",
-                "unitRef": "JPY",
-                "consolidation": "consolidated",
-                "dimensions": [],
-                "rawValue": -29266000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "scale": "6",
                 "role": "operatingCf.previous"
               },
               {
                 "concept": "NetSales",
-                "tag": "NetSales",
+                "tag": "jppfs_cor:NetSales",
                 "contextRef": "CurrentYearDuration",
+                "periodStart": "2025-10-01",
+                "periodEnd": "2026-09-30",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 81810000000.0,
+                "scale": "6",
+                "role": "revenue.current"
+              },
+              {
+                "concept": "NetSales",
+                "tag": "jppfs_cor:NetSales",
+                "contextRef": "Prior1YearDuration",
                 "periodStart": "2024-10-01",
                 "periodEnd": "2025-09-30",
                 "periodType": "duration",
@@ -736210,348 +736458,325 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 129764000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
-                "role": "revenue.current"
-              },
-              {
-                "concept": "NetSales",
-                "tag": "NetSales",
-                "contextRef": "Prior1YearDuration",
-                "periodStart": "2023-10-01",
-                "periodEnd": "2024-09-30",
-                "periodType": "duration",
-                "unitRef": "JPY",
-                "consolidation": "consolidated",
-                "dimensions": [],
-                "rawValue": 107781000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "scale": "6",
                 "role": "revenue.previous"
               }
             ]
           },
           "trend": [
-            -27.15,
-            83.42
+            83.42,
+            14.15
           ]
         },
         "debtRatio": {
-          "value": 0.93,
+          "value": 0.8,
           "provenance": {
             "formula": "debt / equity",
             "sourceFacts": [
               {
                 "concept": "ShortTermLoansPayable",
-                "tag": "ShortTermLoansPayable",
+                "tag": "jppfs_cor:ShortTermLoansPayable",
                 "contextRef": "CurrentYearInstant",
-                "periodEnd": "2025-09-30",
+                "periodEnd": "2026-09-30",
                 "periodType": "instant",
                 "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
-                "rawValue": 19866000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "rawValue": 35941000000.0,
+                "scale": "6",
                 "role": "debt.current"
               },
               {
                 "concept": "CurrentPortionOfLongTermLoansPayable",
-                "tag": "CurrentPortionOfLongTermLoansPayable",
+                "tag": "jppfs_cor:CurrentPortionOfLongTermLoansPayable",
                 "contextRef": "CurrentYearInstant",
-                "periodEnd": "2025-09-30",
+                "periodEnd": "2026-09-30",
                 "periodType": "instant",
                 "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
-                "rawValue": 4992000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "rawValue": 5754000000.0,
+                "scale": "6",
                 "role": "debt.current"
               },
               {
-                "concept": "BondsPayable",
-                "tag": "BondsPayable",
+                "concept": "CurrentPortionOfBonds",
+                "tag": "jppfs_cor:CurrentPortionOfBonds",
                 "contextRef": "CurrentYearInstant",
-                "periodEnd": "2025-09-30",
+                "periodEnd": "2026-09-30",
                 "periodType": "instant",
                 "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 1000000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "scale": "6",
                 "role": "debt.current"
               },
               {
                 "concept": "LongTermLoansPayable",
-                "tag": "LongTermLoansPayable",
+                "tag": "jppfs_cor:LongTermLoansPayable",
                 "contextRef": "CurrentYearInstant",
-                "periodEnd": "2025-09-30",
+                "periodEnd": "2026-09-30",
                 "periodType": "instant",
                 "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
-                "rawValue": 27145000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "rawValue": 8590000000.0,
+                "scale": "6",
                 "role": "debt.current"
               },
               {
                 "concept": "ShareholdersEquity",
-                "tag": "ShareholdersEquity",
+                "tag": "jppfs_cor:ShareholdersEquity",
                 "contextRef": "CurrentYearInstant",
-                "periodEnd": "2025-09-30",
+                "periodEnd": "2026-09-30",
                 "periodType": "instant",
                 "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
-                "rawValue": 56789000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "rawValue": 64400000000.0,
+                "scale": "6",
                 "role": "equity.current"
               }
             ]
           }
         },
         "netCash": {
-          "value": -386.82,
+          "value": -336.8,
           "provenance": {
             "formula": "(cash - debt) / 100000000",
             "sourceFacts": [
               {
                 "concept": "CashAndCashEquivalents",
-                "tag": "CashAndCashEquivalents",
+                "tag": "jppfs_cor:CashAndCashEquivalents",
                 "contextRef": "CurrentYearInstant",
-                "periodEnd": "2025-09-30",
+                "periodEnd": "2026-09-30",
                 "periodType": "instant",
                 "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
-                "rawValue": 14321000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "rawValue": 17605000000.0,
+                "scale": "6",
                 "role": "cash.current"
               },
               {
                 "concept": "ShortTermLoansPayable",
-                "tag": "ShortTermLoansPayable",
+                "tag": "jppfs_cor:ShortTermLoansPayable",
                 "contextRef": "CurrentYearInstant",
-                "periodEnd": "2025-09-30",
+                "periodEnd": "2026-09-30",
                 "periodType": "instant",
                 "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
-                "rawValue": 19866000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "rawValue": 35941000000.0,
+                "scale": "6",
                 "role": "debt.current"
               },
               {
                 "concept": "CurrentPortionOfLongTermLoansPayable",
-                "tag": "CurrentPortionOfLongTermLoansPayable",
+                "tag": "jppfs_cor:CurrentPortionOfLongTermLoansPayable",
                 "contextRef": "CurrentYearInstant",
-                "periodEnd": "2025-09-30",
+                "periodEnd": "2026-09-30",
                 "periodType": "instant",
                 "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
-                "rawValue": 4992000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "rawValue": 5754000000.0,
+                "scale": "6",
                 "role": "debt.current"
               },
               {
-                "concept": "BondsPayable",
-                "tag": "BondsPayable",
+                "concept": "CurrentPortionOfBonds",
+                "tag": "jppfs_cor:CurrentPortionOfBonds",
                 "contextRef": "CurrentYearInstant",
-                "periodEnd": "2025-09-30",
+                "periodEnd": "2026-09-30",
                 "periodType": "instant",
                 "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 1000000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "scale": "6",
                 "role": "debt.current"
               },
               {
                 "concept": "LongTermLoansPayable",
-                "tag": "LongTermLoansPayable",
+                "tag": "jppfs_cor:LongTermLoansPayable",
                 "contextRef": "CurrentYearInstant",
-                "periodEnd": "2025-09-30",
+                "periodEnd": "2026-09-30",
                 "periodType": "instant",
                 "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
-                "rawValue": 27145000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "rawValue": 8590000000.0,
+                "scale": "6",
                 "role": "debt.current"
               }
             ]
           }
         },
         "inventoryGrowth": {
-          "value": -7.95,
+          "value": -4.1,
           "provenance": {
             "formula": "(inventory.current / inventory.previous - 1) * 100",
             "sourceFacts": [
               {
                 "concept": "Merchandise",
-                "tag": "Merchandise",
+                "tag": "jppfs_cor:Merchandise",
                 "contextRef": "CurrentYearInstant",
+                "periodEnd": "2026-09-30",
+                "periodType": "instant",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 340000000.0,
+                "scale": "6",
+                "role": "inventory.current"
+              },
+              {
+                "concept": "Supplies",
+                "tag": "jppfs_cor:Supplies",
+                "contextRef": "CurrentYearInstant",
+                "periodEnd": "2026-09-30",
+                "periodType": "instant",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 104000000.0,
+                "scale": "6",
+                "role": "inventory.current"
+              },
+              {
+                "concept": "Merchandise",
+                "tag": "jppfs_cor:Merchandise",
+                "contextRef": "Prior1YearInstant",
                 "periodEnd": "2025-09-30",
                 "periodType": "instant",
                 "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 356000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
-                "role": "inventory.current"
+                "scale": "6",
+                "role": "inventory.previous"
               },
               {
                 "concept": "Supplies",
-                "tag": "Supplies",
-                "contextRef": "CurrentYearInstant",
+                "tag": "jppfs_cor:Supplies",
+                "contextRef": "Prior1YearInstant",
                 "periodEnd": "2025-09-30",
                 "periodType": "instant",
                 "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 107000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
-                "role": "inventory.current"
-              },
-              {
-                "concept": "Merchandise",
-                "tag": "Merchandise",
-                "contextRef": "Prior1YearInstant",
-                "periodEnd": "2024-09-30",
-                "periodType": "instant",
-                "unitRef": "JPY",
-                "consolidation": "consolidated",
-                "dimensions": [],
-                "rawValue": 361000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
-                "role": "inventory.previous"
-              },
-              {
-                "concept": "Supplies",
-                "tag": "Supplies",
-                "contextRef": "Prior1YearInstant",
-                "periodEnd": "2024-09-30",
-                "periodType": "instant",
-                "unitRef": "JPY",
-                "consolidation": "consolidated",
-                "dimensions": [],
-                "rawValue": 142000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "scale": "6",
                 "role": "inventory.previous"
               }
             ]
           }
         },
         "receivablesGrowth": {
-          "value": -12.83,
+          "value": 17.64,
           "provenance": {
             "formula": "(receivables.current / receivables.previous - 1) * 100",
             "sourceFacts": [
               {
                 "concept": "AccountsReceivableTrade",
-                "tag": "AccountsReceivableTrade",
+                "tag": "jppfs_cor:AccountsReceivableTrade",
                 "contextRef": "CurrentYearInstant",
+                "periodEnd": "2026-09-30",
+                "periodType": "instant",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 727000000.0,
+                "scale": "6",
+                "role": "receivables.current"
+              },
+              {
+                "concept": "AccountsReceivableTrade",
+                "tag": "jppfs_cor:AccountsReceivableTrade",
+                "contextRef": "Prior1YearInstant",
                 "periodEnd": "2025-09-30",
                 "periodType": "instant",
                 "unitRef": "JPY",
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 618000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
-                "role": "receivables.current"
-              },
-              {
-                "concept": "AccountsReceivableTrade",
-                "tag": "AccountsReceivableTrade",
-                "contextRef": "Prior1YearInstant",
-                "periodEnd": "2024-09-30",
-                "periodType": "instant",
-                "unitRef": "JPY",
-                "consolidation": "consolidated",
-                "dimensions": [],
-                "rawValue": 709000000.0,
-                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2024-11-01/jppfs_cor",
+                "scale": "6",
                 "role": "receivables.previous"
               }
             ]
           }
         },
         "roa": {
-          "value": 14.805,
+          "value": 12.4091,
           "confidence": "B",
           "confidenceReason": "ROEと自己資本比率から ROA = ROE × 自己資本比率 で補完しています。",
-          "previousValue": 9.702,
+          "previousValue": 14.7651,
           "trend": [
-            9.702,
-            14.805
+            14.7651,
+            12.4091
           ]
         },
         "operatingIncomeGrowth": {
-          "value": -11.2294,
+          "value": -2.7054,
           "confidence": "B",
           "confidenceReason": "売上成長率と営業利益率の前年差から営業利益成長率を補完しています。"
         },
         "epsGrowth": {
-          "value": -11.2542,
+          "value": -6.5742,
           "confidence": "C",
           "confidenceReason": "株式数の変化を反映できないため、純利益成長率をEPS成長率の近似として表示しています。"
         },
         "roic": {
-          "value": 16.7091,
+          "value": 15.8676,
           "confidence": "C",
           "confidenceReason": "NOPATと投下資本を直接取得できない会社では、ROE・利益率・D/Eから簡易推定しています。"
         },
         "wacc": {
-          "value": 4.1281,
+          "value": 4.3351,
           "confidence": "C",
           "confidenceReason": "市場ベータや実効税率を直接取得できないため、財務レバレッジから簡易推定したWACCです。"
         },
         "ebitda": {
-          "value": 288.0262,
+          "value": 268.5494,
           "confidence": "C",
           "confidenceReason": "減価償却費を直接取得できない会社では、業種別の償却率を営業利益に足して推定しています。",
-          "previousValue": 314.4739,
+          "previousValue": 287.8893,
           "trend": [
-            314.4739,
-            288.0262
+            287.8893,
+            268.5494
           ]
         }
       },
       "history": [
         {
-          "year": "2024/09",
-          "revenue": 1078,
-          "operatingMargin": 26.57,
-          "netMargin": 18.98,
-          "roe": 42.0,
-          "operatingCfMargin": -27.15
-        },
-        {
           "year": "2025/09",
           "revenue": 1298,
           "operatingMargin": 19.59,
           "netMargin": 13.99,
-          "roe": 32.9,
+          "roe": 32.98,
           "operatingCfMargin": 83.42
+        },
+        {
+          "year": "2026/09",
+          "revenue": 818,
+          "operatingMargin": 30.23,
+          "netMargin": 20.73,
+          "roe": 27.98,
+          "operatingCfMargin": 14.15
         }
       ],
-      "valuation": {
-        "eps": 216.18,
-        "bps": 681.46
-      },
-      "documentType": "AnnualSecuritiesReport",
-      "periodType": "annual",
-      "sourceDetail": "EDINET有価証券報告書XBRL・年次",
       "quality": {
-        "policy": "strict-annual-baseline-batched",
-        "edinetAnnualReport": true,
+        "policy": "strict-full-year-only",
+        "roeModelVersion": 1,
+        "provenanceModelVersion": 1,
+        "quarterlySkipped": true,
+        "edinetMerged": false,
         "ambiguousRevenueTagsExcluded": [
           "OrdinaryIncome"
         ],
         "inventoryPolicy": "Inventoriesタグを優先し、無い場合は商品・製品、仕掛品、原材料等を合算",
-        "inventoryModelVersion": 2,
-        "dataModelVersion": 9,
-        "roeModelVersion": 1,
-        "provenanceModelVersion": 1,
-        "totalCompanyContextsOnly": true,
         "supplementalMetricsModelVersion": 1
       }
     },
@@ -822312,26 +822537,252 @@
     },
     "3988": {
       "code": "3988",
-      "companyName": "ＳＹＳＨＤ",
-      "documentId": "081220260907532274",
-      "documentType": "FullYearEarnings",
-      "filedAt": "2026-09-14T15:00:00+09:00",
+      "companyName": "株式会社ＳＹＳホールディングス",
+      "documentId": "S100ZABE",
+      "filedAt": "2026-10-29 15:06",
       "periodEnd": "2026-07-31",
-      "periodType": "annual",
-      "source": "TDnet",
-      "sourceDetail": "TDnet決算短信XBRL・通期のみ",
-      "sourceUrl": "https://www.release.tdnet.info/inbs/140120260907532274.pdf",
-      "title": "2026年７月期決算短信〔日本基準〕（連結）",
+      "source": "EDINET",
+      "sourceUrl": "https://disclosure2dl.edinet-fsa.go.jp/searchdocument/pdf/S100ZABE.pdf",
       "metrics": {
-        "equityRatio": {
-          "value": 52.05,
-          "previousValue": 47.46,
+        "revenueGrowth": {
+          "value": 11.55,
           "provenance": {
-            "formula": "equity / assets * 100",
+            "formula": "(revenue.current / revenue.previous - 1) * 100",
             "sourceFacts": [
               {
+                "concept": "NetSales",
+                "tag": "NetSales",
+                "contextRef": "CurrentYearDuration",
+                "periodStart": "2025-08-01",
+                "periodEnd": "2026-07-31",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 15673698000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "revenue.current"
+              },
+              {
+                "concept": "NetSales",
+                "tag": "NetSales",
+                "contextRef": "Prior1YearDuration",
+                "periodStart": "2024-08-01",
+                "periodEnd": "2025-07-31",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 14051094000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "revenue.previous"
+              }
+            ]
+          }
+        },
+        "operatingMargin": {
+          "value": 5.09,
+          "previousValue": 5.02,
+          "provenance": {
+            "formula": "operatingIncome / revenue * 100",
+            "sourceFacts": [
+              {
+                "concept": "OperatingIncome",
+                "tag": "OperatingIncome",
+                "contextRef": "CurrentYearDuration",
+                "periodStart": "2025-08-01",
+                "periodEnd": "2026-07-31",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 797851000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "operatingIncome.current"
+              },
+              {
+                "concept": "OperatingIncome",
+                "tag": "OperatingIncome",
+                "contextRef": "Prior1YearDuration",
+                "periodStart": "2024-08-01",
+                "periodEnd": "2025-07-31",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 705229000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "operatingIncome.previous"
+              },
+              {
+                "concept": "NetSales",
+                "tag": "NetSales",
+                "contextRef": "CurrentYearDuration",
+                "periodStart": "2025-08-01",
+                "periodEnd": "2026-07-31",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 15673698000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "revenue.current"
+              },
+              {
+                "concept": "NetSales",
+                "tag": "NetSales",
+                "contextRef": "Prior1YearDuration",
+                "periodStart": "2024-08-01",
+                "periodEnd": "2025-07-31",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 14051094000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "revenue.previous"
+              }
+            ]
+          },
+          "trend": [
+            5.02,
+            5.09
+          ]
+        },
+        "netMargin": {
+          "value": 3.5,
+          "previousValue": 3.01,
+          "provenance": {
+            "formula": "profit / revenue * 100",
+            "sourceFacts": [
+              {
+                "concept": "ProfitLossAttributableToOwnersOfParent",
+                "tag": "ProfitLossAttributableToOwnersOfParent",
+                "contextRef": "CurrentYearDuration",
+                "periodStart": "2025-08-01",
+                "periodEnd": "2026-07-31",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 548522000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "profit.current"
+              },
+              {
+                "concept": "ProfitLossAttributableToOwnersOfParent",
+                "tag": "ProfitLossAttributableToOwnersOfParent",
+                "contextRef": "Prior1YearDuration",
+                "periodStart": "2024-08-01",
+                "periodEnd": "2025-07-31",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 423426000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "profit.previous"
+              },
+              {
+                "concept": "NetSales",
+                "tag": "NetSales",
+                "contextRef": "CurrentYearDuration",
+                "periodStart": "2025-08-01",
+                "periodEnd": "2026-07-31",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 15673698000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "revenue.current"
+              },
+              {
+                "concept": "NetSales",
+                "tag": "NetSales",
+                "contextRef": "Prior1YearDuration",
+                "periodStart": "2024-08-01",
+                "periodEnd": "2025-07-31",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 14051094000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "revenue.previous"
+              }
+            ]
+          },
+          "trend": [
+            3.01,
+            3.5
+          ]
+        },
+        "roe": {
+          "value": 13.7,
+          "previousValue": 11.9,
+          "provenance": {
+            "formula": "disclosedRoe * 100; fallback profit / average equity * 100",
+            "sourceFacts": [
+              {
+                "concept": "RateOfReturnOnEquitySummaryOfBusinessResults",
+                "tag": "RateOfReturnOnEquitySummaryOfBusinessResults",
+                "contextRef": "CurrentYearDuration",
+                "periodStart": "2025-08-01",
+                "periodEnd": "2026-07-31",
+                "periodType": "duration",
+                "unitRef": "pure",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 0.137,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jpcrp/2025-11-01/jpcrp_cor",
+                "role": "disclosedRoe.current"
+              },
+              {
+                "concept": "RateOfReturnOnEquitySummaryOfBusinessResults",
+                "tag": "RateOfReturnOnEquitySummaryOfBusinessResults",
+                "contextRef": "Prior1YearDuration",
+                "periodStart": "2024-08-01",
+                "periodEnd": "2025-07-31",
+                "periodType": "duration",
+                "unitRef": "pure",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 0.119,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jpcrp/2025-11-01/jpcrp_cor",
+                "role": "disclosedRoe.previous"
+              },
+              {
+                "concept": "ProfitLossAttributableToOwnersOfParent",
+                "tag": "ProfitLossAttributableToOwnersOfParent",
+                "contextRef": "CurrentYearDuration",
+                "periodStart": "2025-08-01",
+                "periodEnd": "2026-07-31",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 548522000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "profit.current"
+              },
+              {
+                "concept": "ProfitLossAttributableToOwnersOfParent",
+                "tag": "ProfitLossAttributableToOwnersOfParent",
+                "contextRef": "Prior1YearDuration",
+                "periodStart": "2024-08-01",
+                "periodEnd": "2025-07-31",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 423426000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "profit.previous"
+              },
+              {
                 "concept": "ShareholdersEquity",
-                "tag": "jppfs_cor:ShareholdersEquity",
+                "tag": "ShareholdersEquity",
                 "contextRef": "CurrentYearInstant",
                 "periodEnd": "2026-07-31",
                 "periodType": "instant",
@@ -822339,12 +822790,12 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 4259102000.0,
-                "scale": "3",
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
                 "role": "equity.current"
               },
               {
                 "concept": "ShareholdersEquity",
-                "tag": "jppfs_cor:ShareholdersEquity",
+                "tag": "ShareholdersEquity",
                 "contextRef": "Prior1YearInstant",
                 "periodEnd": "2025-07-31",
                 "periodType": "instant",
@@ -822352,12 +822803,77 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 3755433000.0,
-                "scale": "3",
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "equity.previous"
+              }
+            ]
+          },
+          "trend": [
+            11.9,
+            13.7
+          ]
+        },
+        "equityRatio": {
+          "value": 51.8,
+          "previousValue": 47.4,
+          "provenance": {
+            "formula": "disclosedEquityRatio * 100; fallback equity / assets * 100",
+            "sourceFacts": [
+              {
+                "concept": "EquityToAssetRatioSummaryOfBusinessResults",
+                "tag": "EquityToAssetRatioSummaryOfBusinessResults",
+                "contextRef": "CurrentYearInstant",
+                "periodEnd": "2026-07-31",
+                "periodType": "instant",
+                "unitRef": "pure",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 0.518,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jpcrp/2025-11-01/jpcrp_cor",
+                "role": "disclosedEquityRatio.current"
+              },
+              {
+                "concept": "EquityToAssetRatioSummaryOfBusinessResults",
+                "tag": "EquityToAssetRatioSummaryOfBusinessResults",
+                "contextRef": "Prior1YearInstant",
+                "periodEnd": "2025-07-31",
+                "periodType": "instant",
+                "unitRef": "pure",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 0.474,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jpcrp/2025-11-01/jpcrp_cor",
+                "role": "disclosedEquityRatio.previous"
+              },
+              {
+                "concept": "ShareholdersEquity",
+                "tag": "ShareholdersEquity",
+                "contextRef": "CurrentYearInstant",
+                "periodEnd": "2026-07-31",
+                "periodType": "instant",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 4259102000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "equity.current"
+              },
+              {
+                "concept": "ShareholdersEquity",
+                "tag": "ShareholdersEquity",
+                "contextRef": "Prior1YearInstant",
+                "periodEnd": "2025-07-31",
+                "periodType": "instant",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 3755433000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
                 "role": "equity.previous"
               },
               {
                 "concept": "Assets",
-                "tag": "jppfs_cor:Assets",
+                "tag": "Assets",
                 "contextRef": "CurrentYearInstant",
                 "periodEnd": "2026-07-31",
                 "periodType": "instant",
@@ -822365,12 +822881,12 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 8182449000.0,
-                "scale": "3",
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
                 "role": "assets.current"
               },
               {
                 "concept": "Assets",
-                "tag": "jppfs_cor:Assets",
+                "tag": "Assets",
                 "contextRef": "Prior1YearInstant",
                 "periodEnd": "2025-07-31",
                 "periodType": "instant",
@@ -822378,11 +822894,80 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 7913008000.0,
-                "scale": "3",
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
                 "role": "assets.previous"
               }
             ]
           }
+        },
+        "operatingCfMargin": {
+          "value": 4.06,
+          "previousValue": 4.02,
+          "provenance": {
+            "formula": "operatingCf / revenue * 100",
+            "sourceFacts": [
+              {
+                "concept": "NetCashProvidedByUsedInOperatingActivities",
+                "tag": "NetCashProvidedByUsedInOperatingActivities",
+                "contextRef": "CurrentYearDuration",
+                "periodStart": "2025-08-01",
+                "periodEnd": "2026-07-31",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 635758000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "operatingCf.current"
+              },
+              {
+                "concept": "NetCashProvidedByUsedInOperatingActivities",
+                "tag": "NetCashProvidedByUsedInOperatingActivities",
+                "contextRef": "Prior1YearDuration",
+                "periodStart": "2024-08-01",
+                "periodEnd": "2025-07-31",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 564600000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "operatingCf.previous"
+              },
+              {
+                "concept": "NetSales",
+                "tag": "NetSales",
+                "contextRef": "CurrentYearDuration",
+                "periodStart": "2025-08-01",
+                "periodEnd": "2026-07-31",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 15673698000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "revenue.current"
+              },
+              {
+                "concept": "NetSales",
+                "tag": "NetSales",
+                "contextRef": "Prior1YearDuration",
+                "periodStart": "2024-08-01",
+                "periodEnd": "2025-07-31",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 14051094000.0,
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
+                "role": "revenue.previous"
+              }
+            ]
+          },
+          "trend": [
+            4.02,
+            4.06
+          ]
         },
         "debtRatio": {
           "value": 0.36,
@@ -822391,7 +822976,7 @@
             "sourceFacts": [
               {
                 "concept": "ShortTermLoansPayable",
-                "tag": "jppfs_cor:ShortTermLoansPayable",
+                "tag": "ShortTermLoansPayable",
                 "contextRef": "CurrentYearInstant",
                 "periodEnd": "2026-07-31",
                 "periodType": "instant",
@@ -822399,12 +822984,12 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 300000000.0,
-                "scale": "3",
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
                 "role": "debt.current"
               },
               {
                 "concept": "CurrentPortionOfLongTermLoansPayable",
-                "tag": "jppfs_cor:CurrentPortionOfLongTermLoansPayable",
+                "tag": "CurrentPortionOfLongTermLoansPayable",
                 "contextRef": "CurrentYearInstant",
                 "periodEnd": "2026-07-31",
                 "periodType": "instant",
@@ -822412,12 +822997,12 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 434544000.0,
-                "scale": "3",
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
                 "role": "debt.current"
               },
               {
                 "concept": "LongTermLoansPayable",
-                "tag": "jppfs_cor:LongTermLoansPayable",
+                "tag": "LongTermLoansPayable",
                 "contextRef": "CurrentYearInstant",
                 "periodEnd": "2026-07-31",
                 "periodType": "instant",
@@ -822425,12 +823010,12 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 811138000.0,
-                "scale": "3",
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
                 "role": "debt.current"
               },
               {
                 "concept": "ShareholdersEquity",
-                "tag": "jppfs_cor:ShareholdersEquity",
+                "tag": "ShareholdersEquity",
                 "contextRef": "CurrentYearInstant",
                 "periodEnd": "2026-07-31",
                 "periodType": "instant",
@@ -822438,7 +823023,7 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 4259102000.0,
-                "scale": "3",
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
                 "role": "equity.current"
               }
             ]
@@ -822451,7 +823036,7 @@
             "sourceFacts": [
               {
                 "concept": "CashAndCashEquivalents",
-                "tag": "jppfs_cor:CashAndCashEquivalents",
+                "tag": "CashAndCashEquivalents",
                 "contextRef": "CurrentYearInstant",
                 "periodEnd": "2026-07-31",
                 "periodType": "instant",
@@ -822459,12 +823044,12 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 3887584000.0,
-                "scale": "3",
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
                 "role": "cash.current"
               },
               {
                 "concept": "ShortTermLoansPayable",
-                "tag": "jppfs_cor:ShortTermLoansPayable",
+                "tag": "ShortTermLoansPayable",
                 "contextRef": "CurrentYearInstant",
                 "periodEnd": "2026-07-31",
                 "periodType": "instant",
@@ -822472,12 +823057,12 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 300000000.0,
-                "scale": "3",
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
                 "role": "debt.current"
               },
               {
                 "concept": "CurrentPortionOfLongTermLoansPayable",
-                "tag": "jppfs_cor:CurrentPortionOfLongTermLoansPayable",
+                "tag": "CurrentPortionOfLongTermLoansPayable",
                 "contextRef": "CurrentYearInstant",
                 "periodEnd": "2026-07-31",
                 "periodType": "instant",
@@ -822485,12 +823070,12 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 434544000.0,
-                "scale": "3",
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
                 "role": "debt.current"
               },
               {
                 "concept": "LongTermLoansPayable",
-                "tag": "jppfs_cor:LongTermLoansPayable",
+                "tag": "LongTermLoansPayable",
                 "contextRef": "CurrentYearInstant",
                 "periodEnd": "2026-07-31",
                 "periodType": "instant",
@@ -822498,7 +823083,7 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 811138000.0,
-                "scale": "3",
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
                 "role": "debt.current"
               }
             ]
@@ -822511,7 +823096,7 @@
             "sourceFacts": [
               {
                 "concept": "WorkInProcess",
-                "tag": "jppfs_cor:WorkInProcess",
+                "tag": "WorkInProcess",
                 "contextRef": "CurrentYearInstant",
                 "periodEnd": "2026-07-31",
                 "periodType": "instant",
@@ -822519,12 +823104,12 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 57348000.0,
-                "scale": "3",
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
                 "role": "inventory.current"
               },
               {
                 "concept": "WorkInProcess",
-                "tag": "jppfs_cor:WorkInProcess",
+                "tag": "WorkInProcess",
                 "contextRef": "Prior1YearInstant",
                 "periodEnd": "2025-07-31",
                 "periodType": "instant",
@@ -822532,7 +823117,7 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 46070000.0,
-                "scale": "3",
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
                 "role": "inventory.previous"
               }
             ]
@@ -822545,7 +823130,7 @@
             "sourceFacts": [
               {
                 "concept": "AccountsReceivableTrade",
-                "tag": "jppfs_cor:AccountsReceivableTrade",
+                "tag": "AccountsReceivableTrade",
                 "contextRef": "CurrentYearInstant",
                 "periodEnd": "2026-07-31",
                 "periodType": "instant",
@@ -822553,12 +823138,12 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 1576575000.0,
-                "scale": "3",
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
                 "role": "receivables.current"
               },
               {
                 "concept": "AccountsReceivableTrade",
-                "tag": "jppfs_cor:AccountsReceivableTrade",
+                "tag": "AccountsReceivableTrade",
                 "contextRef": "Prior1YearInstant",
                 "periodEnd": "2025-07-31",
                 "periodType": "instant",
@@ -822566,29 +823151,90 @@
                 "consolidation": "consolidated",
                 "dimensions": [],
                 "rawValue": 1500318000.0,
-                "scale": "3",
+                "namespace": "http://disclosure.edinet-fsa.go.jp/taxonomy/jppfs/2025-11-01/jppfs_cor",
                 "role": "receivables.previous"
               }
             ]
           }
         },
+        "roa": {
+          "value": 7.0966,
+          "confidence": "B",
+          "confidenceReason": "ROEと自己資本比率から ROA = ROE × 自己資本比率 で補完しています。",
+          "previousValue": 5.6406,
+          "trend": [
+            5.6406,
+            7.0966
+          ]
+        },
+        "operatingIncomeGrowth": {
+          "value": 13.1055,
+          "confidence": "B",
+          "confidenceReason": "売上成長率と営業利益率の前年差から営業利益成長率を補完しています。"
+        },
+        "epsGrowth": {
+          "value": 29.7093,
+          "confidence": "C",
+          "confidenceReason": "株式数の変化を反映できないため、純利益成長率をEPS成長率の近似として表示しています。"
+        },
+        "roic": {
+          "value": 10.2549,
+          "confidence": "C",
+          "confidenceReason": "NOPATと投下資本を直接取得できない会社では、ROE・利益率・D/Eから簡易推定しています。"
+        },
         "wacc": {
-          "value": 5.1269,
+          "value": 5.1336,
           "confidence": "C",
           "confidenceReason": "市場ベータや実効税率を直接取得できないため、財務レバレッジから簡易推定したWACCです。"
+        },
+        "ebitda": {
+          "value": 10.8173,
+          "confidence": "C",
+          "confidenceReason": "減価償却費を直接取得できない会社では、業種別の償却率を営業利益に足して推定しています。",
+          "previousValue": 9.5987,
+          "trend": [
+            9.5987,
+            10.8173
+          ]
         }
       },
-      "history": [],
+      "history": [
+        {
+          "year": "2025/07",
+          "revenue": 141,
+          "operatingMargin": 5.02,
+          "netMargin": 3.01,
+          "roe": 11.9,
+          "operatingCfMargin": 4.02
+        },
+        {
+          "year": "2026/07",
+          "revenue": 157,
+          "operatingMargin": 5.09,
+          "netMargin": 3.5,
+          "roe": 13.7,
+          "operatingCfMargin": 4.06
+        }
+      ],
+      "valuation": {
+        "eps": 51.93,
+        "bps": 400.93
+      },
+      "documentType": "AnnualSecuritiesReport",
+      "periodType": "annual",
+      "sourceDetail": "EDINET有価証券報告書XBRL・年次",
       "quality": {
-        "policy": "strict-full-year-only",
-        "roeModelVersion": 1,
-        "provenanceModelVersion": 1,
-        "quarterlySkipped": true,
-        "edinetMerged": false,
+        "policy": "strict-annual-baseline-batched",
+        "edinetAnnualReport": true,
         "ambiguousRevenueTagsExcluded": [
           "OrdinaryIncome"
         ],
         "inventoryPolicy": "Inventoriesタグを優先し、無い場合は商品・製品、仕掛品、原材料等を合算",
+        "inventoryModelVersion": 2,
+        "dataModelVersion": 9,
+        "roeModelVersion": 1,
+        "provenanceModelVersion": 1,
+        "totalCompanyContextsOnly": true,
         "supplementalMetricsModelVersion": 1
       }
     },
@@ -830763,7 +831409,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-28T22:57:50.755509Z",
+        "checkedAt": "2026-10-29T23:06:12.296768Z",
         "periodEnd": "2026-07-31",
         "status": "matched",
         "sources": {
@@ -840683,7 +841329,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-28T22:57:31.507770Z",
+        "checkedAt": "2026-10-29T23:05:44.929883Z",
         "periodEnd": "2026-07-31",
         "status": "matched",
         "sources": {
@@ -884055,7 +884701,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-28T22:57:58.814268Z",
+        "checkedAt": "2026-10-29T23:06:21.424384Z",
         "periodEnd": "2026-06-30",
         "status": "matched",
         "sources": {
@@ -933039,7 +933685,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-28T22:57:30.216979Z",
+        "checkedAt": "2026-10-29T23:05:43.054346Z",
         "periodEnd": "2026-05-31",
         "status": "quarantined",
         "sources": {
@@ -933239,7 +933885,7 @@
       },
       "quarantine": {
         "sourceReconciliation": {
-          "checkedAt": "2026-10-28T22:57:30.216979Z",
+          "checkedAt": "2026-10-29T23:05:43.054346Z",
           "periodEnd": "2026-05-31",
           "metrics": {
             "equityRatio": {
@@ -967377,7 +968023,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-28T22:57:29.602267Z",
+        "checkedAt": "2026-10-29T23:05:42.142052Z",
         "periodEnd": "2026-04-30",
         "status": "matched",
         "sources": {
@@ -967404,6 +968050,14 @@
                 "matched": true
               }
             },
+            "selectedSource": "EDINET"
+          },
+          "ebitda": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
+          "epsGrowth": {
+            "status": "edinet-only",
             "selectedSource": "EDINET"
           },
           "equityRatio": {
@@ -967460,6 +968114,10 @@
             "status": "edinet-only",
             "selectedSource": "EDINET"
           },
+          "operatingIncomeGrowth": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
           "operatingMargin": {
             "status": "edinet-only",
             "selectedSource": "EDINET"
@@ -967481,7 +968139,19 @@
             "status": "edinet-only",
             "selectedSource": "EDINET"
           },
+          "roa": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
           "roe": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
+          "roic": {
+            "status": "edinet-only",
+            "selectedSource": "EDINET"
+          },
+          "wacc": {
             "status": "edinet-only",
             "selectedSource": "EDINET"
           }
@@ -2070805,34 +2071475,34 @@
     "documentsScanned": 2213,
     "documentsUpdated": 0,
     "tdnetDocumentsScanned": 500,
-    "tdnetDocumentsUpdated": 92,
+    "tdnetDocumentsUpdated": 93,
     "tdnetOnly": true,
     "nonTdnetRecordsDropped": 2946,
-    "tdnetRowsScanned": 878,
-    "tdnetEarningsRows": 645,
-    "tdnetQuarterlyRowsSkipped": 504,
-    "tdnetFullYearFilings": 138,
+    "tdnetRowsScanned": 1052,
+    "tdnetEarningsRows": 783,
+    "tdnetQuarterlyRowsSkipped": 639,
+    "tdnetFullYearFilings": 141,
     "tdnetStrictFailures": 0,
     "nonStrictExistingRecordsDropped": 278,
     "acceptedDocumentType": "FullYearEarnings",
     "nonStrictRecordsDropped": 0,
     "edinetCompanies": 3515,
     "tdnetCompanies": 107,
-    "edinetDocumentsScanned": 102170,
-    "edinetPendingBeforeBatch": 64,
-    "edinetBatchSize": 64,
-    "edinetDocumentsUpdated": 10,
+    "edinetDocumentsScanned": 102379,
+    "edinetPendingBeforeBatch": 56,
+    "edinetBatchSize": 56,
+    "edinetDocumentsUpdated": 1,
     "edinetBatchFailures": 0,
-    "edinetBatchGeneratedAt": "2026-10-28T22:57:09.843947Z",
+    "edinetBatchGeneratedAt": "2026-10-29T23:05:14.620637Z",
     "nonAnnualExistingRecordsDropped": 0,
     "annualOnly": true,
     "nonAnnualRecordsDropped": 0,
     "edinetEstimatedRemaining": 0,
     "targetCompanies": 3695,
-    "edinetDocumentsProcessedThisBatch": 64,
-    "edinetDocumentsAlreadyProcessed": 3610,
+    "edinetDocumentsProcessedThisBatch": 56,
+    "edinetDocumentsAlreadyProcessed": 3618,
     "edinetTdnetBaselineMarked": 0,
-    "edinetNoMetricDocuments": 54,
+    "edinetNoMetricDocuments": 55,
     "edinetProcessedDocumentIds": [
       "S100W0W0",
       "S100W5FQ",
@@ -2074575,10 +2075245,12 @@
       "S100ZA5J",
       "S100ZA5W",
       "S100ZAAO",
+      "S100ZABE",
       "S100ZAC4",
       "S100ZAEK",
       "S100ZAH4",
-      "S100ZAJ1"
+      "S100ZAJ1",
+      "S100ZASH"
     ],
     "missingCompanies": 73,
     "coverageRatio": 98.02,
@@ -2074594,34 +2075266,34 @@
     "metricRangeQuarantinedCompanies": 0,
     "historyTrendQuarantinedCompanies": 5,
     "goldenAnchoredCompanies": 194,
-    "goldenAnchoredMetrics": 760,
+    "goldenAnchoredMetrics": 759,
     "goldenFallbackRecords": 0,
-    "sourceReconciliationCompanies": 17,
-    "sourceMatchedMetrics": 109,
-    "sourceQuarantinedMetrics": 17,
-    "dataUpdatedAt": "2026-10-28T17:00:00+09:00",
-    "latestPeriodEnd": "2026-08-31",
-    "lastCheckedAt": "2026-10-28T22:58:02.056297Z",
+    "sourceReconciliationCompanies": 18,
+    "sourceMatchedMetrics": 117,
+    "sourceQuarantinedMetrics": 18,
+    "dataUpdatedAt": "2026-10-29T16:30:00+09:00",
+    "latestPeriodEnd": "2026-09-30",
+    "lastCheckedAt": "2026-10-29T23:06:25.536546Z",
     "supplementalMetricsModelVersion": 1,
-    "supplementalMetricsAdded": 414,
+    "supplementalMetricsAdded": 371,
     "supplementalMetricsAddedByKey": {
-      "ebitda": 47,
-      "epsGrowth": 58,
-      "operatingIncomeGrowth": 55,
-      "roa": 81,
-      "roic": 61,
-      "wacc": 112
+      "ebitda": 39,
+      "epsGrowth": 50,
+      "operatingIncomeGrowth": 48,
+      "roa": 73,
+      "roic": 56,
+      "wacc": 105
     },
     "invalidExistingRecordsDropped": 0,
     "edinetDocumentsUnchanged": 0,
     "dataModelVersion": 9,
     "dataModelRefresh": false,
-    "tdnetCorrectionFilings": 16,
+    "tdnetCorrectionFilings": 17,
     "tdnetRoeDisclosuresMerged": 4,
     "tdnetCorrectionRecordsMerged": 3,
-    "sourceReconciliationChecksThisRun": 7,
-    "sourceMatchedMetricsThisRun": 47,
-    "sourceQuarantinedMetricsThisRun": 3,
+    "sourceReconciliationChecksThisRun": 8,
+    "sourceMatchedMetricsThisRun": 55,
+    "sourceQuarantinedMetricsThisRun": 4,
     "tdnetRoeBackfillAttemptedDocumentIds": [
       "081220260924539741",
       "081220261007547263",
@@ -2074641,11 +2075313,13 @@
       "081220261023555521",
       "081220261026556114",
       "081220261027556739",
-      "081220261028557635"
+      "081220261028557635",
+      "081220261028557780",
+      "081220261028558347"
     ],
     "tdnetRoePriorityCodesMissing": [],
-    "tdnetDocumentsAttempted": 121,
-    "tdnetNoMetricDocuments": 22
+    "tdnetDocumentsAttempted": 124,
+    "tdnetNoMetricDocuments": 23
   },
   "dataPolicy": {
     "mode": "edinet-annual-baseline-tdnet-full-year-overlay-batched",
@@ -2074657,6 +2075331,6 @@
     "batched": true,
     "note": "上場全社級のカバレッジを確保するため、EDINET年次データを基礎DBとして使います。長時間実行を避けるため、EDINETは複数回に分けて構築します。TDnetは通期決算短信だけを採用し、四半期・中間短信は年次KPIとの混在を避けるため除外します。未取得企業には架空KPIを表示せず、未取得として扱います。"
   },
-  "dataUpdatedAt": "2026-10-28T17:00:00+09:00",
-  "latestPeriodEnd": "2026-08-31"
+  "dataUpdatedAt": "2026-10-29T16:30:00+09:00",
+  "latestPeriodEnd": "2026-09-30"
 }
