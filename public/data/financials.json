@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-10-29T23:06:25.536546Z",
+  "generatedAt": "2026-10-30T22:46:46.762276Z",
   "source": "EDINET+TDnet",
   "status": "partial",
   "message": "EDINET年次ベースライン＋TDnet通期決算短信オーバーレイで更新済み。開示元が一致しない18指標と関連する推定指標は確認待ちです。EDINET有価証券報告書ベースの年次データを基礎DBにし、TDnetの通期決算短信で直近分のみ上書きしています。四半期・中間短信は統合していません。対象3,695社のうち財務KPI取得済みは3,622社です。",
@@ -98505,7 +98505,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-29T23:05:41.843019Z",
+        "checkedAt": "2026-10-30T22:46:13.850844Z",
         "periodEnd": "2026-03-31",
         "status": "quarantined",
         "sources": {
@@ -98662,10 +98662,6 @@
             },
             "selectedSource": "EDINET"
           },
-          "roa": {
-            "status": "edinet-only",
-            "selectedSource": "EDINET"
-          },
           "roe": {
             "status": "quarantined",
             "fields": {
@@ -98685,14 +98681,6 @@
               }
             },
             "selectedSource": null
-          },
-          "roic": {
-            "status": "edinet-only",
-            "selectedSource": "EDINET"
-          },
-          "wacc": {
-            "status": "edinet-only",
-            "selectedSource": "EDINET"
           }
         },
         "quarantinedMetrics": [
@@ -98701,7 +98689,7 @@
       },
       "quarantine": {
         "sourceReconciliation": {
-          "checkedAt": "2026-10-29T23:05:41.843019Z",
+          "checkedAt": "2026-10-30T22:46:13.850844Z",
           "periodEnd": "2026-03-31",
           "metrics": {
             "roe": {
@@ -284814,7 +284802,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-29T23:06:11.985462Z",
+        "checkedAt": "2026-10-30T22:46:35.770018Z",
         "periodEnd": "2026-02-28",
         "status": "quarantined",
         "sources": {
@@ -285015,7 +285003,7 @@
       },
       "quarantine": {
         "sourceReconciliation": {
-          "checkedAt": "2026-10-29T23:06:11.985462Z",
+          "checkedAt": "2026-10-30T22:46:35.770018Z",
           "periodEnd": "2026-02-28",
           "metrics": {
             "netMargin": {
@@ -478297,7 +478285,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-29T23:06:20.854864Z",
+        "checkedAt": "2026-10-30T22:46:42.593441Z",
         "periodEnd": "2025-12-31",
         "status": "matched",
         "sources": {
@@ -831409,7 +831397,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-29T23:06:12.296768Z",
+        "checkedAt": "2026-10-30T22:46:36.064707Z",
         "periodEnd": "2026-07-31",
         "status": "matched",
         "sources": {
@@ -841329,7 +841317,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-29T23:05:44.929883Z",
+        "checkedAt": "2026-10-30T22:46:16.011145Z",
         "periodEnd": "2026-07-31",
         "status": "matched",
         "sources": {
@@ -884701,7 +884689,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-29T23:06:21.424384Z",
+        "checkedAt": "2026-10-30T22:46:43.194200Z",
         "periodEnd": "2026-06-30",
         "status": "matched",
         "sources": {
@@ -933685,7 +933673,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-29T23:05:43.054346Z",
+        "checkedAt": "2026-10-30T22:46:14.652485Z",
         "periodEnd": "2026-05-31",
         "status": "quarantined",
         "sources": {
@@ -933885,7 +933873,7 @@
       },
       "quarantine": {
         "sourceReconciliation": {
-          "checkedAt": "2026-10-29T23:05:43.054346Z",
+          "checkedAt": "2026-10-30T22:46:14.652485Z",
           "periodEnd": "2026-05-31",
           "metrics": {
             "equityRatio": {
@@ -968023,7 +968011,7 @@
       },
       "reconciliation": {
         "modelVersion": 1,
-        "checkedAt": "2026-10-29T23:05:42.142052Z",
+        "checkedAt": "2026-10-30T22:46:14.059611Z",
         "periodEnd": "2026-04-30",
         "status": "matched",
         "sources": {
@@ -2003825,56 +2003813,134 @@
     },
     "6196": {
       "code": "6196",
-      "companyName": "ストライクグループ",
-      "documentId": "S100XAN1",
-      "documentType": "AnnualSecuritiesReport",
-      "filedAt": "2025-12-17 12:18",
-      "periodEnd": "2025-09-30",
+      "companyName": "ストライクＧ",
+      "documentId": "081220261030560411",
+      "documentType": "FullYearEarnings",
+      "filedAt": "2026-10-30T15:30:00+09:00",
+      "periodEnd": "2026-09-30",
       "periodType": "annual",
-      "source": "EDINET",
-      "sourceUrl": "https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?S100XAN1",
-      "sourceDetail": "EDINET有価証券報告書XBRL・未取得普通企業の自動補完",
+      "source": "TDnet",
+      "sourceDetail": "TDnet決算短信XBRL・通期のみ",
+      "sourceUrl": "https://www.release.tdnet.info/inbs/140120261030560411.pdf",
+      "title": "2026年９月期 決算短信〔日本基準〕(連結)",
       "metrics": {
-        "operatingMargin": {
-          "value": 31.17
-        },
-        "netMargin": {
-          "value": 23.23
-        },
         "roe": {
-          "value": 21.98
+          "value": 30.66,
+          "provenance": {
+            "formula": "disclosedRoe; fallback profit / average equity * 100",
+            "sourceFacts": [
+              {
+                "concept": "ProfitLossAttributableToOwnersOfParent",
+                "tag": "jppfs_cor:ProfitLossAttributableToOwnersOfParent",
+                "contextRef": "CurrentYearDuration",
+                "periodStart": "2025-10-01",
+                "periodEnd": "2026-09-30",
+                "periodType": "duration",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 7139333000.0,
+                "scale": "3",
+                "role": "profit.current"
+              },
+              {
+                "concept": "ShareholdersEquity",
+                "tag": "jppfs_cor:ShareholdersEquity",
+                "contextRef": "CurrentYearInstant",
+                "periodEnd": "2026-09-30",
+                "periodType": "instant",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 25101137000.0,
+                "scale": "3",
+                "role": "equity.current"
+              },
+              {
+                "concept": "NetAssets",
+                "tag": "jppfs_cor:NetAssets",
+                "contextRef": "Prior1YearInstant",
+                "periodEnd": "2025-09-30",
+                "periodType": "instant",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 21474522000.0,
+                "scale": "3",
+                "role": "equity.previous"
+              }
+            ]
+          }
         },
         "equityRatio": {
-          "value": 86.72
-        },
-        "operatingCfMargin": {
-          "value": 18.94
-        },
-        "netCash": {
-          "value": 201.49
+          "value": 74.2,
+          "provenance": {
+            "formula": "equity / assets * 100",
+            "sourceFacts": [
+              {
+                "concept": "ShareholdersEquity",
+                "tag": "jppfs_cor:ShareholdersEquity",
+                "contextRef": "CurrentYearInstant",
+                "periodEnd": "2026-09-30",
+                "periodType": "instant",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 25101137000.0,
+                "scale": "3",
+                "role": "equity.current"
+              },
+              {
+                "concept": "NetAssets",
+                "tag": "jppfs_cor:NetAssets",
+                "contextRef": "Prior1YearInstant",
+                "periodEnd": "2025-09-30",
+                "periodType": "instant",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 21474522000.0,
+                "scale": "3",
+                "role": "equity.previous"
+              },
+              {
+                "concept": "Assets",
+                "tag": "jppfs_cor:Assets",
+                "contextRef": "CurrentYearInstant",
+                "periodEnd": "2026-09-30",
+                "periodType": "instant",
+                "unitRef": "JPY",
+                "consolidation": "consolidated",
+                "dimensions": [],
+                "rawValue": 33829698000.0,
+                "scale": "3",
+                "role": "assets.current"
+              }
+            ]
+          }
         },
         "roa": {
-          "value": 19.0611,
+          "value": 22.7497,
           "confidence": "B",
           "confidenceReason": "ROEと自己資本比率から ROA = ROE × 自己資本比率 で補完しています。"
         },
-        "roic": {
-          "value": 20.6449,
-          "confidence": "C",
-          "confidenceReason": "NOPATと投下資本を直接取得できない会社では、ROE・利益率・D/Eから簡易推定しています。"
-        },
         "wacc": {
-          "value": 4.7613,
+          "value": 4.5611,
           "confidence": "C",
           "confidenceReason": "市場ベータや実効税率を直接取得できないため、財務レバレッジから簡易推定したWACCです。"
         }
       },
       "history": [],
-      "valuation": {},
       "quality": {
-        "policy": "ordinary-missing-edinet-fallback",
-        "autoFilled": true,
-        "parserVersion": 1,
+        "policy": "strict-full-year-only",
+        "roeModelVersion": 1,
+        "provenanceModelVersion": 1,
+        "quarterlySkipped": true,
+        "edinetMerged": false,
+        "ambiguousRevenueTagsExcluded": [
+          "OrdinaryIncome"
+        ],
+        "inventoryPolicy": "Inventoriesタグを優先し、無い場合は商品・製品、仕掛品、原材料等を合算",
         "supplementalMetricsModelVersion": 1
       }
     },
@@ -2071475,32 +2071541,32 @@
     "documentsScanned": 2213,
     "documentsUpdated": 0,
     "tdnetDocumentsScanned": 500,
-    "tdnetDocumentsUpdated": 93,
+    "tdnetDocumentsUpdated": 94,
     "tdnetOnly": true,
     "nonTdnetRecordsDropped": 2946,
-    "tdnetRowsScanned": 1052,
-    "tdnetEarningsRows": 783,
-    "tdnetQuarterlyRowsSkipped": 639,
-    "tdnetFullYearFilings": 141,
+    "tdnetRowsScanned": 1354,
+    "tdnetEarningsRows": 1040,
+    "tdnetQuarterlyRowsSkipped": 893,
+    "tdnetFullYearFilings": 144,
     "tdnetStrictFailures": 0,
     "nonStrictExistingRecordsDropped": 278,
     "acceptedDocumentType": "FullYearEarnings",
     "nonStrictRecordsDropped": 0,
-    "edinetCompanies": 3515,
-    "tdnetCompanies": 107,
-    "edinetDocumentsScanned": 102379,
-    "edinetPendingBeforeBatch": 56,
-    "edinetBatchSize": 56,
-    "edinetDocumentsUpdated": 1,
+    "edinetCompanies": 3514,
+    "tdnetCompanies": 108,
+    "edinetDocumentsScanned": 102705,
+    "edinetPendingBeforeBatch": 55,
+    "edinetBatchSize": 55,
+    "edinetDocumentsUpdated": 0,
     "edinetBatchFailures": 0,
-    "edinetBatchGeneratedAt": "2026-10-29T23:05:14.620637Z",
+    "edinetBatchGeneratedAt": "2026-10-30T22:45:50.034238Z",
     "nonAnnualExistingRecordsDropped": 0,
     "annualOnly": true,
     "nonAnnualRecordsDropped": 0,
     "edinetEstimatedRemaining": 0,
     "targetCompanies": 3695,
-    "edinetDocumentsProcessedThisBatch": 56,
-    "edinetDocumentsAlreadyProcessed": 3618,
+    "edinetDocumentsProcessedThisBatch": 55,
+    "edinetDocumentsAlreadyProcessed": 3620,
     "edinetTdnetBaselineMarked": 0,
     "edinetNoMetricDocuments": 55,
     "edinetProcessedDocumentIds": [
@@ -2075250,7 +2075316,8 @@
       "S100ZAEK",
       "S100ZAH4",
       "S100ZAJ1",
-      "S100ZASH"
+      "S100ZASH",
+      "S100ZAWS"
     ],
     "missingCompanies": 73,
     "coverageRatio": 98.02,
@@ -2075271,17 +2075338,17 @@
     "sourceReconciliationCompanies": 18,
     "sourceMatchedMetrics": 117,
     "sourceQuarantinedMetrics": 18,
-    "dataUpdatedAt": "2026-10-29T16:30:00+09:00",
+    "dataUpdatedAt": "2026-10-30T15:30:00+09:00",
     "latestPeriodEnd": "2026-09-30",
-    "lastCheckedAt": "2026-10-29T23:06:25.536546Z",
+    "lastCheckedAt": "2026-10-30T22:46:46.762276Z",
     "supplementalMetricsModelVersion": 1,
-    "supplementalMetricsAdded": 371,
+    "supplementalMetricsAdded": 367,
     "supplementalMetricsAddedByKey": {
-      "ebitda": 39,
-      "epsGrowth": 50,
-      "operatingIncomeGrowth": 48,
+      "ebitda": 38,
+      "epsGrowth": 49,
+      "operatingIncomeGrowth": 47,
       "roa": 73,
-      "roic": 56,
+      "roic": 55,
       "wacc": 105
     },
     "invalidExistingRecordsDropped": 0,
@@ -2075315,11 +2075382,13 @@
       "081220261027556739",
       "081220261028557635",
       "081220261028557780",
-      "081220261028558347"
+      "081220261028558347",
+      "081220261029559599",
+      "081220261030561105"
     ],
     "tdnetRoePriorityCodesMissing": [],
-    "tdnetDocumentsAttempted": 124,
-    "tdnetNoMetricDocuments": 23
+    "tdnetDocumentsAttempted": 127,
+    "tdnetNoMetricDocuments": 25
   },
   "dataPolicy": {
     "mode": "edinet-annual-baseline-tdnet-full-year-overlay-batched",
@@ -2075331,6 +2075400,6 @@
     "batched": true,
     "note": "上場全社級のカバレッジを確保するため、EDINET年次データを基礎DBとして使います。長時間実行を避けるため、EDINETは複数回に分けて構築します。TDnetは通期決算短信だけを採用し、四半期・中間短信は年次KPIとの混在を避けるため除外します。未取得企業には架空KPIを表示せず、未取得として扱います。"
   },
-  "dataUpdatedAt": "2026-10-29T16:30:00+09:00",
+  "dataUpdatedAt": "2026-10-30T15:30:00+09:00",
   "latestPeriodEnd": "2026-09-30"
 }
