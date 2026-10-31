@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-30T22:46:46.762276Z",
+  "generatedAt": "2026-10-31T21:58:18.896028Z",
   "dataUpdatedAt": "2026-10-30T15:30:00+09:00",
   "latestPeriodEnd": "2026-09-30",
   "mode": "edinet-annual-baseline-tdnet-full-year-overlay-batched",
@@ -17,7 +17,7 @@
   "coverageRatio": 98.02,
   "edinetCompanies": 3514,
   "tdnetCompanies": 108,
-  "edinetDocumentsScanned": 102705,
+  "edinetDocumentsScanned": 102505,
   "edinetPendingBeforeBatch": 55,
   "edinetBatchSize": 55,
   "edinetDocumentsUpdated": 0,
