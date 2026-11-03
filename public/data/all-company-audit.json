@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-03T01:25:08.942023Z",
-  "financialSnapshotGeneratedAt": "2026-11-03T01:24:58.640390Z",
+  "generatedAt": "2026-11-03T23:51:01.102554Z",
+  "financialSnapshotGeneratedAt": "2026-11-03T23:50:51.138048Z",
   "policy": {
     "stalePeriodDays": 800,
     "minimumEdinetDataModelVersion": 9,
