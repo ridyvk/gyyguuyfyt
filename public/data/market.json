@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-11-02T17:27:07.645517Z",
+  "generatedAt": "2026-11-03T06:28:49.906130Z",
   "source": "Yahoo Finance",
   "status": "ready",
   "message": "Yahoo Financeの公開株価データとEDINET・TDnetのEPS/BPSからPER・PBRを自動計算しています。株価はリアルタイム保証ではありません。",
@@ -24503,7 +24503,7 @@
       "date": "2026-11-02",
       "timestamp": "2026-11-02T13:10:41+09:00",
       "close": 2247.0,
-      "volume": 900.0,
+      "volume": 2200.0,
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "quoteInterval": "15m",
@@ -44185,7 +44185,7 @@
       "date": "2026-11-02",
       "timestamp": "2026-11-02T10:58:06+09:00",
       "close": 3375.0,
-      "volume": 200.0,
+      "volume": 300.0,
       "source": "Yahoo Finance",
       "priceType": "regular-market-price",
       "quoteInterval": "15m",
@@ -57746,14 +57746,6 @@
       "bps": 255.71,
       "disclosedDate": "2025-09-30",
       "disclosedAt": "2025-12-16 14:29",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
-    "6200": {
-      "eps": 49.2,
-      "bps": 148.7,
-      "disclosedDate": "2025-09-30",
-      "disclosedAt": "2025-12-16 14:01",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
@@ -72687,7 +72679,7 @@
       "2026-10-28",
       "2026-10-16"
     ],
-    "fundamentals": 3115,
+    "fundamentals": 3114,
     "quoteFailures": 0,
     "freshQuotesFetched": 3695,
     "fallbackQuotes": 0,
