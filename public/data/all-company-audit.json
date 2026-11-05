@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-05T00:02:46.586182Z",
-  "financialSnapshotGeneratedAt": "2026-11-05T00:02:38.072493Z",
+  "generatedAt": "2026-11-05T23:58:08.524862Z",
+  "financialSnapshotGeneratedAt": "2026-11-05T23:57:59.583859Z",
   "policy": {
     "stalePeriodDays": 800,
     "minimumEdinetDataModelVersion": 9,
@@ -20,19 +20,19 @@
     "pipelineRateTolerancePoints": 0.5
   },
   "summary": {
-    "companies": 3695,
-    "recordsAvailable": 3622,
-    "coverageRatio": 98.02,
+    "companies": 3686,
+    "recordsAvailable": 3608,
+    "coverageRatio": 97.88,
     "ok": 0,
-    "warning": 3611,
+    "warning": 3597,
     "review": 11,
-    "missing": 73,
-    "totalMetricCount": 48931,
-    "sourceBackedMetricCount": 30575,
-    "trustedMetricCount": 28105,
-    "trustedMetricRatio": 91.92,
-    "missingProvenanceRate": 11.46,
-    "oldEdinetModelRate": 11.45,
+    "missing": 78,
+    "totalMetricCount": 48715,
+    "sourceBackedMetricCount": 30438,
+    "trustedMetricCount": 27992,
+    "trustedMetricRatio": 91.96,
+    "missingProvenanceRate": 11.39,
+    "oldEdinetModelRate": 11.4,
     "metricRangeQuarantined": 0,
     "sourceQuarantinedMetrics": 18,
     "containedSourceQuarantinedMetrics": 18,
@@ -43,146 +43,146 @@
     "edinetBatchFailureRate": 0.0,
     "edinetNoMetricDocuments": 55,
     "edinetNoMetricRate": 100.0,
-    "tdnetDocumentsAttempted": 126,
+    "tdnetDocumentsAttempted": 132,
     "tdnetStrictFailures": 0,
     "tdnetStrictFailureRate": 0.0,
-    "tdnetNoMetricDocuments": 25,
-    "tdnetNoMetricRate": 19.84,
+    "tdnetNoMetricDocuments": 26,
+    "tdnetNoMetricRate": 19.7,
     "pipelineFailureCount": 0,
-    "unusableDocumentCount": 80,
+    "unusableDocumentCount": 81,
     "issueCounts": {
       "history-trend-quarantined": 5,
-      "missing-financial-record": 73,
-      "missing-provenance": 415,
-      "old-edinet-model": 402,
-      "partial-provenance": 3205,
+      "missing-financial-record": 78,
+      "missing-provenance": 411,
+      "old-edinet-model": 398,
+      "partial-provenance": 3195,
       "source-mismatch-quarantined": 11,
       "source-reconciliation-quarantined": 11
     },
     "sourceCounts": {
-      "EDINET": 3511,
-      "TDnet": 111,
-      "unavailable": 73
+      "EDINET": 3492,
+      "TDnet": 116,
+      "unavailable": 78
     }
   },
   "metricCoverage": {
     "operatingMargin": {
-      "available": 3320,
-      "missing": 206,
+      "available": 3303,
+      "missing": 214,
       "notApplicable": 169,
-      "availabilityRatio": 94.16,
+      "availabilityRatio": 93.92,
       "missingReasons": {
-        "missing-financial-record": 72,
-        "source-fact-unavailable": 134
+        "missing-financial-record": 77,
+        "source-fact-unavailable": 137
       },
       "kind": "source-extracted"
     },
     "netMargin": {
-      "available": 3349,
-      "missing": 216,
+      "available": 3332,
+      "missing": 224,
       "notApplicable": 130,
-      "availabilityRatio": 93.94,
+      "availabilityRatio": 93.7,
       "missingReasons": {
-        "missing-financial-record": 73,
-        "source-fact-unavailable": 143
+        "missing-financial-record": 78,
+        "source-fact-unavailable": 146
       },
       "kind": "source-extracted"
     },
     "roe": {
-      "available": 3576,
-      "missing": 119,
+      "available": 3559,
+      "missing": 127,
       "notApplicable": 0,
-      "availabilityRatio": 96.78,
+      "availabilityRatio": 96.55,
       "missingReasons": {
-        "missing-financial-record": 73,
-        "source-fact-unavailable": 46
+        "missing-financial-record": 78,
+        "source-fact-unavailable": 49
       },
       "kind": "source-extracted"
     },
     "roa": {
-      "available": 3561,
-      "missing": 134,
+      "available": 3544,
+      "missing": 142,
       "notApplicable": 0,
-      "availabilityRatio": 96.37,
+      "availabilityRatio": 96.15,
       "missingReasons": {
-        "missing-financial-record": 73,
-        "missing-supplemental-input": 61
+        "missing-financial-record": 78,
+        "missing-supplemental-input": 64
       },
       "kind": "supplemental-derived"
     },
     "roic": {
-      "available": 2934,
-      "missing": 592,
+      "available": 2922,
+      "missing": 595,
       "notApplicable": 169,
-      "availabilityRatio": 83.21,
+      "availabilityRatio": 83.08,
       "missingReasons": {
-        "missing-financial-record": 72,
-        "missing-supplemental-input": 520
+        "missing-financial-record": 77,
+        "missing-supplemental-input": 518
       },
       "kind": "supplemental-derived"
     },
     "roicWaccSpread": {
-      "available": 2934,
-      "missing": 592,
+      "available": 2922,
+      "missing": 595,
       "notApplicable": 169,
-      "availabilityRatio": 83.21,
+      "availabilityRatio": 83.08,
       "missingReasons": {
-        "missing-financial-record": 72,
-        "missing-supplemental-input": 520
+        "missing-financial-record": 77,
+        "missing-supplemental-input": 518
       },
       "kind": "supplemental-derived"
     },
     "equityRatio": {
-      "available": 3446,
-      "missing": 80,
+      "available": 3432,
+      "missing": 85,
       "notApplicable": 169,
-      "availabilityRatio": 97.73,
+      "availabilityRatio": 97.58,
       "missingReasons": {
-        "missing-financial-record": 72,
+        "missing-financial-record": 77,
         "source-fact-unavailable": 8
       },
       "kind": "source-extracted"
     },
     "operatingCfMargin": {
-      "available": 3300,
-      "missing": 226,
+      "available": 3283,
+      "missing": 234,
       "notApplicable": 169,
-      "availabilityRatio": 93.59,
+      "availabilityRatio": 93.35,
       "missingReasons": {
-        "missing-financial-record": 72,
-        "source-fact-unavailable": 154
+        "missing-financial-record": 77,
+        "source-fact-unavailable": 157
       },
       "kind": "source-extracted"
     },
     "cashProfitGap": {
-      "available": 3275,
-      "missing": 251,
+      "available": 3259,
+      "missing": 258,
       "notApplicable": 169,
-      "availabilityRatio": 92.88,
+      "availabilityRatio": 92.66,
       "missingReasons": {
-        "missing-financial-record": 72,
-        "missing-supplemental-input": 179
+        "missing-financial-record": 77,
+        "missing-supplemental-input": 181
       },
       "kind": "supplemental-derived"
     },
     "netCash": {
-      "available": 2755,
-      "missing": 771,
+      "available": 2743,
+      "missing": 774,
       "notApplicable": 169,
-      "availabilityRatio": 78.13,
+      "availabilityRatio": 77.99,
       "missingReasons": {
-        "missing-financial-record": 72,
-        "source-fact-unavailable": 699
+        "missing-financial-record": 77,
+        "source-fact-unavailable": 697
       },
       "kind": "source-extracted"
     },
     "wacc": {
-      "available": 3444,
-      "missing": 82,
+      "available": 3430,
+      "missing": 87,
       "notApplicable": 169,
-      "availabilityRatio": 97.67,
+      "availabilityRatio": 97.53,
       "missingReasons": {
-        "missing-financial-record": 72,
+        "missing-financial-record": 77,
         "missing-supplemental-input": 10
       },
       "kind": "supplemental-derived"
@@ -190,12 +190,12 @@
   },
   "industries": {
     "その他製品": {
-      "companies": 105,
+      "companies": 102,
       "ok": 0,
-      "warning": 104,
+      "warning": 101,
       "review": 0,
       "missing": 1,
-      "coverageRatio": 99.05
+      "coverageRatio": 99.02
     },
     "その他金融業": {
       "companies": 39,
@@ -206,12 +206,12 @@
       "coverageRatio": 97.44
     },
     "ガラス・土石製品": {
-      "companies": 48,
+      "companies": 49,
       "ok": 0,
-      "warning": 47,
+      "warning": 48,
       "review": 0,
       "missing": 1,
-      "coverageRatio": 97.92
+      "coverageRatio": 97.96
     },
     "ゴム製品": {
       "companies": 16,
@@ -222,12 +222,12 @@
       "coverageRatio": 100.0
     },
     "サービス業": {
-      "companies": 532,
+      "companies": 533,
       "ok": 0,
       "warning": 517,
       "review": 0,
-      "missing": 15,
-      "coverageRatio": 97.18
+      "missing": 16,
+      "coverageRatio": 97.0
     },
     "パルプ・紙": {
       "companies": 24,
@@ -238,12 +238,12 @@
       "coverageRatio": 100.0
     },
     "不動産業": {
-      "companies": 130,
+      "companies": 132,
       "ok": 0,
-      "warning": 129,
+      "warning": 130,
       "review": 0,
-      "missing": 1,
-      "coverageRatio": 99.23
+      "missing": 2,
+      "coverageRatio": 98.48
     },
     "保険業": {
       "companies": 14,
@@ -262,12 +262,12 @@
       "coverageRatio": 100.0
     },
     "化学": {
-      "companies": 202,
+      "companies": 203,
       "ok": 0,
-      "warning": 199,
+      "warning": 200,
       "review": 0,
       "missing": 3,
-      "coverageRatio": 98.51
+      "coverageRatio": 98.52
     },
     "医薬品": {
       "companies": 79,
@@ -278,17 +278,17 @@
       "coverageRatio": 93.67
     },
     "卸売業": {
-      "companies": 279,
+      "companies": 275,
       "ok": 0,
-      "warning": 274,
+      "warning": 270,
       "review": 4,
       "missing": 1,
       "coverageRatio": 99.64
     },
     "小売業": {
-      "companies": 322,
+      "companies": 323,
       "ok": 0,
-      "warning": 317,
+      "warning": 318,
       "review": 1,
       "missing": 4,
       "coverageRatio": 98.76
@@ -302,20 +302,20 @@
       "coverageRatio": 98.56
     },
     "情報・通信業": {
-      "companies": 605,
+      "companies": 603,
       "ok": 0,
-      "warning": 573,
+      "warning": 570,
       "review": 0,
-      "missing": 32,
-      "coverageRatio": 94.71
+      "missing": 33,
+      "coverageRatio": 94.53
     },
     "機械": {
-      "companies": 207,
+      "companies": 205,
       "ok": 0,
-      "warning": 204,
+      "warning": 202,
       "review": 1,
       "missing": 2,
-      "coverageRatio": 99.03
+      "coverageRatio": 99.02
     },
     "水産・農林業": {
       "companies": 12,
@@ -358,12 +358,12 @@
       "coverageRatio": 100.0
     },
     "繊維製品": {
-      "companies": 48,
+      "companies": 44,
       "ok": 0,
-      "warning": 46,
+      "warning": 42,
       "review": 0,
       "missing": 2,
-      "coverageRatio": 95.83
+      "coverageRatio": 95.45
     },
     "証券、商品先物取引業": {
       "companies": 37,
@@ -374,25 +374,25 @@
       "coverageRatio": 100.0
     },
     "輸送用機器": {
-      "companies": 80,
+      "companies": 82,
       "ok": 0,
-      "warning": 79,
+      "warning": 80,
       "review": 0,
-      "missing": 1,
-      "coverageRatio": 98.75
+      "missing": 2,
+      "coverageRatio": 97.56
     },
     "金属製品": {
-      "companies": 86,
+      "companies": 85,
       "ok": 0,
-      "warning": 85,
+      "warning": 84,
       "review": 1,
       "missing": 0,
       "coverageRatio": 100.0
     },
     "鉄鋼": {
-      "companies": 37,
+      "companies": 36,
       "ok": 0,
-      "warning": 37,
+      "warning": 36,
       "review": 0,
       "missing": 0,
       "coverageRatio": 100.0
@@ -422,17 +422,17 @@
       "coverageRatio": 100.0
     },
     "電気・ガス業": {
-      "companies": 28,
+      "companies": 29,
       "ok": 0,
       "warning": 27,
       "review": 0,
-      "missing": 1,
-      "coverageRatio": 96.43
+      "missing": 2,
+      "coverageRatio": 93.1
     },
     "電気機器": {
-      "companies": 223,
+      "companies": 222,
       "ok": 0,
-      "warning": 223,
+      "warning": 222,
       "review": 0,
       "missing": 0,
       "coverageRatio": 100.0
@@ -4943,7 +4943,7 @@
     },
     {
       "code": "2108",
-      "companyName": "日本甜菜製糖",
+      "companyName": "ニッテン",
       "market": "プライム",
       "industry": "食料品",
       "status": "warning",
@@ -9931,7 +9931,7 @@
     },
     {
       "code": "2681",
-      "companyName": "ゲオホールディングス",
+      "companyName": "セカンドリテイリング",
       "market": "プライム",
       "industry": "小売業",
       "status": "warning",
@@ -10284,7 +10284,7 @@
       "code": "2721",
       "companyName": "ジェイホールディングス",
       "market": "スタンダード",
-      "industry": "卸売業",
+      "industry": "サービス業",
       "status": "warning",
       "source": "EDINET",
       "documentId": "S100XUOH",
@@ -14527,7 +14527,7 @@
       "code": "3103",
       "companyName": "ユニチカ",
       "market": "スタンダード",
-      "industry": "繊維製品",
+      "industry": "化学",
       "status": "warning",
       "source": "EDINET",
       "documentId": "S100YJHA",
@@ -14548,9 +14548,9 @@
     },
     {
       "code": "3104",
-      "companyName": "富士紡ホールディングス",
+      "companyName": "フジボウホールディングス",
       "market": "プライム",
-      "industry": "繊維製品",
+      "industry": "ガラス・土石製品",
       "status": "warning",
       "source": "EDINET",
       "documentId": "S100YIS2",
@@ -16832,7 +16832,7 @@
       "code": "3302",
       "companyName": "帝国繊維",
       "market": "プライム",
-      "industry": "繊維製品",
+      "industry": "輸送用機器",
       "status": "warning",
       "source": "EDINET",
       "documentId": "S100XQYR",
@@ -16853,7 +16853,7 @@
     },
     {
       "code": "3306",
-      "companyName": "日本製麻",
+      "companyName": "ＳＥＩＭＡホールディングス",
       "market": "スタンダード",
       "industry": "卸売業",
       "status": "warning",
@@ -17191,7 +17191,7 @@
       "code": "3350",
       "companyName": "メタプラネット",
       "market": "スタンダード",
-      "industry": "卸売業",
+      "industry": "その他金融業",
       "status": "warning",
       "source": "EDINET",
       "documentId": "S100XTWY",
@@ -18989,7 +18989,7 @@
     {
       "code": "3491",
       "companyName": "ＧＡ　ｔｅｃｈｎｏｌｏｇｉｅｓ",
-      "market": "グロース",
+      "market": "プライム",
       "industry": "不動産業",
       "status": "warning",
       "source": "EDINET",
@@ -20971,33 +20971,6 @@
       ]
     },
     {
-      "code": "3670",
-      "companyName": "協立情報通信",
-      "market": "スタンダード",
-      "industry": "情報・通信業",
-      "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100YG51",
-      "periodEnd": "2026-03-31",
-      "periodAgeDays": 219,
-      "metricCount": 9,
-      "sourceBackedMetricCount": 6,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
-          "severity": "warning"
-        }
-      ]
-    },
-    {
       "code": "3671",
       "companyName": "ソフトマックス",
       "market": "スタンダード",
@@ -21026,7 +20999,7 @@
     },
     {
       "code": "3672",
-      "companyName": "オルトプラス",
+      "companyName": "オルトプラスホールディングス",
       "market": "スタンダード",
       "industry": "情報・通信業",
       "status": "warning",
@@ -21211,7 +21184,7 @@
     {
       "code": "3680",
       "companyName": "ホットリンク",
-      "market": "グロース",
+      "market": "スタンダード",
       "industry": "情報・通信業",
       "status": "warning",
       "source": "EDINET",
@@ -21356,15 +21329,15 @@
       "market": "スタンダード",
       "industry": "情報・通信業",
       "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100XAFO",
-      "periodEnd": "2025-09-30",
-      "periodAgeDays": 401,
+      "source": "TDnet",
+      "documentId": "081220261104564739",
+      "periodEnd": "2026-09-30",
+      "periodAgeDays": 36,
       "metricCount": 15,
       "sourceBackedMetricCount": 10,
       "provenanceMetricCount": 10,
       "trustedMetricCount": 10,
-      "dataModelVersion": 9,
+      "dataModelVersion": null,
       "provenanceModelVersion": 1,
       "issues": [
         {
@@ -21517,15 +21490,15 @@
       "market": "スタンダード",
       "industry": "情報・通信業",
       "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100XAH0",
-      "periodEnd": "2025-09-30",
-      "periodAgeDays": 401,
+      "source": "TDnet",
+      "documentId": "081220261105565473",
+      "periodEnd": "2026-09-30",
+      "periodAgeDays": 36,
       "metricCount": 13,
       "sourceBackedMetricCount": 7,
       "provenanceMetricCount": 7,
       "trustedMetricCount": 7,
-      "dataModelVersion": 9,
+      "dataModelVersion": null,
       "provenanceModelVersion": 1,
       "issues": [
         {
@@ -21607,15 +21580,15 @@
       "market": "スタンダード",
       "industry": "情報・通信業",
       "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100XAQC",
-      "periodEnd": "2025-09-30",
-      "periodAgeDays": 401,
-      "metricCount": 14,
-      "sourceBackedMetricCount": 8,
-      "provenanceMetricCount": 8,
-      "trustedMetricCount": 8,
-      "dataModelVersion": 9,
+      "source": "TDnet",
+      "documentId": "081220261105565280",
+      "periodEnd": "2026-09-30",
+      "periodAgeDays": 36,
+      "metricCount": 4,
+      "sourceBackedMetricCount": 3,
+      "provenanceMetricCount": 3,
+      "trustedMetricCount": 3,
+      "dataModelVersion": null,
       "provenanceModelVersion": 1,
       "issues": [
         {
@@ -21868,7 +21841,7 @@
       "code": "3750",
       "companyName": "ＡＤＲバイオメディカルホールディングス",
       "market": "スタンダード",
-      "industry": "情報・通信業",
+      "industry": "精密機器",
       "status": "warning",
       "source": "EDINET",
       "documentId": "S100YLDW",
@@ -22278,33 +22251,6 @@
       "issues": [
         {
           "code": "partial-provenance",
-          "severity": "warning"
-        }
-      ]
-    },
-    {
-      "code": "3787",
-      "companyName": "テクノマセマティカル",
-      "market": "スタンダード",
-      "industry": "情報・通信業",
-      "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100YI1N",
-      "periodEnd": "2026-03-31",
-      "periodAgeDays": 219,
-      "metricCount": 9,
-      "sourceBackedMetricCount": 6,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
           "severity": "warning"
         }
       ]
@@ -23040,7 +22986,7 @@
     },
     {
       "code": "3850",
-      "companyName": "エヌ・ティ・ティ・データ・イントラマート",
+      "companyName": "イントラマート",
       "market": "スタンダード",
       "industry": "情報・通信業",
       "status": "warning",
@@ -23674,7 +23620,7 @@
     {
       "code": "3911",
       "companyName": "Ａｉｍｉｎｇ",
-      "market": "グロース",
+      "market": "スタンダード",
       "industry": "情報・通信業",
       "status": "warning",
       "source": "EDINET",
@@ -23834,7 +23780,7 @@
     },
     {
       "code": "3918",
-      "companyName": "ＰＣＩホールディングス",
+      "companyName": "ＰＣＩソリューションズ",
       "market": "スタンダード",
       "industry": "情報・通信業",
       "status": "warning",
@@ -29179,29 +29125,6 @@
       ]
     },
     {
-      "code": "4316",
-      "companyName": "ビーマップ",
-      "market": "グロース",
-      "industry": "情報・通信業",
-      "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100YK9U",
-      "periodEnd": "2026-03-31",
-      "periodAgeDays": 219,
-      "metricCount": 13,
-      "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 10,
-      "trustedMetricCount": 10,
-      "dataModelVersion": 9,
-      "provenanceModelVersion": 1,
-      "issues": [
-        {
-          "code": "partial-provenance",
-          "severity": "warning"
-        }
-      ]
-    },
-    {
       "code": "4317",
       "companyName": "レイ",
       "market": "スタンダード",
@@ -31382,7 +31305,7 @@
     },
     {
       "code": "4444",
-      "companyName": "インフォネット",
+      "companyName": "インフォネットグループ",
       "market": "グロース",
       "industry": "情報・通信業",
       "status": "warning",
@@ -31713,18 +31636,18 @@
     {
       "code": "4475",
       "companyName": "ＨＥＮＮＧＥ",
-      "market": "グロース",
+      "market": "プライム",
       "industry": "情報・通信業",
       "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100XCC9",
-      "periodEnd": "2025-09-30",
-      "periodAgeDays": 401,
-      "metricCount": 13,
-      "sourceBackedMetricCount": 7,
-      "provenanceMetricCount": 7,
-      "trustedMetricCount": 7,
-      "dataModelVersion": 9,
+      "source": "TDnet",
+      "documentId": "081220261102562428",
+      "periodEnd": "2026-09-30",
+      "periodAgeDays": 36,
+      "metricCount": 3,
+      "sourceBackedMetricCount": 2,
+      "provenanceMetricCount": 2,
+      "trustedMetricCount": 2,
+      "dataModelVersion": null,
       "provenanceModelVersion": 1,
       "issues": [
         {
@@ -33317,7 +33240,7 @@
     {
       "code": "4586",
       "companyName": "メドレックス",
-      "market": "グロース",
+      "market": "スタンダード",
       "industry": "医薬品",
       "status": "warning",
       "source": "EDINET",
@@ -35605,7 +35528,7 @@
       "code": "4765",
       "companyName": "ＳＢＩグローバルアセットマネジメント",
       "market": "プライム",
-      "industry": "サービス業",
+      "industry": "証券、商品先物取引業",
       "status": "warning",
       "source": "EDINET",
       "documentId": "S100YCOR",
@@ -35883,7 +35806,7 @@
       "code": "4784",
       "companyName": "ＧＭＯインターネット",
       "market": "プライム",
-      "industry": "サービス業",
+      "industry": "情報・通信業",
       "status": "warning",
       "source": "EDINET",
       "documentId": "S100XRMD",
@@ -41559,29 +41482,6 @@
       ]
     },
     {
-      "code": "5484",
-      "companyName": "東北特殊鋼",
-      "market": "スタンダード",
-      "industry": "鉄鋼",
-      "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100YNM9",
-      "periodEnd": "2026-03-31",
-      "periodAgeDays": 219,
-      "metricCount": 14,
-      "sourceBackedMetricCount": 8,
-      "provenanceMetricCount": 8,
-      "trustedMetricCount": 8,
-      "dataModelVersion": 9,
-      "provenanceModelVersion": 1,
-      "issues": [
-        {
-          "code": "partial-provenance",
-          "severity": "warning"
-        }
-      ]
-    },
-    {
       "code": "548A",
       "companyName": "システムエグゼ",
       "market": "スタンダード",
@@ -43587,7 +43487,7 @@
     },
     {
       "code": "5842",
-      "companyName": "インテグラル",
+      "companyName": "インテグラル・グループ",
       "market": "グロース",
       "industry": "証券、商品先物取引業",
       "status": "warning",
@@ -44136,7 +44036,7 @@
     },
     {
       "code": "5902",
-      "companyName": "ホッカンホールディングス",
+      "companyName": "ホッカン",
       "market": "プライム",
       "industry": "金属製品",
       "status": "warning",
@@ -46229,15 +46129,15 @@
       "market": "プライム",
       "industry": "サービス業",
       "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100X9H5",
-      "periodEnd": "2025-09-30",
-      "periodAgeDays": 401,
-      "metricCount": 14,
-      "sourceBackedMetricCount": 8,
-      "provenanceMetricCount": 8,
-      "trustedMetricCount": 8,
-      "dataModelVersion": 9,
+      "source": "TDnet",
+      "documentId": "081220261105565689",
+      "periodEnd": "2026-09-30",
+      "periodAgeDays": 36,
+      "metricCount": 4,
+      "sourceBackedMetricCount": 3,
+      "provenanceMetricCount": 3,
+      "trustedMetricCount": 3,
+      "dataModelVersion": null,
       "provenanceModelVersion": 1,
       "issues": [
         {
@@ -46478,7 +46378,7 @@
     },
     {
       "code": "6072",
-      "companyName": "地盤ネットホールディングス",
+      "companyName": "ＥＲＴＨ　Ｇｒｏｕｐ",
       "market": "スタンダード",
       "industry": "サービス業",
       "status": "warning",
@@ -47347,29 +47247,6 @@
       "sourceBackedMetricCount": 8,
       "provenanceMetricCount": 8,
       "trustedMetricCount": 8,
-      "dataModelVersion": 9,
-      "provenanceModelVersion": 1,
-      "issues": [
-        {
-          "code": "partial-provenance",
-          "severity": "warning"
-        }
-      ]
-    },
-    {
-      "code": "6147",
-      "companyName": "ヤマザキ",
-      "market": "スタンダード",
-      "industry": "機械",
-      "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100YGTK",
-      "periodEnd": "2026-03-31",
-      "periodAgeDays": 219,
-      "metricCount": 15,
-      "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 10,
-      "trustedMetricCount": 10,
       "dataModelVersion": 9,
       "provenanceModelVersion": 1,
       "issues": [
@@ -51179,8 +51056,29 @@
       ]
     },
     {
+      "code": "640A",
+      "companyName": "ＡＳＮＯＶＡ　Ｃｏｍｐａｎｉｅｓ",
+      "market": "グロース",
+      "industry": "サービス業",
+      "status": "missing",
+      "source": null,
+      "documentId": null,
+      "periodEnd": null,
+      "periodAgeDays": null,
+      "metricCount": 0,
+      "sourceBackedMetricCount": 0,
+      "provenanceMetricCount": 0,
+      "trustedMetricCount": 0,
+      "issues": [
+        {
+          "code": "missing-financial-record",
+          "severity": "missing"
+        }
+      ]
+    },
+    {
       "code": "6412",
-      "companyName": "平和",
+      "companyName": "平和ホールディングス",
       "market": "プライム",
       "industry": "機械",
       "status": "warning",
@@ -51294,6 +51192,27 @@
       ]
     },
     {
+      "code": "641A",
+      "companyName": "ＮＯＫ　Ｇｒｏｕｐ",
+      "market": "プライム",
+      "industry": "輸送用機器",
+      "status": "missing",
+      "source": null,
+      "documentId": null,
+      "periodEnd": null,
+      "periodAgeDays": null,
+      "metricCount": 0,
+      "sourceBackedMetricCount": 0,
+      "provenanceMetricCount": 0,
+      "trustedMetricCount": 0,
+      "issues": [
+        {
+          "code": "missing-financial-record",
+          "severity": "missing"
+        }
+      ]
+    },
+    {
       "code": "6420",
       "companyName": "ガリレイホールディングス",
       "market": "プライム",
@@ -51382,6 +51301,27 @@
         {
           "code": "partial-provenance",
           "severity": "warning"
+        }
+      ]
+    },
+    {
+      "code": "642A",
+      "companyName": "キューデンホールディングス",
+      "market": "プライム",
+      "industry": "電気・ガス業",
+      "status": "missing",
+      "source": null,
+      "documentId": null,
+      "periodEnd": null,
+      "periodAgeDays": null,
+      "metricCount": 0,
+      "sourceBackedMetricCount": 0,
+      "provenanceMetricCount": 0,
+      "trustedMetricCount": 0,
+      "issues": [
+        {
+          "code": "missing-financial-record",
+          "severity": "missing"
         }
       ]
     },
@@ -51943,7 +51883,7 @@
       "code": "6473",
       "companyName": "ジェイテクト",
       "market": "プライム",
-      "industry": "機械",
+      "industry": "輸送用機器",
       "status": "warning",
       "source": "EDINET",
       "documentId": "S100YEL3",
@@ -52147,6 +52087,27 @@
         {
           "code": "partial-provenance",
           "severity": "warning"
+        }
+      ]
+    },
+    {
+      "code": "648A",
+      "companyName": "ルクレ",
+      "market": "グロース",
+      "industry": "情報・通信業",
+      "status": "missing",
+      "source": null,
+      "documentId": null,
+      "periodEnd": null,
+      "periodAgeDays": null,
+      "metricCount": 0,
+      "sourceBackedMetricCount": 0,
+      "provenanceMetricCount": 0,
+      "trustedMetricCount": 0,
+      "issues": [
+        {
+          "code": "missing-financial-record",
+          "severity": "missing"
         }
       ]
     },
@@ -52667,7 +52628,7 @@
     {
       "code": "6524",
       "companyName": "湖北工業",
-      "market": "スタンダード",
+      "market": "プライム",
       "industry": "電気機器",
       "status": "warning",
       "source": "EDINET",
@@ -52730,6 +52691,27 @@
         {
           "code": "partial-provenance",
           "severity": "warning"
+        }
+      ]
+    },
+    {
+      "code": "652A",
+      "companyName": "トグルホールディングス",
+      "market": "グロース",
+      "industry": "不動産業",
+      "status": "missing",
+      "source": null,
+      "documentId": null,
+      "periodEnd": null,
+      "periodAgeDays": null,
+      "metricCount": 0,
+      "sourceBackedMetricCount": 0,
+      "provenanceMetricCount": 0,
+      "trustedMetricCount": 0,
+      "issues": [
+        {
+          "code": "missing-financial-record",
+          "severity": "missing"
         }
       ]
     },
@@ -53196,7 +53178,7 @@
     {
       "code": "6560",
       "companyName": "エル・ティー・エス",
-      "market": "プライム",
+      "market": "スタンダード",
       "industry": "サービス業",
       "status": "warning",
       "source": "EDINET",
@@ -54106,7 +54088,7 @@
       "code": "6633",
       "companyName": "ＣＧＳホールディングス",
       "market": "スタンダード",
-      "industry": "電気機器",
+      "industry": "情報・通信業",
       "status": "warning",
       "source": "EDINET",
       "documentId": "S100XRYC",
@@ -60542,33 +60524,6 @@
       ]
     },
     {
-      "code": "7183",
-      "companyName": "あんしん保証",
-      "market": "スタンダード",
-      "industry": "その他金融業",
-      "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100YCZS",
-      "periodEnd": "2026-03-31",
-      "periodAgeDays": 219,
-      "metricCount": 9,
-      "sourceBackedMetricCount": 6,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
-          "severity": "warning"
-        }
-      ]
-    },
-    {
       "code": "7184",
       "companyName": "富山第一銀行",
       "market": "プライム",
@@ -61450,29 +61405,6 @@
       "status": "warning",
       "source": "EDINET",
       "documentId": "S100YFXP",
-      "periodEnd": "2026-03-31",
-      "periodAgeDays": 219,
-      "metricCount": 16,
-      "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 10,
-      "trustedMetricCount": 10,
-      "dataModelVersion": 9,
-      "provenanceModelVersion": 1,
-      "issues": [
-        {
-          "code": "partial-provenance",
-          "severity": "warning"
-        }
-      ]
-    },
-    {
-      "code": "7255",
-      "companyName": "桜井製作所",
-      "market": "スタンダード",
-      "industry": "輸送用機器",
-      "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100YI1Y",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 219,
       "metricCount": 16,
@@ -64155,29 +64087,6 @@
       ]
     },
     {
-      "code": "7490",
-      "companyName": "日新商事",
-      "market": "スタンダード",
-      "industry": "卸売業",
-      "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100YKC9",
-      "periodEnd": "2026-03-31",
-      "periodAgeDays": 219,
-      "metricCount": 16,
-      "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 10,
-      "trustedMetricCount": 10,
-      "dataModelVersion": 9,
-      "provenanceModelVersion": 1,
-      "issues": [
-        {
-          "code": "partial-provenance",
-          "severity": "warning"
-        }
-      ]
-    },
-    {
       "code": "7494",
       "companyName": "コナカ",
       "market": "スタンダード",
@@ -65352,7 +65261,7 @@
       "code": "7599",
       "companyName": "ＩＤＯＭ",
       "market": "プライム",
-      "industry": "卸売業",
+      "industry": "小売業",
       "status": "warning",
       "source": "EDINET",
       "documentId": "S100Y64O",
@@ -65492,7 +65401,7 @@
     },
     {
       "code": "7606",
-      "companyName": "ユナイテッドアローズ",
+      "companyName": "ＴＡＢＡＹＡホールディングス",
       "market": "プライム",
       "industry": "小売業",
       "status": "warning",
@@ -66433,7 +66342,7 @@
     },
     {
       "code": "7695",
-      "companyName": "交換できるくん",
+      "companyName": "リフォームテクノロジー",
       "market": "グロース",
       "industry": "小売業",
       "status": "warning",
@@ -66538,29 +66447,6 @@
       "periodEnd": "2026-06-30",
       "periodAgeDays": 128,
       "metricCount": 14,
-      "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 10,
-      "trustedMetricCount": 10,
-      "dataModelVersion": 9,
-      "provenanceModelVersion": 1,
-      "issues": [
-        {
-          "code": "partial-provenance",
-          "severity": "warning"
-        }
-      ]
-    },
-    {
-      "code": "7709",
-      "companyName": "クボテック",
-      "market": "スタンダード",
-      "industry": "精密機器",
-      "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100XQ6A",
-      "periodEnd": "2026-03-31",
-      "periodAgeDays": 219,
-      "metricCount": 13,
       "sourceBackedMetricCount": 10,
       "provenanceMetricCount": 10,
       "trustedMetricCount": 10,
@@ -68458,33 +68344,6 @@
       ]
     },
     {
-      "code": "7851",
-      "companyName": "カワセコンピュータサプライ",
-      "market": "スタンダード",
-      "industry": "その他製品",
-      "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100YMBT",
-      "periodEnd": "2026-03-31",
-      "periodAgeDays": 219,
-      "metricCount": 9,
-      "sourceBackedMetricCount": 6,
-      "provenanceMetricCount": 0,
-      "trustedMetricCount": 0,
-      "dataModelVersion": null,
-      "provenanceModelVersion": null,
-      "issues": [
-        {
-          "code": "missing-provenance",
-          "severity": "warning"
-        },
-        {
-          "code": "old-edinet-model",
-          "severity": "warning"
-        }
-      ]
-    },
-    {
       "code": "7856",
       "companyName": "萩原工業",
       "market": "プライム",
@@ -68983,7 +68842,7 @@
       "code": "7893",
       "companyName": "プロネクサス",
       "market": "プライム",
-      "industry": "その他製品",
+      "industry": "サービス業",
       "status": "warning",
       "source": "EDINET",
       "documentId": "S100YEYJ",
@@ -69648,29 +69507,6 @@
       ]
     },
     {
-      "code": "7946",
-      "companyName": "光陽社",
-      "market": "スタンダード",
-      "industry": "その他製品",
-      "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100YLWX",
-      "periodEnd": "2026-03-31",
-      "periodAgeDays": 219,
-      "metricCount": 16,
-      "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 10,
-      "trustedMetricCount": 10,
-      "dataModelVersion": 9,
-      "provenanceModelVersion": 1,
-      "issues": [
-        {
-          "code": "partial-provenance",
-          "severity": "warning"
-        }
-      ]
-    },
-    {
       "code": "7947",
       "companyName": "エフピコ",
       "market": "プライム",
@@ -70195,29 +70031,6 @@
       "periodEnd": "2025-12-31",
       "periodAgeDays": 309,
       "metricCount": 16,
-      "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 10,
-      "trustedMetricCount": 10,
-      "dataModelVersion": 9,
-      "provenanceModelVersion": 1,
-      "issues": [
-        {
-          "code": "partial-provenance",
-          "severity": "warning"
-        }
-      ]
-    },
-    {
-      "code": "7985",
-      "companyName": "ネポン",
-      "market": "スタンダード",
-      "industry": "金属製品",
-      "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100YN9E",
-      "periodEnd": "2026-03-31",
-      "periodAgeDays": 219,
-      "metricCount": 15,
       "sourceBackedMetricCount": 10,
       "provenanceMetricCount": 10,
       "trustedMetricCount": 10,
@@ -71921,7 +71734,7 @@
       "code": "8107",
       "companyName": "キムラタン",
       "market": "スタンダード",
-      "industry": "繊維製品",
+      "industry": "不動産業",
       "status": "warning",
       "source": "EDINET",
       "documentId": "S100YER7",
@@ -72362,29 +72175,6 @@
       "status": "warning",
       "source": "EDINET",
       "documentId": "S100YJAK",
-      "periodEnd": "2026-03-31",
-      "periodAgeDays": 219,
-      "metricCount": 16,
-      "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 10,
-      "trustedMetricCount": 10,
-      "dataModelVersion": 9,
-      "provenanceModelVersion": 1,
-      "issues": [
-        {
-          "code": "partial-provenance",
-          "severity": "warning"
-        }
-      ]
-    },
-    {
-      "code": "8141",
-      "companyName": "新光商事",
-      "market": "プライム",
-      "industry": "卸売業",
-      "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100YME7",
       "periodEnd": "2026-03-31",
       "periodAgeDays": 219,
       "metricCount": 16,
@@ -75247,7 +75037,7 @@
     },
     {
       "code": "8595",
-      "companyName": "ジャフコ　グループ",
+      "companyName": "ＪＡＦＣＯ",
       "market": "プライム",
       "industry": "証券、商品先物取引業",
       "status": "warning",
@@ -75637,7 +75427,7 @@
       "code": "8699",
       "companyName": "ＨＳホールディングス",
       "market": "スタンダード",
-      "industry": "証券、商品先物取引業",
+      "industry": "卸売業",
       "status": "warning",
       "source": "EDINET",
       "documentId": "S100YJQ6",
@@ -79420,7 +79210,7 @@
     },
     {
       "code": "9227",
-      "companyName": "マイクロ波化学",
+      "companyName": "ＭＷＣＣ",
       "market": "グロース",
       "industry": "サービス業",
       "status": "warning",
@@ -83965,29 +83755,6 @@
       ]
     },
     {
-      "code": "9691",
-      "companyName": "両毛システムズ",
-      "market": "スタンダード",
-      "industry": "情報・通信業",
-      "status": "warning",
-      "source": "EDINET",
-      "documentId": "S100YIGO",
-      "periodEnd": "2026-03-31",
-      "periodAgeDays": 219,
-      "metricCount": 16,
-      "sourceBackedMetricCount": 10,
-      "provenanceMetricCount": 10,
-      "trustedMetricCount": 10,
-      "dataModelVersion": 9,
-      "provenanceModelVersion": 1,
-      "issues": [
-        {
-          "code": "partial-provenance",
-          "severity": "warning"
-        }
-      ]
-    },
-    {
       "code": "9692",
       "companyName": "シーイーシー",
       "market": "プライム",
@@ -86119,7 +85886,7 @@
     },
     {
       "code": "9906",
-      "companyName": "藤井産業",
+      "companyName": "藤井産業ホールディングス",
       "market": "スタンダード",
       "industry": "卸売業",
       "status": "warning",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-11-05T15:50:19.672998Z",
+  "generatedAt": "2026-11-05T23:59:12.482538Z",
   "source": "Yahoo Finance",
   "status": "ready",
   "message": "Yahoo Financeの公開株価データとEDINET・TDnetのEPS/BPSからPER・PBRを自動計算しています。株価はリアルタイム保証ではありません。",
@@ -11395,19 +11395,6 @@
       "changePercent": 0.7972,
       "stale": false
     },
-    "3670": {
-      "date": "2026-09-30",
-      "timestamp": "2026-09-30T15:17:34+09:00",
-      "close": 1654.0,
-      "volume": 2700.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "quoteInterval": "15m",
-      "isRealtime": false,
-      "previousClose": 1654.0,
-      "changePercent": 0.0,
-      "stale": true
-    },
     "3671": {
       "date": "2026-11-05",
       "timestamp": "2026-11-05T15:30:00+09:00",
@@ -12122,19 +12109,6 @@
       "previousClose": 100.0,
       "changePercent": -1.0,
       "stale": false
-    },
-    "3787": {
-      "date": "2026-09-30",
-      "timestamp": "2026-09-30T15:30:00+09:00",
-      "close": 680.0,
-      "volume": 149900.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "quoteInterval": "15m",
-      "isRealtime": false,
-      "previousClose": 680.0,
-      "changePercent": 0.0,
-      "stale": true
     },
     "3788": {
       "date": "2026-11-05",
@@ -15944,19 +15918,6 @@
       "previousClose": 2307.0,
       "changePercent": -0.4768,
       "stale": false
-    },
-    "4316": {
-      "date": "2026-09-30",
-      "timestamp": "2026-09-30T15:30:00+09:00",
-      "close": 42.0,
-      "volume": 2046900.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "quoteInterval": "15m",
-      "isRealtime": false,
-      "previousClose": 42.0,
-      "changePercent": 0.0,
-      "stale": true
     },
     "4317": {
       "date": "2026-11-05",
@@ -22783,19 +22744,6 @@
       "changePercent": 2.9895,
       "stale": false
     },
-    "5484": {
-      "date": "2026-10-16",
-      "timestamp": "2026-10-16T15:23:42+09:00",
-      "close": 4455.0,
-      "volume": 400.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "quoteInterval": "15m",
-      "isRealtime": false,
-      "previousClose": 4455.0,
-      "changePercent": 0.0,
-      "stale": true
-    },
     "548A": {
       "date": "2026-11-05",
       "timestamp": "2026-11-05T15:20:13+09:00",
@@ -25981,19 +25929,6 @@
       "changePercent": -12.4974,
       "stale": false
     },
-    "6147": {
-      "date": "2026-09-30",
-      "timestamp": "2026-09-30T15:30:00+09:00",
-      "close": 166.0,
-      "volume": 57100.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "quoteInterval": "15m",
-      "isRealtime": false,
-      "previousClose": 166.0,
-      "changePercent": 0.0,
-      "stale": true
-    },
     "6149": {
       "date": "2026-11-05",
       "timestamp": "2026-11-05T15:30:00+09:00",
@@ -28113,6 +28048,19 @@
       "changePercent": 0.0,
       "stale": true
     },
+    "640A": {
+      "date": "2026-11-05",
+      "timestamp": "2026-11-05T15:30:00+09:00",
+      "close": 377.0,
+      "volume": 11300.0,
+      "source": "Yahoo Finance",
+      "priceType": "intraday-15m",
+      "quoteInterval": "15m",
+      "isRealtime": false,
+      "previousClose": 375.0,
+      "changePercent": 0.5333,
+      "stale": false
+    },
     "6412": {
       "date": "2026-11-05",
       "timestamp": "2026-11-05T15:30:00+09:00",
@@ -28178,6 +28126,19 @@
       "changePercent": 4.3143,
       "stale": false
     },
+    "641A": {
+      "date": "2026-11-05",
+      "timestamp": "2026-11-05T15:30:00+09:00",
+      "close": 2756.5,
+      "volume": 349700.0,
+      "source": "Yahoo Finance",
+      "priceType": "intraday-15m",
+      "quoteInterval": "15m",
+      "isRealtime": false,
+      "previousClose": 2722.5,
+      "changePercent": 1.2489,
+      "stale": false
+    },
     "6420": {
       "date": "2026-11-05",
       "timestamp": "2026-11-05T15:30:00+09:00",
@@ -28228,6 +28189,19 @@
       "isRealtime": false,
       "previousClose": 314.0,
       "changePercent": 0.6369,
+      "stale": false
+    },
+    "642A": {
+      "date": "2026-11-05",
+      "timestamp": "2026-11-05T15:30:00+09:00",
+      "close": 2046.5,
+      "volume": 1851500.0,
+      "source": "Yahoo Finance",
+      "priceType": "intraday-15m",
+      "quoteInterval": "15m",
+      "isRealtime": false,
+      "previousClose": 2014.5,
+      "changePercent": 1.5885,
       "stale": false
     },
     "6430": {
@@ -28659,6 +28633,19 @@
       "changePercent": 0.1,
       "stale": false
     },
+    "648A": {
+      "date": "2026-11-05",
+      "timestamp": "2026-11-05T15:30:00+09:00",
+      "close": 1734.0,
+      "volume": 67600.0,
+      "source": "Yahoo Finance",
+      "priceType": "intraday-15m",
+      "quoteInterval": "15m",
+      "isRealtime": false,
+      "previousClose": 1687.0,
+      "changePercent": 2.786,
+      "stale": false
+    },
     "6490": {
       "date": "2026-11-05",
       "timestamp": "2026-11-05T15:30:00+09:00",
@@ -28982,6 +28969,19 @@
       "isRealtime": false,
       "previousClose": 1700.0,
       "changePercent": -5.2353,
+      "stale": false
+    },
+    "652A": {
+      "date": "2026-11-05",
+      "timestamp": "2026-11-05T15:30:00+09:00",
+      "close": 3790.0,
+      "volume": 227800.0,
+      "source": "Yahoo Finance",
+      "priceType": "intraday-15m",
+      "quoteInterval": "15m",
+      "isRealtime": false,
+      "previousClose": 3735.0,
+      "changePercent": 1.4726,
       "stale": false
     },
     "6532": {
@@ -33352,19 +33352,6 @@
       "changePercent": 1.2897,
       "stale": false
     },
-    "7183": {
-      "date": "2026-10-08",
-      "timestamp": "2026-10-08T15:30:00+09:00",
-      "close": 255.0,
-      "volume": 3800.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "quoteInterval": "15m",
-      "isRealtime": false,
-      "previousClose": 255.0,
-      "changePercent": 0.0,
-      "stale": true
-    },
     "7184": {
       "date": "2026-11-05",
       "timestamp": "2026-11-05T15:30:00+09:00",
@@ -33871,19 +33858,6 @@
       "previousClose": 797.0,
       "changePercent": -0.1255,
       "stale": false
-    },
-    "7255": {
-      "date": "2026-09-30",
-      "timestamp": "2026-09-30T15:30:00+09:00",
-      "close": 530.0,
-      "volume": 14300.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "quoteInterval": "15m",
-      "isRealtime": false,
-      "previousClose": 530.0,
-      "changePercent": 0.0,
-      "stale": true
     },
     "7256": {
       "date": "2026-11-05",
@@ -35367,19 +35341,6 @@
       "changePercent": 0.0543,
       "stale": false
     },
-    "7490": {
-      "date": "2026-10-08",
-      "timestamp": "2026-10-08T15:10:57+09:00",
-      "close": 2192.0,
-      "volume": 5600.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "quoteInterval": "15m",
-      "isRealtime": false,
-      "previousClose": 2192.0,
-      "changePercent": 0.0,
-      "stale": true
-    },
     "7494": {
       "date": "2026-11-05",
       "timestamp": "2026-11-05T15:30:00+09:00",
@@ -36667,19 +36628,6 @@
       "changePercent": -2.0305,
       "stale": false
     },
-    "7709": {
-      "date": "2026-09-30",
-      "timestamp": "2026-09-30T15:30:00+09:00",
-      "close": 40.0,
-      "volume": 1033400.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "quoteInterval": "15m",
-      "isRealtime": false,
-      "previousClose": 40.0,
-      "changePercent": 0.0,
-      "stale": true
-    },
     "7711": {
       "date": "2026-11-05",
       "timestamp": "2026-11-05T15:30:00+09:00",
@@ -37720,19 +37668,6 @@
       "changePercent": 0.1294,
       "stale": false
     },
-    "7851": {
-      "date": "2026-09-30",
-      "timestamp": "2026-09-30T15:30:00+09:00",
-      "close": 170.0,
-      "volume": 6600.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "quoteInterval": "15m",
-      "isRealtime": false,
-      "previousClose": 170.0,
-      "changePercent": 0.0,
-      "stale": true
-    },
     "7856": {
       "date": "2026-11-05",
       "timestamp": "2026-11-05T15:30:00+09:00",
@@ -38370,19 +38305,6 @@
       "changePercent": 3.8199,
       "stale": false
     },
-    "7946": {
-      "date": "2026-09-30",
-      "timestamp": "2026-09-30T14:26:29+09:00",
-      "close": 322.0,
-      "volume": 2100.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "quoteInterval": "15m",
-      "isRealtime": false,
-      "previousClose": 322.0,
-      "changePercent": 0.0,
-      "stale": true
-    },
     "7947": {
       "date": "2026-11-05",
       "timestamp": "2026-11-05T15:30:00+09:00",
@@ -38681,19 +38603,6 @@
       "previousClose": 858.1,
       "changePercent": 3.8923,
       "stale": false
-    },
-    "7985": {
-      "date": "2026-09-30",
-      "timestamp": "2026-09-30T13:14:48+09:00",
-      "close": 704.0,
-      "volume": 2700.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "quoteInterval": "15m",
-      "isRealtime": false,
-      "previousClose": 704.0,
-      "changePercent": 0.0,
-      "stale": true
     },
     "7986": {
       "date": "2026-11-05",
@@ -39903,19 +39812,6 @@
       "previousClose": 2295.0,
       "changePercent": 0.0871,
       "stale": false
-    },
-    "8141": {
-      "date": "2026-10-28",
-      "timestamp": "2026-10-28T15:30:00+09:00",
-      "close": 1571.0,
-      "volume": 310700.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "quoteInterval": "15m",
-      "isRealtime": false,
-      "previousClose": 1571.0,
-      "changePercent": 0.0,
-      "stale": true
     },
     "8142": {
       "date": "2026-11-05",
@@ -46365,19 +46261,6 @@
       "changePercent": -0.9603,
       "stale": false
     },
-    "9691": {
-      "date": "2026-10-08",
-      "timestamp": "2026-10-08T09:00:00+09:00",
-      "close": 5160.0,
-      "volume": 500.0,
-      "source": "Yahoo Finance",
-      "priceType": "regular-market-price",
-      "quoteInterval": "15m",
-      "isRealtime": false,
-      "previousClose": 5160.0,
-      "changePercent": 0.0,
-      "stale": true
-    },
     "9692": {
       "date": "2026-11-05",
       "timestamp": "2026-11-05T15:30:00+09:00",
@@ -48746,14 +48629,6 @@
       "financialSource": "TDnet",
       "financialDocumentType": "FullYearEarnings"
     },
-    "4316": {
-      "eps": -43.38,
-      "bps": 105.11,
-      "disclosedDate": "2026-03-31",
-      "disclosedAt": "2026-06-25 12:43",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
     "4046": {
       "eps": 123.96,
       "bps": 1046.31,
@@ -48917,14 +48792,6 @@
       "bps": 5755.95,
       "disclosedDate": "2026-03-31",
       "disclosedAt": "2026-06-23 14:10",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
-    "7709": {
-      "eps": -11.34,
-      "bps": 4.07,
-      "disclosedDate": "2026-03-31",
-      "disclosedAt": "2026-06-29 09:23",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
@@ -49114,14 +48981,6 @@
       "bps": 2825.95,
       "disclosedDate": "2026-03-31",
       "disclosedAt": "2026-06-24 16:05",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
-    "7946": {
-      "eps": 31.91,
-      "bps": 707.43,
-      "disclosedDate": "2026-03-31",
-      "disclosedAt": "2026-06-26 16:13",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
@@ -56947,14 +56806,6 @@
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
-    "4475": {
-      "eps": 42.4,
-      "bps": 118.13,
-      "disclosedDate": "2025-09-30",
-      "disclosedAt": "2025-12-24 15:34",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
     "7041": {
       "eps": 27.73,
       "bps": 525.57,
@@ -57613,14 +57464,6 @@
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
-    "3712": {
-      "eps": 356.21,
-      "bps": 2298.22,
-      "disclosedDate": "2025-09-30",
-      "disclosedAt": "2025-12-17 15:55",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
     "8798": {
       "eps": -59.8,
       "bps": -157.2,
@@ -57701,14 +57544,6 @@
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
-    "3690": {
-      "eps": -22.98,
-      "bps": 267.6,
-      "disclosedDate": "2025-09-30",
-      "disclosedAt": "2025-12-16 15:33",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
     "3496": {
       "eps": 153.62,
       "bps": 555.68,
@@ -57746,14 +57581,6 @@
       "bps": 3038.39,
       "disclosedDate": "2025-09-30",
       "disclosedAt": "2025-12-16 10:03",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
-    "3698": {
-      "eps": 80.51,
-      "bps": 774.55,
-      "disclosedDate": "2025-09-30",
-      "disclosedAt": "2025-12-15 17:04",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
@@ -57800,14 +57627,6 @@
       "bps": 2115.41,
       "disclosedDate": "2025-09-30",
       "disclosedAt": "2025-12-11 14:30",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
-    "6050": {
-      "eps": 81.52,
-      "bps": 1039.62,
-      "disclosedDate": "2025-09-30",
-      "disclosedAt": "2025-12-10 13:23",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
@@ -61125,14 +60944,6 @@
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
-    "6147": {
-      "eps": -81.23,
-      "bps": 234.68,
-      "disclosedDate": "2026-03-31",
-      "disclosedAt": "2026-06-25 09:33",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
     "9818": {
       "eps": 125.17,
       "bps": 2078.67,
@@ -61986,14 +61797,6 @@
       "eps": 27.96,
       "disclosedDate": "2026-03-31",
       "disclosedAt": "2026-06-23 15:43",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
-    "7985": {
-      "eps": 39.41,
-      "bps": 2551.98,
-      "disclosedDate": "2026-03-31",
-      "disclosedAt": "2026-06-30 09:06",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
@@ -63278,14 +63081,6 @@
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
-    "7255": {
-      "eps": 70.25,
-      "bps": 1499.97,
-      "disclosedDate": "2026-03-31",
-      "disclosedAt": "2026-06-26 11:46",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
     "9072": {
       "eps": 152.85,
       "bps": 2037.86,
@@ -63442,14 +63237,6 @@
       "bps": 2943.08,
       "disclosedDate": "2026-03-31",
       "disclosedAt": "2026-06-23 09:49",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
-    "7490": {
-      "eps": 548.37,
-      "bps": 3931.33,
-      "disclosedDate": "2026-03-31",
-      "disclosedAt": "2026-06-29 10:00",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
@@ -66354,14 +66141,6 @@
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
-    "9691": {
-      "eps": 616.24,
-      "bps": 4676.79,
-      "disclosedDate": "2026-03-31",
-      "disclosedAt": "2026-06-23 16:35",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
     "6158": {
       "eps": 42.34,
       "bps": 1620.26,
@@ -66604,14 +66383,6 @@
       "bps": 1680.92,
       "disclosedDate": "2026-03-31",
       "disclosedAt": "2026-06-23 15:38",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
-    "8141": {
-      "eps": 38.72,
-      "bps": 1844.07,
-      "disclosedDate": "2026-03-31",
-      "disclosedAt": "2026-06-29 15:40",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
@@ -68536,14 +68307,6 @@
       "bps": 2873.63,
       "disclosedDate": "2026-03-31",
       "disclosedAt": "2026-06-22 16:14",
-      "financialSource": "EDINET",
-      "financialDocumentType": "AnnualSecuritiesReport"
-    },
-    "5484": {
-      "eps": 171.74,
-      "bps": 3966.94,
-      "disclosedDate": "2026-03-31",
-      "disclosedAt": "2026-06-30 16:50",
       "financialSource": "EDINET",
       "financialDocumentType": "AnnualSecuritiesReport"
     },
@@ -72651,8 +72414,8 @@
     }
   },
   "stats": {
-    "quoteUniverse": 3695,
-    "companies": 3695,
+    "quoteUniverse": 3686,
+    "companies": 3686,
     "quoteCoverageRatio": 100.0,
     "missingQuotes": 0,
     "missingQuoteCodes": [],
@@ -72660,15 +72423,14 @@
       "2026-11-05",
       "2026-11-04",
       "2026-11-02",
-      "2026-10-29",
-      "2026-10-28"
+      "2026-10-29"
     ],
-    "fundamentals": 3112,
+    "fundamentals": 3097,
     "quoteFailures": 0,
-    "freshQuotesFetched": 3695,
+    "freshQuotesFetched": 3686,
     "fallbackQuotes": 0,
     "staleQuotesDropped": 0,
-    "marketDateStaleQuotes": 34,
+    "marketDateStaleQuotes": 20,
     "maxFallbackQuoteAgeDays": 10
   }
 }
