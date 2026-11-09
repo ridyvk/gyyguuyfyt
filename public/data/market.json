@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-11-09T15:59:12.264464Z",
+  "generatedAt": "2026-11-09T17:36:14.127615Z",
   "source": "Yahoo Finance",
   "status": "ready",
   "message": "Yahoo Financeの公開株価データとEDINET・TDnetのEPS/BPSからPER・PBRを自動計算しています。株価はリアルタイム保証ではありません。",
